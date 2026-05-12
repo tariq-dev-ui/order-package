@@ -102,7 +102,6 @@
       "allPackages":         "جميع الباقات",
       "createPackage":       "إنشاء باقة",
       "myPackages":          "باقاتي",
-      "cloneResell":         "نسخ وإعادة بيع",
       "distributionNetwork": "شبكة التوزيع",
       "distributedPackages": "الباقات الموزَّعة",
       "subagents":           "الوكلاء الفرعيون",
@@ -534,7 +533,6 @@
       "subtitle": "إدارة وإعادة توزيع الباقات المعيّنة لشبكتك"
     },
     "buttons": {
-      "cloneCustomize":      "نسخ وتخصيص",
       "manageDistribution":  "إدارة التوزيع",
       "newAllocation":       "تخصيص جديد",
       "createAllocation":    "إنشاء التخصيص"

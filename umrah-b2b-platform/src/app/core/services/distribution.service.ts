@@ -3,11 +3,10 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { MockDataService } from './mock-data.service';
 import {
-  SubagentAllocation, DistributionConfig, DistributionRequest,
-  ClonePackageRequest, DistributionSummary
+  SubagentAllocation,
+  DistributionSummary
 } from '../models/distribution.model';
-import { Package } from '../models/package.model';
-import { DistributionStatus, PackageType, PackageStatus } from '../models/enums';
+import { DistributionStatus } from '../models/enums';
 
 @Injectable({ providedIn: 'root' })
 export class DistributionService {
@@ -78,40 +77,4 @@ export class DistributionService {
     throw new Error(`Allocation ${id} not found`);
   }
 
-  clonePackage(request: ClonePackageRequest, sourcePackage: Package): Observable<Package> {
-    const cloned: Package = {
-      ...sourcePackage,
-      id: 'pkg-clone-' + Date.now(),
-      title: request.customTitle || `${sourcePackage.title} (Reseller Copy)`,
-      type: PackageType.PRIVATE_RESELL,
-      status: PackageStatus.DRAFT,
-      parentPackageId: request.sourcePackageId,
-      pricingConfig: {
-        ...sourcePackage.pricingConfig,
-        finalSellingPrice: request.customPrice || sourcePackage.pricingConfig.finalSellingPrice
-      },
-      validFrom: request.customValidFrom || sourcePackage.validFrom,
-      validTo: request.customValidTo || sourcePackage.validTo,
-      ownership: {
-        ...sourcePackage.ownership,
-        parentPackageId: sourcePackage.id,
-        distributedByAgentId: request.masterAgentId,
-        ownershipChain: [
-          ...sourcePackage.ownership.ownershipChain,
-          {
-            id: request.masterAgentId,
-            name: 'Master Agent',
-            role: 'Reseller',
-            level: sourcePackage.ownership.ownershipChain.length,
-            timestamp: new Date()
-          }
-        ]
-      },
-      soldCount: 0,
-      reservedCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as Package;
-    return of(cloned).pipe(delay(400));
-  }
 }

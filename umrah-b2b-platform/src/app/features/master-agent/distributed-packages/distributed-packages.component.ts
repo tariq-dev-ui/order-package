@@ -29,10 +29,6 @@ import { filter } from 'rxjs/operators';
           <p class="page-subtitle">{{ 'masterAgent.dashboard.subtitle' | translate }}</p>
         </div>
         <div class="flex items-center gap-3">
-          <button class="btn btn--secondary" routerLink="/master/packages/clone">
-            <span class="material-icons-round">content_copy</span>
-            {{ 'masterAgent.buttons.cloneCustomize' | translate }}
-          </button>
           <button class="btn btn--primary">
             <span class="material-icons-round">hub</span>
             {{ 'masterAgent.buttons.manageDistribution' | translate }}

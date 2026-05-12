@@ -55,18 +55,6 @@ export interface DistributionRequest {
   commissionValue: number;
 }
 
-export interface ClonePackageRequest {
-  sourcePackageId: string;
-  masterAgentId: string;
-  customTitle?: string;
-  customPrice?: number;
-  customValidFrom?: Date;
-  customValidTo?: Date;
-  customServices?: string[];
-  markup?: number;
-  markupType?: 'percentage' | 'fixed';
-}
-
 export interface DistributionSummary {
   totalPackages: number;
   activeDistributions: number;

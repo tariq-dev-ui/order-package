@@ -627,8 +627,7 @@ export class SidebarComponent implements OnInit {
       items: [
         { labelKey: 'sidebar.nav.allPackages', icon: 'view_list', route: '/admin/packages', roles: [UserRole.ADMIN] },
         { labelKey: 'sidebar.nav.createPackage', icon: 'add_circle_outline', route: '/admin/packages/builder', roles: [UserRole.ADMIN], badgeKey: 'sidebar.badges.new', badgeColor: 'gold' },
-        { labelKey: 'sidebar.nav.myPackages', icon: 'inventory_2', route: '/master/packages', roles: [UserRole.MASTER_AGENT] },
-        { labelKey: 'sidebar.nav.cloneResell', icon: 'content_copy', route: '/master/packages/clone', roles: [UserRole.MASTER_AGENT] }
+        { labelKey: 'sidebar.nav.myPackages', icon: 'inventory_2', route: '/master/packages', roles: [UserRole.MASTER_AGENT] }
       ] as NavItem[]
     },
     {

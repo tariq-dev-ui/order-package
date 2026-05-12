@@ -102,7 +102,6 @@
       "allPackages":        "All Packages",
       "createPackage":      "Create Package",
       "myPackages":         "My Packages",
-      "cloneResell":        "Clone & Resell",
       "distributionNetwork":"Distribution Network",
       "distributedPackages":"Distributed Packages",
       "subagents":          "Subagents",
@@ -534,7 +533,6 @@
       "subtitle": "Manage and redistribute packages assigned to your network"
     },
     "buttons": {
-      "cloneCustomize":   "Clone & Customize",
       "manageDistribution": "Manage Distribution",
       "newAllocation":    "New Allocation",
       "createAllocation": "Create Allocation"
