@@ -5,13 +5,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BookingMode, PackageType, VisaStatus } from '../../../../../core/models/enums';
 import { Package } from '../../../../../core/models/package.model';
 import { CustomerInfo, OtherServiceSelection } from '../../../../../core/models/package-order.model';
+import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
+import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
+import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
 
 @Component({
   selector: 'app-step6-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
   template: `
-    <div class="step-content animate-fade-in">
+    <div class="step-shell animate-fade-in">
+      <div class="step-grid">
+        <app-order-summary class="sidebar" [data]="orderSummary"></app-order-summary>
+        <div class="step-content">
       <div class="detail-section">
         <div class="section-header">
           <div>
@@ -121,10 +127,14 @@ import { CustomerInfo, OtherServiceSelection } from '../../../../../core/models/
           {{ 'builder.navigation.nextPricing' | translate }} <span class="material-icons-round">arrow_forward</span>
         </button>
       </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    .step-content { padding: var(--space-xl); max-width: 920px; margin: 0 auto; }
+    .step-shell { padding: 14px 0 0; }
+    .step-grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .step-content { padding: var(--space-xl); min-width: 0; }
 
     .detail-section {
       background: var(--color-surface);
@@ -141,6 +151,7 @@ import { CustomerInfo, OtherServiceSelection } from '../../../../../core/models/
       display: flex; align-items: center; justify-content: space-between;
       margin-top: var(--space-xl); padding-top: var(--space-xl); border-top: 1px solid var(--color-border);
     }
+    @media (max-width: 1024px) { .step-grid { grid-template-columns: 1fr; } }
   `]
 })
 export class Step6DetailsComponent implements OnInit {
@@ -165,6 +176,9 @@ export class Step6DetailsComponent implements OnInit {
   departureDateStr = '';
   customer: CustomerInfo = { name: '', phone: '', email: '', notes: '' };
   otherServicesText = '';
+  orderSummary: OrderSummaryData = { title: '', sections: [], supportCards: [] };
+
+  constructor(private readonly builderUi: PackageBuilderUiService) {}
 
   ngOnInit(): void {
     this.title = this.packageData.title || '';
@@ -174,6 +188,7 @@ export class Step6DetailsComponent implements OnInit {
     this.visaStatus = this.packageData.visaStatus || VisaStatus.INCLUDED;
     this.bookingMode = this.packageData.bookingMode || BookingMode.INSTANT;
     this.packageType = this.packageData.type || PackageType.SHARED;
+    this.orderSummary = this.builderUi.getOrderSummaryData();
   }
 
   emitCustomerData(): void {

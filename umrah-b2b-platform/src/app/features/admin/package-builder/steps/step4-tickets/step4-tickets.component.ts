@@ -3,13 +3,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Package, TicketService } from '../../../../../core/models/package.model';
+import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
+import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
+import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
 
 @Component({
   selector: 'app-step4-tickets',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
   template: `
-    <div class="step-content animate-fade-in">
+    <div class="step-shell animate-fade-in">
+      <div class="step-grid">
+        <app-order-summary class="sidebar" [data]="orderSummary"></app-order-summary>
+        <div class="step-content">
       <div class="step-header">
         <div class="step-icon-wrap" style="background:#fdf4ff;color:#9333ea">
           <span class="material-icons-round" style="font-size:26px">flight</span>
@@ -119,10 +125,14 @@ import { Package, TicketService } from '../../../../../core/models/package.model
           {{ 'builder.navigation.nextCatering' | translate }} <span class="material-icons-round">arrow_forward</span>
         </button>
       </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    .step-content { padding: var(--space-xl); max-width: 860px; margin: 0 auto; }
+    .step-shell { padding: 14px 0 0; }
+    .step-grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .step-content { padding: var(--space-xl); min-width: 0; }
     .step-header { display: flex; align-items: flex-start; gap: var(--space-md); margin-bottom: var(--space-xl); }
     .step-icon-wrap { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .step-title { font-size: 1.25rem; font-weight: 700; }
@@ -135,6 +145,7 @@ import { Package, TicketService } from '../../../../../core/models/package.model
     .step-nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-xl); padding-top: var(--space-xl); border-top: 1px solid var(--color-border); }
     .mb-4 { margin-bottom: 16px; }
     .mt-4 { margin-top: 16px; }
+    @media (max-width: 1024px) { .step-grid { grid-template-columns: 1fr; } }
   `]
 })
 export class Step4TicketsComponent implements OnInit {
@@ -148,8 +159,14 @@ export class Step4TicketsComponent implements OnInit {
   departureStr = '';
   returnStr = '';
   newItem: Partial<TicketService> = { airline: '', flightNumber: '', origin: '', destination: '', class: 'economy', baggageAllowance: 23 };
+  orderSummary: OrderSummaryData = { title: '', sections: [], supportCards: [] };
 
-  ngOnInit(): void { this.tickets = [...(this.packageData.tickets || [])]; }
+  constructor(private readonly builderUi: PackageBuilderUiService) {}
+
+  ngOnInit(): void {
+    this.tickets = [...(this.packageData.tickets || [])];
+    this.orderSummary = this.builderUi.getOrderSummaryData();
+  }
 
   add(): void {
     if (!this.newItem.airline) return;

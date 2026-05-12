@@ -16,18 +16,20 @@ import { PackageStepperComponent } from './components/package-stepper/package-st
 import { CustomerInfo, OtherServiceSelection } from '../../../core/models/package-order.model';
 import { PackageBuilderService } from '../../../core/services/package-builder.service';
 import { OrderService } from '../../../core/services/order.service';
+import { PackageVisibilityComponent } from './components/package-visibility/package-visibility.component';
 
 @Component({
   selector: 'app-package-builder',
   standalone: true,
   imports: [
-    CommonModule, PackageStepperComponent,
+    CommonModule, PackageStepperComponent, PackageVisibilityComponent,
     Step1MakkahComponent, Step2MadinahComponent, Step3TransportComponent,
     Step4TicketsComponent, Step5CateringComponent, Step6DetailsComponent,
     Step7PricingComponent
   ],
   template: `
     <div class="builder-shell">
+      <app-package-visibility (visibilityChanged)="onVisibilityChanged()"></app-package-visibility>
       <div class="stepper-wrap">
         <app-package-stepper
           [steps]="steps"
@@ -141,7 +143,10 @@ export class PackageBuilderComponent {
     totalCapacity: 0,
     soldCount: 0,
     reservedCount: 0,
-    visaStatus: VisaStatus.INCLUDED
+    visaStatus: VisaStatus.INCLUDED,
+    visibilityType: 'shared',
+    selectedAgents: [],
+    selectedGroups: []
   };
 
   steps: PackageBuilderStep[] = [];
@@ -155,6 +160,7 @@ export class PackageBuilderComponent {
     private readonly router: Router
   ) {
     this.steps = this.builderUi.getSteps();
+    this.onVisibilityChanged();
   }
 
   goToStep(step: number): void {
@@ -177,6 +183,16 @@ export class PackageBuilderComponent {
 
   onDataChanged(data: Partial<Package>): void {
     this.packageData = { ...this.packageData, ...data };
+  }
+
+  onVisibilityChanged(): void {
+    const visibility = this.packageBuilderService.getVisibilitySignal()();
+    this.packageData = {
+      ...this.packageData,
+      visibilityType: visibility.visibilityType,
+      selectedAgents: visibility.selectedAgents,
+      selectedGroups: visibility.selectedGroups
+    };
   }
 
   onCustomerInfoChanged(data: CustomerInfo): void {

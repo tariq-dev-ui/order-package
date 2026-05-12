@@ -25,6 +25,7 @@ import { PackageOrder } from '../../../core/models/package-order.model';
                 <th>Order #</th>
                 <th>Customer</th>
                 <th>Package Summary</th>
+                <th>Visibility</th>
                 <th>Makkah</th>
                 <th>Madinah</th>
                 <th>Transport</th>
@@ -43,6 +44,7 @@ import { PackageOrder } from '../../../core/models/package-order.model';
                   <td>{{ order.orderNumber }}</td>
                   <td>{{ order.customerInfo.name }}</td>
                   <td>{{ order.packageSummary }}</td>
+                  <td>{{ formatVisibility(order) }}</td>
                   <td>{{ summarize(order.makkahHotel.map(h => h.name)) }}</td>
                   <td>{{ summarize(order.madinahHotel.map(h => h.name)) }}</td>
                   <td>{{ summarize(order.transport.map(t => t.route)) }}</td>
@@ -58,7 +60,7 @@ import { PackageOrder } from '../../../core/models/package-order.model';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="13" class="empty-cell">لا توجد طلبات حتى الآن</td>
+                  <td colspan="14" class="empty-cell">لا توجد طلبات حتى الآن</td>
                 </tr>
               }
             </tbody>
@@ -93,5 +95,15 @@ export class AgentOrdersComponent implements OnInit {
 
     const sliced = items.slice(0, 2).join(', ');
     return items.length > 2 ? `${sliced}...` : sliced;
+  }
+
+  formatVisibility(order: PackageOrder): string {
+    if (order.visibilityType === 'private') {
+      return `Private (${order.selectedAgents?.length || 0})`;
+    }
+    if (order.visibilityType === 'group') {
+      return `Group (${order.selectedGroups?.length || 0})`;
+    }
+    return 'Shared';
   }
 }

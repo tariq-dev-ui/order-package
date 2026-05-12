@@ -79,6 +79,9 @@ export interface PackageOrder {
   customerInfo: CustomerInfo;
   packageSummary: string;
   packageTitle?: string;
+  visibilityType?: 'shared' | 'private' | 'group';
+  selectedAgents?: string[];
+  selectedGroups?: string[];
   makkahHotel: HotelSelection[];
   madinahHotel: HotelSelection[];
   transport: TransportSelection[];

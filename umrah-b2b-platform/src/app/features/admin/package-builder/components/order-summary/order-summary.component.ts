@@ -14,6 +14,11 @@ import { PackageBuilderService } from '../../../../../core/services/package-buil
         <span class="material-icons-round">list_alt</span>
       </div>
 
+      <div class="visibility-line">
+        <span>الظهور:</span>
+        <strong>{{ visibilityLabel() }}</strong>
+      </div>
+
       @for (section of data.sections; track section.id) {
         <section class="summary-section">
           <header class="summary-section-head">
@@ -95,6 +100,23 @@ import { PackageBuilderService } from '../../../../../core/services/package-buil
     .summary-head .material-icons-round {
       font-size: 20px;
       color: var(--sero-text-secondary);
+    }
+
+    .visibility-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #e8ede2;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.83rem;
+      color: #5f6c59;
+      background: #fbfcf9;
+    }
+
+    .visibility-line strong {
+      color: var(--sero-primary);
+      font-size: 0.84rem;
     }
 
     .summary-section {
@@ -229,8 +251,21 @@ import { PackageBuilderService } from '../../../../../core/services/package-buil
 export class OrderSummaryComponent {
   @Input({ required: true }) data!: OrderSummaryData;
   readonly makkahHotels;
+  readonly visibility;
 
   constructor(private readonly builderService: PackageBuilderService) {
     this.makkahHotels = this.builderService.getMakkahHotelsSignal();
+    this.visibility = this.builderService.getVisibilitySignal();
+  }
+
+  visibilityLabel(): string {
+    const type = this.visibility().visibilityType;
+    if (type === 'private') {
+      return `Private (${this.visibility().selectedAgents.length})`;
+    }
+    if (type === 'group') {
+      return `Group (${this.visibility().selectedGroups.length})`;
+    }
+    return 'Shared';
   }
 }

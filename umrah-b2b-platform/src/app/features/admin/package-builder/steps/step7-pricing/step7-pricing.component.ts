@@ -6,13 +6,19 @@ import { Package } from '../../../../../core/models/package.model';
 import { PricingConfig, CostBreakdown, PricingSimulationResult } from '../../../../../core/models/pricing.model';
 import { MarkupType } from '../../../../../core/models/enums';
 import { PricingService } from '../../../../../core/services/pricing.service';
+import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
+import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
+import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
 
 @Component({
   selector: 'app-step7-pricing',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
   template: `
-    <div class="step-content animate-fade-in">
+    <div class="step-shell animate-fade-in">
+      <div class="step-grid">
+        <app-order-summary class="sidebar" [data]="orderSummary"></app-order-summary>
+        <div class="step-content">
       <div class="pricing-layout">
 
         <!-- LEFT: Input Panels -->
@@ -309,10 +315,14 @@ import { PricingService } from '../../../../../core/services/pricing.service';
       @if (statusMessage) {
         <div class="status-box">{{ statusMessage }}</div>
       }
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    .step-content { padding: var(--space-xl); max-width: 1200px; margin: 0 auto; }
+    .step-shell { padding: 14px 0 0; }
+    .step-grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .step-content { padding: var(--space-xl); min-width: 0; }
 
     .pricing-layout {
       display: grid;
@@ -586,6 +596,10 @@ import { PricingService } from '../../../../../core/services/pricing.service';
       font-size: 0.87rem;
       font-weight: 700;
     }
+    @media (max-width: 1024px) {
+      .step-grid { grid-template-columns: 1fr; }
+      .pricing-layout { grid-template-columns: 1fr; }
+    }
   `]
 })
 export class Step7PricingComponent implements OnInit {
@@ -608,8 +622,12 @@ export class Step7PricingComponent implements OnInit {
   hideCostFromSubagents = true;
   isBlendedPrice = false;
   simulation: PricingSimulationResult | null = null;
+  orderSummary: OrderSummaryData = { title: '', sections: [], supportCards: [] };
 
-  constructor(private pricingService: PricingService) {}
+  constructor(
+    private pricingService: PricingService,
+    private readonly builderUi: PackageBuilderUiService
+  ) {}
 
   ngOnInit(): void {
     if (this.packageData.pricingConfig) {
@@ -617,6 +635,7 @@ export class Step7PricingComponent implements OnInit {
       this.markupType = this.packageData.pricingConfig.agentMargin?.type || MarkupType.PERCENTAGE;
       this.markupValue = this.packageData.pricingConfig.agentMargin?.value || 15;
     }
+    this.orderSummary = this.builderUi.getOrderSummaryData();
     this.recalculate();
   }
 

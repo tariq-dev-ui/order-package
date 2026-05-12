@@ -1,5 +1,5 @@
 import { Injectable, Signal, signal } from '@angular/core';
-import { Package } from '../models/package.model';
+import { Package, PackageVisibilityType } from '../models/package.model';
 import { CustomerInfo, OtherServiceSelection } from '../models/package-order.model';
 import { PackageHotelSelection } from '../models/package-builder-ui.model';
 
@@ -8,9 +8,20 @@ export interface PackageBuilderValidation {
   errors: string[];
 }
 
+export interface PackageVisibilityState {
+  visibilityType: PackageVisibilityType;
+  selectedAgents: string[];
+  selectedGroups: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class PackageBuilderService {
   private readonly makkahHotels = signal<PackageHotelSelection[]>([]);
+  private readonly visibilityState = signal<PackageVisibilityState>({
+    visibilityType: 'shared',
+    selectedAgents: [],
+    selectedGroups: []
+  });
 
   getMakkahHotelsSignal(): Signal<PackageHotelSelection[]> {
     return this.makkahHotels.asReadonly();
@@ -34,8 +45,39 @@ export class PackageBuilderService {
     this.makkahHotels.update((current) => current.filter((item) => item.id !== hotelId));
   }
 
+  getVisibilitySignal(): Signal<PackageVisibilityState> {
+    return this.visibilityState.asReadonly();
+  }
+
+  setVisibilityType(type: PackageVisibilityType): void {
+    this.visibilityState.update((current) => ({
+      visibilityType: type,
+      selectedAgents: type === 'private' ? current.selectedAgents : [],
+      selectedGroups: type === 'group' ? current.selectedGroups : []
+    }));
+  }
+
+  setSelectedAgents(agentIds: string[]): void {
+    this.visibilityState.update((current) => ({
+      ...current,
+      selectedAgents: [...agentIds]
+    }));
+  }
+
+  setSelectedGroups(groupIds: string[]): void {
+    this.visibilityState.update((current) => ({
+      ...current,
+      selectedGroups: [...groupIds]
+    }));
+  }
+
   resetBuilderState(): void {
     this.makkahHotels.set([]);
+    this.visibilityState.set({
+      visibilityType: 'shared',
+      selectedAgents: [],
+      selectedGroups: []
+    });
   }
 
   validateForOrderCreation(

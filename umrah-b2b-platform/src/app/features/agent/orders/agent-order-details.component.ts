@@ -25,6 +25,7 @@ import { OrderStatus, PackageOrder } from '../../../core/models/package-order.mo
             <div><strong>Phone:</strong> {{ order.customerInfo.phone }}</div>
             <div><strong>Email:</strong> {{ order.customerInfo.email }}</div>
             <div><strong>Package Summary:</strong> {{ order.packageSummary }}</div>
+            <div><strong>Visibility:</strong> {{ formatVisibility(order) }}</div>
             <div><strong>Makkah hotel:</strong> {{ listLabel(order.makkahHotel.map(h => h.name)) }}</div>
             <div><strong>Madinah hotel:</strong> {{ listLabel(order.madinahHotel.map(h => h.name)) }}</div>
             <div><strong>Transport:</strong> {{ listLabel(order.transport.map(t => t.route)) }}</div>
@@ -88,5 +89,15 @@ export class AgentOrderDetailsComponent implements OnInit {
 
   listLabel(values: string[]): string {
     return values.length ? values.join(', ') : '-';
+  }
+
+  formatVisibility(order: PackageOrder): string {
+    if (order.visibilityType === 'private') {
+      return `Private (${order.selectedAgents?.length || 0} agents)`;
+    }
+    if (order.visibilityType === 'group') {
+      return `Group (${order.selectedGroups?.length || 0} groups)`;
+    }
+    return 'Shared';
   }
 }
