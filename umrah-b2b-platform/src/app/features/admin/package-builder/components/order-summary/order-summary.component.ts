@@ -263,6 +263,9 @@ export class OrderSummaryComponent {
     if (type === 'private') {
       return `Private (${this.visibility().selectedAgents.length})`;
     }
+    if (type === 'group') {
+      return `Group (${this.visibility().selectedGroups.length})`;
+    }
     return 'Shared';
   }
 }

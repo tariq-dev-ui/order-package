@@ -1,9 +1,16 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AgentService } from '../../../../../core/services/agent.service';
-import { PackageBuilderService } from '../../../../../core/services/package-builder.service';
+import {
+  PackageBuilderService,
+  PackageVisibilityState
+} from '../../../../../core/services/package-builder.service';
+import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { PackageVisibilityType } from '../../../../../core/models/package.model';
 import { Agent } from '../../../../../core/models/agent.model';
+import { SelectOption } from '../../../../../core/models/package-builder-ui.model';
 import {
   CommissionModel,
   PricingPermission,
@@ -13,12 +20,12 @@ import {
 @Component({
   selector: 'app-package-visibility',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <section class="visibility-card">
       <div class="visibility-header">
-        <h3>Package Visibility & Distribution</h3>
-        <p>حدد من يمكنه مشاهدة هذه الباقة قبل بدء إضافة الخدمات</p>
+        <h3>{{ 'distribution.modalDetails.cardTitle' | translate }}</h3>
+        <p>{{ 'distribution.modalDetails.cardSubtitle' | translate }}</p>
       </div>
 
       <div class="visibility-options">
@@ -30,92 +37,212 @@ import {
             (click)="selectType(option.type)">
             <span class="material-icons-round">{{ option.icon }}</span>
             <div>
-              <strong>{{ option.title }}</strong>
-              <p>{{ option.description }}</p>
+              <strong>{{ option.titleKey | translate }}</strong>
+              <p>{{ option.descriptionKey | translate }}</p>
             </div>
           </button>
         }
       </div>
 
       <div class="visibility-actions">
-        <button type="button" class="btn btn--secondary btn--sm" (click)="showDetailsPopup = true">
+        <button type="button" class="btn btn--secondary btn--sm" (click)="openDetails()">
           <span class="material-icons-round">tune</span>
-          عرض التفاصيل
+          {{ 'distribution.modalDetails.openDetails' | translate }}
         </button>
       </div>
 
       @if (showDetailsPopup) {
-        <div class="details-modal-overlay" (click)="showDetailsPopup = false">
+        <div class="details-modal-overlay" (click)="cancelDetails()">
           <div class="details-modal" (click)="$event.stopPropagation()">
             <div class="details-modal-head">
-              <h4>تفاصيل التوزيع</h4>
-              <button type="button" class="close-btn" (click)="showDetailsPopup = false">
+              <div>
+                <h4>{{ activeVisibilityConfig().titleKey | translate }}</h4>
+                <p>{{ activeVisibilityConfig().subtitleKey | translate }}</p>
+              </div>
+              <button type="button" class="close-btn" (click)="cancelDetails()">
                 <span class="material-icons-round">close</span>
               </button>
             </div>
 
-            @if (visibility().visibilityType === 'private') {
-              <div class="selectors-wrap">
-                <div class="selector-title">اختر الوكلاء المسموح لهم</div>
-                <div class="selector-list">
-                  @for (agent of agents; track agent.id) {
-                    <label>
-                      <input
-                        type="checkbox"
-                        [checked]="visibility().selectedAgents.includes(agent.id)"
-                        (change)="toggleAgent(agent.id)" />
-                      <span>{{ agent.name }}</span>
-                    </label>
+            <section class="modal-section">
+              <h5><span class="material-icons-round">verified_user</span> {{ 'distribution.modalDetails.permissionsTitle' | translate }}</h5>
+              <div class="toggle-cards">
+                <label class="toggle-card">
+                  <input type="checkbox" [checked]="modalDraft.allowReselling" (change)="onDraftToggle('allowReselling', $event)" />
+                  <div>
+                    <strong>{{ 'distribution.modalDetails.allowReselling' | translate }}</strong>
+                    <p>{{ 'distribution.modalDetails.allowResellingDesc' | translate }}</p>
+                  </div>
+                </label>
+                <label class="toggle-card">
+                  <input type="checkbox" [checked]="modalDraft.hideOriginalCost" (change)="onDraftToggle('hideOriginalCost', $event)" />
+                  <div>
+                    <strong>{{ 'distribution.modalDetails.hideCost' | translate }}</strong>
+                    <p>{{ 'distribution.modalDetails.hideCostDesc' | translate }}</p>
+                  </div>
+                </label>
+                @if (activeVisibilityConfig().showAgentSelector) {
+                  <div class="toggle-card static">
+                    <div>
+                      <strong>{{ 'distribution.modalDetails.subagentAccess' | translate }}</strong>
+                      <p>{{ modalDraft.subagentAccessMode === SubagentAccessMode.ALL ? ('distribution.modalDetails.allAgentsAccess' | translate) : ('distribution.modalDetails.selectedAgentsAccess' | translate) }}</p>
+                    </div>
+                  </div>
+                }
+                @if (activeVisibilityConfig().showGroupSelector) {
+                  <div class="toggle-card static">
+                    <div>
+                      <strong>{{ 'distribution.modalDetails.groupAccess' | translate }}</strong>
+                      <p>{{ 'distribution.modalDetails.groupAccessDesc' | translate }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+
+            @if (activeVisibilityConfig().showAgentSelector) {
+              <section class="modal-section">
+                <h5><span class="material-icons-round">supervisor_account</span> {{ 'distribution.modalDetails.agentAccessTitle' | translate }}</h5>
+                <div class="segmented-row">
+                  @for (accessOption of accessOptions; track accessOption.value) {
+                    <button
+                      type="button"
+                      class="segmented-btn"
+                      [class.active]="modalDraft.subagentAccessMode === accessOption.value"
+                      (click)="setAccessMode(accessOption.value)">
+                      {{ accessOption.labelKey | translate }}
+                    </button>
                   }
                 </div>
-              </div>
+                <div class="selected-box">
+                  <strong>{{ 'distribution.modalDetails.selectedAgentsTitle' | translate }}</strong>
+                  @if (selectedAgentNames().length > 0) {
+                    <div class="selected-chips">
+                      @for (name of selectedAgentNames(); track name) {
+                        <button type="button" class="selected-chip" (click)="removeDraftAgent(name)">
+                          {{ name }} <span class="material-icons-round">close</span>
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="empty-search">{{ 'distribution.modalDetails.noAgentsSelected' | translate }}</p>
+                  }
+                </div>
+                <div class="agent-selector">
+                  <input
+                    type="text"
+                    class="agent-search"
+                    [(ngModel)]="agentSearch"
+                    [placeholder]="'distribution.modalDetails.searchAgent' | translate" />
+                  <div class="selector-list">
+                    @for (agent of filteredAgents(); track agent.id) {
+                      <label>
+                        <input
+                          type="checkbox"
+                          [checked]="modalDraft.selectedAgents.includes(agent.id)"
+                          (change)="toggleDraftAgent(agent.id)" />
+                        <span>{{ agent.name }}</span>
+                      </label>
+                    } @empty {
+                      <p class="empty-search">{{ 'distribution.modalDetails.noAgentResults' | translate }}</p>
+                    }
+                  </div>
+                </div>
+              </section>
             }
 
-            <div class="advanced-grid">
-              <label class="inline-toggle">
-                <input type="checkbox" [checked]="visibility().allowReselling" (change)="onAllowReselling($event)" />
-                <span>السماح بإعادة البيع</span>
-              </label>
+            @if (activeVisibilityConfig().showGroupSelector) {
+              <section class="modal-section">
+                <h5><span class="material-icons-round">groups</span> {{ 'distribution.modalDetails.groupAccessTitle' | translate }}</h5>
+                <div class="selected-box">
+                  <strong>{{ 'distribution.modalDetails.selectedGroupsTitle' | translate }}</strong>
+                  @if (selectedGroupLabels().length > 0) {
+                    <div class="selected-chips">
+                      @for (label of selectedGroupLabels(); track label) {
+                        <button type="button" class="selected-chip" (click)="removeDraftGroup(label)">
+                          {{ label }} <span class="material-icons-round">close</span>
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="empty-search">{{ 'distribution.modalDetails.noGroupsSelected' | translate }}</p>
+                  }
+                </div>
+                <div class="agent-selector">
+                  <input
+                    type="text"
+                    class="agent-search"
+                    [(ngModel)]="groupSearch"
+                    [placeholder]="'distribution.modalDetails.searchGroup' | translate" />
+                  <div class="selector-list">
+                    @for (group of filteredGroups(); track group.value) {
+                      <label>
+                        <input
+                          type="checkbox"
+                          [checked]="modalDraft.selectedGroups.includes(group.value)"
+                          (change)="toggleDraftGroup(group.value)" />
+                        <span>{{ group.label }}</span>
+                      </label>
+                    } @empty {
+                      <p class="empty-search">{{ 'distribution.modalDetails.noGroupResults' | translate }}</p>
+                    }
+                  </div>
+                </div>
+              </section>
+            }
 
-              <label class="inline-toggle">
-                <input type="checkbox" [checked]="visibility().hideOriginalCost" (change)="onHideCost($event)" />
-                <span>إخفاء التكلفة الأصلية</span>
-              </label>
+            <section class="modal-section">
+              <h5><span class="material-icons-round">payments</span> {{ 'distribution.modalDetails.pricingAuthorityTitle' | translate }}</h5>
+              <div class="option-cards">
+                @for (priceOption of pricingOptions; track priceOption.value) {
+                  <button
+                    type="button"
+                    class="option-card"
+                    [class.active]="modalDraft.pricingPermission === priceOption.value"
+                    (click)="modalDraft.pricingPermission = priceOption.value">
+                    <strong>{{ priceOption.titleKey | translate }}</strong>
+                    <p>{{ priceOption.descriptionKey | translate }}</p>
+                  </button>
+                }
+              </div>
+            </section>
 
-              <label class="inline-field">
-                <span>وصول الوكلاء الفرعيين</span>
-                <select [value]="visibility().subagentAccessMode" (change)="onSubagentAccessChange($event)">
-                  <option [value]="SubagentAccessMode.ALL">All</option>
-                  <option [value]="SubagentAccessMode.SELECTED">Selected</option>
-                </select>
-              </label>
+            <section class="modal-section">
+              <h5><span class="material-icons-round">percent</span> {{ 'distribution.modalDetails.commissionModelTitle' | translate }}</h5>
+              <div class="segmented-row">
+                @for (commissionOption of commissionOptions; track commissionOption.value) {
+                  <button
+                    type="button"
+                    class="segmented-btn"
+                    [class.active]="modalDraft.commissionModel === commissionOption.value"
+                    (click)="modalDraft.commissionModel = commissionOption.value">
+                    {{ commissionOption.labelKey | translate }}
+                  </button>
+                }
+              </div>
+              <div class="inline-input-grid">
+                <label class="inline-field">
+                  <span>{{ modalDraft.commissionModel === CommissionModel.PERCENTAGE ? ('distribution.modalDetails.commissionPercent' | translate) : ('distribution.modalDetails.commissionFixed' | translate) }}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    [value]="modalDraft.commissionValue"
+                    (input)="onDraftNumber('commissionValue', $event)" />
+                </label>
+                <label class="inline-field">
+                  <span>{{ 'distribution.modalDetails.allocatedInventory' | translate }}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    [value]="modalDraft.allocatedInventory"
+                    (input)="onDraftNumber('allocatedInventory', $event)" />
+                </label>
+              </div>
+            </section>
 
-              <label class="inline-field">
-                <span>صلاحية التسعير</span>
-                <select [value]="visibility().pricingPermission" (change)="onPricingPermissionChange($event)">
-                  <option [value]="PricingPermission.FIXED_BY_ADMIN">Fixed by Admin</option>
-                  <option [value]="PricingPermission.AGENT_MARKUP">Agent Markup</option>
-                  <option [value]="PricingPermission.AGENT_FULL_CONTROL">Agent Full Control</option>
-                </select>
-              </label>
-
-              <label class="inline-field">
-                <span>نموذج العمولة</span>
-                <select [value]="visibility().commissionModel" (change)="onCommissionModelChange($event)">
-                  <option [value]="CommissionModel.PERCENTAGE">Percentage</option>
-                  <option [value]="CommissionModel.FIXED_AMOUNT">Fixed Amount</option>
-                </select>
-              </label>
-
-              <label class="inline-field">
-                <span>قيمة العمولة</span>
-                <input type="number" min="0" [value]="visibility().commissionValue" (input)="onCommissionValueChange($event)" />
-              </label>
-
-              <label class="inline-field">
-                <span>المخزون المخصص</span>
-                <input type="number" min="1" [value]="visibility().allocatedInventory" (input)="onAllocatedInventoryChange($event)" />
-              </label>
+            <div class="modal-footer">
+              <button type="button" class="btn btn--secondary" (click)="cancelDetails()">{{ 'common.buttons.cancel' | translate }}</button>
+              <button type="button" class="btn btn--primary" (click)="saveDetails()">{{ 'distribution.modalDetails.saveSettings' | translate }}</button>
             </div>
           </div>
         </div>
@@ -193,48 +320,9 @@ import {
     }
 
     .selectors-wrap {
-      border-top: 1px dashed var(--sero-border-light);
-      padding-top: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-    }
-
-    .advanced-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 10px;
-      border-top: 1px dashed var(--sero-border-light);
-      padding-top: 10px;
-    }
-
-    .inline-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      color: var(--sero-text-secondary);
-      cursor: pointer;
-    }
-
-    .inline-field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 0.76rem;
-      color: var(--sero-text-secondary);
-    }
-
-    .inline-field select,
-    .inline-field input {
-      height: 34px;
-      border: 1px solid var(--sero-border);
-      border-radius: 8px;
-      padding: 6px 8px;
-      font-size: 0.8rem;
-      color: var(--sero-text-primary);
-      background: #fff;
-      outline: none;
     }
 
     .selector-title {
@@ -247,6 +335,12 @@ import {
       display: flex;
       flex-wrap: wrap;
       gap: 8px 14px;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 10px;
+      padding: 8px;
+      background: #fff;
     }
 
     .selector-list label {
@@ -288,6 +382,7 @@ import {
       display: flex;
       flex-direction: column;
       gap: 10px;
+      animation: modalIn 180ms ease;
     }
 
     .details-modal-head {
@@ -296,6 +391,13 @@ import {
       justify-content: space-between;
       border-bottom: 1px solid var(--sero-border-light);
       padding-bottom: 8px;
+    }
+
+    .details-modal-head p {
+      margin: 2px 0 0;
+      font-size: 0.78rem;
+      color: var(--sero-text-secondary);
+      font-weight: 500;
     }
 
     .details-modal-head h4 {
@@ -322,13 +424,245 @@ import {
       font-size: 16px;
     }
 
+    .modal-section {
+      border: 1px solid #ecefe5;
+      border-radius: 12px;
+      padding: 10px;
+      background: #fcfdfb;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-section h5 {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: var(--sero-text-primary);
+      font-weight: 800;
+    }
+
+    .modal-section h5 .material-icons-round {
+      font-size: 16px;
+      color: var(--sero-primary);
+    }
+
+    .toggle-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .toggle-card {
+      border: 1px solid #e4e9de;
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .toggle-card.static {
+      cursor: default;
+      background: #f9fbf6;
+    }
+
+    .toggle-card strong {
+      font-size: 0.82rem;
+      color: var(--sero-text-primary);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .toggle-card p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--sero-text-secondary);
+    }
+
+    .segmented-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .segmented-btn {
+      border: 1px solid var(--sero-border);
+      border-radius: 9px;
+      background: #fff;
+      color: var(--sero-text-secondary);
+      padding: 7px 10px;
+      font-size: 0.79rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+
+    .segmented-btn.active {
+      border-color: var(--sero-primary);
+      background: var(--sero-primary-50);
+      color: var(--sero-primary-dark);
+    }
+
+    .agent-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .selected-box {
+      border: 1px solid #e7ecdf;
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .selected-box strong {
+      font-size: 0.79rem;
+      color: var(--sero-text-primary);
+    }
+
+    .selected-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .selected-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      border: 1px solid #d8e0cd;
+      border-radius: 999px;
+      background: #f6f9f2;
+      color: #384532;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .selected-chip .material-icons-round {
+      font-size: 13px;
+    }
+
+    .agent-search {
+      height: 36px;
+      border: 1px solid var(--sero-border);
+      border-radius: 9px;
+      padding: 8px 10px;
+      outline: none;
+      font-size: 0.8rem;
+      color: var(--sero-text-primary);
+      background: #fff;
+    }
+
+    .empty-search {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--sero-text-muted);
+    }
+
+    .option-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .option-card {
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      text-align: right;
+      background: #fff;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+
+    .option-card:hover {
+      border-color: var(--sero-border-strong);
+    }
+
+    .option-card.active {
+      border-color: var(--sero-primary);
+      background: var(--sero-primary-50);
+      box-shadow: 0 0 0 1px var(--sero-primary-100);
+    }
+
+    .option-card strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--sero-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .option-card p {
+      margin: 0;
+      font-size: 0.74rem;
+      color: var(--sero-text-secondary);
+      line-height: 1.35;
+    }
+
+    .inline-input-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .inline-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.76rem;
+      color: var(--sero-text-secondary);
+    }
+
+    .inline-field input {
+      height: 34px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      color: var(--sero-text-primary);
+      background: #fff;
+      outline: none;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--sero-border-light);
+      padding-top: 10px;
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     @media (max-width: 900px) {
       .visibility-options {
         grid-template-columns: 1fr;
       }
-      .advanced-grid {
-        grid-template-columns: 1fr;
+      .details-modal {
+        width: 100%;
+        max-height: 92vh;
+        border-radius: 12px;
       }
+      .option-cards { grid-template-columns: 1fr; }
+      .inline-input-grid { grid-template-columns: 1fr; }
+      .modal-footer { justify-content: stretch; }
+      .modal-footer .btn { flex: 1; }
     }
   `]
 })
@@ -338,33 +672,79 @@ export class PackageVisibilityComponent implements OnInit {
   readonly PricingPermission = PricingPermission;
   readonly CommissionModel = CommissionModel;
   showDetailsPopup = false;
+  agentSearch = '';
+  groupSearch = '';
+  modalDraft: PackageVisibilityState = {
+    visibilityType: 'shared',
+    selectedAgents: [],
+    selectedGroups: [],
+    allowReselling: true,
+    hideOriginalCost: true,
+    subagentAccessMode: SubagentAccessMode.ALL,
+    pricingPermission: PricingPermission.AGENT_MARKUP,
+    commissionModel: CommissionModel.PERCENTAGE,
+    commissionValue: 8,
+    allocatedInventory: 50
+  };
 
   readonly visibility;
   agents: Agent[] = [];
+  agentGroups: SelectOption[] = [];
+
+  readonly publicVisibilityConfig = {
+    type: 'shared' as PackageVisibilityType,
+    titleKey: 'distribution.modalDetails.publicModalTitle',
+    subtitleKey: 'distribution.modalDetails.publicModalSubtitle',
+    showAgentSelector: false,
+    showGroupSelector: false
+  };
+
+  readonly privateVisibilityConfig = {
+    type: 'private' as PackageVisibilityType,
+    titleKey: 'distribution.modalDetails.privateModalTitle',
+    subtitleKey: 'distribution.modalDetails.privateModalSubtitle',
+    showAgentSelector: true,
+    showGroupSelector: false
+  };
+
+  readonly groupVisibilityConfig = {
+    type: 'group' as PackageVisibilityType,
+    titleKey: 'distribution.modalDetails.groupModalTitle',
+    subtitleKey: 'distribution.modalDetails.groupModalSubtitle',
+    showAgentSelector: false,
+    showGroupSelector: true
+  };
 
   readonly options: Array<{
     type: PackageVisibilityType;
     icon: string;
-    title: string;
-    description: string;
+    titleKey: string;
+    descriptionKey: string;
   }> = [
     {
       type: 'shared',
       icon: 'public',
-      title: 'Shared Package',
-      description: 'Visible to all agents on the platform.'
+      titleKey: 'distribution.modalDetails.sharedTitle',
+      descriptionKey: 'distribution.modalDetails.sharedDesc'
     },
     {
       type: 'private',
       icon: 'lock',
-      title: 'Private Package',
-      description: 'Visible only to selected agents.'
+      titleKey: 'distribution.modalDetails.privateTitle',
+      descriptionKey: 'distribution.modalDetails.privateDesc'
+    },
+    {
+      type: 'group',
+      icon: 'groups',
+      titleKey: 'distribution.modalDetails.groupTitle',
+      descriptionKey: 'distribution.modalDetails.groupDesc'
     }
   ];
 
   constructor(
     private readonly builderService: PackageBuilderService,
-    private readonly agentService: AgentService
+    private readonly agentService: AgentService,
+    private readonly builderUiService: PackageBuilderUiService
   ) {
     this.visibility = this.builderService.getVisibilitySignal();
   }
@@ -373,56 +753,178 @@ export class PackageVisibilityComponent implements OnInit {
     this.agentService.getSubagents().subscribe((agents) => {
       this.agents = agents;
     });
+    this.agentGroups = this.builderUiService.getAgentGroupOptions();
   }
 
   selectType(type: PackageVisibilityType): void {
+    if (this.showDetailsPopup) {
+      this.saveDetails();
+    }
     this.builderService.setVisibilityType(type);
+    this.modalDraft = this.cloneState(this.visibility());
     this.visibilityChanged.emit();
   }
 
-  toggleAgent(agentId: string): void {
-    const current = this.visibility().selectedAgents;
+  openDetails(): void {
+    this.modalDraft = this.cloneState(this.visibility());
+    this.agentSearch = '';
+    this.groupSearch = '';
+    this.showDetailsPopup = true;
+  }
+
+  cancelDetails(): void {
+    this.showDetailsPopup = false;
+    this.agentSearch = '';
+    this.groupSearch = '';
+  }
+
+  saveDetails(): void {
+    this.builderService.setVisibilityState({
+      ...this.modalDraft,
+      selectedAgents: this.modalDraft.visibilityType === 'private'
+        && this.modalDraft.subagentAccessMode === SubagentAccessMode.SELECTED
+        ? this.modalDraft.selectedAgents
+        : this.modalDraft.visibilityType === 'private'
+          ? this.modalDraft.selectedAgents
+          : [],
+      selectedGroups: this.modalDraft.visibilityType === 'group'
+        ? this.modalDraft.selectedGroups
+        : []
+    });
+    this.visibilityChanged.emit();
+    this.cancelDetails();
+  }
+
+  activeVisibilityConfig() {
+    const type = this.modalDraft.visibilityType || this.visibility().visibilityType;
+    if (type === 'private') {
+      return this.privateVisibilityConfig;
+    }
+    if (type === 'group') {
+      return this.groupVisibilityConfig;
+    }
+    return this.publicVisibilityConfig;
+  }
+
+  filteredAgents(): Agent[] {
+    const q = this.agentSearch.trim().toLowerCase();
+    if (!q) {
+      return this.agents;
+    }
+
+    return this.agents.filter((agent) => `${agent.name} ${agent.companyName}`.toLowerCase().includes(q));
+  }
+
+  filteredGroups(): SelectOption[] {
+    const q = this.groupSearch.trim().toLowerCase();
+    if (!q) {
+      return this.agentGroups;
+    }
+
+    return this.agentGroups.filter((group) => group.label.toLowerCase().includes(q));
+  }
+
+  selectedAgentNames(): string[] {
+    const selected = new Set(this.modalDraft.selectedAgents);
+    return this.agents
+      .filter((agent) => selected.has(agent.id))
+      .map((agent) => agent.name);
+  }
+
+  selectedGroupLabels(): string[] {
+    const selected = new Set(this.modalDraft.selectedGroups);
+    return this.agentGroups
+      .filter((group) => selected.has(group.value))
+      .map((group) => group.label);
+  }
+
+  setAccessMode(mode: SubagentAccessMode): void {
+    this.modalDraft = { ...this.modalDraft, subagentAccessMode: mode };
+  }
+
+  toggleDraftAgent(agentId: string): void {
+    const current = this.modalDraft.selectedAgents;
     const next = current.includes(agentId)
       ? current.filter((id) => id !== agentId)
       : [...current, agentId];
-    this.builderService.setSelectedAgents(next);
-    this.visibilityChanged.emit();
+    this.modalDraft = { ...this.modalDraft, selectedAgents: next };
   }
 
-  onAllowReselling(event: Event): void {
-    this.builderService.setAllowReselling((event.target as HTMLInputElement).checked);
-    this.visibilityChanged.emit();
+  removeDraftAgent(agentName: string): void {
+    const agent = this.agents.find((item) => item.name === agentName);
+    if (!agent) {
+      return;
+    }
+    this.modalDraft = {
+      ...this.modalDraft,
+      selectedAgents: this.modalDraft.selectedAgents.filter((id) => id !== agent.id)
+    };
   }
 
-  onHideCost(event: Event): void {
-    this.builderService.setHideOriginalCost((event.target as HTMLInputElement).checked);
-    this.visibilityChanged.emit();
+  toggleDraftGroup(groupId: string): void {
+    const current = this.modalDraft.selectedGroups;
+    const next = current.includes(groupId)
+      ? current.filter((id) => id !== groupId)
+      : [...current, groupId];
+    this.modalDraft = { ...this.modalDraft, selectedGroups: next };
   }
 
-  onSubagentAccessChange(event: Event): void {
-    this.builderService.setSubagentAccessMode((event.target as HTMLSelectElement).value as SubagentAccessMode);
-    this.visibilityChanged.emit();
+  removeDraftGroup(groupLabel: string): void {
+    const group = this.agentGroups.find((item) => item.label === groupLabel);
+    if (!group) {
+      return;
+    }
+    this.modalDraft = {
+      ...this.modalDraft,
+      selectedGroups: this.modalDraft.selectedGroups.filter((id) => id !== group.value)
+    };
   }
 
-  onPricingPermissionChange(event: Event): void {
-    this.builderService.setPricingPermission((event.target as HTMLSelectElement).value as PricingPermission);
-    this.visibilityChanged.emit();
+  onDraftToggle(
+    key: 'allowReselling' | 'hideOriginalCost',
+    event: Event
+  ): void {
+    this.modalDraft = { ...this.modalDraft, [key]: (event.target as HTMLInputElement).checked };
   }
 
-  onCommissionModelChange(event: Event): void {
-    this.builderService.setCommissionModel((event.target as HTMLSelectElement).value as CommissionModel);
-    this.visibilityChanged.emit();
-  }
-
-  onCommissionValueChange(event: Event): void {
+  onDraftNumber(key: 'commissionValue' | 'allocatedInventory', event: Event): void {
     const value = Number((event.target as HTMLInputElement).value || 0);
-    this.builderService.setCommissionValue(value);
-    this.visibilityChanged.emit();
+    this.modalDraft = { ...this.modalDraft, [key]: key === 'allocatedInventory' ? Math.max(1, value) : value };
   }
 
-  onAllocatedInventoryChange(event: Event): void {
-    const value = Number((event.target as HTMLInputElement).value || 1);
-    this.builderService.setAllocatedInventory(value);
-    this.visibilityChanged.emit();
+  readonly accessOptions = [
+    { value: SubagentAccessMode.ALL, labelKey: 'distribution.modalDetails.all' },
+    { value: SubagentAccessMode.SELECTED, labelKey: 'distribution.modalDetails.selected' }
+  ];
+
+  readonly pricingOptions = [
+    {
+      value: PricingPermission.FIXED_BY_ADMIN,
+      titleKey: 'distribution.modalDetails.fixedByAdminTitle',
+      descriptionKey: 'distribution.modalDetails.fixedByAdminDesc'
+    },
+    {
+      value: PricingPermission.AGENT_MARKUP,
+      titleKey: 'distribution.modalDetails.agentMarkupTitle',
+      descriptionKey: 'distribution.modalDetails.agentMarkupDesc'
+    },
+    {
+      value: PricingPermission.AGENT_FULL_CONTROL,
+      titleKey: 'distribution.modalDetails.fullControlTitle',
+      descriptionKey: 'distribution.modalDetails.fullControlDesc'
+    }
+  ];
+
+  readonly commissionOptions = [
+    { value: CommissionModel.PERCENTAGE, labelKey: 'distribution.modalDetails.percentage' },
+    { value: CommissionModel.FIXED_AMOUNT, labelKey: 'distribution.modalDetails.fixedAmount' }
+  ];
+
+  private cloneState(state: PackageVisibilityState): PackageVisibilityState {
+    return {
+      ...state,
+      selectedAgents: [...(state.selectedAgents || [])],
+      selectedGroups: [...(state.selectedGroups || [])]
+    };
   }
 }

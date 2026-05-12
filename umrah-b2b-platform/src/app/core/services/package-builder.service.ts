@@ -16,6 +16,7 @@ export interface PackageBuilderValidation {
 export interface PackageVisibilityState {
   visibilityType: PackageVisibilityType;
   selectedAgents: string[];
+  selectedGroups: string[];
   allowReselling: boolean;
   hideOriginalCost: boolean;
   subagentAccessMode: SubagentAccessMode;
@@ -25,19 +26,37 @@ export interface PackageVisibilityState {
   allocatedInventory: number;
 }
 
+type VisibilityConfigState = Omit<PackageVisibilityState, 'visibilityType'>;
+
+const DEFAULT_VISIBILITY_PROFILE: VisibilityConfigState = {
+  selectedAgents: [],
+  selectedGroups: [],
+  allowReselling: true,
+  hideOriginalCost: true,
+  subagentAccessMode: SubagentAccessMode.ALL,
+  pricingPermission: PricingPermission.AGENT_MARKUP,
+  commissionModel: CommissionModel.PERCENTAGE,
+  commissionValue: 8,
+  allocatedInventory: 50
+};
+
 @Injectable({ providedIn: 'root' })
 export class PackageBuilderService {
   private readonly makkahHotels = signal<PackageHotelSelection[]>([]);
+  private readonly visibilityProfiles = signal<Record<PackageVisibilityType, VisibilityConfigState>>({
+    shared: { ...DEFAULT_VISIBILITY_PROFILE },
+    private: {
+      ...DEFAULT_VISIBILITY_PROFILE,
+      subagentAccessMode: SubagentAccessMode.SELECTED
+    },
+    group: {
+      ...DEFAULT_VISIBILITY_PROFILE,
+      subagentAccessMode: SubagentAccessMode.SELECTED
+    }
+  });
   private readonly visibilityState = signal<PackageVisibilityState>({
     visibilityType: 'shared',
-    selectedAgents: [],
-    allowReselling: true,
-    hideOriginalCost: true,
-    subagentAccessMode: SubagentAccessMode.ALL,
-    pricingPermission: PricingPermission.AGENT_MARKUP,
-    commissionModel: CommissionModel.PERCENTAGE,
-    commissionValue: 8,
-    allocatedInventory: 50
+    ...DEFAULT_VISIBILITY_PROFILE
   });
 
   getMakkahHotelsSignal(): Signal<PackageHotelSelection[]> {
@@ -66,61 +85,85 @@ export class PackageBuilderService {
     return this.visibilityState.asReadonly();
   }
 
-  setVisibilityType(type: PackageVisibilityType): void {
-    this.visibilityState.update((current) => ({
+  setVisibilityState(state: PackageVisibilityState): void {
+    const normalized: PackageVisibilityState = {
+      ...state,
+      selectedAgents: [...(state.selectedAgents || [])],
+      selectedGroups: [...(state.selectedGroups || [])],
+      visibilityType: state.visibilityType || 'shared'
+    };
+
+    this.visibilityProfiles.update((current) => ({
       ...current,
-      visibilityType: type,
-      selectedAgents: type === 'private' ? current.selectedAgents : []
+      [normalized.visibilityType]: this.extractProfile(normalized)
     }));
+    this.visibilityState.set(normalized);
+  }
+
+  setVisibilityType(type: PackageVisibilityType): void {
+    const profile = this.visibilityProfiles()[type] || { ...DEFAULT_VISIBILITY_PROFILE };
+    this.visibilityState.set({
+      visibilityType: type,
+      ...profile
+    });
   }
 
   setSelectedAgents(agentIds: string[]): void {
-    this.visibilityState.update((current) => ({
-      ...current,
+    this.patchVisibility({
       selectedAgents: [...agentIds]
-    }));
+    });
+  }
+
+  setSelectedGroups(groupIds: string[]): void {
+    this.patchVisibility({
+      selectedGroups: [...groupIds]
+    });
   }
 
   setAllowReselling(value: boolean): void {
-    this.visibilityState.update((current) => ({ ...current, allowReselling: value }));
+    this.patchVisibility({ allowReselling: value });
   }
 
   setHideOriginalCost(value: boolean): void {
-    this.visibilityState.update((current) => ({ ...current, hideOriginalCost: value }));
+    this.patchVisibility({ hideOriginalCost: value });
   }
 
   setSubagentAccessMode(value: SubagentAccessMode): void {
-    this.visibilityState.update((current) => ({ ...current, subagentAccessMode: value }));
+    this.patchVisibility({ subagentAccessMode: value });
   }
 
   setPricingPermission(value: PricingPermission): void {
-    this.visibilityState.update((current) => ({ ...current, pricingPermission: value }));
+    this.patchVisibility({ pricingPermission: value });
   }
 
   setCommissionModel(value: CommissionModel): void {
-    this.visibilityState.update((current) => ({ ...current, commissionModel: value }));
+    this.patchVisibility({ commissionModel: value });
   }
 
   setCommissionValue(value: number): void {
-    this.visibilityState.update((current) => ({ ...current, commissionValue: value }));
+    this.patchVisibility({ commissionValue: value });
   }
 
   setAllocatedInventory(value: number): void {
-    this.visibilityState.update((current) => ({ ...current, allocatedInventory: value }));
+    this.patchVisibility({ allocatedInventory: value });
   }
 
   resetBuilderState(): void {
     this.makkahHotels.set([]);
+    this.visibilityProfiles.set({
+      shared: { ...DEFAULT_VISIBILITY_PROFILE },
+      private: {
+        ...DEFAULT_VISIBILITY_PROFILE,
+        subagentAccessMode: SubagentAccessMode.SELECTED
+      },
+      group: {
+        ...DEFAULT_VISIBILITY_PROFILE,
+        subagentAccessMode: SubagentAccessMode.SELECTED
+      }
+    });
     this.visibilityState.set({
       visibilityType: 'shared',
-      selectedAgents: [],
-      allowReselling: true,
-      hideOriginalCost: true,
-      subagentAccessMode: SubagentAccessMode.ALL,
-      pricingPermission: PricingPermission.AGENT_MARKUP,
-      commissionModel: CommissionModel.PERCENTAGE,
-      commissionValue: 8,
-      allocatedInventory: 50
+      ...DEFAULT_VISIBILITY_PROFILE
     });
   }
 
@@ -166,6 +209,9 @@ export class PackageBuilderService {
     if (packageData.visibilityType === 'private' && !(packageData.selectedAgents?.length)) {
       errors.push('يرجى اختيار وكيل واحد على الأقل لنوع الظهور الخاص');
     }
+    if (packageData.visibilityType === 'group' && !(packageData.selectedGroups?.length)) {
+      errors.push('يرجى اختيار مجموعة واحدة على الأقل لنوع الظهور الجماعي');
+    }
 
     if (!otherServices.length) {
       errors.push('يرجى إضافة خدمة واحدة على الأقل في قسم الخدمات الأخرى');
@@ -178,6 +224,41 @@ export class PackageBuilderService {
     return {
       isValid: errors.length === 0,
       errors
+    };
+  }
+
+  private patchVisibility(patch: Partial<PackageVisibilityState>): void {
+    this.visibilityState.update((current) => {
+      const next = {
+        ...current,
+        ...patch,
+        selectedAgents: patch.selectedAgents ? [...patch.selectedAgents] : current.selectedAgents,
+        selectedGroups: patch.selectedGroups ? [...patch.selectedGroups] : current.selectedGroups
+      };
+
+      this.updateCurrentProfile(next);
+      return next;
+    });
+  }
+
+  private updateCurrentProfile(state: PackageVisibilityState): void {
+    this.visibilityProfiles.update((current) => ({
+      ...current,
+      [state.visibilityType]: this.extractProfile(state)
+    }));
+  }
+
+  private extractProfile(state: PackageVisibilityState): VisibilityConfigState {
+    return {
+      selectedAgents: [...state.selectedAgents],
+      selectedGroups: [...state.selectedGroups],
+      allowReselling: state.allowReselling,
+      hideOriginalCost: state.hideOriginalCost,
+      subagentAccessMode: state.subagentAccessMode,
+      pricingPermission: state.pricingPermission,
+      commissionModel: state.commissionModel,
+      commissionValue: state.commissionValue,
+      allocatedInventory: state.allocatedInventory
     };
   }
 }

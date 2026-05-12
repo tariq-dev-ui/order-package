@@ -5,7 +5,7 @@ import {
 import { DistributionConfig } from './distribution.model';
 import { PricingConfig } from './pricing.model';
 
-export type PackageVisibilityType = 'shared' | 'private';
+export type PackageVisibilityType = 'shared' | 'private' | 'group';
 
 export interface HotelService {
   id: string;
@@ -105,6 +105,7 @@ export interface Package {
   distributionConfig?: DistributionConfig;
   visibilityType?: PackageVisibilityType;
   selectedAgents?: string[];
+  selectedGroups?: string[];
 
   // Pricing
   pricingConfig: PricingConfig;
