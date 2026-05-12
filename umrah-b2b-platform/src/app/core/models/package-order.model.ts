@@ -90,7 +90,14 @@ export interface PackageOrder {
   packageSummary: string;
   packageTitle?: string;
   visibilityType?: 'shared' | 'private' | 'group';
-  selectedAgents?: string[];
+  selectedAgent?: {
+    id: string;
+    name: string;
+    companyName: string;
+    email: string;
+    phone: string;
+    agentCode?: string;
+  } | null;
   selectedGroups?: string[];
   distributionSettings?: DistributionSettings;
   makkahHotel: HotelSelection[];

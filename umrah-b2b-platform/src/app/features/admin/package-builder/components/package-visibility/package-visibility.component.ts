@@ -34,6 +34,8 @@ import {
             type="button"
             class="visibility-option"
             [class.active]="visibility().visibilityType === option.type"
+            [class.private-option]="option.type === 'private'"
+            [class.group-option]="option.type === 'group'"
             (click)="selectType(option.type)">
             <span class="material-icons-round">{{ option.icon }}</span>
             <div>
@@ -84,8 +86,8 @@ import {
                 @if (activeVisibilityConfig().showAgentSelector) {
                   <div class="toggle-card static">
                     <div>
-                      <strong>{{ 'distribution.modalDetails.subagentAccess' | translate }}</strong>
-                      <p>{{ modalDraft.subagentAccessMode === SubagentAccessMode.ALL ? ('distribution.modalDetails.allAgentsAccess' | translate) : ('distribution.modalDetails.selectedAgentsAccess' | translate) }}</p>
+                      <strong>{{ 'distribution.modalDetails.privateSingleAgent' | translate }}</strong>
+                      <p>{{ 'distribution.modalDetails.privateSingleAgentDesc' | translate }}</p>
                     </div>
                   </div>
                 }
@@ -102,52 +104,57 @@ import {
 
             @if (activeVisibilityConfig().showAgentSelector) {
               <section class="modal-section">
-                <h5><span class="material-icons-round">supervisor_account</span> {{ 'distribution.modalDetails.agentAccessTitle' | translate }}</h5>
-                <div class="segmented-row">
-                  @for (accessOption of accessOptions; track accessOption.value) {
-                    <button
-                      type="button"
-                      class="segmented-btn"
-                      [class.active]="modalDraft.subagentAccessMode === accessOption.value"
-                      (click)="setAccessMode(accessOption.value)">
-                      {{ accessOption.labelKey | translate }}
-                    </button>
-                  }
-                </div>
+                <h5><span class="material-icons-round">person_search</span> {{ 'distribution.modalDetails.agentAccessTitle' | translate }}</h5>
                 <div class="selected-box">
-                  <strong>{{ 'distribution.modalDetails.selectedAgentsTitle' | translate }}</strong>
-                  @if (selectedAgentNames().length > 0) {
-                    <div class="selected-chips">
-                      @for (name of selectedAgentNames(); track name) {
-                        <button type="button" class="selected-chip" (click)="removeDraftAgent(name)">
-                          {{ name }} <span class="material-icons-round">close</span>
+                  <strong>{{ 'distribution.modalDetails.selectedAgentTitle' | translate }}</strong>
+                  @if (modalDraft.selectedAgent) {
+                    <div class="selected-agent-card">
+                      <div class="selected-agent-main">
+                        <div class="agent-top-line">
+                          <span class="material-icons-round">badge</span>
+                          <strong>{{ modalDraft.selectedAgent.name }}</strong>
+                        </div>
+                        <p>{{ modalDraft.selectedAgent.companyName }}</p>
+                        <small>{{ 'distribution.modalDetails.agentCodeLabel' | translate }}: {{ selectedAgentCode() }}</small>
+                      </div>
+                      <div class="selected-agent-actions">
+                        <button type="button" class="btn-link" (click)="focusAgentSearch()">
+                          {{ 'distribution.modalDetails.changeAgent' | translate }}
                         </button>
-                      }
+                        <button type="button" class="btn-link danger" (click)="removeDraftAgent()">
+                          {{ 'distribution.modalDetails.removeAgent' | translate }}
+                        </button>
+                      </div>
                     </div>
                   } @else {
-                    <p class="empty-search">{{ 'distribution.modalDetails.noAgentsSelected' | translate }}</p>
+                    <p class="empty-search">{{ 'distribution.modalDetails.noAgentSelected' | translate }}</p>
                   }
                 </div>
                 <div class="agent-selector">
                   <input
+                    #agentSearchInput
                     type="text"
                     class="agent-search"
                     [(ngModel)]="agentSearch"
                     [placeholder]="'distribution.modalDetails.searchAgent' | translate" />
                   <div class="selector-list">
                     @for (agent of filteredAgents(); track agent.id) {
-                      <label>
+                      <label class="single-select-option">
                         <input
-                          type="checkbox"
-                          [checked]="modalDraft.selectedAgents.includes(agent.id)"
-                          (change)="toggleDraftAgent(agent.id)" />
-                        <span>{{ agent.name }}</span>
+                          type="radio"
+                          name="private-agent"
+                          [checked]="modalDraft.selectedAgent?.id === agent.id"
+                          (change)="selectDraftAgent(agent)" />
+                        <span>{{ agent.name }} - {{ agent.companyName }}</span>
                       </label>
                     } @empty {
                       <p class="empty-search">{{ 'distribution.modalDetails.noAgentResults' | translate }}</p>
                     }
                   </div>
                 </div>
+                @if (privateSelectionError) {
+                  <p class="validation-msg">{{ privateSelectionError }}</p>
+                }
               </section>
             }
 
@@ -299,10 +306,26 @@ import {
       box-shadow: 0 0 0 1px var(--sero-primary-100);
     }
 
+    .visibility-option.private-option.active {
+      border-color: #7a5a1d;
+      background: #fff8e9;
+      box-shadow: 0 0 0 1px #f4deb1;
+    }
+
+    .visibility-option.group-option.active {
+      border-color: #4d6f92;
+      background: #f2f7fd;
+      box-shadow: 0 0 0 1px #d6e4f4;
+    }
+
     .visibility-option .material-icons-round {
       font-size: 18px;
       color: var(--sero-primary);
       margin-top: 2px;
+    }
+
+    .visibility-option.private-option .material-icons-round {
+      color: #7a5a1d;
     }
 
     .visibility-option strong {
@@ -350,6 +373,15 @@ import {
       font-size: 0.8rem;
       color: var(--sero-text-secondary);
       cursor: pointer;
+    }
+
+    .single-select-option {
+      width: 100%;
+      justify-content: space-between;
+      border: 1px solid #edf2e8;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #fff;
     }
 
     .visibility-actions {
@@ -535,6 +567,65 @@ import {
       gap: 6px;
     }
 
+    .selected-agent-card {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid #dfe7d3;
+      border-radius: 10px;
+      background: #f8fbf4;
+      padding: 8px;
+    }
+
+    .selected-agent-main {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .selected-agent-main p,
+    .selected-agent-main small {
+      margin: 0;
+      color: var(--sero-text-secondary);
+    }
+
+    .selected-agent-main small {
+      font-size: 0.72rem;
+    }
+
+    .agent-top-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .agent-top-line .material-icons-round {
+      font-size: 14px;
+      color: var(--sero-primary);
+    }
+
+    .selected-agent-actions {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: var(--sero-primary-dark);
+      font-size: 0.74rem;
+      cursor: pointer;
+      text-align: right;
+      padding: 0;
+      font-weight: 700;
+    }
+
+    .btn-link.danger {
+      color: #a34444;
+    }
+
     .selected-chip {
       display: inline-flex;
       align-items: center;
@@ -567,6 +658,13 @@ import {
       margin: 0;
       font-size: 0.78rem;
       color: var(--sero-text-muted);
+    }
+
+    .validation-msg {
+      margin: 0;
+      color: #b33a3a;
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
     .option-cards {
@@ -668,15 +766,15 @@ import {
 })
 export class PackageVisibilityComponent implements OnInit {
   @Output() visibilityChanged = new EventEmitter<void>();
-  readonly SubagentAccessMode = SubagentAccessMode;
   readonly PricingPermission = PricingPermission;
   readonly CommissionModel = CommissionModel;
   showDetailsPopup = false;
   agentSearch = '';
   groupSearch = '';
+  privateSelectionError = '';
   modalDraft: PackageVisibilityState = {
     visibilityType: 'shared',
-    selectedAgents: [],
+    selectedAgent: null,
     selectedGroups: [],
     allowReselling: true,
     hideOriginalCost: true,
@@ -769,6 +867,7 @@ export class PackageVisibilityComponent implements OnInit {
     this.modalDraft = this.cloneState(this.visibility());
     this.agentSearch = '';
     this.groupSearch = '';
+    this.privateSelectionError = '';
     this.showDetailsPopup = true;
   }
 
@@ -776,17 +875,20 @@ export class PackageVisibilityComponent implements OnInit {
     this.showDetailsPopup = false;
     this.agentSearch = '';
     this.groupSearch = '';
+    this.privateSelectionError = '';
   }
 
   saveDetails(): void {
+    if (this.modalDraft.visibilityType === 'private' && !this.modalDraft.selectedAgent?.id) {
+      this.privateSelectionError = 'يجب اختيار الوكيل الخاص بالباقة';
+      return;
+    }
+
     this.builderService.setVisibilityState({
       ...this.modalDraft,
-      selectedAgents: this.modalDraft.visibilityType === 'private'
-        && this.modalDraft.subagentAccessMode === SubagentAccessMode.SELECTED
-        ? this.modalDraft.selectedAgents
-        : this.modalDraft.visibilityType === 'private'
-          ? this.modalDraft.selectedAgents
-          : [],
+      selectedAgent: this.modalDraft.visibilityType === 'private'
+        ? this.modalDraft.selectedAgent
+        : null,
       selectedGroups: this.modalDraft.visibilityType === 'group'
         ? this.modalDraft.selectedGroups
         : []
@@ -824,11 +926,13 @@ export class PackageVisibilityComponent implements OnInit {
     return this.agentGroups.filter((group) => group.label.toLowerCase().includes(q));
   }
 
-  selectedAgentNames(): string[] {
-    const selected = new Set(this.modalDraft.selectedAgents);
-    return this.agents
-      .filter((agent) => selected.has(agent.id))
-      .map((agent) => agent.name);
+  selectedAgentCode(): string {
+    const selected = this.modalDraft.selectedAgent;
+    if (!selected) {
+      return '-';
+    }
+
+    return selected.agentCode || selected.licenseNumber || `AG-${selected.id}`;
   }
 
   selectedGroupLabels(): string[] {
@@ -838,26 +942,22 @@ export class PackageVisibilityComponent implements OnInit {
       .map((group) => group.label);
   }
 
-  setAccessMode(mode: SubagentAccessMode): void {
-    this.modalDraft = { ...this.modalDraft, subagentAccessMode: mode };
+  focusAgentSearch(): void {
+    this.agentSearch = '';
   }
 
-  toggleDraftAgent(agentId: string): void {
-    const current = this.modalDraft.selectedAgents;
-    const next = current.includes(agentId)
-      ? current.filter((id) => id !== agentId)
-      : [...current, agentId];
-    this.modalDraft = { ...this.modalDraft, selectedAgents: next };
-  }
-
-  removeDraftAgent(agentName: string): void {
-    const agent = this.agents.find((item) => item.name === agentName);
-    if (!agent) {
-      return;
-    }
+  selectDraftAgent(agent: Agent): void {
+    this.privateSelectionError = '';
     this.modalDraft = {
       ...this.modalDraft,
-      selectedAgents: this.modalDraft.selectedAgents.filter((id) => id !== agent.id)
+      selectedAgent: { ...agent }
+    };
+  }
+
+  removeDraftAgent(): void {
+    this.modalDraft = {
+      ...this.modalDraft,
+      selectedAgent: null
     };
   }
 
@@ -892,11 +992,6 @@ export class PackageVisibilityComponent implements OnInit {
     this.modalDraft = { ...this.modalDraft, [key]: key === 'allocatedInventory' ? Math.max(1, value) : value };
   }
 
-  readonly accessOptions = [
-    { value: SubagentAccessMode.ALL, labelKey: 'distribution.modalDetails.all' },
-    { value: SubagentAccessMode.SELECTED, labelKey: 'distribution.modalDetails.selected' }
-  ];
-
   readonly pricingOptions = [
     {
       value: PricingPermission.FIXED_BY_ADMIN,
@@ -923,7 +1018,7 @@ export class PackageVisibilityComponent implements OnInit {
   private cloneState(state: PackageVisibilityState): PackageVisibilityState {
     return {
       ...state,
-      selectedAgents: [...(state.selectedAgents || [])],
+      selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
       selectedGroups: [...(state.selectedGroups || [])]
     };
   }

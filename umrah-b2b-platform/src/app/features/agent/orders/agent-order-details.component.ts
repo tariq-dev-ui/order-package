@@ -93,7 +93,9 @@ export class AgentOrderDetailsComponent implements OnInit {
 
   formatVisibility(order: PackageOrder): string {
     if (order.visibilityType === 'private') {
-      return `Private (${order.selectedAgents?.length || 0} agents)`;
+      return order.selectedAgent?.name
+        ? `Private (${order.selectedAgent.name})`
+        : 'Private (No agent)';
     }
     if (order.visibilityType === 'group') {
       return `Group (${order.selectedGroups?.length || 0} groups)`;

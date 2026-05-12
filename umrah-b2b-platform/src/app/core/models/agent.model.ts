@@ -2,6 +2,7 @@ import { UserRole } from './enums';
 
 export interface Agent {
   id: string;
+  agentCode?: string;
   name: string;
   companyName: string;
   email: string;

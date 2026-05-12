@@ -4,6 +4,7 @@ import {
 } from './enums';
 import { DistributionConfig } from './distribution.model';
 import { PricingConfig } from './pricing.model';
+import { Agent } from './agent.model';
 
 export type PackageVisibilityType = 'shared' | 'private' | 'group';
 
@@ -104,7 +105,7 @@ export interface Package {
   // Distribution
   distributionConfig?: DistributionConfig;
   visibilityType?: PackageVisibilityType;
-  selectedAgents?: string[];
+  selectedAgent?: Agent | null;
   selectedGroups?: string[];
 
   // Pricing

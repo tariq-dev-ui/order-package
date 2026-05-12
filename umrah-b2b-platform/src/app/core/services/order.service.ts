@@ -34,7 +34,14 @@ export class OrderService {
       packageSummary: this.buildPackageSummary(packageData),
       packageTitle: packageData.title,
       visibilityType: packageData.visibilityType,
-      selectedAgents: packageData.selectedAgents || [],
+      selectedAgent: packageData.selectedAgent ? {
+        id: packageData.selectedAgent.id,
+        name: packageData.selectedAgent.name,
+        companyName: packageData.selectedAgent.companyName,
+        email: packageData.selectedAgent.email,
+        phone: packageData.selectedAgent.phone,
+        agentCode: packageData.selectedAgent.agentCode
+      } : null,
       selectedGroups: packageData.selectedGroups || [],
       distributionSettings: packageData.distributionConfig ? {
         allowReselling: packageData.distributionConfig.allowReselling,

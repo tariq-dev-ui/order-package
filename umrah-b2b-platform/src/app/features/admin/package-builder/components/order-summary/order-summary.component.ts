@@ -261,7 +261,9 @@ export class OrderSummaryComponent {
   visibilityLabel(): string {
     const type = this.visibility().visibilityType;
     if (type === 'private') {
-      return `Private (${this.visibility().selectedAgents.length})`;
+      return this.visibility().selectedAgent?.name
+        ? `Private (${this.visibility().selectedAgent?.name})`
+        : 'Private';
     }
     if (type === 'group') {
       return `Group (${this.visibility().selectedGroups.length})`;

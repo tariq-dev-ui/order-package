@@ -154,7 +154,7 @@ export class PackageBuilderComponent {
     reservedCount: 0,
     visaStatus: VisaStatus.INCLUDED,
     visibilityType: 'shared',
-    selectedAgents: [],
+    selectedAgent: null,
     selectedGroups: []
   };
 
@@ -199,16 +199,16 @@ export class PackageBuilderComponent {
     this.packageData = {
       ...this.packageData,
       visibilityType: visibility.visibilityType,
-      selectedAgents: visibility.selectedAgents,
+      selectedAgent: visibility.selectedAgent,
       selectedGroups: visibility.selectedGroups,
       distributionConfig: {
         packageId: this.packageData.id || 'draft-package',
-        masterAgentId: visibility.selectedAgents[0] || visibility.selectedGroups[0] || 'master-001',
-        masterAgentName: 'Distribution Owner',
+        masterAgentId: visibility.selectedAgent?.id || visibility.selectedGroups[0] || 'master-001',
+        masterAgentName: visibility.selectedAgent?.name || 'Distribution Owner',
         allowReselling: visibility.allowReselling,
         subagentAccessMode: visibility.subagentAccessMode || SubagentAccessMode.ALL,
         selectedSubagentIds: visibility.visibilityType === 'private'
-          ? visibility.selectedAgents
+          ? (visibility.selectedAgent ? [visibility.selectedAgent.id] : [])
           : visibility.selectedGroups,
         pricingPermission: visibility.pricingPermission || PricingPermission.AGENT_MARKUP,
         hideOriginalCost: visibility.hideOriginalCost,

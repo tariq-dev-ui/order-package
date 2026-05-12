@@ -1,5 +1,6 @@
 import { Injectable, Signal, signal } from '@angular/core';
 import { Package, PackageVisibilityType } from '../models/package.model';
+import { Agent } from '../models/agent.model';
 import { CustomerInfo, OtherServiceSelection } from '../models/package-order.model';
 import { PackageHotelSelection } from '../models/package-builder-ui.model';
 import {
@@ -15,7 +16,7 @@ export interface PackageBuilderValidation {
 
 export interface PackageVisibilityState {
   visibilityType: PackageVisibilityType;
-  selectedAgents: string[];
+  selectedAgent: Agent | null;
   selectedGroups: string[];
   allowReselling: boolean;
   hideOriginalCost: boolean;
@@ -29,7 +30,7 @@ export interface PackageVisibilityState {
 type VisibilityConfigState = Omit<PackageVisibilityState, 'visibilityType'>;
 
 const DEFAULT_VISIBILITY_PROFILE: VisibilityConfigState = {
-  selectedAgents: [],
+  selectedAgent: null,
   selectedGroups: [],
   allowReselling: true,
   hideOriginalCost: true,
@@ -88,7 +89,7 @@ export class PackageBuilderService {
   setVisibilityState(state: PackageVisibilityState): void {
     const normalized: PackageVisibilityState = {
       ...state,
-      selectedAgents: [...(state.selectedAgents || [])],
+      selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
       selectedGroups: [...(state.selectedGroups || [])],
       visibilityType: state.visibilityType || 'shared'
     };
@@ -108,9 +109,9 @@ export class PackageBuilderService {
     });
   }
 
-  setSelectedAgents(agentIds: string[]): void {
+  setSelectedAgent(agent: Agent | null): void {
     this.patchVisibility({
-      selectedAgents: [...agentIds]
+      selectedAgent: agent ? { ...agent } : null
     });
   }
 
@@ -206,8 +207,8 @@ export class PackageBuilderService {
       errors.push('يجب إضافة خدمة طعام واحدة على الأقل');
     }
 
-    if (packageData.visibilityType === 'private' && !(packageData.selectedAgents?.length)) {
-      errors.push('يرجى اختيار وكيل واحد على الأقل لنوع الظهور الخاص');
+    if (packageData.visibilityType === 'private' && !packageData.selectedAgent?.id) {
+      errors.push('يجب اختيار الوكيل الخاص بالباقة');
     }
     if (packageData.visibilityType === 'group' && !(packageData.selectedGroups?.length)) {
       errors.push('يرجى اختيار مجموعة واحدة على الأقل لنوع الظهور الجماعي');
@@ -232,7 +233,9 @@ export class PackageBuilderService {
       const next = {
         ...current,
         ...patch,
-        selectedAgents: patch.selectedAgents ? [...patch.selectedAgents] : current.selectedAgents,
+        selectedAgent: patch.selectedAgent !== undefined
+          ? (patch.selectedAgent ? { ...patch.selectedAgent } : null)
+          : current.selectedAgent,
         selectedGroups: patch.selectedGroups ? [...patch.selectedGroups] : current.selectedGroups
       };
 
@@ -250,7 +253,7 @@ export class PackageBuilderService {
 
   private extractProfile(state: PackageVisibilityState): VisibilityConfigState {
     return {
-      selectedAgents: [...state.selectedAgents],
+      selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
       selectedGroups: [...state.selectedGroups],
       allowReselling: state.allowReselling,
       hideOriginalCost: state.hideOriginalCost,
