@@ -265,9 +265,6 @@ export class OrderSummaryComponent {
         ? `Private (${this.visibility().selectedAgent?.name})`
         : 'Private';
     }
-    if (type === 'group') {
-      return `Group (${this.visibility().selectedGroups.length})`;
-    }
     return 'Shared';
   }
 }

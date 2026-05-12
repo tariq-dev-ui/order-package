@@ -103,9 +103,6 @@ export class AgentOrdersComponent implements OnInit {
         ? `Private (${order.selectedAgent.name})`
         : 'Private (No agent)';
     }
-    if (order.visibilityType === 'group') {
-      return `Group (${order.selectedGroups?.length || 0})`;
-    }
     return 'Shared';
   }
 }

@@ -17,7 +17,6 @@ export interface PackageBuilderValidation {
 export interface PackageVisibilityState {
   visibilityType: PackageVisibilityType;
   selectedAgent: Agent | null;
-  selectedGroups: string[];
   allowReselling: boolean;
   hideOriginalCost: boolean;
   subagentAccessMode: SubagentAccessMode;
@@ -31,7 +30,6 @@ type VisibilityConfigState = Omit<PackageVisibilityState, 'visibilityType'>;
 
 const DEFAULT_VISIBILITY_PROFILE: VisibilityConfigState = {
   selectedAgent: null,
-  selectedGroups: [],
   allowReselling: true,
   hideOriginalCost: true,
   subagentAccessMode: SubagentAccessMode.ALL,
@@ -47,10 +45,6 @@ export class PackageBuilderService {
   private readonly visibilityProfiles = signal<Record<PackageVisibilityType, VisibilityConfigState>>({
     shared: { ...DEFAULT_VISIBILITY_PROFILE },
     private: {
-      ...DEFAULT_VISIBILITY_PROFILE,
-      subagentAccessMode: SubagentAccessMode.SELECTED
-    },
-    group: {
       ...DEFAULT_VISIBILITY_PROFILE,
       subagentAccessMode: SubagentAccessMode.SELECTED
     }
@@ -90,7 +84,6 @@ export class PackageBuilderService {
     const normalized: PackageVisibilityState = {
       ...state,
       selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
-      selectedGroups: [...(state.selectedGroups || [])],
       visibilityType: state.visibilityType || 'shared'
     };
 
@@ -112,12 +105,6 @@ export class PackageBuilderService {
   setSelectedAgent(agent: Agent | null): void {
     this.patchVisibility({
       selectedAgent: agent ? { ...agent } : null
-    });
-  }
-
-  setSelectedGroups(groupIds: string[]): void {
-    this.patchVisibility({
-      selectedGroups: [...groupIds]
     });
   }
 
@@ -154,10 +141,6 @@ export class PackageBuilderService {
     this.visibilityProfiles.set({
       shared: { ...DEFAULT_VISIBILITY_PROFILE },
       private: {
-        ...DEFAULT_VISIBILITY_PROFILE,
-        subagentAccessMode: SubagentAccessMode.SELECTED
-      },
-      group: {
         ...DEFAULT_VISIBILITY_PROFILE,
         subagentAccessMode: SubagentAccessMode.SELECTED
       }
@@ -210,10 +193,6 @@ export class PackageBuilderService {
     if (packageData.visibilityType === 'private' && !packageData.selectedAgent?.id) {
       errors.push('يجب اختيار الوكيل الخاص بالباقة');
     }
-    if (packageData.visibilityType === 'group' && !(packageData.selectedGroups?.length)) {
-      errors.push('يرجى اختيار مجموعة واحدة على الأقل لنوع الظهور الجماعي');
-    }
-
     if (!otherServices.length) {
       errors.push('يرجى إضافة خدمة واحدة على الأقل في قسم الخدمات الأخرى');
     }
@@ -235,8 +214,7 @@ export class PackageBuilderService {
         ...patch,
         selectedAgent: patch.selectedAgent !== undefined
           ? (patch.selectedAgent ? { ...patch.selectedAgent } : null)
-          : current.selectedAgent,
-        selectedGroups: patch.selectedGroups ? [...patch.selectedGroups] : current.selectedGroups
+          : current.selectedAgent
       };
 
       this.updateCurrentProfile(next);
@@ -254,7 +232,6 @@ export class PackageBuilderService {
   private extractProfile(state: PackageVisibilityState): VisibilityConfigState {
     return {
       selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
-      selectedGroups: [...state.selectedGroups],
       allowReselling: state.allowReselling,
       hideOriginalCost: state.hideOriginalCost,
       subagentAccessMode: state.subagentAccessMode,

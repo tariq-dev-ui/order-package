@@ -42,7 +42,6 @@ export class OrderService {
         phone: packageData.selectedAgent.phone,
         agentCode: packageData.selectedAgent.agentCode
       } : null,
-      selectedGroups: packageData.selectedGroups || [],
       distributionSettings: packageData.distributionConfig ? {
         allowReselling: packageData.distributionConfig.allowReselling,
         hideOriginalCost: packageData.distributionConfig.hideOriginalCost,

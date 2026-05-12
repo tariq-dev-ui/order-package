@@ -89,7 +89,7 @@ export interface PackageOrder {
   customerInfo: CustomerInfo;
   packageSummary: string;
   packageTitle?: string;
-  visibilityType?: 'shared' | 'private' | 'group';
+  visibilityType?: 'shared' | 'private';
   selectedAgent?: {
     id: string;
     name: string;
@@ -98,7 +98,6 @@ export interface PackageOrder {
     phone: string;
     agentCode?: string;
   } | null;
-  selectedGroups?: string[];
   distributionSettings?: DistributionSettings;
   makkahHotel: HotelSelection[];
   madinahHotel: HotelSelection[];

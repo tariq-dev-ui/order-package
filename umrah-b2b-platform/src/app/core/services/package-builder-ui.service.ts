@@ -49,14 +49,6 @@ export class PackageBuilderUiService {
     return this.getRoomTypes().map((room) => ({ value: room.id, label: room.label }));
   }
 
-  getAgentGroupOptions(): SelectOption[] {
-    return [
-      { value: 'group-premium', label: 'مجموعة الوكلاء المميزين' },
-      { value: 'group-central', label: 'مجموعة المنطقة المركزية' },
-      { value: 'group-new', label: 'مجموعة الوكلاء الجدد' }
-    ];
-  }
-
   getOrderSummaryData(): OrderSummaryData {
     return {
       title: 'تفاصيل الطلب',

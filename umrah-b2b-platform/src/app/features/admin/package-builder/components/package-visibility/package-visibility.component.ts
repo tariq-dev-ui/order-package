@@ -7,10 +7,8 @@ import {
   PackageBuilderService,
   PackageVisibilityState
 } from '../../../../../core/services/package-builder.service';
-import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { PackageVisibilityType } from '../../../../../core/models/package.model';
 import { Agent } from '../../../../../core/models/agent.model';
-import { SelectOption } from '../../../../../core/models/package-builder-ui.model';
 import {
   CommissionModel,
   PricingPermission,
@@ -35,7 +33,6 @@ import {
             class="visibility-option"
             [class.active]="visibility().visibilityType === option.type"
             [class.private-option]="option.type === 'private'"
-            [class.group-option]="option.type === 'group'"
             (click)="selectType(option.type)">
             <span class="material-icons-round">{{ option.icon }}</span>
             <div>
@@ -88,14 +85,6 @@ import {
                     <div>
                       <strong>{{ 'distribution.modalDetails.privateSingleAgent' | translate }}</strong>
                       <p>{{ 'distribution.modalDetails.privateSingleAgentDesc' | translate }}</p>
-                    </div>
-                  </div>
-                }
-                @if (activeVisibilityConfig().showGroupSelector) {
-                  <div class="toggle-card static">
-                    <div>
-                      <strong>{{ 'distribution.modalDetails.groupAccess' | translate }}</strong>
-                      <p>{{ 'distribution.modalDetails.groupAccessDesc' | translate }}</p>
                     </div>
                   </div>
                 }
@@ -155,46 +144,6 @@ import {
                 @if (privateSelectionError) {
                   <p class="validation-msg">{{ privateSelectionError }}</p>
                 }
-              </section>
-            }
-
-            @if (activeVisibilityConfig().showGroupSelector) {
-              <section class="modal-section">
-                <h5><span class="material-icons-round">groups</span> {{ 'distribution.modalDetails.groupAccessTitle' | translate }}</h5>
-                <div class="selected-box">
-                  <strong>{{ 'distribution.modalDetails.selectedGroupsTitle' | translate }}</strong>
-                  @if (selectedGroupLabels().length > 0) {
-                    <div class="selected-chips">
-                      @for (label of selectedGroupLabels(); track label) {
-                        <button type="button" class="selected-chip" (click)="removeDraftGroup(label)">
-                          {{ label }} <span class="material-icons-round">close</span>
-                        </button>
-                      }
-                    </div>
-                  } @else {
-                    <p class="empty-search">{{ 'distribution.modalDetails.noGroupsSelected' | translate }}</p>
-                  }
-                </div>
-                <div class="agent-selector">
-                  <input
-                    type="text"
-                    class="agent-search"
-                    [(ngModel)]="groupSearch"
-                    [placeholder]="'distribution.modalDetails.searchGroup' | translate" />
-                  <div class="selector-list">
-                    @for (group of filteredGroups(); track group.value) {
-                      <label>
-                        <input
-                          type="checkbox"
-                          [checked]="modalDraft.selectedGroups.includes(group.value)"
-                          (change)="toggleDraftGroup(group.value)" />
-                        <span>{{ group.label }}</span>
-                      </label>
-                    } @empty {
-                      <p class="empty-search">{{ 'distribution.modalDetails.noGroupResults' | translate }}</p>
-                    }
-                  </div>
-                </div>
               </section>
             }
 
@@ -310,12 +259,6 @@ import {
       border-color: #7a5a1d;
       background: #fff8e9;
       box-shadow: 0 0 0 1px #f4deb1;
-    }
-
-    .visibility-option.group-option.active {
-      border-color: #4d6f92;
-      background: #f2f7fd;
-      box-shadow: 0 0 0 1px #d6e4f4;
     }
 
     .visibility-option .material-icons-round {
@@ -561,12 +504,6 @@ import {
       color: var(--sero-text-primary);
     }
 
-    .selected-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
     .selected-agent-card {
       display: flex;
       align-items: flex-start;
@@ -770,12 +707,10 @@ export class PackageVisibilityComponent implements OnInit {
   readonly CommissionModel = CommissionModel;
   showDetailsPopup = false;
   agentSearch = '';
-  groupSearch = '';
   privateSelectionError = '';
   modalDraft: PackageVisibilityState = {
     visibilityType: 'shared',
     selectedAgent: null,
-    selectedGroups: [],
     allowReselling: true,
     hideOriginalCost: true,
     subagentAccessMode: SubagentAccessMode.ALL,
@@ -787,30 +722,19 @@ export class PackageVisibilityComponent implements OnInit {
 
   readonly visibility;
   agents: Agent[] = [];
-  agentGroups: SelectOption[] = [];
 
   readonly publicVisibilityConfig = {
     type: 'shared' as PackageVisibilityType,
     titleKey: 'distribution.modalDetails.publicModalTitle',
     subtitleKey: 'distribution.modalDetails.publicModalSubtitle',
-    showAgentSelector: false,
-    showGroupSelector: false
+    showAgentSelector: false
   };
 
   readonly privateVisibilityConfig = {
     type: 'private' as PackageVisibilityType,
     titleKey: 'distribution.modalDetails.privateModalTitle',
     subtitleKey: 'distribution.modalDetails.privateModalSubtitle',
-    showAgentSelector: true,
-    showGroupSelector: false
-  };
-
-  readonly groupVisibilityConfig = {
-    type: 'group' as PackageVisibilityType,
-    titleKey: 'distribution.modalDetails.groupModalTitle',
-    subtitleKey: 'distribution.modalDetails.groupModalSubtitle',
-    showAgentSelector: false,
-    showGroupSelector: true
+    showAgentSelector: true
   };
 
   readonly options: Array<{
@@ -830,19 +754,12 @@ export class PackageVisibilityComponent implements OnInit {
       icon: 'lock',
       titleKey: 'distribution.modalDetails.privateTitle',
       descriptionKey: 'distribution.modalDetails.privateDesc'
-    },
-    {
-      type: 'group',
-      icon: 'groups',
-      titleKey: 'distribution.modalDetails.groupTitle',
-      descriptionKey: 'distribution.modalDetails.groupDesc'
     }
   ];
 
   constructor(
     private readonly builderService: PackageBuilderService,
-    private readonly agentService: AgentService,
-    private readonly builderUiService: PackageBuilderUiService
+    private readonly agentService: AgentService
   ) {
     this.visibility = this.builderService.getVisibilitySignal();
   }
@@ -851,7 +768,6 @@ export class PackageVisibilityComponent implements OnInit {
     this.agentService.getSubagents().subscribe((agents) => {
       this.agents = agents;
     });
-    this.agentGroups = this.builderUiService.getAgentGroupOptions();
   }
 
   selectType(type: PackageVisibilityType): void {
@@ -866,7 +782,6 @@ export class PackageVisibilityComponent implements OnInit {
   openDetails(): void {
     this.modalDraft = this.cloneState(this.visibility());
     this.agentSearch = '';
-    this.groupSearch = '';
     this.privateSelectionError = '';
     this.showDetailsPopup = true;
   }
@@ -874,7 +789,6 @@ export class PackageVisibilityComponent implements OnInit {
   cancelDetails(): void {
     this.showDetailsPopup = false;
     this.agentSearch = '';
-    this.groupSearch = '';
     this.privateSelectionError = '';
   }
 
@@ -888,10 +802,7 @@ export class PackageVisibilityComponent implements OnInit {
       ...this.modalDraft,
       selectedAgent: this.modalDraft.visibilityType === 'private'
         ? this.modalDraft.selectedAgent
-        : null,
-      selectedGroups: this.modalDraft.visibilityType === 'group'
-        ? this.modalDraft.selectedGroups
-        : []
+        : null
     });
     this.visibilityChanged.emit();
     this.cancelDetails();
@@ -901,9 +812,6 @@ export class PackageVisibilityComponent implements OnInit {
     const type = this.modalDraft.visibilityType || this.visibility().visibilityType;
     if (type === 'private') {
       return this.privateVisibilityConfig;
-    }
-    if (type === 'group') {
-      return this.groupVisibilityConfig;
     }
     return this.publicVisibilityConfig;
   }
@@ -917,15 +825,6 @@ export class PackageVisibilityComponent implements OnInit {
     return this.agents.filter((agent) => `${agent.name} ${agent.companyName}`.toLowerCase().includes(q));
   }
 
-  filteredGroups(): SelectOption[] {
-    const q = this.groupSearch.trim().toLowerCase();
-    if (!q) {
-      return this.agentGroups;
-    }
-
-    return this.agentGroups.filter((group) => group.label.toLowerCase().includes(q));
-  }
-
   selectedAgentCode(): string {
     const selected = this.modalDraft.selectedAgent;
     if (!selected) {
@@ -933,13 +832,6 @@ export class PackageVisibilityComponent implements OnInit {
     }
 
     return selected.agentCode || selected.licenseNumber || `AG-${selected.id}`;
-  }
-
-  selectedGroupLabels(): string[] {
-    const selected = new Set(this.modalDraft.selectedGroups);
-    return this.agentGroups
-      .filter((group) => selected.has(group.value))
-      .map((group) => group.label);
   }
 
   focusAgentSearch(): void {
@@ -958,25 +850,6 @@ export class PackageVisibilityComponent implements OnInit {
     this.modalDraft = {
       ...this.modalDraft,
       selectedAgent: null
-    };
-  }
-
-  toggleDraftGroup(groupId: string): void {
-    const current = this.modalDraft.selectedGroups;
-    const next = current.includes(groupId)
-      ? current.filter((id) => id !== groupId)
-      : [...current, groupId];
-    this.modalDraft = { ...this.modalDraft, selectedGroups: next };
-  }
-
-  removeDraftGroup(groupLabel: string): void {
-    const group = this.agentGroups.find((item) => item.label === groupLabel);
-    if (!group) {
-      return;
-    }
-    this.modalDraft = {
-      ...this.modalDraft,
-      selectedGroups: this.modalDraft.selectedGroups.filter((id) => id !== group.value)
     };
   }
 
@@ -1018,8 +891,7 @@ export class PackageVisibilityComponent implements OnInit {
   private cloneState(state: PackageVisibilityState): PackageVisibilityState {
     return {
       ...state,
-      selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null,
-      selectedGroups: [...(state.selectedGroups || [])]
+      selectedAgent: state.selectedAgent ? { ...state.selectedAgent } : null
     };
   }
 }
