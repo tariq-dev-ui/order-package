@@ -1,0 +1,583 @@
+{
+  "lang": {
+    "en": "الإنجليزية",
+    "ar": "العربية",
+    "switch": "تغيير اللغة"
+  },
+
+  "common": {
+    "buttons": {
+      "save":         "حفظ",
+      "saveDraft":    "حفظ كمسودة",
+      "cancel":       "إلغاء",
+      "confirm":      "تأكيد",
+      "delete":       "حذف",
+      "edit":         "تعديل",
+      "view":         "عرض",
+      "add":          "إضافة",
+      "remove":       "إزالة",
+      "next":         "التالي",
+      "back":         "السابق",
+      "publish":      "نشر الباقة",
+      "submit":       "إرسال",
+      "close":        "إغلاق",
+      "export":       "تصدير",
+      "import":       "استيراد",
+      "search":       "بحث",
+      "filter":       "تصفية",
+      "reset":        "إعادة ضبط",
+      "apply":        "تطبيق",
+      "clone":        "نسخ",
+      "distribute":   "توزيع",
+      "book":         "احجز الآن",
+      "request":      "إرسال طلب",
+      "pause":        "إيقاف مؤقت",
+      "resume":       "استئناف",
+      "manage":       "إدارة"
+    },
+    "status": {
+      "active":       "نشط",
+      "draft":        "مسودة",
+      "paused":       "موقوف مؤقتاً",
+      "expired":      "منتهي الصلاحية",
+      "pending":      "قيد الانتظار",
+      "verified":     "موثّق",
+      "archived":     "مؤرشف",
+      "underReview":  "تحت المراجعة"
+    },
+    "roles": {
+      "admin":        "مدير النظام",
+      "masterAgent":  "الوكيل الرئيسي",
+      "subAgent":     "وكيل فرعي",
+      "viewer":       "مشاهد"
+    },
+    "validation": {
+      "required":       "هذا الحقل مطلوب",
+      "minLength":      "يجب أن يحتوي على {{min}} أحرف على الأقل",
+      "maxLength":      "لا يمكن أن يتجاوز {{max}} حرف",
+      "invalidEmail":   "الرجاء إدخال بريد إلكتروني صحيح",
+      "invalidPhone":   "الرجاء إدخال رقم هاتف صحيح",
+      "minValue":       "يجب أن تكون القيمة {{min}} على الأقل",
+      "maxValue":       "لا يمكن أن تتجاوز القيمة {{max}}",
+      "positiveNumber": "يجب أن تكون القيمة موجبة"
+    },
+    "labels": {
+      "yes":       "نعم",
+      "no":        "لا",
+      "enabled":   "مفعّل",
+      "disabled":  "معطّل",
+      "all":       "الكل",
+      "none":      "لا شيء",
+      "total":     "الإجمالي",
+      "loading":   "جارٍ التحميل...",
+      "noData":    "لا توجد بيانات",
+      "currency":  "ر.س",
+      "perPerson": "للشخص",
+      "nights":    "ليالٍ",
+      "units":     "وحدات",
+      "pax":       "مسافر"
+    },
+    "time": {
+      "today":     "اليوم",
+      "yesterday": "أمس",
+      "thisMonth": "هذا الشهر",
+      "lastMonth": "الشهر الماضي",
+      "thisYear":  "هذا العام",
+      "last30":    "آخر 30 يوماً",
+      "last90":    "آخر 90 يوماً"
+    }
+  },
+
+  "sidebar": {
+    "brand":      "عمرة",
+    "brandSub":   "المنصة التجارية B2B",
+    "sections": {
+      "overview":     "نظرة عامة",
+      "packages":     "الباقات",
+      "distribution": "شبكة التوزيع",
+      "analytics":    "التحليلات"
+    },
+    "nav": {
+      "dashboard":           "لوحة التحكم",
+      "allPackages":         "جميع الباقات",
+      "createPackage":       "إنشاء باقة",
+      "myPackages":          "باقاتي",
+      "cloneResell":         "نسخ وإعادة بيع",
+      "distributionNetwork": "شبكة التوزيع",
+      "distributedPackages": "الباقات الموزَّعة",
+      "subagents":           "الوكلاء الفرعيون",
+      "marketplace":         "السوق التجاري",
+      "analytics":           "التحليلات",
+      "performance":         "الأداء",
+      "settings":            "الإعدادات",
+      "logout":              "تسجيل الخروج"
+    },
+    "badges": {
+      "new": "جديد"
+    }
+  },
+
+  "topbar": {
+    "notifications": "الإشعارات",
+    "help":          "المساعدة والدعم",
+    "roleView": {
+      "admin":       "عرض المدير",
+      "masterAgent": "عرض الوكيل الرئيسي",
+      "subAgent":    "عرض الوكيل الفرعي"
+    },
+    "switchView": "تبديل طريقة العرض"
+  },
+
+  "package": {
+    "types": {
+      "shared":        "باقة مشتركة",
+      "privateResell": "باقة إعادة بيع حصرية",
+      "sharedDesc":    "متاحة لجميع الوكلاء على المنصة. توزيع معياري بدون قيود على إعادة البيع.",
+      "resellDesc":    "مخصصة حصرياً لوكيل رئيسي يستطيع توزيعها على شبكة وكلائه الفرعيين."
+    },
+    "status": {
+      "active":      "نشط",
+      "draft":       "مسودة",
+      "paused":      "موقوف مؤقتاً",
+      "expired":     "منتهية الصلاحية",
+      "verified":    "موثّقة",
+      "underReview": "تحت المراجعة",
+      "archived":    "مؤرشفة"
+    },
+    "visa": {
+      "included":    "التأشيرة مشمولة",
+      "notIncluded": "بدون تأشيرة",
+      "optional":    "التأشيرة اختيارية"
+    },
+    "booking": {
+      "instant":  "فوري",
+      "request":  "بناءً على الطلب",
+      "manual":   "تأكيد يدوي",
+      "inquiry":  "استفسار فقط"
+    },
+    "card": {
+      "nights":         "ليالٍ",
+      "remaining":      "متبقٍّ",
+      "inventory":      "المخزون",
+      "perPerson":      "للشخص",
+      "hotelsCount":    "فنادق",
+      "transportCount": "مواصلات",
+      "flightsCount":   "رحلات جوية",
+      "catering":       "وجبات",
+      "instantBooking": "حجز فوري",
+      "verified":       "موثّق",
+      "markup":         "هامش ربح",
+      "validUntil":     "صالح حتى",
+      "viewDetails":    "عرض التفاصيل",
+      "distribute":     "توزيع",
+      "bookNow":        "احجز الآن",
+      "sendRequest":    "إرسال طلب"
+    },
+    "ownership": {
+      "createdBy":    "أُنشئت بواسطة",
+      "distributedBy":"وُزِّعت بواسطة",
+      "parent":       "الباقة الأصلية",
+      "chain":        "سلسلة الملكية"
+    },
+    "empty": {
+      "title":  "لا توجد باقات",
+      "desc":   "لم يتم تخصيص أي باقات لحسابك بعد.",
+      "action": "إنشاء باقة"
+    }
+  },
+
+  "builder": {
+    "title":    "إنشاء باقة جديدة",
+    "untitled": "باقة بدون عنوان",
+    "steps": {
+      "makkahHotels":   "فنادق مكة",
+      "madinahHotels":  "فنادق المدينة",
+      "transportation": "المواصلات",
+      "tickets":        "التذاكر",
+      "catering":       "خدمات التموين",
+      "finalDetails":   "التفاصيل النهائية",
+      "pricing":        "التسعير"
+    },
+    "stepSubtitles": {
+      "makkahHotels":   "إضافة إقامة في مكة المكرمة",
+      "madinahHotels":  "إضافة إقامة في المدينة المنورة",
+      "transportation": "تكوين خطوط النقل",
+      "tickets":        "إضافة تذاكر الطيران",
+      "catering":       "إعداد خدمات الوجبات",
+      "finalDetails":   "إعدادات الرؤية والتوزيع",
+      "pricing":        "تحديد الأسعار والهوامش"
+    },
+    "hotels": {
+      "makkahTitle":    "فنادق مكة المكرمة",
+      "makkahDesc":     "أضف خيارات الإقامة في مكة المكرمة. يمكنك إضافة فنادق متعددة بأنواع مختلفة.",
+      "madinahTitle":   "فنادق المدينة المنورة",
+      "madinahDesc":    "أضف خيارات الإقامة بالقرب من المسجد النبوي الشريف في المدينة المنورة.",
+      "addMakkah":      "إضافة فندق مكة",
+      "addMadinah":     "إضافة فندق المدينة",
+      "formTitle":      "إضافة فندق",
+      "name":           "اسم الفندق",
+      "namePlaceholder":"مثال: فندق فيرمونت مكة برج ساعة",
+      "rating":         "تصنيف النجوم",
+      "stars3":         "3 نجوم",
+      "stars4":         "4 نجوم",
+      "stars5":         "5 نجوم",
+      "distanceHaram":  "المسافة من الحرم (كم)",
+      "distanceNabawi": "المسافة من المسجد النبوي (كم)",
+      "nights":         "عدد الليالي",
+      "roomType":       "نوع الغرفة",
+      "mealPlan":       "نظام الوجبات",
+      "checkIn":        "تاريخ الوصول",
+      "checkOut":       "تاريخ المغادرة",
+      "kmHaram":        "كم من الحرم",
+      "roomTypes": {
+        "standard":   "غرفة عادية",
+        "superior":   "غرفة سوبيريور",
+        "deluxe":     "غرفة ديلوكس",
+        "suite":      "جناح",
+        "family":     "غرفة عائلية",
+        "connecting": "غرف متصلة"
+      },
+      "mealPlans": {
+        "roomOnly":     "غرفة فقط",
+        "breakfast":    "إفطار",
+        "halfBoard":    "نصف إقامة",
+        "fullBoard":    "إقامة كاملة",
+        "allInclusive": "كل شيء مشمول"
+      }
+    },
+    "transport": {
+      "title":           "خدمات المواصلات",
+      "desc":            "قم بتكوين خدمات النقل بين المطارات والفنادق والمشاعر المقدسة.",
+      "addBtn":          "إضافة خدمة نقل",
+      "formTitle":       "إضافة خدمة نقل",
+      "route":           "المسار",
+      "routePlaceholder":"مثال: مطار جدة ← مكة ← المدينة ← مطار جدة",
+      "type":            "نوع وسيلة النقل",
+      "provider":        "مزود الخدمة",
+      "capacity":        "السعة (عدد المقاعد)",
+      "airCon":          "تكييف هواء",
+      "airConYes":       "نعم، مع تكييف",
+      "types": {
+        "bus":        "حافلة",
+        "vipBus":     "حافلة VIP",
+        "van":        "فان (ميني باص)",
+        "privateCar": "سيارة خاصة"
+      }
+    },
+    "tickets": {
+      "title":          "تذاكر الطيران",
+      "desc":           "أضف تفاصيل تذاكر الطيران. يمكنك تضمين رحلات متعددة للمسارات المتوقفة.",
+      "addBtn":         "إضافة تذكرة طيران",
+      "formTitle":      "إضافة تذكرة طيران",
+      "airline":        "شركة الطيران",
+      "flightNumber":   "رقم الرحلة",
+      "origin":         "مطار المغادرة (IATA)",
+      "destination":    "مطار الوصول (IATA)",
+      "departureDate":  "تاريخ المغادرة",
+      "returnDate":     "تاريخ العودة (اختياري)",
+      "cabinClass":     "درجة السفر",
+      "baggage":        "وزن الأمتعة المسموح (كجم)",
+      "classes": {
+        "economy":  "درجة اقتصادية",
+        "business": "درجة رجال الأعمال",
+        "first":    "الدرجة الأولى"
+      }
+    },
+    "catering": {
+      "title":           "خدمات التموين",
+      "desc":            "أضف خيارات الوجبات والتموين. اتركه فارغاً إن لم يكن مشمولاً في الباقة.",
+      "addBtn":          "إضافة خدمة تموين",
+      "formTitle":       "إضافة خدمة تموين",
+      "provider":        "اسم المزود",
+      "providerPlaceholder": "مثال: شركة البركة للتموين",
+      "mealsPerDay":     "عدد الوجبات يومياً",
+      "serviceLocation": "موقع الخدمة",
+      "dietary":         "الخيارات الغذائية",
+      "dietaryHint":     "مفصولة بفواصل",
+      "meals": {
+        "one":   "1 (عشاء فقط)",
+        "two":   "2 (إفطار + عشاء)",
+        "three": "3 (يوم كامل)"
+      },
+      "locations": {
+        "hotelRestaurant":"مطعم الفندق",
+        "roomService":    "خدمة الغرف",
+        "diningHall":     "قاعة طعام مخصصة",
+        "hotelAndRoom":   "الفندق وخدمة الغرف"
+      }
+    },
+    "details": {
+      "packageInfo":           "معلومات الباقة",
+      "packageInfoDesc":       "التفاصيل الأساسية الظاهرة للوكلاء والمسافرين",
+      "packageTitle":          "عنوان الباقة",
+      "packageTitlePlaceholder": "مثال: باقة عمرة رمضان الذهبية الفاخرة 2026",
+      "description":           "الوصف",
+      "descriptionPlaceholder":"صِف أبرز مميزات الباقة وما تشمله وخصائصها المتفردة...",
+      "totalCapacity":         "الطاقة الاستيعابية الإجمالية",
+      "departureDate":         "تاريخ المغادرة",
+      "validFrom":             "صالحة من",
+      "validTo":               "صالحة حتى",
+      "numberOfNights":        "عدد الليالي",
+      "visaStatus":            "حالة التأشيرة",
+      "visaStatuses": {
+        "included":    "التأشيرة مشمولة",
+        "notIncluded": "التأشيرة غير مشمولة",
+        "optional":    "التأشيرة اختيارية"
+      },
+      "bookingConfig":     "تكوين الحجز",
+      "bookingConfigDesc": "كيفية حجز الوكلاء والمسافرين لهذه الباقة",
+      "bookingModes": {
+        "instant":      "حجز فوري",
+        "request":      "حجز بالطلب",
+        "manual":       "تأكيد يدوي",
+        "inquiry":      "استفسار فقط",
+        "instantDesc":  "يتأكد الحجز فوراً عند الدفع",
+        "requestDesc":  "يحتاج إلى موافقة إدارية قبل التأكيد",
+        "manualDesc":   "مراجعة يدوية وإجراءات تأكيد",
+        "inquiryDesc":  "يرسل الوكلاء استفسارات دون حجز مباشر"
+      }
+    },
+    "navigation": {
+      "nextMakkah":      "التالي: فنادق مكة",
+      "nextMadinah":     "التالي: فنادق المدينة",
+      "nextTransport":   "التالي: المواصلات",
+      "nextTickets":     "التالي: التذاكر",
+      "nextCatering":    "التالي: التموين",
+      "nextDetails":     "التالي: التفاصيل النهائية",
+      "nextPricing":     "التالي: التسعير",
+      "backToDetails":   "العودة إلى التفاصيل",
+      "publishPackage":  "نشر الباقة"
+    }
+  },
+
+  "distribution": {
+    "pageTitle":    "شبكة التوزيع للوكلاء",
+    "pageSubtitle": "إدارة تدفق الباقات: مدير النظام ← الوكيل الرئيسي ← الوكلاء الفرعيون",
+    "newResellBtn": "إنشاء باقة إعادة بيع حصرية",
+    "hierarchy":    "التسلسل الهرمي للتوزيع",
+    "distributes":  "يوزّع",
+    "resellsTo":    "يُعيد البيع لـ",
+    "moreSubagents":"+ {{count}} وكيل فرعي آخر",
+
+    "section": {
+      "title":    "رؤية الباقة وإعدادات التوزيع",
+      "subtitle": "تحكّم في كيفية توزيع هذه الباقة عبر شبكة وكلائك"
+    },
+
+    "owner": {
+      "title":       "مالك الباقة (الوكيل الرئيسي)",
+      "select":      "تعيين وكيل رئيسي",
+      "placeholder": "— اختر الوكيل الرئيسي —"
+    },
+    "reselling": {
+      "title":  "صلاحيات إعادة البيع",
+      "toggle": "السماح للوكيل الرئيسي بإعادة البيع",
+      "hint":   "عند التفعيل، يستطيع الوكيل الرئيسي توزيع هذه الباقة على وكلائه الفرعيين."
+    },
+    "costVisibility": {
+      "title":  "رؤية التكلفة",
+      "toggle": "إخفاء تكلفة الإدارة عن الوكيل الرئيسي",
+      "hint":   "سيرى الوكيل الرئيسي سعر البيع النهائي فقط، دون تفاصيل التكلفة."
+    },
+    "subagentAccess": {
+      "title":        "نمط وصول الوكلاء الفرعيين",
+      "all":          "جميع الوكلاء الفرعيين",
+      "allDesc":      "متاحة لجميع الوكلاء الفرعيين التابعين للوكيل الرئيسي",
+      "selected":     "وكلاء فرعيون مختارون فقط",
+      "selectedDesc": "يختار الوكيل الرئيسي أي الوكلاء يمكنهم الوصول"
+    },
+    "pricing": {
+      "title":            "صلاحيات التسعير",
+      "fixed":            "سعر ثابت من الإدارة",
+      "fixedDesc":        "لا يمكن للوكيل الرئيسي تغيير السعر",
+      "markup":           "الوكيل يضيف هامش ربح",
+      "markupDesc":       "يستطيع الوكيل الرئيسي إضافة هامش فوق سعر الإدارة",
+      "fullControl":      "تحكم كامل للوكيل",
+      "fullControlDesc":  "يستطيع الوكيل الرئيسي تحديد أي سعر للبيع بحرية"
+    },
+    "commission": {
+      "title":      "نموذج العمولة",
+      "percentage": "نسبة مئوية (%)",
+      "fixed":      "مبلغ ثابت",
+      "value":      "قيمة العمولة"
+    },
+    "inventory": {
+      "title":         "تخصيص المخزون",
+      "totalCapacity": "إجمالي سعة الباقة",
+      "allocate":      "تخصيص للوكيل الرئيسي",
+      "remaining":     "المتبقي بعد التخصيص:",
+      "allocated":     "مُخصَّص",
+      "total":         "الإجمالي"
+    },
+
+    "privateResell": {
+      "title":    "باقات إعادة البيع الحصرية",
+      "subtitle": "{{count}} باقة في التوزيع الحصري"
+    },
+    "shared": {
+      "title":    "الباقات المشتركة",
+      "subtitle": "{{count}} باقة متاحة لجميع الوكلاء"
+    },
+    "advancedSettings": "إعدادات التوزيع المتقدمة"
+  },
+
+  "pricing": {
+    "pageTitle": "محرك التسعير",
+    "costBreakdown": {
+      "title":         "تفصيل التكاليف",
+      "subtitle":      "تكاليف الإدارة الداخلية (مخفية عن الوكلاء)",
+      "makkahHotels":  "فنادق مكة",
+      "madinahHotels": "فنادق المدينة",
+      "transportation":"المواصلات",
+      "tickets":       "الرحلات الجوية / التذاكر",
+      "catering":      "خدمات التموين",
+      "visa":          "رسوم التأشيرة",
+      "other":         "تكاليف أخرى",
+      "total":         "إجمالي تكلفة الإدارة"
+    },
+    "margin": {
+      "title":        "هامش ربح الوكيل",
+      "subtitle":     "هامش الربح المضاف فوق تكلفة الإدارة",
+      "percentage":   "نسبة مئوية",
+      "fixed":        "مبلغ ثابت",
+      "markupValue":  "قيمة الهامش",
+      "markupAmount": "مبلغ الهامش",
+      "profitMargin": "هامش الربح"
+    },
+    "displayOptions": {
+      "title":             "خيارات عرض السعر",
+      "subtitle":          "تحكّم فيما يراه الوكلاء والوكلاء الفرعيون",
+      "hideBreakdown":     "إخفاء تفاصيل الخدمات",
+      "hideBreakdownDesc": "عرض السعر الإجمالي فقط، مع إخفاء تكلفة كل خدمة على حدة",
+      "hideCost":          "إخفاء التكلفة عن الوكلاء الفرعيين",
+      "hideCostDesc":      "يرى الوكلاء الفرعيون سعر البيع فقط دون تكلفة الإدارة",
+      "blended":           "وضع السعر الموحّد",
+      "blendedDesc":       "عرض سعر إجمالي واحد فقط (بدون تفصيل للفرد)"
+    },
+    "simulator": {
+      "title":          "معاينة التسعير المباشر",
+      "adminCost":      "تكلفة الإدارة الأساسية",
+      "sellingPrice":   "سعر البيع النهائي",
+      "profitSimTitle": "محاكاة الربح",
+      "profitPerPax":   "الربح للشخص الواحد",
+      "ifPaxSold":      "إذا تم بيع {{count}} مسافر",
+      "simulatePax":    "محاكاة عدد المسافرين",
+      "margin":         "هامش ربح",
+      "percentageMarkup":"هامش مئوي",
+      "fixedMarkup":    "هامش ثابت"
+    },
+    "priceCard": {
+      "perPerson":   "سعر الفرد",
+      "sellingPrice":"سعر البيع"
+    },
+    "finalSummary": {
+      "profit": "+{{pct}}% ربح"
+    }
+  },
+
+  "masterAgent": {
+    "dashboard": {
+      "title":    "الباقات الموزَّعة",
+      "subtitle": "إدارة وإعادة توزيع الباقات المعيّنة لشبكتك"
+    },
+    "buttons": {
+      "cloneCustomize":      "نسخ وتخصيص",
+      "manageDistribution":  "إدارة التوزيع",
+      "newAllocation":       "تخصيص جديد",
+      "createAllocation":    "إنشاء التخصيص"
+    },
+    "packages": {
+      "sectionTitle":    "محفظة باقاتي",
+      "sectionSubtitle": "{{count}} باقة مُعيَّنة لشبكتك",
+      "searchPlaceholder": "البحث في الباقات...",
+      "filterAll":       "جميع الحالات",
+      "filterActive":    "النشطة",
+      "filterPaused":    "الموقوفة"
+    },
+    "allocations": {
+      "title":    "تخصيصات الوكلاء الفرعيين",
+      "subtitle": "توزيع المخزون الحالي عبر شبكة وكلائك الفرعيين",
+      "columns": {
+        "subagent":  "الوكيل الفرعي",
+        "package":   "الباقة",
+        "allocated": "المُخصَّص",
+        "sold":      "المباع",
+        "remaining": "المتبقي",
+        "sellPrice": "سعر البيع",
+        "status":    "الحالة",
+        "actions":   "الإجراءات"
+      },
+      "markup": "هامش ربح"
+    },
+    "modal": {
+      "newAlloc":        "تخصيص وكيل فرعي جديد",
+      "selectPkg":       "اختر الباقة",
+      "pkgPlaceholder":  "— اختر الباقة —",
+      "selectAgent":     "اختر الوكيل الفرعي",
+      "agentPlaceholder":"— اختر الوكيل الفرعي —",
+      "units":           "الوحدات المراد تخصيصها",
+      "sellPrice":       "سعر البيع (ر.س)",
+      "markup":          "مبلغ الهامش (ر.س)"
+    }
+  },
+
+  "analytics": {
+    "adminTitle":    "تحليلات التوزيع",
+    "adminSubtitle": "الأداء الشامل للمنصة عبر جميع الوكلاء والباقات",
+    "inventory": {
+      "title":      "نظرة عامة على المخزون",
+      "total":      "إجمالي الوحدات",
+      "sold":       "المباع",
+      "remaining":  "المتبقي",
+      "conversion": "معدل التحويل"
+    },
+    "revenue": {
+      "title": "الإيرادات الشهرية (2026)"
+    },
+    "topAgents": {
+      "title":     "أفضل الوكلاء أداءً",
+      "thisMonth": "هذا الشهر",
+      "columns": {
+        "rank":       "الترتيب",
+        "agent":      "الوكيل",
+        "sold":       "الباقات المباعة",
+        "revenue":    "الإيرادات",
+        "conversion": "معدل التحويل"
+      }
+    },
+    "packagePerf": {
+      "title": "أداء الباقات",
+      "columns": {
+        "package":   "الباقة",
+        "allocated": "المُخصَّص",
+        "sold":      "المباع",
+        "remaining": "المتبقي",
+        "revenue":   "الإيرادات",
+        "convRate":  "معدل التحويل",
+        "fill":      "نسبة الامتلاء"
+      }
+    },
+    "widgets": {
+      "totalPackages":   "إجمالي الباقات",
+      "activeSubagents": "الوكلاء الفرعيون النشطون",
+      "soldInventory":   "الوحدات المباعة",
+      "totalRevenue":    "إجمالي الإيرادات",
+      "pendingRequests": "الطلبات المعلّقة",
+      "conversionRate":  "معدل التحويل",
+      "myPackages":      "باقاتي",
+      "myRevenue":       "إيراداتي",
+      "remainingStock":  "المخزون المتبقي",
+      "packagesSold":    "الباقات المباعة"
+    },
+    "periodSelect": {
+      "last30":   "آخر 30 يوماً",
+      "last90":   "آخر 90 يوماً",
+      "thisYear": "هذا العام"
+    }
+  },
+
+  "marketplace": {
+    "title":    "سوق الباقات التجاري",
+    "subtitle": "تصفّح وأحجز باقات العمرة المتاحة"
+  }
+}
