@@ -62,6 +62,16 @@ export interface PricingSummary {
   totalPrice: number;
 }
 
+export interface DistributionSettings {
+  allowReselling: boolean;
+  hideOriginalCost: boolean;
+  subagentAccessMode: string;
+  pricingPermission: string;
+  commissionModel: string;
+  commissionValue: number;
+  allocatedInventory: number;
+}
+
 export enum OrderStatus {
   NEW_REQUEST = 'New Request',
   ACCEPTED = 'Accepted',
@@ -82,6 +92,7 @@ export interface PackageOrder {
   visibilityType?: 'shared' | 'private' | 'group';
   selectedAgents?: string[];
   selectedGroups?: string[];
+  distributionSettings?: DistributionSettings;
   makkahHotel: HotelSelection[];
   madinahHotel: HotelSelection[];
   transport: TransportSelection[];

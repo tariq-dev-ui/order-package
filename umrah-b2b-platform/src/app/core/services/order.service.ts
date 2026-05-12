@@ -36,6 +36,15 @@ export class OrderService {
       visibilityType: packageData.visibilityType,
       selectedAgents: packageData.selectedAgents || [],
       selectedGroups: packageData.selectedGroups || [],
+      distributionSettings: packageData.distributionConfig ? {
+        allowReselling: packageData.distributionConfig.allowReselling,
+        hideOriginalCost: packageData.distributionConfig.hideOriginalCost,
+        subagentAccessMode: packageData.distributionConfig.subagentAccessMode,
+        pricingPermission: packageData.distributionConfig.pricingPermission,
+        commissionModel: packageData.distributionConfig.commissionModel,
+        commissionValue: packageData.distributionConfig.commissionValue,
+        allocatedInventory: packageData.distributionConfig.allocatedInventory
+      } : undefined,
       makkahHotel: this.mapHotels(packageData.makkahHotels, 'makkah'),
       madinahHotel: this.mapHotels(packageData.madinahHotels, 'madinah'),
       transport: this.mapTransport(packageData),

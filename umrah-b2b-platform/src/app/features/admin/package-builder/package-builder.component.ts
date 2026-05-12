@@ -9,7 +9,16 @@ import { Step5CateringComponent } from './steps/step5-catering/step5-catering.co
 import { Step6DetailsComponent } from './steps/step6-details/step6-details.component';
 import { Step7PricingComponent } from './steps/step7-pricing/step7-pricing.component';
 import { Package } from '../../../core/models/package.model';
-import { PackageType, PackageStatus, BookingMode, VisaStatus } from '../../../core/models/enums';
+import {
+  BookingMode,
+  CommissionModel,
+  DistributionStatus,
+  PackageStatus,
+  PackageType,
+  PricingPermission,
+  SubagentAccessMode,
+  VisaStatus
+} from '../../../core/models/enums';
 import { PackageBuilderStep } from '../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../core/services/package-builder-ui.service';
 import { PackageStepperComponent } from './components/package-stepper/package-stepper.component';
@@ -191,7 +200,24 @@ export class PackageBuilderComponent {
       ...this.packageData,
       visibilityType: visibility.visibilityType,
       selectedAgents: visibility.selectedAgents,
-      selectedGroups: visibility.selectedGroups
+      selectedGroups: visibility.selectedGroups,
+      distributionConfig: {
+        packageId: this.packageData.id || 'draft-package',
+        masterAgentId: visibility.selectedAgents[0] || 'master-001',
+        masterAgentName: 'Distribution Owner',
+        allowReselling: visibility.allowReselling,
+        subagentAccessMode: visibility.subagentAccessMode || SubagentAccessMode.ALL,
+        selectedSubagentIds: visibility.selectedAgents,
+        pricingPermission: visibility.pricingPermission || PricingPermission.AGENT_MARKUP,
+        hideOriginalCost: visibility.hideOriginalCost,
+        commissionModel: visibility.commissionModel || CommissionModel.PERCENTAGE,
+        commissionValue: visibility.commissionValue,
+        allocatedInventory: visibility.allocatedInventory,
+        reservedInventory: 0,
+        soldInventory: 0,
+        status: DistributionStatus.ACTIVE,
+        createdAt: new Date()
+      }
     };
   }
 

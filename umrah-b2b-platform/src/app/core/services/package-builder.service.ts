@@ -2,6 +2,11 @@ import { Injectable, Signal, signal } from '@angular/core';
 import { Package, PackageVisibilityType } from '../models/package.model';
 import { CustomerInfo, OtherServiceSelection } from '../models/package-order.model';
 import { PackageHotelSelection } from '../models/package-builder-ui.model';
+import {
+  CommissionModel,
+  PricingPermission,
+  SubagentAccessMode
+} from '../models/enums';
 
 export interface PackageBuilderValidation {
   isValid: boolean;
@@ -12,6 +17,13 @@ export interface PackageVisibilityState {
   visibilityType: PackageVisibilityType;
   selectedAgents: string[];
   selectedGroups: string[];
+  allowReselling: boolean;
+  hideOriginalCost: boolean;
+  subagentAccessMode: SubagentAccessMode;
+  pricingPermission: PricingPermission;
+  commissionModel: CommissionModel;
+  commissionValue: number;
+  allocatedInventory: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +32,14 @@ export class PackageBuilderService {
   private readonly visibilityState = signal<PackageVisibilityState>({
     visibilityType: 'shared',
     selectedAgents: [],
-    selectedGroups: []
+    selectedGroups: [],
+    allowReselling: true,
+    hideOriginalCost: true,
+    subagentAccessMode: SubagentAccessMode.ALL,
+    pricingPermission: PricingPermission.AGENT_MARKUP,
+    commissionModel: CommissionModel.PERCENTAGE,
+    commissionValue: 8,
+    allocatedInventory: 50
   });
 
   getMakkahHotelsSignal(): Signal<PackageHotelSelection[]> {
@@ -51,6 +70,7 @@ export class PackageBuilderService {
 
   setVisibilityType(type: PackageVisibilityType): void {
     this.visibilityState.update((current) => ({
+      ...current,
       visibilityType: type,
       selectedAgents: type === 'private' ? current.selectedAgents : [],
       selectedGroups: type === 'group' ? current.selectedGroups : []
@@ -71,12 +91,47 @@ export class PackageBuilderService {
     }));
   }
 
+  setAllowReselling(value: boolean): void {
+    this.visibilityState.update((current) => ({ ...current, allowReselling: value }));
+  }
+
+  setHideOriginalCost(value: boolean): void {
+    this.visibilityState.update((current) => ({ ...current, hideOriginalCost: value }));
+  }
+
+  setSubagentAccessMode(value: SubagentAccessMode): void {
+    this.visibilityState.update((current) => ({ ...current, subagentAccessMode: value }));
+  }
+
+  setPricingPermission(value: PricingPermission): void {
+    this.visibilityState.update((current) => ({ ...current, pricingPermission: value }));
+  }
+
+  setCommissionModel(value: CommissionModel): void {
+    this.visibilityState.update((current) => ({ ...current, commissionModel: value }));
+  }
+
+  setCommissionValue(value: number): void {
+    this.visibilityState.update((current) => ({ ...current, commissionValue: value }));
+  }
+
+  setAllocatedInventory(value: number): void {
+    this.visibilityState.update((current) => ({ ...current, allocatedInventory: value }));
+  }
+
   resetBuilderState(): void {
     this.makkahHotels.set([]);
     this.visibilityState.set({
       visibilityType: 'shared',
       selectedAgents: [],
-      selectedGroups: []
+      selectedGroups: [],
+      allowReselling: true,
+      hideOriginalCost: true,
+      subagentAccessMode: SubagentAccessMode.ALL,
+      pricingPermission: PricingPermission.AGENT_MARKUP,
+      commissionModel: CommissionModel.PERCENTAGE,
+      commissionValue: 8,
+      allocatedInventory: 50
     });
   }
 
@@ -117,6 +172,14 @@ export class PackageBuilderService {
 
     if (!packageData.catering?.length) {
       errors.push('يجب إضافة خدمة طعام واحدة على الأقل');
+    }
+
+    if (packageData.visibilityType === 'private' && !(packageData.selectedAgents?.length)) {
+      errors.push('يرجى اختيار وكيل واحد على الأقل لنوع الظهور الخاص');
+    }
+
+    if (packageData.visibilityType === 'group' && !(packageData.selectedGroups?.length)) {
+      errors.push('يرجى اختيار مجموعة واحدة على الأقل لنوع ظهور المجموعات');
     }
 
     if (!otherServices.length) {

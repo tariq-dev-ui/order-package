@@ -6,6 +6,11 @@ import { PackageBuilderService } from '../../../../../core/services/package-buil
 import { PackageVisibilityType } from '../../../../../core/models/package.model';
 import { Agent } from '../../../../../core/models/agent.model';
 import { SelectOption } from '../../../../../core/models/package-builder-ui.model';
+import {
+  CommissionModel,
+  PricingPermission,
+  SubagentAccessMode
+} from '../../../../../core/models/enums';
 
 @Component({
   selector: 'app-package-visibility',
@@ -67,6 +72,53 @@ import { SelectOption } from '../../../../../core/models/package-builder-ui.mode
           </div>
         </div>
       }
+
+      <div class="advanced-grid">
+        <label class="inline-toggle">
+          <input type="checkbox" [checked]="visibility().allowReselling" (change)="onAllowReselling($event)" />
+          <span>السماح بإعادة البيع</span>
+        </label>
+
+        <label class="inline-toggle">
+          <input type="checkbox" [checked]="visibility().hideOriginalCost" (change)="onHideCost($event)" />
+          <span>إخفاء التكلفة الأصلية</span>
+        </label>
+
+        <label class="inline-field">
+          <span>وصول الوكلاء الفرعيين</span>
+          <select [value]="visibility().subagentAccessMode" (change)="onSubagentAccessChange($event)">
+            <option [value]="SubagentAccessMode.ALL">All</option>
+            <option [value]="SubagentAccessMode.SELECTED">Selected</option>
+          </select>
+        </label>
+
+        <label class="inline-field">
+          <span>صلاحية التسعير</span>
+          <select [value]="visibility().pricingPermission" (change)="onPricingPermissionChange($event)">
+            <option [value]="PricingPermission.FIXED_BY_ADMIN">Fixed by Admin</option>
+            <option [value]="PricingPermission.AGENT_MARKUP">Agent Markup</option>
+            <option [value]="PricingPermission.AGENT_FULL_CONTROL">Agent Full Control</option>
+          </select>
+        </label>
+
+        <label class="inline-field">
+          <span>نموذج العمولة</span>
+          <select [value]="visibility().commissionModel" (change)="onCommissionModelChange($event)">
+            <option [value]="CommissionModel.PERCENTAGE">Percentage</option>
+            <option [value]="CommissionModel.FIXED_AMOUNT">Fixed Amount</option>
+          </select>
+        </label>
+
+        <label class="inline-field">
+          <span>قيمة العمولة</span>
+          <input type="number" min="0" [value]="visibility().commissionValue" (input)="onCommissionValueChange($event)" />
+        </label>
+
+        <label class="inline-field">
+          <span>المخزون المخصص</span>
+          <input type="number" min="1" [value]="visibility().allocatedInventory" (input)="onAllocatedInventoryChange($event)" />
+        </label>
+      </div>
     </section>
   `,
   styles: [`
@@ -147,6 +199,43 @@ import { SelectOption } from '../../../../../core/models/package-builder-ui.mode
       gap: 8px;
     }
 
+    .advanced-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+      border-top: 1px dashed var(--sero-border-light);
+      padding-top: 10px;
+    }
+
+    .inline-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--sero-text-secondary);
+      cursor: pointer;
+    }
+
+    .inline-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.76rem;
+      color: var(--sero-text-secondary);
+    }
+
+    .inline-field select,
+    .inline-field input {
+      height: 34px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      color: var(--sero-text-primary);
+      background: #fff;
+      outline: none;
+    }
+
     .selector-title {
       font-size: 0.83rem;
       font-weight: 700;
@@ -172,11 +261,17 @@ import { SelectOption } from '../../../../../core/models/package-builder-ui.mode
       .visibility-options {
         grid-template-columns: 1fr;
       }
+      .advanced-grid {
+        grid-template-columns: 1fr;
+      }
     }
   `]
 })
 export class PackageVisibilityComponent implements OnInit {
   @Output() visibilityChanged = new EventEmitter<void>();
+  readonly SubagentAccessMode = SubagentAccessMode;
+  readonly PricingPermission = PricingPermission;
+  readonly CommissionModel = CommissionModel;
 
   readonly visibility;
   agents: Agent[] = [];
@@ -243,6 +338,43 @@ export class PackageVisibilityComponent implements OnInit {
       ? current.filter((id) => id !== groupId)
       : [...current, groupId];
     this.builderService.setSelectedGroups(next);
+    this.visibilityChanged.emit();
+  }
+
+  onAllowReselling(event: Event): void {
+    this.builderService.setAllowReselling((event.target as HTMLInputElement).checked);
+    this.visibilityChanged.emit();
+  }
+
+  onHideCost(event: Event): void {
+    this.builderService.setHideOriginalCost((event.target as HTMLInputElement).checked);
+    this.visibilityChanged.emit();
+  }
+
+  onSubagentAccessChange(event: Event): void {
+    this.builderService.setSubagentAccessMode((event.target as HTMLSelectElement).value as SubagentAccessMode);
+    this.visibilityChanged.emit();
+  }
+
+  onPricingPermissionChange(event: Event): void {
+    this.builderService.setPricingPermission((event.target as HTMLSelectElement).value as PricingPermission);
+    this.visibilityChanged.emit();
+  }
+
+  onCommissionModelChange(event: Event): void {
+    this.builderService.setCommissionModel((event.target as HTMLSelectElement).value as CommissionModel);
+    this.visibilityChanged.emit();
+  }
+
+  onCommissionValueChange(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value || 0);
+    this.builderService.setCommissionValue(value);
+    this.visibilityChanged.emit();
+  }
+
+  onAllocatedInventoryChange(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value || 1);
+    this.builderService.setAllocatedInventory(value);
     this.visibilityChanged.emit();
   }
 }
