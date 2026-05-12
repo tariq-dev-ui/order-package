@@ -67,6 +67,8 @@ export interface DistributionSettings {
   hideOriginalCost: boolean;
   subagentAccessMode: string;
   pricingPermission: string;
+  agentMarkupType?: string;
+  agentMarkupValue?: number;
   commissionModel: string;
   commissionValue: number;
   allocatedInventory: number;

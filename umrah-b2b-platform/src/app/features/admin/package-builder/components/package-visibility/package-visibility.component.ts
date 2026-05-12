@@ -11,6 +11,7 @@ import { PackageVisibilityType } from '../../../../../core/models/package.model'
 import { Agent } from '../../../../../core/models/agent.model';
 import {
   CommissionModel,
+  MarkupType,
   PricingPermission,
   SubagentAccessMode
 } from '../../../../../core/models/enums';
@@ -161,6 +162,34 @@ import {
                   </button>
                 }
               </div>
+              @if (modalDraft.pricingPermission === PricingPermission.AGENT_MARKUP) {
+                <div class="markup-controls">
+                  <div class="segmented-row">
+                    <button
+                      type="button"
+                      class="segmented-btn"
+                      [class.active]="modalDraft.agentMarkupType === MarkupType.PERCENTAGE"
+                      (click)="onDraftMarkupType(MarkupType.PERCENTAGE)">
+                      {{ 'distribution.modalDetails.markupPercentage' | translate }}
+                    </button>
+                    <button
+                      type="button"
+                      class="segmented-btn"
+                      [class.active]="modalDraft.agentMarkupType === MarkupType.FIXED"
+                      (click)="onDraftMarkupType(MarkupType.FIXED)">
+                      {{ 'distribution.modalDetails.markupFixed' | translate }}
+                    </button>
+                  </div>
+                  <label class="inline-field">
+                    <span>{{ modalDraft.agentMarkupType === MarkupType.PERCENTAGE ? ('distribution.modalDetails.markupPercentageValue' | translate) : ('distribution.modalDetails.markupFixedValue' | translate) }}</span>
+                    <input
+                      type="number"
+                      min="0"
+                      [value]="modalDraft.agentMarkupValue"
+                      (input)="onDraftMarkupValue($event)" />
+                  </label>
+                </div>
+              }
             </section>
 
             <section class="modal-section">
@@ -644,6 +673,17 @@ import {
       line-height: 1.35;
     }
 
+    .markup-controls {
+      margin-top: 8px;
+      border: 1px dashed #dbe4d0;
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .inline-input-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -705,6 +745,7 @@ export class PackageVisibilityComponent implements OnInit {
   @Output() visibilityChanged = new EventEmitter<void>();
   readonly PricingPermission = PricingPermission;
   readonly CommissionModel = CommissionModel;
+  readonly MarkupType = MarkupType;
   showDetailsPopup = false;
   agentSearch = '';
   privateSelectionError = '';
@@ -715,6 +756,8 @@ export class PackageVisibilityComponent implements OnInit {
     hideOriginalCost: true,
     subagentAccessMode: SubagentAccessMode.ALL,
     pricingPermission: PricingPermission.AGENT_MARKUP,
+    agentMarkupType: MarkupType.PERCENTAGE,
+    agentMarkupValue: 10,
     commissionModel: CommissionModel.PERCENTAGE,
     commissionValue: 8,
     allocatedInventory: 50
@@ -863,6 +906,15 @@ export class PackageVisibilityComponent implements OnInit {
   onDraftNumber(key: 'commissionValue' | 'allocatedInventory', event: Event): void {
     const value = Number((event.target as HTMLInputElement).value || 0);
     this.modalDraft = { ...this.modalDraft, [key]: key === 'allocatedInventory' ? Math.max(1, value) : value };
+  }
+
+  onDraftMarkupType(type: MarkupType): void {
+    this.modalDraft = { ...this.modalDraft, agentMarkupType: type };
+  }
+
+  onDraftMarkupValue(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value || 0);
+    this.modalDraft = { ...this.modalDraft, agentMarkupValue: Math.max(0, value) };
   }
 
   readonly pricingOptions = [

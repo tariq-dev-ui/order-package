@@ -465,6 +465,10 @@
       "agentMarkupDesc": "الوكيل يضيف هامش فقط فوق السعر.",
       "fullControlTitle": "تحكم كامل للوكيل",
       "fullControlDesc": "الوكيل يحدد سعر البيع بحرية.",
+      "markupPercentage": "هامش بنسبة %",
+      "markupFixed": "هامش مبلغ ثابت",
+      "markupPercentageValue": "نسبة الهامش %",
+      "markupFixedValue": "قيمة الهامش الثابت",
       "percentage": "نسبة مئوية",
       "fixedAmount": "مبلغ ثابت"
     }
@@ -564,7 +568,7 @@
       "pkgPlaceholder":  "— اختر الباقة —",
       "selectAgent":     "اختر الوكيل الفرعي",
       "agentPlaceholder":"— اختر الوكيل الفرعي —",
-      "units":           "الوحدات المراد تخصيصها",
+      "units":           "عدد البكجات",
       "sellPrice":       "سعر البيع (ر.س)",
       "markup":          "مبلغ الهامش (ر.س)"
     }

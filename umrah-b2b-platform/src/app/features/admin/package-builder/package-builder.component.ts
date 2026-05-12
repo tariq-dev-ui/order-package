@@ -207,6 +207,8 @@ export class PackageBuilderComponent {
         subagentAccessMode: visibility.subagentAccessMode || SubagentAccessMode.ALL,
         selectedSubagentIds: visibility.selectedAgent ? [visibility.selectedAgent.id] : [],
         pricingPermission: visibility.pricingPermission || PricingPermission.AGENT_MARKUP,
+        agentMarkupType: visibility.agentMarkupType,
+        agentMarkupValue: visibility.agentMarkupValue,
         hideOriginalCost: visibility.hideOriginalCost,
         commissionModel: visibility.commissionModel || CommissionModel.PERCENTAGE,
         commissionValue: visibility.commissionValue,

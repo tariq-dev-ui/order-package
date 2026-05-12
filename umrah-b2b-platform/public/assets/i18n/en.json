@@ -465,6 +465,10 @@
       "agentMarkupDesc": "Agent can add markup above base price.",
       "fullControlTitle": "Agent Full Control",
       "fullControlDesc": "Agent can fully control selling price.",
+      "markupPercentage": "Percentage Markup %",
+      "markupFixed": "Fixed Amount Markup",
+      "markupPercentageValue": "Markup Percentage %",
+      "markupFixedValue": "Fixed Markup Value",
       "percentage": "Percentage",
       "fixedAmount": "Fixed Amount"
     }

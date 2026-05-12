@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PackageCardComponent } from '../../../shared/components/package-card/package-card.component';
@@ -13,6 +13,7 @@ import { SubagentAllocation } from '../../../core/models/distribution.model';
 import { DashboardWidget } from '../../../core/models/analytics.model';
 import { Agent } from '../../../core/models/agent.model';
 import { DistributionStatus } from '../../../core/models/enums';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-distributed-packages',
@@ -71,7 +72,11 @@ import { DistributionStatus } from '../../../core/models/enums';
         <div class="section-header">
           <div>
             <div class="section-title">{{ 'masterAgent.packages.sectionTitle' | translate }}</div>
-            <div class="section-subtitle">{{ packages.length }} {{ 'masterAgent.packages.sectionSubtitle' | translate }}</div>
+            @if (isMyPackagesPage) {
+              <div class="section-subtitle">الباقات التي تم شراؤها من الإدارة</div>
+            } @else {
+              <div class="section-subtitle">{{ packages.length }} {{ 'masterAgent.packages.sectionSubtitle' | translate }}</div>
+            }
           </div>
           <div class="flex items-center gap-2">
             <input class="form-control form-control--sm" [(ngModel)]="searchQuery" [placeholder]="'masterAgent.packages.searchPlaceholder' | translate" style="width:200px" />
@@ -84,7 +89,7 @@ import { DistributionStatus } from '../../../core/models/enums';
         </div>
 
         <div class="packages-grid">
-          @for (pkg of filteredPackages; track pkg.id) {
+          @for (pkg of displayedPackages; track pkg.id) {
             <app-package-card [pkg]="pkg" [showDistribute]="true" (view)="viewPackage(pkg)" (distribute)="openDistributeModal(pkg)" />
           }
           @empty {
@@ -197,10 +202,24 @@ import { DistributionStatus } from '../../../core/models/enums';
             </button>
           </div>
           <div class="modal-body">
+            <div class="base-price-card">
+              <div class="base-price-meta">
+                <div class="base-price-label">سعر البكج الأساسي</div>
+                <div class="base-price-value">
+                  {{ getSelectedPackageBasePrice() | number:'1.0-0' }} {{ 'common.labels.currency' | translate }}
+                </div>
+              </div>
+              <div class="base-price-meta base-price-meta--accent">
+                <div class="base-price-label">نسبة الهامش الربحي</div>
+                <div class="base-price-value">
+                  {{ getMarkupPercent() | number:'1.0-2' }}%
+                </div>
+              </div>
+            </div>
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">{{ 'masterAgent.modal.selectPkg' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newAlloc.packageId">
+                <select class="form-control" [(ngModel)]="newAlloc.packageId" (ngModelChange)="onPackageChanged()">
                   <option value="">{{ 'masterAgent.modal.pkgPlaceholder' | translate }}</option>
                   @for (pkg of rawPackages; track pkg.id) {
                     <option [value]="pkg.id">{{ pkg.title }}</option>
@@ -223,10 +242,6 @@ import { DistributionStatus } from '../../../core/models/enums';
               <div class="form-group">
                 <label class="form-label">{{ 'masterAgent.modal.sellPrice' | translate }}</label>
                 <input class="form-control" type="number" [(ngModel)]="newAlloc.price" placeholder="0" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">{{ 'masterAgent.modal.markup' | translate }}</label>
-                <input class="form-control" type="number" [(ngModel)]="newAlloc.markup" placeholder="0" />
               </div>
             </div>
           </div>
@@ -306,6 +321,36 @@ import { DistributionStatus } from '../../../core/models/enums';
     }
     .modal-body   { padding: var(--space-lg); background: var(--sero-card-bg); }
     .modal-footer { padding: var(--space-md) var(--space-lg); border-top: 1px solid var(--sero-border); display: flex; justify-content: flex-end; gap: var(--space-sm); background: var(--sero-surface-2); }
+    .base-price-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid #e4ebdb;
+      border-radius: 10px;
+      background: #f8fbf4;
+      padding: 10px 12px;
+      margin-bottom: var(--space-md);
+    }
+    .base-price-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .base-price-meta--accent {
+      border-inline-start: 1px dashed #d5dfc8;
+      padding-inline-start: 12px;
+    }
+    .base-price-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sero-text-secondary);
+    }
+    .base-price-value {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--sero-primary-dark);
+    }
   `]
 })
 export class DistributedPackagesComponent implements OnInit {
@@ -317,17 +362,24 @@ export class DistributedPackagesComponent implements OnInit {
   searchQuery = '';
   filterStatus = '';
   showAllocateModal = false;
-  newAlloc = { packageId: '', subagentId: '', units: 10, price: 0, markup: 0 };
+  newAlloc = { packageId: '', subagentId: '', units: 10, price: 0 };
   currentMasterId = 'master-001';
+  isMyPackagesPage = false;
 
   constructor(
     private pkgService: PackageService,
     private distService: DistributionService,
     private agentService: AgentService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.updatePageMode();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => this.updatePageMode());
+
     this.analyticsService.getMasterAgentWidgets(this.currentMasterId).subscribe(w => { this.widgets = w; });
 
     this.pkgService.getPackagesForMasterAgent(this.currentMasterId).subscribe(pkgs => {
@@ -353,11 +405,53 @@ export class DistributedPackagesComponent implements OnInit {
     });
   }
 
+  get adminPurchasedPackages(): PackageCardView[] {
+    return this.filteredPackages.filter((cardPkg) => {
+      const rawPkg = this.rawPackages.find((item) => item.id === cardPkg.id);
+      return !!rawPkg?.ownership?.createdByAdminId;
+    });
+  }
+
+  get displayedPackages(): PackageCardView[] {
+    return this.isMyPackagesPage ? this.adminPurchasedPackages : this.filteredPackages;
+  }
+
   viewPackage(pkg: PackageCardView): void { console.log('View:', pkg); }
 
   openDistributeModal(pkg: PackageCardView): void {
     this.newAlloc.packageId = pkg.id;
+    this.onPackageChanged();
     this.showAllocateModal = true;
+  }
+
+  onPackageChanged(): void {
+    const basePrice = this.getSelectedPackageBasePrice();
+    this.newAlloc.price = basePrice;
+  }
+
+  getSelectedPackageBasePrice(): number {
+    const pkg = this.rawPackages.find((item) => item.id === this.newAlloc.packageId);
+    return pkg?.pricingConfig?.finalSellingPrice || 0;
+  }
+
+  getMarkupPercent(): number {
+    const basePrice = this.getSelectedPackageBasePrice();
+    const markup = this.getMarkupAmount();
+    if (!basePrice || markup <= 0) {
+      return 0;
+    }
+
+    return (markup / basePrice) * 100;
+  }
+
+  getMarkupAmount(): number {
+    const basePrice = this.getSelectedPackageBasePrice();
+    const diff = this.newAlloc.price - basePrice;
+    return diff > 0 ? diff : 0;
+  }
+
+  private updatePageMode(): void {
+    this.isMyPackagesPage = this.router.url.startsWith('/master/packages');
   }
 
   getPackageName(pkgId: string): string {
@@ -395,7 +489,7 @@ export class DistributedPackagesComponent implements OnInit {
       soldUnits: 0,
       remainingUnits: this.newAlloc.units,
       sellingPrice: this.newAlloc.price,
-      markup: this.newAlloc.markup,
+      markup: this.getMarkupAmount(),
       status: DistributionStatus.ACTIVE,
       assignedAt: new Date()
     }).subscribe(() => {

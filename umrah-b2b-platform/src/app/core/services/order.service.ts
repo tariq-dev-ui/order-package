@@ -47,6 +47,8 @@ export class OrderService {
         hideOriginalCost: packageData.distributionConfig.hideOriginalCost,
         subagentAccessMode: packageData.distributionConfig.subagentAccessMode,
         pricingPermission: packageData.distributionConfig.pricingPermission,
+        agentMarkupType: packageData.distributionConfig.agentMarkupType,
+        agentMarkupValue: packageData.distributionConfig.agentMarkupValue,
         commissionModel: packageData.distributionConfig.commissionModel,
         commissionValue: packageData.distributionConfig.commissionValue,
         allocatedInventory: packageData.distributionConfig.allocatedInventory

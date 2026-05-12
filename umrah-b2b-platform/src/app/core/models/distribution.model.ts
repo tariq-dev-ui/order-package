@@ -1,5 +1,5 @@
 import {
-  DistributionStatus, PricingPermission, CommissionModel, SubagentAccessMode
+  DistributionStatus, PricingPermission, CommissionModel, SubagentAccessMode, MarkupType
 } from './enums';
 
 export interface DistributionConfig {
@@ -10,6 +10,8 @@ export interface DistributionConfig {
   subagentAccessMode: SubagentAccessMode;
   selectedSubagentIds?: string[];
   pricingPermission: PricingPermission;
+  agentMarkupType?: MarkupType;
+  agentMarkupValue?: number;
   hideOriginalCost: boolean;
   commissionModel: CommissionModel;
   commissionValue: number;
@@ -46,6 +48,8 @@ export interface DistributionRequest {
   subagentAccessMode: SubagentAccessMode;
   selectedSubagentIds?: string[];
   pricingPermission: PricingPermission;
+  agentMarkupType?: MarkupType;
+  agentMarkupValue?: number;
   hideOriginalCost: boolean;
   commissionModel: CommissionModel;
   commissionValue: number;

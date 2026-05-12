@@ -5,6 +5,7 @@ import { CustomerInfo, OtherServiceSelection } from '../models/package-order.mod
 import { PackageHotelSelection } from '../models/package-builder-ui.model';
 import {
   CommissionModel,
+  MarkupType,
   PricingPermission,
   SubagentAccessMode
 } from '../models/enums';
@@ -21,6 +22,8 @@ export interface PackageVisibilityState {
   hideOriginalCost: boolean;
   subagentAccessMode: SubagentAccessMode;
   pricingPermission: PricingPermission;
+  agentMarkupType: MarkupType;
+  agentMarkupValue: number;
   commissionModel: CommissionModel;
   commissionValue: number;
   allocatedInventory: number;
@@ -34,6 +37,8 @@ const DEFAULT_VISIBILITY_PROFILE: VisibilityConfigState = {
   hideOriginalCost: true,
   subagentAccessMode: SubagentAccessMode.ALL,
   pricingPermission: PricingPermission.AGENT_MARKUP,
+  agentMarkupType: MarkupType.PERCENTAGE,
+  agentMarkupValue: 10,
   commissionModel: CommissionModel.PERCENTAGE,
   commissionValue: 8,
   allocatedInventory: 50
@@ -126,6 +131,14 @@ export class PackageBuilderService {
 
   setCommissionModel(value: CommissionModel): void {
     this.patchVisibility({ commissionModel: value });
+  }
+
+  setAgentMarkupType(value: MarkupType): void {
+    this.patchVisibility({ agentMarkupType: value });
+  }
+
+  setAgentMarkupValue(value: number): void {
+    this.patchVisibility({ agentMarkupValue: value });
   }
 
   setCommissionValue(value: number): void {
@@ -236,6 +249,8 @@ export class PackageBuilderService {
       hideOriginalCost: state.hideOriginalCost,
       subagentAccessMode: state.subagentAccessMode,
       pricingPermission: state.pricingPermission,
+      agentMarkupType: state.agentMarkupType,
+      agentMarkupValue: state.agentMarkupValue,
       commissionModel: state.commissionModel,
       commissionValue: state.commissionValue,
       allocatedInventory: state.allocatedInventory
