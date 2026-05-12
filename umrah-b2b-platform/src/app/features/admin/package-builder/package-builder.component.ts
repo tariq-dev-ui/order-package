@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Step1MakkahComponent } from './steps/step1-makkah/step1-makkah.component';
 import { Step2MadinahComponent } from './steps/step2-madinah/step2-madinah.component';
 import { Step3TransportComponent } from './steps/step3-transport/step3-transport.component';
@@ -12,6 +13,9 @@ import { PackageType, PackageStatus, BookingMode, VisaStatus } from '../../../co
 import { PackageBuilderStep } from '../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../core/services/package-builder-ui.service';
 import { PackageStepperComponent } from './components/package-stepper/package-stepper.component';
+import { CustomerInfo, OtherServiceSelection } from '../../../core/models/package-order.model';
+import { PackageBuilderService } from '../../../core/services/package-builder.service';
+import { OrderService } from '../../../core/services/order.service';
 
 @Component({
   selector: 'app-package-builder',
@@ -71,15 +75,21 @@ import { PackageStepperComponent } from './components/package-stepper/package-st
             <app-step6-details
               [packageData]="packageData"
               (dataChanged)="onDataChanged($event)"
+              (customerInfoChanged)="onCustomerInfoChanged($event)"
+              (otherServicesChanged)="onOtherServicesChanged($event)"
               (next)="nextStep()"
               (prev)="prevStep()" />
           }
           @case (7) {
             <app-step7-pricing
               [packageData]="packageData"
+              [validationErrors]="validationErrors()"
+              [canCreateOrder]="canCreateOrder()"
+              [isSubmitting]="isCreatingOrder()"
+              [statusMessage]="statusMessage()"
               (dataChanged)="onDataChanged($event)"
               (prev)="prevStep()"
-              (publish)="publishPackage()" />
+              (createOrder)="publishPackage()" />
           }
         }
       </div>
@@ -110,6 +120,8 @@ import { PackageStepperComponent } from './components/package-stepper/package-st
 })
 export class PackageBuilderComponent {
   currentStep = signal(1);
+  isCreatingOrder = signal(false);
+  statusMessage = signal('');
   totalSteps = 7;
 
   packageData: Partial<Package> = {
@@ -133,8 +145,15 @@ export class PackageBuilderComponent {
   };
 
   steps: PackageBuilderStep[] = [];
+  customerInfo: CustomerInfo = { name: '', phone: '', email: '', notes: '' };
+  otherServices: OtherServiceSelection[] = [];
 
-  constructor(private readonly builderUi: PackageBuilderUiService) {
+  constructor(
+    private readonly builderUi: PackageBuilderUiService,
+    private readonly packageBuilderService: PackageBuilderService,
+    private readonly orderService: OrderService,
+    private readonly router: Router
+  ) {
     this.steps = this.builderUi.getSteps();
   }
 
@@ -160,8 +179,42 @@ export class PackageBuilderComponent {
     this.packageData = { ...this.packageData, ...data };
   }
 
+  onCustomerInfoChanged(data: CustomerInfo): void {
+    this.customerInfo = { ...data };
+  }
+
+  onOtherServicesChanged(data: OtherServiceSelection[]): void {
+    this.otherServices = [...data];
+  }
+
+  validationErrors(): string[] {
+    return this.packageBuilderService.validateForOrderCreation(this.packageData, this.customerInfo, this.otherServices).errors;
+  }
+
+  canCreateOrder(): boolean {
+    return this.packageBuilderService.validateForOrderCreation(this.packageData, this.customerInfo, this.otherServices).isValid;
+  }
+
   publishPackage(): void {
-    console.log('Publishing package:', this.packageData);
-    // TODO: wire to PackageService.createPackage with ACTIVE status
+    const validation = this.packageBuilderService.validateForOrderCreation(this.packageData, this.customerInfo, this.otherServices);
+    if (!validation.isValid) {
+      this.statusMessage.set('يرجى استكمال البيانات المطلوبة قبل إنشاء الطلب');
+      return;
+    }
+
+    this.isCreatingOrder.set(true);
+    this.statusMessage.set('');
+
+    this.orderService.createOrder(this.packageData, this.customerInfo, this.otherServices).subscribe({
+      next: (order) => {
+        this.isCreatingOrder.set(false);
+        this.statusMessage.set(`تم إنشاء الطلب بنجاح. رقم الطلب: ${order.orderNumber}`);
+        this.router.navigate(['/admin/orders/confirmation', order.id]);
+      },
+      error: () => {
+        this.isCreatingOrder.set(false);
+        this.statusMessage.set('حدث خطأ أثناء إنشاء الطلب. حاول مرة أخرى');
+      }
+    });
   }
 }

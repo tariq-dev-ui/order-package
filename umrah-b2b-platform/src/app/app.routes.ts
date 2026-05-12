@@ -11,7 +11,8 @@ export const routes: Routes = [
       { path: 'analytics', loadComponent: () => import('./features/admin/analytics/admin-analytics.component').then(m => m.AdminAnalyticsComponent) },
       { path: 'distribution', loadComponent: () => import('./features/admin/distribution/admin-distribution.component').then(m => m.AdminDistributionComponent) },
       { path: 'packages', loadComponent: () => import('./features/admin/distribution/admin-distribution.component').then(m => m.AdminDistributionComponent) },
-      { path: 'packages/builder', loadComponent: () => import('./features/admin/package-builder/package-builder.component').then(m => m.PackageBuilderComponent) }
+      { path: 'packages/builder', loadComponent: () => import('./features/admin/package-builder/package-builder.component').then(m => m.PackageBuilderComponent) },
+      { path: 'orders/confirmation/:orderId', loadComponent: () => import('./features/admin/orders/order-confirmation.component').then(m => m.OrderConfirmationComponent) }
     ]
   },
   {
@@ -30,7 +31,9 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'marketplace', pathMatch: 'full' },
-      { path: 'marketplace', loadComponent: () => import('./features/master-agent/distributed-packages/distributed-packages.component').then(m => m.DistributedPackagesComponent) }
+      { path: 'marketplace', loadComponent: () => import('./features/master-agent/distributed-packages/distributed-packages.component').then(m => m.DistributedPackagesComponent) },
+      { path: 'orders', loadComponent: () => import('./features/agent/orders/agent-orders.component').then(m => m.AgentOrdersComponent) },
+      { path: 'orders/:id', loadComponent: () => import('./features/agent/orders/agent-order-details.component').then(m => m.AgentOrderDetailsComponent) }
     ]
   },
   { path: '**', redirectTo: 'master/distributed' }

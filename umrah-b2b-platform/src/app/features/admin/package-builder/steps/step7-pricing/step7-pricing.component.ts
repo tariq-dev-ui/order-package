@@ -285,12 +285,30 @@ import { PricingService } from '../../../../../core/services/pricing.service';
             <span class="fps-value">{{ simulation?.sellingPrice || cost.total | number:'1.0-0' }} {{ 'common.labels.currency' | translate }}</span>
             <span class="fps-profit">{{ simulation ? '+' + (simulation.profitPercentage) + '% ' + ('pricing.simulator.margin' | translate) : '' }}</span>
           </div>
-          <button class="btn btn--primary btn--lg" (click)="publish.emit()">
-            <span class="material-icons-round">rocket_launch</span>
-            {{ 'builder.navigation.publishPackage' | translate }}
+          <button class="btn btn--primary btn--lg" [disabled]="!canCreateOrder || isSubmitting" (click)="createOrder.emit()">
+            <span class="material-icons-round">{{ isSubmitting ? 'hourglass_top' : 'add_shopping_cart' }}</span>
+            {{ isSubmitting ? 'جاري إنشاء الطلب...' : 'Create Order' }}
           </button>
         </div>
       </div>
+
+      @if (validationErrors.length > 0) {
+        <div class="validation-box">
+          <div class="vb-title">
+            <span class="material-icons-round">error_outline</span>
+            لا يمكن إنشاء الطلب قبل استكمال البيانات التالية:
+          </div>
+          <ul>
+            @for (error of validationErrors; track error) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (statusMessage) {
+        <div class="status-box">{{ statusMessage }}</div>
+      }
     </div>
   `,
   styles: [`
@@ -531,13 +549,54 @@ import { PricingService } from '../../../../../core/services/pricing.service';
     .fps-label  { font-size: .8125rem; color: var(--color-text-muted); }
     .fps-value  { font-size: 1rem; font-weight: 800; color: var(--color-text-primary); }
     .fps-profit { font-size: .75rem; color: var(--color-success); font-weight: 600; }
+
+    .validation-box {
+      margin-top: 12px;
+      border: 1px solid #f3d7b5;
+      background: #fff8ef;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: #9a5c19;
+    }
+
+    .validation-box .vb-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+    }
+
+    .validation-box ul {
+      margin: 0;
+      padding-inline-start: 18px;
+      display: grid;
+      gap: 4px;
+      font-size: 0.85rem;
+    }
+
+    .status-box {
+      margin-top: 10px;
+      border: 1px solid #b6e0c6;
+      background: #edf9f1;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      color: #29653d;
+      font-size: 0.87rem;
+      font-weight: 700;
+    }
   `]
 })
 export class Step7PricingComponent implements OnInit {
   @Input() packageData!: Partial<Package>;
+  @Input() validationErrors: string[] = [];
+  @Input() canCreateOrder = false;
+  @Input() isSubmitting = false;
+  @Input() statusMessage = '';
   @Output() dataChanged = new EventEmitter<Partial<Package>>();
   @Output() prev = new EventEmitter<void>();
-  @Output() publish = new EventEmitter<void>();
+  @Output() createOrder = new EventEmitter<void>();
 
   MarkupType = MarkupType;
 

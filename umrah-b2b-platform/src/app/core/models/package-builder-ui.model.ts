@@ -52,4 +52,20 @@ export interface MakkahFormSelection {
   roomType: string;
   rooms: number;
   nights: number;
+  notes?: string;
+}
+
+export type HotelSelectionMode = 'criteria' | 'specific';
+
+export interface PackageHotelSelection {
+  id: string;
+  cityType: 'makkah' | 'madinah';
+  selectionMode: HotelSelectionMode;
+  hotelName: string;
+  district?: string;
+  category?: string;
+  roomType: string;
+  roomsCount: number;
+  nightsCount: number;
+  notes?: string;
 }

@@ -637,7 +637,8 @@ export class SidebarComponent implements OnInit {
         { labelKey: 'sidebar.nav.distributionNetwork', icon: 'account_tree', route: '/admin/distribution', roles: [UserRole.ADMIN] },
         { labelKey: 'sidebar.nav.distributedPackages', icon: 'share', route: '/master/distributed', roles: [UserRole.MASTER_AGENT] },
         { labelKey: 'sidebar.nav.subagents', icon: 'supervisor_account', route: '/master/subagents', roles: [UserRole.MASTER_AGENT] },
-        { labelKey: 'sidebar.nav.marketplace', icon: 'storefront', route: '/agent/marketplace', roles: [UserRole.SUB_AGENT] }
+        { labelKey: 'sidebar.nav.marketplace', icon: 'storefront', route: '/agent/marketplace', roles: [UserRole.SUB_AGENT] },
+        { labelKey: 'Agent Orders', icon: 'assignment', route: '/agent/orders', roles: [UserRole.SUB_AGENT] }
       ] as NavItem[]
     },
     {

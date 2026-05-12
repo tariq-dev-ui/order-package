@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
+import { PackageBuilderService } from '../../../../../core/services/package-builder.service';
 
 @Component({
   selector: 'app-order-summary',
@@ -26,14 +27,27 @@ import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.
           </header>
 
           <div class="summary-lines">
-            @for (line of section.lines; track $index) {
-              <p>
-                @if (line.value) {
-                  <strong>{{ line.label }}</strong> {{ line.value }}
-                } @else {
-                  {{ line.label }}
+            @if (section.id === 'makkah-stay') {
+              @if (makkahHotels().length > 0) {
+                @for (hotel of makkahHotels(); track hotel.id) {
+                  <div class="hotel-line">
+                    <strong>{{ hotel.hotelName }}</strong>
+                    <span>{{ hotel.roomType }} - {{ hotel.roomsCount }} غرف - {{ hotel.nightsCount }} ليال</span>
+                  </div>
                 }
-              </p>
+              } @else {
+                <p>لم يتم إضافة أي فندق</p>
+              }
+            } @else {
+              @for (line of section.lines; track $index) {
+                <p>
+                  @if (line.value) {
+                    <strong>{{ line.label }}</strong> {{ line.value }}
+                  } @else {
+                    {{ line.label }}
+                  }
+                </p>
+              }
             }
           </div>
         </section>
@@ -152,6 +166,27 @@ import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.
       font-weight: 700;
     }
 
+    .hotel-line {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 4px 0;
+      border-bottom: 1px dashed #e5ebde;
+    }
+
+    .hotel-line:last-child {
+      border-bottom: none;
+    }
+
+    .hotel-line strong {
+      font-size: 0.87rem;
+    }
+
+    .hotel-line span {
+      font-size: 0.78rem;
+      color: #778373;
+    }
+
     .summary-support {
       margin-top: 2px;
       display: flex;
@@ -193,4 +228,9 @@ import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.
 })
 export class OrderSummaryComponent {
   @Input({ required: true }) data!: OrderSummaryData;
+  readonly makkahHotels;
+
+  constructor(private readonly builderService: PackageBuilderService) {
+    this.makkahHotels = this.builderService.getMakkahHotelsSignal();
+  }
 }
