@@ -154,8 +154,7 @@ export class PackageBuilderComponent {
     reservedCount: 0,
     visaStatus: VisaStatus.INCLUDED,
     visibilityType: 'shared',
-    selectedAgents: [],
-    selectedGroups: []
+    selectedAgents: []
   };
 
   steps: PackageBuilderStep[] = [];
@@ -200,7 +199,6 @@ export class PackageBuilderComponent {
       ...this.packageData,
       visibilityType: visibility.visibilityType,
       selectedAgents: visibility.selectedAgents,
-      selectedGroups: visibility.selectedGroups,
       distributionConfig: {
         packageId: this.packageData.id || 'draft-package',
         masterAgentId: visibility.selectedAgents[0] || 'master-001',

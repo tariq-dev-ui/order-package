@@ -1,11 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgentService } from '../../../../../core/services/agent.service';
-import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { PackageBuilderService } from '../../../../../core/services/package-builder.service';
 import { PackageVisibilityType } from '../../../../../core/models/package.model';
 import { Agent } from '../../../../../core/models/agent.model';
-import { SelectOption } from '../../../../../core/models/package-builder-ui.model';
 import {
   CommissionModel,
   PricingPermission,
@@ -39,86 +37,89 @@ import {
         }
       </div>
 
-      @if (visibility().visibilityType === 'private') {
-        <div class="selectors-wrap">
-          <div class="selector-title">اختر الوكلاء المسموح لهم</div>
-          <div class="selector-list">
-            @for (agent of agents; track agent.id) {
-              <label>
-                <input
-                  type="checkbox"
-                  [checked]="visibility().selectedAgents.includes(agent.id)"
-                  (change)="toggleAgent(agent.id)" />
-                <span>{{ agent.name }}</span>
-              </label>
-            }
-          </div>
-        </div>
-      }
-
-      @if (visibility().visibilityType === 'group') {
-        <div class="selectors-wrap">
-          <div class="selector-title">اختر مجموعات الوكلاء</div>
-          <div class="selector-list">
-            @for (group of groups; track group.value) {
-              <label>
-                <input
-                  type="checkbox"
-                  [checked]="visibility().selectedGroups.includes(group.value)"
-                  (change)="toggleGroup(group.value)" />
-                <span>{{ group.label }}</span>
-              </label>
-            }
-          </div>
-        </div>
-      }
-
-      <div class="advanced-grid">
-        <label class="inline-toggle">
-          <input type="checkbox" [checked]="visibility().allowReselling" (change)="onAllowReselling($event)" />
-          <span>السماح بإعادة البيع</span>
-        </label>
-
-        <label class="inline-toggle">
-          <input type="checkbox" [checked]="visibility().hideOriginalCost" (change)="onHideCost($event)" />
-          <span>إخفاء التكلفة الأصلية</span>
-        </label>
-
-        <label class="inline-field">
-          <span>وصول الوكلاء الفرعيين</span>
-          <select [value]="visibility().subagentAccessMode" (change)="onSubagentAccessChange($event)">
-            <option [value]="SubagentAccessMode.ALL">All</option>
-            <option [value]="SubagentAccessMode.SELECTED">Selected</option>
-          </select>
-        </label>
-
-        <label class="inline-field">
-          <span>صلاحية التسعير</span>
-          <select [value]="visibility().pricingPermission" (change)="onPricingPermissionChange($event)">
-            <option [value]="PricingPermission.FIXED_BY_ADMIN">Fixed by Admin</option>
-            <option [value]="PricingPermission.AGENT_MARKUP">Agent Markup</option>
-            <option [value]="PricingPermission.AGENT_FULL_CONTROL">Agent Full Control</option>
-          </select>
-        </label>
-
-        <label class="inline-field">
-          <span>نموذج العمولة</span>
-          <select [value]="visibility().commissionModel" (change)="onCommissionModelChange($event)">
-            <option [value]="CommissionModel.PERCENTAGE">Percentage</option>
-            <option [value]="CommissionModel.FIXED_AMOUNT">Fixed Amount</option>
-          </select>
-        </label>
-
-        <label class="inline-field">
-          <span>قيمة العمولة</span>
-          <input type="number" min="0" [value]="visibility().commissionValue" (input)="onCommissionValueChange($event)" />
-        </label>
-
-        <label class="inline-field">
-          <span>المخزون المخصص</span>
-          <input type="number" min="1" [value]="visibility().allocatedInventory" (input)="onAllocatedInventoryChange($event)" />
-        </label>
+      <div class="visibility-actions">
+        <button type="button" class="btn btn--secondary btn--sm" (click)="showDetailsPopup = true">
+          <span class="material-icons-round">tune</span>
+          عرض التفاصيل
+        </button>
       </div>
+
+      @if (showDetailsPopup) {
+        <div class="details-modal-overlay" (click)="showDetailsPopup = false">
+          <div class="details-modal" (click)="$event.stopPropagation()">
+            <div class="details-modal-head">
+              <h4>تفاصيل التوزيع</h4>
+              <button type="button" class="close-btn" (click)="showDetailsPopup = false">
+                <span class="material-icons-round">close</span>
+              </button>
+            </div>
+
+            @if (visibility().visibilityType === 'private') {
+              <div class="selectors-wrap">
+                <div class="selector-title">اختر الوكلاء المسموح لهم</div>
+                <div class="selector-list">
+                  @for (agent of agents; track agent.id) {
+                    <label>
+                      <input
+                        type="checkbox"
+                        [checked]="visibility().selectedAgents.includes(agent.id)"
+                        (change)="toggleAgent(agent.id)" />
+                      <span>{{ agent.name }}</span>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="advanced-grid">
+              <label class="inline-toggle">
+                <input type="checkbox" [checked]="visibility().allowReselling" (change)="onAllowReselling($event)" />
+                <span>السماح بإعادة البيع</span>
+              </label>
+
+              <label class="inline-toggle">
+                <input type="checkbox" [checked]="visibility().hideOriginalCost" (change)="onHideCost($event)" />
+                <span>إخفاء التكلفة الأصلية</span>
+              </label>
+
+              <label class="inline-field">
+                <span>وصول الوكلاء الفرعيين</span>
+                <select [value]="visibility().subagentAccessMode" (change)="onSubagentAccessChange($event)">
+                  <option [value]="SubagentAccessMode.ALL">All</option>
+                  <option [value]="SubagentAccessMode.SELECTED">Selected</option>
+                </select>
+              </label>
+
+              <label class="inline-field">
+                <span>صلاحية التسعير</span>
+                <select [value]="visibility().pricingPermission" (change)="onPricingPermissionChange($event)">
+                  <option [value]="PricingPermission.FIXED_BY_ADMIN">Fixed by Admin</option>
+                  <option [value]="PricingPermission.AGENT_MARKUP">Agent Markup</option>
+                  <option [value]="PricingPermission.AGENT_FULL_CONTROL">Agent Full Control</option>
+                </select>
+              </label>
+
+              <label class="inline-field">
+                <span>نموذج العمولة</span>
+                <select [value]="visibility().commissionModel" (change)="onCommissionModelChange($event)">
+                  <option [value]="CommissionModel.PERCENTAGE">Percentage</option>
+                  <option [value]="CommissionModel.FIXED_AMOUNT">Fixed Amount</option>
+                </select>
+              </label>
+
+              <label class="inline-field">
+                <span>قيمة العمولة</span>
+                <input type="number" min="0" [value]="visibility().commissionValue" (input)="onCommissionValueChange($event)" />
+              </label>
+
+              <label class="inline-field">
+                <span>المخزون المخصص</span>
+                <input type="number" min="1" [value]="visibility().allocatedInventory" (input)="onAllocatedInventoryChange($event)" />
+              </label>
+            </div>
+          </div>
+        </div>
+      }
     </section>
   `,
   styles: [`
@@ -257,6 +258,70 @@ import {
       cursor: pointer;
     }
 
+    .visibility-actions {
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px dashed var(--sero-border-light);
+      padding-top: 8px;
+    }
+
+    .details-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(34, 43, 28, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .details-modal {
+      width: min(760px, 100%);
+      max-height: 85vh;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .details-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--sero-border-light);
+      padding-bottom: 8px;
+    }
+
+    .details-modal-head h4 {
+      margin: 0;
+      font-size: 0.96rem;
+      color: var(--sero-text-primary);
+      font-weight: 800;
+    }
+
+    .close-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--sero-text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .close-btn .material-icons-round {
+      font-size: 16px;
+    }
+
     @media (max-width: 900px) {
       .visibility-options {
         grid-template-columns: 1fr;
@@ -272,10 +337,10 @@ export class PackageVisibilityComponent implements OnInit {
   readonly SubagentAccessMode = SubagentAccessMode;
   readonly PricingPermission = PricingPermission;
   readonly CommissionModel = CommissionModel;
+  showDetailsPopup = false;
 
   readonly visibility;
   agents: Agent[] = [];
-  groups: SelectOption[] = [];
 
   readonly options: Array<{
     type: PackageVisibilityType;
@@ -294,19 +359,12 @@ export class PackageVisibilityComponent implements OnInit {
       icon: 'lock',
       title: 'Private Package',
       description: 'Visible only to selected agents.'
-    },
-    {
-      type: 'group',
-      icon: 'groups',
-      title: 'Group Package',
-      description: 'Visible to selected agent groups.'
     }
   ];
 
   constructor(
     private readonly builderService: PackageBuilderService,
-    private readonly agentService: AgentService,
-    private readonly builderUiService: PackageBuilderUiService
+    private readonly agentService: AgentService
   ) {
     this.visibility = this.builderService.getVisibilitySignal();
   }
@@ -315,7 +373,6 @@ export class PackageVisibilityComponent implements OnInit {
     this.agentService.getSubagents().subscribe((agents) => {
       this.agents = agents;
     });
-    this.groups = this.builderUiService.getAgentGroupOptions();
   }
 
   selectType(type: PackageVisibilityType): void {
@@ -329,15 +386,6 @@ export class PackageVisibilityComponent implements OnInit {
       ? current.filter((id) => id !== agentId)
       : [...current, agentId];
     this.builderService.setSelectedAgents(next);
-    this.visibilityChanged.emit();
-  }
-
-  toggleGroup(groupId: string): void {
-    const current = this.visibility().selectedGroups;
-    const next = current.includes(groupId)
-      ? current.filter((id) => id !== groupId)
-      : [...current, groupId];
-    this.builderService.setSelectedGroups(next);
     this.visibilityChanged.emit();
   }
 

@@ -35,7 +35,6 @@ export class OrderService {
       packageTitle: packageData.title,
       visibilityType: packageData.visibilityType,
       selectedAgents: packageData.selectedAgents || [],
-      selectedGroups: packageData.selectedGroups || [],
       distributionSettings: packageData.distributionConfig ? {
         allowReselling: packageData.distributionConfig.allowReselling,
         hideOriginalCost: packageData.distributionConfig.hideOriginalCost,

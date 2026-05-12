@@ -16,7 +16,6 @@ export interface PackageBuilderValidation {
 export interface PackageVisibilityState {
   visibilityType: PackageVisibilityType;
   selectedAgents: string[];
-  selectedGroups: string[];
   allowReselling: boolean;
   hideOriginalCost: boolean;
   subagentAccessMode: SubagentAccessMode;
@@ -32,7 +31,6 @@ export class PackageBuilderService {
   private readonly visibilityState = signal<PackageVisibilityState>({
     visibilityType: 'shared',
     selectedAgents: [],
-    selectedGroups: [],
     allowReselling: true,
     hideOriginalCost: true,
     subagentAccessMode: SubagentAccessMode.ALL,
@@ -72,8 +70,7 @@ export class PackageBuilderService {
     this.visibilityState.update((current) => ({
       ...current,
       visibilityType: type,
-      selectedAgents: type === 'private' ? current.selectedAgents : [],
-      selectedGroups: type === 'group' ? current.selectedGroups : []
+      selectedAgents: type === 'private' ? current.selectedAgents : []
     }));
   }
 
@@ -81,13 +78,6 @@ export class PackageBuilderService {
     this.visibilityState.update((current) => ({
       ...current,
       selectedAgents: [...agentIds]
-    }));
-  }
-
-  setSelectedGroups(groupIds: string[]): void {
-    this.visibilityState.update((current) => ({
-      ...current,
-      selectedGroups: [...groupIds]
     }));
   }
 
@@ -124,7 +114,6 @@ export class PackageBuilderService {
     this.visibilityState.set({
       visibilityType: 'shared',
       selectedAgents: [],
-      selectedGroups: [],
       allowReselling: true,
       hideOriginalCost: true,
       subagentAccessMode: SubagentAccessMode.ALL,
@@ -176,10 +165,6 @@ export class PackageBuilderService {
 
     if (packageData.visibilityType === 'private' && !(packageData.selectedAgents?.length)) {
       errors.push('يرجى اختيار وكيل واحد على الأقل لنوع الظهور الخاص');
-    }
-
-    if (packageData.visibilityType === 'group' && !(packageData.selectedGroups?.length)) {
-      errors.push('يرجى اختيار مجموعة واحدة على الأقل لنوع ظهور المجموعات');
     }
 
     if (!otherServices.length) {
