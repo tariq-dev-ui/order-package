@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
 import { TopbarComponent } from '../components/topbar/topbar.component';
 import { LayoutService } from '../../core/services/layout.service';
+import { ViewModeService } from '../../core/services/view-mode.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -65,5 +66,16 @@ import { LayoutService } from '../../core/services/layout.service';
 export class AdminLayoutComponent {
   pageTitle = 'SERO Platform';
 
-  constructor(public layout: LayoutService) {}
+  constructor(
+    public layout: LayoutService,
+    private readonly viewModeService: ViewModeService
+  ) {
+    this.viewModeService.selectedView$.subscribe((mode) => {
+      this.pageTitle = mode === 'admin'
+        ? 'Admin View'
+        : mode === 'master'
+          ? 'Master Agent View'
+          : 'Sub Agent View';
+    });
+  }
 }

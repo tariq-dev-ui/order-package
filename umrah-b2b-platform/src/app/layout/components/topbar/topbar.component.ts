@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AgentService } from '../../../core/services/agent.service';
 import { Agent } from '../../../core/models/agent.model';
 import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
+import { ViewMode, ViewModeService } from '../../../core/services/view-mode.service';
 
 @Component({
   selector: 'app-topbar',
@@ -36,12 +37,12 @@ import { LanguageSwitcherComponent } from '../../../shared/components/language-s
         <app-language-switcher />
 
         <!-- Role switcher (demo) -->
-        <div class="role-switcher">
+        <div class="role-switcher" [attr.data-mode]="selectedMode">
           <span class="material-icons-round rs-icon">swap_horiz</span>
-          <select class="rs-select" (change)="switchRole($event)">
-            <option value="admin-001">{{ 'topbar.roleView.admin' | translate }}</option>
-            <option value="master-001" selected>{{ 'topbar.roleView.masterAgent' | translate }}</option>
-            <option value="agent-001">{{ 'topbar.roleView.subAgent' | translate }}</option>
+          <select class="rs-select" [value]="selectedMode" (change)="switchRole($event)">
+            <option value="admin">{{ 'topbar.roleView.admin' | translate }}</option>
+            <option value="master">{{ 'topbar.roleView.masterAgent' | translate }}</option>
+            <option value="subAgent">{{ 'topbar.roleView.subAgent' | translate }}</option>
           </select>
         </div>
 
@@ -155,6 +156,21 @@ import { LanguageSwitcherComponent } from '../../../shared/components/language-s
       &:hover { border-color: var(--sero-border-strong); background: var(--sero-surface-3); }
     }
 
+    .role-switcher[data-mode='admin'] {
+      border-color: #b95c5c;
+      background: #fff4f4;
+    }
+
+    .role-switcher[data-mode='master'] {
+      border-color: #8c7b3d;
+      background: #fbf8ee;
+    }
+
+    .role-switcher[data-mode='subAgent'] {
+      border-color: #4f769b;
+      background: #f2f7fd;
+    }
+
     .rs-icon {
       font-size: 16px;
       color: var(--sero-text-muted);
@@ -253,16 +269,24 @@ export class TopbarComponent implements OnInit {
   @Input() breadcrumbs: { label: string; route?: string }[] = [];
 
   currentAgent: Agent | null = null;
+  selectedMode: ViewMode = 'master';
 
-  constructor(private agentService: AgentService) {}
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly viewModeService: ViewModeService
+  ) {}
 
   ngOnInit(): void {
     this.agentService.getCurrentAgent().subscribe(a => (this.currentAgent = a));
+    this.selectedMode = this.viewModeService.getCurrentMode();
+    this.viewModeService.selectedView$.subscribe((mode) => {
+      this.selectedMode = mode;
+    });
   }
 
   switchRole(event: Event): void {
-    const agentId = (event.target as HTMLSelectElement).value;
-    this.agentService.setCurrentAgent(agentId);
+    const mode = (event.target as HTMLSelectElement).value as ViewMode;
+    this.viewModeService.setMode(mode);
   }
 
   getInitials(name: string): string {

@@ -14,7 +14,7 @@ export class MockDataService {
   readonly agents: Agent[] = [
     {
       id: 'admin-001',
-      name: 'Mohammed Al-Rashid',
+      name: 'TARIQ AMER',
       companyName: 'Umrah Platform Admin',
       email: 'admin@umrahplatform.com',
       phone: '+966501234567',
