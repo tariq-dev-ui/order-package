@@ -88,6 +88,11 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     </header>
   `,
   styles: [`
+    :host {
+      display: block;
+      height: var(--sero-topbar-height);
+      flex-shrink: 0;
+    }
 
     /* ════ TOPBAR — matches RMS header design ════════════════════ */
     .sero-topbar {
@@ -98,8 +103,11 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       align-items: center;
       justify-content: space-between;
       padding: 0 28px;
-      position: sticky;
+      position: fixed;
       top: 0;
+      left: var(--layout-sidebar-offset, var(--sero-sidebar-width));
+      right: 0;
+      width: auto;
       z-index: 90;
       box-shadow: 0 1px 3px rgba(58, 71, 42, 0.06);
     }
@@ -336,10 +344,22 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
 
     /* ── RTL ── */
     :host-context([dir="rtl"]) .sero-topbar { direction: rtl; }
+    :host-context([dir="rtl"]) .sero-topbar {
+      left: 0;
+      right: var(--layout-sidebar-offset, var(--sero-sidebar-width));
+    }
     :host-context([dir="rtl"]) .topbar-left  { flex-direction: row-reverse; }
     :host-context([dir="rtl"]) .topbar-right { flex-direction: row-reverse; }
     :host-context([dir="rtl"]) .breadcrumb-trail { flex-direction: row-reverse; }
     :host-context([dir="rtl"]) .rs-value { text-align: end; }
+
+    @media (max-width: 1023px) {
+      .sero-topbar {
+        left: 0;
+        right: 0;
+        padding: 0 12px;
+      }
+    }
   `]
 })
 export class TopbarComponent implements OnInit {

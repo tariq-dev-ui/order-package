@@ -31,6 +31,7 @@ import { ViewModeService } from '../../core/services/view-mode.service';
 
     .sero-main {
       flex: 1;
+      --layout-sidebar-offset: var(--sero-sidebar-width);
       margin-left: var(--sero-sidebar-width);
       margin-right: 0;
       display: flex;
@@ -41,6 +42,7 @@ import { ViewModeService } from '../../core/services/view-mode.service';
     }
 
     .sero-main.sidebar-collapsed {
+      --layout-sidebar-offset: var(--sero-sidebar-collapsed);
       margin-left: var(--sero-sidebar-collapsed);
     }
 
@@ -53,11 +55,13 @@ import { ViewModeService } from '../../core/services/view-mode.service';
 
     /* RTL — sidebar is on the right */
     :host-context([dir="rtl"]) .sero-main {
+      --layout-sidebar-offset: var(--sero-sidebar-width);
       margin-left: 0;
       margin-right: var(--sero-sidebar-width);
     }
 
     :host-context([dir="rtl"]) .sero-main.sidebar-collapsed {
+      --layout-sidebar-offset: var(--sero-sidebar-collapsed);
       margin-left: 0;
       margin-right: var(--sero-sidebar-collapsed);
     }
@@ -65,6 +69,7 @@ import { ViewModeService } from '../../core/services/view-mode.service';
     @media (max-width: 1023px) {
       .sero-main,
       .sero-main.sidebar-collapsed {
+        --layout-sidebar-offset: 0px;
         margin-left: 0;
         margin-right: 0;
       }

@@ -29,15 +29,7 @@ interface NavGroup {
 
       <!-- ── Logo Header ── -->
       <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <div class="logo-mark">
-            <span class="material-icons-round">travel_explore</span>
-          </div>
-          <div class="logo-text-wrap">
-            <span class="logo-name">Sero</span>
-            <span class="logo-sub">B2B Platform</span>
-          </div>
-        </div>
+        <img class="sidebar-logo-img" src="/IMG/logo.png" alt="Sero" />
       </div>
 
       <!-- ── Navigation ── -->
@@ -96,7 +88,7 @@ interface NavGroup {
       width: var(--sero-sidebar-width);
       height: 100vh;
       background: var(--sero-surface-2);
-      border-inline-end: 1px solid var(--sero-border);
+      border-inline-end: 0.1px solid var(--sero-border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -109,7 +101,7 @@ interface NavGroup {
     /* ── Logo Header ── */
     .sidebar-header {
       height: var(--sero-topbar-height);
-      padding: 0 18px;
+      padding: 0 20px;
       background: var(--sero-card-bg);
       border-bottom: 1px solid var(--sero-border);
       display: flex;
@@ -117,48 +109,11 @@ interface NavGroup {
       flex-shrink: 0;
     }
 
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      direction: ltr;
-    }
-
-    .logo-mark {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-light) 100%);
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      flex-shrink: 0;
-      box-shadow: 0 2px 8px color-mix(in srgb, var(--sero-primary) 35%, transparent);
-
-      .material-icons-round { font-size: 21px; }
-    }
-
-    .logo-text-wrap {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .logo-name {
-      font-size: 1.0625rem;
-      font-weight: 800;
-      color: var(--sero-text-primary);
-      letter-spacing: -0.03em;
-      line-height: 1;
-    }
-
-    .logo-sub {
-      font-size: 0.6rem;
-      color: var(--sero-text-muted);
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 3px;
+    .sidebar-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     /* ── Navigation Scroll Area ── */
@@ -318,7 +273,7 @@ interface NavGroup {
     /* ── RTL ── */
     :host-context([dir="rtl"]) .sero-sidebar {
       border-inline-end: none;
-      border-inline-start: 1px solid var(--sero-border);
+      border-inline-start: 0.1px solid var(--sero-border);
     }
 
     :host-context([dir="rtl"]) .nav-item.active:not(.has-children)::after {
