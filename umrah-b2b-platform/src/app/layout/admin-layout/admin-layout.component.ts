@@ -46,7 +46,7 @@ import { ViewModeService } from '../../core/services/view-mode.service';
 
     .sero-content {
       flex: 1;
-      padding: 28px 32px;
+      padding: 24px 28px;
       background: var(--sero-app-bg);
       min-height: calc(100vh - var(--sero-topbar-height));
     }
@@ -60,6 +60,18 @@ import { ViewModeService } from '../../core/services/view-mode.service';
     :host-context([dir="rtl"]) .sero-main.sidebar-collapsed {
       margin-left: 0;
       margin-right: var(--sero-sidebar-collapsed);
+    }
+
+    @media (max-width: 1023px) {
+      .sero-main,
+      .sero-main.sidebar-collapsed {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .sero-content {
+        padding: 16px;
+      }
     }
   `]
 })

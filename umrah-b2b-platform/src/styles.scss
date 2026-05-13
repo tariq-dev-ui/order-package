@@ -2,7 +2,7 @@
 // SERO — UMRAH B2B PLATFORM  |  DESIGN SYSTEM v2
 // ============================================================
 
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
 
 // ============================================================
@@ -40,11 +40,11 @@
   --sero-info-border:     #b2d0e8;
 
   // ── Surface & background ───────────────────────────────────
-  --sero-app-bg:          #fefefc;
+  --sero-app-bg:          #f8f9f7;
   --sero-card-bg:         #ffffff;
-  --sero-surface-2:       #f7f8f4;
-  --sero-surface-3:       #f0f2eb;
-  --sero-surface-4:       #e8ebdf;
+  --sero-surface-2:       #f3f5f0;
+  --sero-surface-3:       #e9eee3;
+  --sero-surface-4:       #dde5d1;
   --sero-bg-hover:        #edf0eb;
   --sero-bg-selected:     #e8ede5;
 
@@ -56,9 +56,9 @@
   --sero-text-inverse:    #ffffff;
 
   // ── Border ─────────────────────────────────────────────────
-  --sero-border:          #d8decf;
-  --sero-border-light:    #eaeee4;
-  --sero-border-strong:   #c4cdb8;
+  --sero-border:          #ccd3bf;
+  --sero-border-light:    #e3e8db;
+  --sero-border-strong:   #b8c2a9;
 
   // ── Sidebar ────────────────────────────────────────────────
   --sero-sidebar-bg:          #1e2613;
@@ -67,16 +67,16 @@
   --sero-sidebar-text-hover:  rgba(255,255,255,.85);
   --sero-sidebar-text-active: #ffffff;
   --sero-sidebar-border:      rgba(255,255,255,.06);
-  --sero-sidebar-width:       264px;
-  --sero-sidebar-collapsed:   72px;
+  --sero-sidebar-width:       270px;
+  --sero-sidebar-collapsed:   80px;
 
   // ── Topbar ─────────────────────────────────────────────────
-  --sero-topbar-height:   64px;
+  --sero-topbar-height:   70px;
   --sero-topbar-bg:       #ffffff;
   --sero-topbar-border:   var(--sero-border);
 
   // ── Typography ─────────────────────────────────────────────
-  --sero-font:            'Tajawal', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --sero-font:            'Noto Kufi Arabic', 'Tajawal', 'Plus Jakarta Sans', system-ui, sans-serif;
 
   // ── Spacing scale (4px base) ───────────────────────────────
   --sp-1:   4px;
@@ -91,16 +91,16 @@
 
   // ── Radius ─────────────────────────────────────────────────
   --r-sm:   6px;
-  --r-md:   10px;
-  --r-lg:   14px;
+  --r-md:   7px;
+  --r-lg:   12px;
   --r-xl:   20px;
   --r-2xl:  28px;
   --r-full: 9999px;
 
   // ── Shadows (warm-tinted, premium) ─────────────────────────
   --shadow-xs:   0 1px 2px 0 rgba(42,53,36,.05);
-  --shadow-sm:   0 1px 4px 0 rgba(42,53,36,.08), 0 1px 2px -1px rgba(42,53,36,.04);
-  --shadow-md:   0 4px 8px -2px rgba(42,53,36,.10), 0 2px 4px -2px rgba(42,53,36,.05);
+  --shadow-sm:   0 1px 4px 0 rgba(42,53,36,.06), 0 1px 2px -1px rgba(42,53,36,.04);
+  --shadow-md:   0 3px 8px -2px rgba(42,53,36,.09), 0 2px 4px -2px rgba(42,53,36,.05);
   --shadow-lg:   0 10px 20px -4px rgba(42,53,36,.10), 0 4px 8px -4px rgba(42,53,36,.05);
   --shadow-xl:   0 20px 32px -8px rgba(42,53,36,.12), 0 8px 12px -6px rgba(42,53,36,.06);
   --shadow-card: 0 0 0 1px var(--sero-border), 0 2px 6px rgba(42,53,36,.05);
@@ -112,6 +112,40 @@
   --t-fast: 120ms ease;
   --t-base: 200ms ease;
   --t-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  // ── Theme variable aliases (cross-project compatibility) ───
+  --theme-primary:          var(--sero-primary);
+  --theme-primary-light:    var(--sero-primary-light);
+  --theme-primary-dark:     var(--sero-primary-dark);
+  --theme-accent:           var(--sero-gold);
+  --theme-accent-light:     var(--sero-gold-light);
+  --theme-success:          var(--sero-success);
+  --theme-success-light:    var(--sero-success-bg);
+  --theme-warning:          var(--sero-warning);
+  --theme-warning-light:    var(--sero-warning-bg);
+  --theme-danger:           var(--sero-danger);
+  --theme-danger-light:     var(--sero-danger-bg);
+  --theme-info:             var(--sero-info);
+  --theme-info-light:       var(--sero-info-bg);
+  --theme-bg:               var(--sero-app-bg);
+  --theme-bg-secondary:     var(--sero-surface-2);
+  --theme-bg-card:          var(--sero-card-bg);
+  --theme-bg-hover:         var(--sero-bg-hover);
+  --theme-bg-selected:      var(--sero-bg-selected);
+  --theme-bg-disabled:      var(--sero-surface-2);
+  --theme-text-primary:     var(--sero-text-primary);
+  --theme-text-secondary:   var(--sero-text-secondary);
+  --theme-text-tertiary:    var(--sero-text-muted);
+  --theme-text-disabled:    var(--sero-text-muted);
+  --theme-text-inverse:     var(--sero-text-inverse);
+  --theme-border:           var(--sero-border);
+  --theme-border-secondary: var(--sero-border-light);
+  --theme-border-hover:     var(--sero-border-strong);
+  --theme-border-focus:     var(--sero-primary);
+  --theme-shadow-sm:        var(--shadow-sm);
+  --theme-shadow-md:        var(--shadow-md);
+  --theme-shadow-lg:        var(--shadow-lg);
+  --theme-shadow-xl:        var(--shadow-xl);
 
   // ── Legacy aliases (for component compatibility) ────────────
   --color-primary:        var(--sero-primary);
@@ -564,41 +598,122 @@ select.form-control option:hover,
 }
 
 // ============================================================
-// SERO TABLE SYSTEM
+// SERO TABLE SYSTEM — RMS design
 // ============================================================
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: var(--r-lg);
+  overflow: hidden;
 
   thead tr {
-    background: var(--sero-surface-2);
-    border-bottom: 2px solid var(--sero-border);
+    background: var(--sero-primary);
   }
 
   th {
     padding: 12px 16px;
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 0.775rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--sero-text-tertiary);
-    text-align: left;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.88);
+    text-align: start;
     white-space: nowrap;
+    height: 44px;
   }
 
   td {
     padding: 13px 16px;
-    font-size: 0.8375rem;
+    font-size: 0.8125rem;
     color: var(--sero-text-primary);
-    border-bottom: 1px solid var(--sero-border-light);
+    border-bottom: 1px solid color-mix(in srgb, var(--sero-border) 55%, transparent);
     vertical-align: middle;
+    height: 52px;
   }
 
   tbody tr {
     transition: background var(--t-fast);
-    &:hover { background: var(--sero-primary-50); }
+    &:hover { background: #edf0eb; }
     &:last-child td { border-bottom: none; }
   }
+}
+
+// Table wrapper with card chrome
+.table-card {
+  background: var(--sero-card-bg);
+  border: 1px solid var(--sero-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+
+  .table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--sero-border-light);
+    gap: 12px;
+
+    .table-card-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--sero-text-primary);
+    }
+
+    .table-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+// Table action icon buttons — RMS style
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--sero-border);
+  background: var(--sero-card-bg);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  color: var(--sero-text-secondary);
+  padding: 0;
+
+  .material-icons-round { font-size: 14px; }
+
+  &:hover { border-color: var(--sero-border-strong); box-shadow: var(--shadow-sm); }
+
+  &.btn-view   { color: #546e7a; &:hover { background: #ecf4f7; border-color: #b0bec5; } }
+  &.btn-edit   { color: var(--sero-primary); &:hover { background: var(--sero-primary-50); border-color: var(--sero-primary-100); } }
+  &.btn-delete { color: var(--sero-danger); &:hover { background: var(--sero-danger-bg); border-color: var(--sero-danger-border); } }
+  &.btn-info   { color: var(--sero-info); &:hover { background: var(--sero-info-bg); border-color: var(--sero-info-border); } }
+  &.btn-approve{ color: var(--sero-success); &:hover { background: var(--sero-success-bg); border-color: var(--sero-success-border); } }
+}
+
+// Status pill (table cells) — RMS pill style
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+
+  &.pill-active    { background: #dcfce7; color: #16a34a; }
+  &.pill-inactive  { background: #fee2e2; color: #b71c1c; }
+  &.pill-pending   { background: var(--sero-warning-bg); color: #d97706; }
+  &.pill-confirmed { background: var(--sero-success-bg); color: var(--sero-success); }
+  &.pill-draft     { background: var(--sero-surface-3); color: var(--sero-text-secondary); }
+  &.pill-expired   { background: var(--sero-danger-bg); color: var(--sero-danger); }
+  &.pill-gold      { background: var(--sero-gold-50); color: var(--sero-gold-dark); }
+  &.pill-primary   { background: var(--sero-primary-50); color: var(--sero-primary-dark); }
 }
 
 // ============================================================
@@ -1108,6 +1223,66 @@ select.form-control option:hover,
 }
 
 // ============================================================
+// SALAM-STYLE MODAL PRIMITIVES
+// ============================================================
+.salam-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 34, 23, 0.42);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.salam-modal-panel {
+  width: min(720px, calc(100vw - 24px));
+  max-height: calc(100vh - 28px);
+  overflow: auto;
+  background: var(--sero-card-bg);
+  border: 1px solid var(--sero-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+}
+
+.salam-modal-header,
+.salam-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+}
+
+.salam-modal-header { border-bottom: 1px solid var(--sero-border-light); }
+.salam-modal-footer { border-top: 1px solid var(--sero-border-light); background: var(--sero-surface-2); }
+.salam-modal-body { padding: 16px; }
+
+// ============================================================
+// SALAM-STYLE SKELETON
+// ============================================================
+.salam-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 7px;
+  background: #edf1e8;
+}
+
+.salam-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.65) 50%, rgba(255,255,255,0) 100%);
+  animation: salam-shine 1.2s ease-in-out infinite;
+}
+
+@keyframes salam-shine {
+  100% { transform: translateX(100%); }
+}
+
+// ============================================================
 // RESPONSIVE
 // ============================================================
 @media (max-width: 1200px) {
@@ -1116,6 +1291,544 @@ select.form-control option:hover,
 }
 @media (max-width: 768px) {
   .grid-2, .grid-3, .grid-4, .grid-6 { grid-template-columns: 1fr; }
+}
+
+// ============================================================
+// SERO FORM BLOCK — luxury grouped form sections (RMS design)
+// ============================================================
+.sero-form-block {
+  --sero-block-accent: var(--sero-primary);
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid var(--sero-border);
+  border-top: 3px solid var(--sero-block-accent);
+  overflow: hidden;
+  background: var(--sero-card-bg);
+
+  &.sero-form-block--contact  { --sero-block-accent: #0d9488; }
+  &.sero-form-block--finance  { --sero-block-accent: #b45309; }
+  &.sero-form-block--address  { --sero-block-accent: #3b5bdb; }
+  &.sero-form-block--gold     { --sero-block-accent: var(--sero-gold); }
+  &.sero-form-block--success  { --sero-block-accent: var(--sero-success); }
+  &.sero-form-block--danger   { --sero-block-accent: var(--sero-danger); }
+
+  .sero-form-block-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px 12px;
+    background: color-mix(in srgb, var(--sero-block-accent) 5%, var(--sero-card-bg));
+    border-bottom: 1px solid color-mix(in srgb, var(--sero-block-accent) 15%, var(--sero-border));
+
+    .block-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--sero-block-accent) 12%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      .material-icons-round { font-size: 16px; color: var(--sero-block-accent); }
+    }
+
+    .block-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--sero-block-accent);
+    }
+  }
+
+  .sero-form-block-body {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+
+    @media (max-width: 560px) { grid-template-columns: 1fr; }
+  }
+}
+
+// ============================================================
+// FORM CONTROL — LUXURY VARIANT (RMS 50px style)
+// ============================================================
+.form-control--luxury {
+  min-height: 50px;
+  padding: 15px 16px;
+  border: 1.5px solid color-mix(in srgb, var(--sero-border) 88%, var(--sero-text-primary) 12%);
+  border-radius: 11px;
+  font-size: 0.9375rem;
+  color: var(--sero-text-primary);
+  background: var(--sero-card-bg);
+  transition: all var(--t-base);
+  outline: none;
+  appearance: none;
+  font-family: var(--sero-font);
+  width: 100%;
+
+  &:hover:not(:focus) {
+    border-color: color-mix(in srgb, var(--sero-primary) 28%, var(--sero-border));
+  }
+
+  &:focus {
+    border-color: color-mix(in srgb, var(--sero-primary) 45%, var(--sero-border));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sero-primary) 12%, transparent);
+  }
+
+  &::placeholder { color: var(--sero-text-muted); }
+}
+
+.form-label--luxury {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sero-text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+// ============================================================
+// LOADING STATES — skeleton + spinner (RMS patterns)
+// ============================================================
+.loading-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  &::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--sero-border);
+    border-top-color: var(--sero-primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  &.spinner-sm::after { width: 14px; height: 14px; }
+  &.spinner-lg::after { width: 28px; height: 28px; border-width: 3px; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--sero-card-bg) 75%, transparent);
+  border-radius: inherit;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--sero-surface-3) 25%,
+    var(--sero-surface-4) 50%,
+    var(--sero-surface-3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--r-sm);
+
+  &--text  { height: 14px; border-radius: 4px; }
+  &--title { height: 20px; border-radius: 4px; }
+  &--avatar{ border-radius: 50%; }
+  &--card  { border-radius: var(--r-lg); }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+// ============================================================
+// MODAL / DIALOG — RMS design
+// ============================================================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--sero-text-primary) 40%, transparent);
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-panel {
+  background: var(--sero-card-bg);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--sero-border);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &--sm { max-width: 400px; }
+  &--lg { max-width: 720px; }
+  &--xl { max-width: 960px; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--sero-border-light);
+  flex-shrink: 0;
+
+  .modal-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sero-text-primary);
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--sero-border);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--sero-text-secondary);
+    transition: all var(--t-fast);
+    padding: 0;
+    .material-icons-round { font-size: 16px; }
+    &:hover { background: var(--sero-surface-2); border-color: var(--sero-border-strong); }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sero-border-strong) transparent;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--sero-border-light);
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--sero-surface-2) 50%, var(--sero-card-bg));
+}
+
+// ============================================================
+// TABS — RMS design
+// ============================================================
+.sero-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--sero-border);
+  padding: 0 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.sero-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sero-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--t-fast), border-color var(--t-fast);
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: var(--sero-font);
+
+  .material-icons-round { font-size: 16px; }
+
+  &:hover { color: var(--sero-text-primary); }
+
+  &.active {
+    color: var(--sero-primary);
+    font-weight: 600;
+    border-bottom-color: var(--sero-primary);
+  }
+
+  .tab-badge {
+    background: var(--sero-surface-4);
+    color: var(--sero-text-secondary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  &.active .tab-badge {
+    background: var(--sero-primary-100);
+    color: var(--sero-primary);
+  }
+}
+
+.sero-tab-content { padding: 24px 0; }
+
+// Pill-style tabs variant
+.sero-tabs--pills {
+  border-bottom: none;
+  background: var(--sero-surface-2);
+  border-radius: var(--r-md);
+  padding: 4px;
+  gap: 2px;
+
+  .sero-tab {
+    border-bottom: none;
+    border-radius: 8px;
+    margin-bottom: 0;
+
+    &.active {
+      background: var(--sero-card-bg);
+      color: var(--sero-primary);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+// ============================================================
+// ALERT / NOTIFICATION CARD — RMS design
+// ============================================================
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-inline-start: 3px solid transparent;
+  font-size: 0.8375rem;
+  line-height: 1.55;
+
+  .alert-icon { flex-shrink: 0; .material-icons-round { font-size: 18px; margin-top: 1px; } }
+  .alert-body { flex: 1; min-width: 0; }
+  .alert-title { font-weight: 600; margin-bottom: 2px; }
+
+  &.alert-success {
+    background: var(--sero-success-bg);
+    border-inline-start-color: var(--sero-success);
+    color: var(--sero-success);
+  }
+  &.alert-warning {
+    background: var(--sero-warning-bg);
+    border-inline-start-color: var(--sero-warning);
+    color: var(--sero-warning);
+    .alert-title { color: var(--sero-text-primary); }
+  }
+  &.alert-danger {
+    background: var(--sero-danger-bg);
+    border-inline-start-color: var(--sero-danger);
+    color: var(--sero-danger);
+  }
+  &.alert-info {
+    background: var(--sero-primary-50);
+    border-inline-start-color: var(--sero-primary);
+    color: var(--sero-primary-dark);
+  }
+  &.alert-gold {
+    background: var(--sero-gold-50);
+    border-inline-start-color: var(--sero-gold);
+    color: var(--sero-gold-dark);
+  }
+}
+
+.notification-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-inline-start: 3px solid transparent;
+  padding: 12px 16px;
+  border-radius: 8px;
+
+  &.unread {
+    background: color-mix(in srgb, var(--sero-primary) 5%, transparent);
+    border-inline-start-color: var(--sero-primary);
+    font-weight: 500;
+  }
+
+  &:hover {
+    background: var(--sero-bg-hover);
+    transform: translateX(-2px);
+  }
+
+  .notif-type-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--sero-primary);
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .notif-text { font-size: 0.8125rem; color: var(--sero-text-primary); line-height: 1.5; }
+  .notif-time { font-size: 0.72rem; color: var(--sero-text-muted); margin-top: 4px; }
+}
+
+// ============================================================
+// TOAST (SweetAlert2-based, RMS animation system)
+// ============================================================
+.app-toast {
+  padding: 0.7rem 0.9rem 0.7rem 0.75rem !important;
+  border-radius: 10px !important;
+  min-width: 240px !important;
+  max-width: 340px !important;
+  box-shadow: var(--shadow-lg) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  font-family: var(--sero-font) !important;
+  background: var(--sero-card-bg) !important;
+  border: 1px solid var(--sero-border) !important;
+  border-inline-start: 3px solid var(--accent, var(--sero-primary)) !important;
+
+  &.app-toast--success { --accent: var(--sero-success); }
+  &.app-toast--error   { --accent: var(--sero-danger); }
+  &.app-toast--info    { --accent: var(--sero-primary); }
+  &.app-toast--warning { --accent: var(--sero-warning); }
+}
+
+.swal2-show.app-toast { animation: toastSlideIn 0.28s cubic-bezier(0.34, 1.2, 0.64, 1) both !important; }
+.swal2-hide.app-toast { animation: toastSlideOut 0.18s ease-in both !important; }
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(16px); }
+}
+
+[dir="rtl"] .swal2-show.app-toast { animation: toastSlideInRtl 0.28s cubic-bezier(0.34, 1.2, 0.64, 1) both !important; }
+[dir="rtl"] .swal2-hide.app-toast { animation: toastSlideOutRtl 0.18s ease-in both !important; }
+
+@keyframes toastSlideInRtl {
+  from { opacity: 0; transform: translateX(-20px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)     scale(1); }
+}
+@keyframes toastSlideOutRtl {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-16px); }
+}
+
+// ============================================================
+// SEARCH INPUT — RMS global search style
+// ============================================================
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+
+  .search-icon {
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sero-text-muted);
+    .material-icons-round { font-size: 18px; }
+    pointer-events: none;
+  }
+
+  input.search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px 0 40px;
+    border: 1px solid var(--sero-border);
+    border-radius: 10px;
+    font-size: 0.8375rem;
+    font-family: var(--sero-font);
+    color: var(--sero-text-primary);
+    background: var(--sero-surface-2);
+    transition: all var(--t-fast);
+    outline: none;
+
+    &::placeholder { color: var(--sero-text-muted); }
+
+    &:hover:not(:focus) {
+      border-color: var(--sero-border-strong);
+      background: var(--sero-surface-3);
+    }
+
+    &:focus {
+      background: var(--sero-card-bg);
+      border-color: var(--sero-primary);
+      box-shadow: 0 0 0 3px rgba(58, 71, 42, 0.10);
+    }
+  }
+}
+
+[dir="rtl"] .search-input-wrap input.search-input { padding: 0 40px 0 14px; }
+
+// ============================================================
+// FILTER BAR — RMS unified filter bar
+// ============================================================
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--sero-card-bg);
+  border-bottom: 1px solid var(--sero-border-light);
+  flex-wrap: wrap;
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .filter-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sero-text-muted);
+    white-space: nowrap;
+  }
+}
+
+// ============================================================
+// SCROLLBAR — update to match RMS thin olive style
+// ============================================================
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--sero-primary) 30%, transparent);
+  border-radius: 3px;
+  &:hover { background: color-mix(in srgb, var(--sero-primary) 50%, transparent); }
 }
 
 // ============================================================

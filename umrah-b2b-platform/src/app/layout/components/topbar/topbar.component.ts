@@ -88,6 +88,8 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     </header>
   `,
   styles: [`
+
+    /* ════ TOPBAR — matches RMS header design ════════════════════ */
     .sero-topbar {
       height: var(--sero-topbar-height);
       background: var(--sero-topbar-bg);
@@ -99,7 +101,7 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       position: sticky;
       top: 0;
       z-index: 90;
-      box-shadow: 0 1px 0 var(--sero-border), var(--shadow-xs);
+      box-shadow: 0 1px 3px rgba(58, 71, 42, 0.06);
     }
 
     .topbar-left {
@@ -108,11 +110,13 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       gap: 16px;
     }
 
+    .page-identity { display: flex; flex-direction: column; }
+
     .topbar-title {
       font-size: 1.0625rem;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--sero-text-primary);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.015em;
       line-height: 1;
     }
 
@@ -137,10 +141,7 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       font-weight: 500;
     }
 
-    .crumb-sep {
-      font-size: 12px;
-      color: var(--sero-border-strong);
-    }
+    .crumb-sep { font-size: 12px; color: var(--sero-border-strong); }
 
     .topbar-right {
       display: flex;
@@ -155,33 +156,29 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       margin: 0 4px;
     }
 
-    // ── Role Switcher ───────────────────────────────────────────
+    /* ── Role Switcher ── */
     .role-switcher {
-      display: flex;
-      align-items: center;
       position: relative;
-      width: 183px;
-      min-height: 31px;
-    }
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      min-width: 180px;
+      padding: 4px 10px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      background: var(--sero-surface-2);
+      transition: border-color var(--t-fast), background var(--t-fast);
+      gap: 6px;
 
-    .role-switcher[data-mode='admin'] {
-      border-color: #b95c5c;
-      background: #fff4f4;
-    }
+      &:hover { border-color: var(--sero-border-strong); background: var(--sero-surface-3); }
 
-    .role-switcher[data-mode='master'] {
-      border-color: #8c7b3d;
-      background: #fbf8ee;
-    }
-
-    .role-switcher[data-mode='subAgent'] {
-      border-color: #4f769b;
-      background: #f2f7fd;
+      &[data-mode='admin']    { border-color: #d8aaaa; background: #fff4f4; }
+      &[data-mode='master']   { border-color: #d8c98c; background: #fbf8ee; }
+      &[data-mode='subAgent'] { border-color: #9ab5d0; background: #f2f7fd; }
     }
 
     .rs-trigger {
       width: 100%;
-      min-height: 31px;
       border: none;
       background: transparent;
       display: flex;
@@ -191,13 +188,16 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       font-family: var(--sero-font);
       cursor: pointer;
       color: var(--sero-text-primary);
+      min-height: 28px;
     }
+
+    .sero-dropdown-icon { font-size: 16px; color: var(--sero-text-muted); flex-shrink: 0; }
 
     .rs-value {
       flex: 1;
       min-width: 0;
       text-align: start;
-      font-size: 0.8rem;
+      font-size: 0.8125rem;
       font-weight: 600;
       line-height: 1.2;
       white-space: nowrap;
@@ -206,9 +206,10 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     }
 
     .rs-chevron {
-      font-size: 18px;
+      font-size: 16px;
       color: var(--sero-text-muted);
       transition: transform var(--t-fast);
+      flex-shrink: 0;
       &.open { transform: rotate(180deg); }
     }
 
@@ -216,15 +217,15 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       position: absolute;
       top: calc(100% + 6px);
       inset-inline-start: 0;
-      width: 100%;
+      min-width: 100%;
       background: var(--sero-card-bg);
       border: 1px solid var(--sero-border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-lg);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.09), 0 2px 10px rgba(15, 23, 42, 0.04);
       padding: 6px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       z-index: 200;
       animation: fadeIn .14s ease;
     }
@@ -233,47 +234,51 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       border: 1px solid transparent;
       background: transparent;
       border-radius: 8px;
-      min-height: 34px;
+      min-height: 38px;
       text-align: start;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      padding: 8px 12px;
+      font-size: 0.8125rem;
+      font-weight: 500;
       color: var(--sero-text-primary);
       cursor: pointer;
       transition: all var(--t-fast);
+      font-family: var(--sero-font);
 
       &:hover {
-        background: var(--sero-surface-2);
+        background: var(--sero-bg-hover);
         border-color: var(--sero-border-light);
       }
 
       &.active {
-        background: var(--sero-primary-50);
+        background: var(--sero-bg-selected);
         color: var(--sero-primary-dark);
-        border-color: var(--sero-primary-100);
+        font-weight: 600;
       }
     }
 
-    // ── Icon buttons ────────────────────────────────────────────
+    /* ── Icon buttons — RMS style 36×36 ── */
     .topbar-icon-btn {
       width: 36px;
       height: 36px;
       border-radius: 8px;
       border: 1px solid var(--sero-border);
-      background: var(--sero-card-bg);
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       position: relative;
-      transition: all var(--t-fast);
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
       color: var(--sero-text-secondary);
+      padding: 0;
 
-      .material-icons-round { font-size: 18px; }
+      .material-icons-round { font-size: 20px; }
+
       &:hover {
-        background: var(--sero-surface-2);
-        border-color: var(--sero-border-strong);
-        color: var(--sero-text-primary);
+        background: color-mix(in srgb, var(--sero-primary) 8%, transparent);
+        border-color: color-mix(in srgb, var(--sero-primary) 35%, transparent);
+        color: var(--sero-primary);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       }
     }
 
@@ -284,21 +289,21 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       background: var(--sero-danger);
       border-radius: 50%;
       top: 7px;
-      right: 7px;
+      inset-inline-end: 7px;
       border: 1.5px solid var(--sero-card-bg);
     }
 
-    // ── User Chip ───────────────────────────────────────────────
+    /* ── User Chip — RMS style ── */
     .user-chip {
       display: flex;
       align-items: center;
       gap: 9px;
-      padding: 6px 10px 6px 6px;
+      padding: 5px 10px 5px 5px;
       border: 1px solid var(--sero-border);
       border-radius: 10px;
       cursor: pointer;
-      transition: all var(--t-fast);
-      background: var(--sero-card-bg);
+      transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      background: transparent;
 
       &:hover {
         background: var(--sero-surface-2);
@@ -308,8 +313,8 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     }
 
     .uc-avatar {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-light) 100%);
       border-radius: 8px;
       display: flex;
@@ -323,11 +328,18 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     }
 
     .uc-info {
-      .uc-name    { font-size: 0.8rem; font-weight: 700; color: var(--sero-text-primary); line-height: 1.2; }
-      .uc-company { font-size: 0.68rem; color: var(--sero-text-muted); }
+      .uc-name    { font-size: 0.8125rem; font-weight: 600; color: var(--sero-text-primary); line-height: 1.2; }
+      .uc-company { font-size: 0.69rem; color: var(--sero-text-muted); margin-top: 1px; }
     }
 
-    .uc-caret { font-size: 16px; color: var(--sero-text-muted); }
+    .uc-caret { font-size: 16px; color: var(--sero-text-muted); flex-shrink: 0; }
+
+    /* ── RTL ── */
+    :host-context([dir="rtl"]) .sero-topbar { direction: rtl; }
+    :host-context([dir="rtl"]) .topbar-left  { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .topbar-right { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .breadcrumb-trail { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .rs-value { text-align: end; }
   `]
 })
 export class TopbarComponent implements OnInit {
