@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 
 const emptyPage = () => import('./features/shared/placeholder/placeholder.component').then(m => m.PlaceholderComponent);
+const statisticsPage = () => import('./features/admin/statistics/statistics-page.component').then(m => m.StatisticsPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -9,8 +10,8 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-      { path: '', loadComponent: emptyPage },
-      { path: 'analytics', loadComponent: emptyPage },
+      { path: '', loadComponent: statisticsPage },
+      { path: 'analytics', loadComponent: statisticsPage },
       { path: 'distribution', loadComponent: emptyPage },
       { path: 'packages', loadComponent: emptyPage },
       { path: 'packages/builder', loadComponent: emptyPage },

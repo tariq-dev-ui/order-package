@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
 import { TopbarComponent } from '../components/topbar/topbar.component';
 import { LayoutService } from '../../core/services/layout.service';
 import { ViewModeService } from '../../core/services/view-mode.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-admin-layout',
@@ -15,7 +16,7 @@ import { ViewModeService } from '../../core/services/view-mode.service';
       <app-sidebar />
       <div class="sero-main"
            [class.sidebar-collapsed]="layout.sidebarCollapsed()">
-        <app-topbar [pageTitle]="pageTitle" />
+        <app-topbar />
         <main class="sero-content">
           <router-outlet />
         </main>
@@ -85,7 +86,8 @@ export class AdminLayoutComponent {
 
   constructor(
     public layout: LayoutService,
-    private readonly viewModeService: ViewModeService
+    private readonly viewModeService: ViewModeService,
+    private readonly router: Router
   ) {
     this.viewModeService.selectedView$.subscribe((mode) => {
       this.pageTitle = mode === 'admin'
@@ -94,5 +96,17 @@ export class AdminLayoutComponent {
           ? 'Master Agent View'
           : 'Sub Agent View';
     });
+
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        if (event.urlAfterRedirects.startsWith('/admin/analytics')) {
+          this.pageTitle = 'الإحصائيات';
+        }
+      });
+
+    if ((this.router.url || '').startsWith('/admin/analytics')) {
+      this.pageTitle = 'الإحصائيات';
+    }
   }
 }

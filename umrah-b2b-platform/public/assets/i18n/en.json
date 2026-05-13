@@ -168,6 +168,9 @@
   "topbar": {
     "notifications":  "Notifications",
     "help":           "Help & Support",
+    "profile":        "Profile",
+    "darkMode":       "Dark Mode",
+    "toggleSidebar":  "Toggle Sidebar",
     "roleView": {
       "admin":        "Admin View",
       "masterAgent":  "Master Agent View",

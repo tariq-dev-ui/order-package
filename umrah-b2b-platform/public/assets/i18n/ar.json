@@ -166,8 +166,11 @@
   },
 
   "topbar": {
-    "notifications": "الإشعارات",
-    "help":          "المساعدة والدعم",
+    "notifications":   "الإشعارات",
+    "help":            "المساعدة والدعم",
+    "profile":         "الملف الشخصي",
+    "darkMode":        "الوضع الليلي",
+    "toggleSidebar":   "تبديل الشريط الجانبي",
     "roleView": {
       "admin":       "عرض المدير",
       "masterAgent": "عرض الوكيل الرئيسي",
