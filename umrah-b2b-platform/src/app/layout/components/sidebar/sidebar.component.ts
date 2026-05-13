@@ -229,7 +229,7 @@ interface NavGroup {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 10px;
+      padding: 8px 10px 8px 14px;
       margin: 1px 8px 1px 0;
       border-radius: 7px;
       cursor: pointer;
@@ -245,6 +245,7 @@ interface NavGroup {
         background: var(--sero-bg-hover);
         color: var(--sero-text-primary);
         .child-icon { color: var(--sero-primary); }
+        &::before { background: color-mix(in srgb, var(--sero-primary) 55%, transparent); }
       }
 
       &.active {
@@ -252,6 +253,20 @@ interface NavGroup {
         color: var(--sero-primary-dark);
         font-weight: 600;
         .child-icon { color: var(--sero-primary); }
+        &::before { background: var(--sero-primary); }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset-inline-start: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 56%;
+        border-radius: 2px;
+        background: transparent;
+        transition: background 150ms ease;
       }
     }
 
@@ -278,6 +293,11 @@ interface NavGroup {
 
     :host-context([dir="rtl"]) .nav-item.active:not(.has-children)::after {
       border-radius: 0 2px 2px 0;
+    }
+
+    :host-context([dir="rtl"]) .nav-child {
+      margin: 1px 0 1px 8px;
+      padding: 8px 14px 8px 10px;
     }
   `]
 })
