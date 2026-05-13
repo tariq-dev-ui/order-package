@@ -750,8 +750,16 @@
       "selectAdjustment": "اختر نوع التعديل",
       "markup": "هامش الربح",
       "discount": "الخصم",
+      "costPrice": "سعر التكلفة",
+      "salePrice": "سعر البيع",
+      "finalSalePrice": "سعر البيع النهائي",
+      "costPricePlaceholder": "أدخل سعر التكلفة",
+      "salePricePlaceholder": "أدخل سعر البيع",
+      "finalSalePricePlaceholder": "أدخل سعر البيع النهائي",
       "apply": "تطبيق",
       "finalPackagePrice": "السعر النهائي للباقة",
+      "requiredWarning": "يرجى إدخال سعر التكلفة وسعر البيع وسعر البيع النهائي.",
+      "costWarning": "تنبيه: سعر البيع النهائي أقل من سعر التكلفة.",
       "hideBreakdown": "إخفاء تفاصيل الخدمات عن الوكيل وإظهار السعر النهائي فقط",
       "verificationStatus": "حالة الاعتماد / القفل",
       "verifiedLocked": "تم التحقق — مقفل",
@@ -760,6 +768,15 @@
         "markup": "هامش الربح",
         "discount": "الخصم"
       }
+    },
+    "packageType": {
+      "label": "نوع البكج",
+      "public": "عام",
+      "private": "بكج خاص",
+      "selectAgent": "اختر الوكيل",
+      "searchAgent": "ابحث عن وكيل",
+      "noAgentsFound": "لا يوجد وكيل مطابق لنتيجة البحث",
+      "privateAgentRequired": "يجب اختيار وكيل للبكج الخاص"
     }
   }
 }

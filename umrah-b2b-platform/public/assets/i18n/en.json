@@ -750,8 +750,16 @@
       "selectAdjustment": "Select adjustment type",
       "markup": "Markup",
       "discount": "Discount",
+      "costPrice": "Cost Price",
+      "salePrice": "Sale Price",
+      "finalSalePrice": "Final Sale Price",
+      "costPricePlaceholder": "Enter cost price",
+      "salePricePlaceholder": "Enter sale price",
+      "finalSalePricePlaceholder": "Enter final sale price",
       "apply": "Apply",
       "finalPackagePrice": "Final package price",
+      "requiredWarning": "Please enter cost price, sale price, and final sale price.",
+      "costWarning": "Warning: final sale price is lower than cost price.",
       "hideBreakdown": "Hide service breakdown from agent and show final price only",
       "verificationStatus": "Verification / lock status",
       "verifiedLocked": "Verified — locked",
@@ -760,6 +768,15 @@
         "markup": "Markup",
         "discount": "Discount"
       }
+    },
+    "packageType": {
+      "label": "Package Type",
+      "public": "Public",
+      "private": "Private Package",
+      "selectAgent": "Select Agent",
+      "searchAgent": "Search Agent",
+      "noAgentsFound": "No agents found",
+      "privateAgentRequired": "Agent selection is required for private package"
     }
   }
 }

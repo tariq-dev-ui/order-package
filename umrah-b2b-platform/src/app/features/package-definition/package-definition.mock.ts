@@ -6,8 +6,8 @@ export const PACKAGE_STEPS: PackageStep[] = [
   { id: 3, label: 'packageDefinition.steps.transport',     icon: 'directions_bus' },
   { id: 4, label: 'packageDefinition.steps.tickets',       icon: 'flight' },
   { id: 5, label: 'packageDefinition.steps.food',          icon: 'restaurant' },
-  { id: 6, label: 'packageDefinition.steps.other',         icon: 'checklist' },
-  { id: 7, label: 'packageDefinition.steps.pricing',       icon: 'payments' },
+  { id: 6, label: 'packageDefinition.steps.pricing',       icon: 'payments' },
+  { id: 7, label: 'packageDefinition.steps.other',         icon: 'checklist' },
 ];
 
 export const MAKKAH_NEIGHBORHOODS = [
@@ -143,4 +143,19 @@ export const PACKAGE_AGENTS = [
   'وكيل جدة',
   'وكيل الدمام',
   'وكيل المدينة',
+];
+
+export interface PrivatePackageAgent {
+  id: string;
+  name: string;
+  code: string;
+  company: string;
+}
+
+export const PRIVATE_PACKAGE_AGENTS: PrivatePackageAgent[] = [
+  { id: 'ag-101', name: 'عبدالله العتيبي', code: 'A-101', company: 'شركة مسار النور' },
+  { id: 'ag-102', name: 'محمد القرشي', code: 'A-102', company: 'شركة ضيافة الحرمين' },
+  { id: 'ag-103', name: 'خالد الزهراني', code: 'A-103', company: 'شركة بوابة مكة' },
+  { id: 'ag-104', name: 'ناصر الحربي', code: 'A-104', company: 'شركة أفق المدينة' },
+  { id: 'ag-105', name: 'إبراهيم المالكي', code: 'A-105', company: 'شركة روافد العمرة' },
 ];

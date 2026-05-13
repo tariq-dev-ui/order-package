@@ -61,6 +61,9 @@ export interface MealFormValues {
 
 export interface PackageDetailsFormValues {
   packageTitle: string;
+  packageType: 'public' | 'private';
+  assignedAgentId?: string;
+  assignedAgentName?: string;
   guestCount: number;
   quantity: number;
   packageCode: string;
@@ -69,17 +72,17 @@ export interface PackageDetailsFormValues {
   isPackageActive: boolean;
   includeVisa: boolean;
   tags: string;
-  agents: string;
 }
 
 export interface PricingFormValues {
   adjustPriceMode: string;
   markupPercent: number;
   discountPercent: number;
+  costPrice: number | null;
+  salePrice: number | null;
+  finalSalePrice: number | null;
   hideServiceBreakdown: boolean;
   verifiedLocked: boolean;
-  isApplied: boolean;
-  finalPrice: number;
 }
 
 export interface PackageDefinitionState {

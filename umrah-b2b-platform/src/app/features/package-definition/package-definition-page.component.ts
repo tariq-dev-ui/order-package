@@ -16,13 +16,15 @@ import {
   FOOD_TYPES,
   MEAL_PLANS,
   PACKAGE_TAGS,
-  PACKAGE_AGENTS
+  PRIVATE_PACKAGE_AGENTS,
+  PrivatePackageAgent
 } from './package-definition.mock';
 import { SeroDropdownComponent, SeroDropdownOption } from '../../shared/components/sero-dropdown/sero-dropdown.component';
 import { PackageStepperComponent } from './components/package-stepper/package-stepper.component';
 import { OrderSummarySidebarComponent } from './components/order-summary-sidebar/order-summary-sidebar.component';
 import { HotelStepFormComponent } from './components/hotel-step-form/hotel-step-form.component';
 import { CounterInputComponent } from './components/counter-input/counter-input.component';
+import { SeroDatePickerComponent } from '../../shared/components/sero-date-picker/sero-date-picker.component';
 
 const INITIAL_SUMMARY: OrderSummary = {
   makkahHotels: [],
@@ -51,6 +53,9 @@ const INITIAL_MEAL_FORM: MealFormValues = {
 
 const INITIAL_PACKAGE_DETAILS_FORM: PackageDetailsFormValues = {
   packageTitle: '',
+  packageType: 'public',
+  assignedAgentId: undefined,
+  assignedAgentName: undefined,
   guestCount: 1,
   quantity: 1,
   packageCode: '',
@@ -59,17 +64,17 @@ const INITIAL_PACKAGE_DETAILS_FORM: PackageDetailsFormValues = {
   isPackageActive: true,
   includeVisa: false,
   tags: '',
-  agents: '',
 };
 
 const INITIAL_PRICING_FORM: PricingFormValues = {
   adjustPriceMode: 'markup',
   markupPercent: 0,
   discountPercent: 0,
+  costPrice: null,
+  salePrice: null,
+  finalSalePrice: null,
   hideServiceBreakdown: false,
   verifiedLocked: true,
-  isApplied: false,
-  finalPrice: 0,
 };
 
 @Component({
@@ -83,6 +88,7 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
     HotelStepFormComponent,
     SeroDropdownComponent,
     CounterInputComponent,
+    SeroDatePickerComponent,
   ],
   template: `
     <div class="pkg-page">
@@ -393,7 +399,7 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
                 </div>
               </section>
             }
-            @case (6) {
+            @case (7) {
               <div class="step-section-header">
                 <span class="material-symbols-outlined step-section-icon">checklist</span>
                 <div class="step-section-content">
@@ -406,109 +412,177 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
               </div>
 
               <section class="step-form-panel">
-                <div class="field-row">
-                  <div class="field-group">
-                    <label class="field-label">عنوان الباقة</label>
-                    <input
-                      class="step-input"
-                      type="text"
-                      [value]="state().packageDetailsForm.packageTitle"
-                      placeholder="أدخل عنوان الباقة"
-                      (input)="setPackageTitle($any($event.target).value)" />
+                <section class="details-form-section">
+                  <div class="details-section-head">
+                    <h3>معلومات الباقة</h3>
+                    <p>حدّد نوع الباقة والبيانات الأساسية الخاصة بها</p>
                   </div>
-                  <div class="field-group field-counter">
-                    <label class="field-label">عدد الضيوف</label>
-                    <app-counter-input
-                      [value]="state().packageDetailsForm.guestCount"
-                      [min]="1"
-                      [max]="999"
-                      (valueChange)="setPackageGuestCount($event)" />
-                    <p class="field-hint">{{ state().packageDetailsForm.guestCount }} ضيف</p>
+                  <div class="field-row">
+                    <div class="field-group" [class.field-span-2]="state().packageDetailsForm.packageType === 'public'">
+                      <label class="field-label">{{ 'packageDefinition.packageType.label' | translate }}</label>
+                      <app-sero-dropdown
+                        [options]="packageTypeOptions"
+                        [value]="state().packageDetailsForm.packageType"
+                        [placeholder]="'packageDefinition.packageType.label' | translate"
+                        (valueChange)="setPackageType($event)" />
+                    </div>
+                    @if (state().packageDetailsForm.packageType === 'private') {
+                      <div class="field-group">
+                        <label class="field-label">{{ 'packageDefinition.packageType.selectAgent' | translate }}</label>
+                        <div class="agent-search-box">
+                          <span class="material-icons-round agent-search-icon">search</span>
+                          <input
+                            class="step-input agent-search-input"
+                            type="text"
+                            [placeholder]="'packageDefinition.packageType.searchAgent' | translate"
+                            [value]="agentSearchTerm()"
+                            (input)="setAgentSearch($any($event.target).value)" />
+                        </div>
+                        <div class="agent-search-results">
+                          @if (filteredPrivateAgents().length === 0) {
+                            <p class="agent-empty-state">{{ 'packageDefinition.packageType.noAgentsFound' | translate }}</p>
+                          } @else {
+                            @for (agent of filteredPrivateAgents(); track agent.id) {
+                              <button
+                                class="agent-result-item"
+                                type="button"
+                                [class.selected]="state().packageDetailsForm.assignedAgentId === agent.id"
+                                (click)="selectAssignedAgent(agent)">
+                                <span class="agent-result-name">{{ agent.name }}</span>
+                                <span class="agent-result-meta">{{ agent.code }} • {{ agent.company }}</span>
+                              </button>
+                            }
+                          }
+                        </div>
+                      </div>
+                    }
                   </div>
-                </div>
-                <div class="field-row">
-                  <div class="field-group field-counter">
-                    <label class="field-label">الكمية</label>
-                    <app-counter-input
-                      [value]="state().packageDetailsForm.quantity"
-                      [min]="1"
-                      [max]="999"
-                      (valueChange)="setPackageQuantity($event)" />
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label">عنوان الباقة</label>
+                      <input
+                        class="step-input"
+                        type="text"
+                        [value]="state().packageDetailsForm.packageTitle"
+                        placeholder="أدخل عنوان الباقة"
+                        (input)="setPackageTitle($any($event.target).value)" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">رمز الباقة</label>
+                      <input
+                        class="step-input"
+                        type="text"
+                        [value]="state().packageDetailsForm.packageCode"
+                        placeholder="أدخل رمز الباقة"
+                        (input)="setPackageCode($any($event.target).value)" />
+                    </div>
                   </div>
-                  <div class="field-group">
-                    <label class="field-label">تفعيل الباقة</label>
-                    <label class="step-switch">
-                      <span class="step-switch-label">تنشيط الباقة</span>
-                      <span class="apply-nights-switch">
-                        <input
-                          type="checkbox"
-                          [checked]="state().packageDetailsForm.isPackageActive"
-                          (change)="setPackageActive($any($event.target).checked)" />
-                        <span class="switch-track" aria-hidden="true"></span>
-                      </span>
-                    </label>
+                </section>
+
+                <section class="details-form-section">
+                  <div class="details-section-head">
+                    <h3>إعدادات الباقة</h3>
+                    <p>اضبط السعة والخيارات التشغيلية للباقة</p>
                   </div>
-                </div>
-                <div class="field-row">
-                  <div class="field-group">
-                    <label class="field-label">رمز الباقة</label>
-                    <input
-                      class="step-input"
-                      type="text"
-                      [value]="state().packageDetailsForm.packageCode"
-                      placeholder="أدخل رمز الباقة"
-                      (input)="setPackageCode($any($event.target).value)" />
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label">عدد الضيوف</label>
+                      <div class="counter-field-card">
+                        <app-counter-input
+                          [value]="state().packageDetailsForm.guestCount"
+                          [min]="1"
+                          [max]="999"
+                          (valueChange)="setPackageGuestCount($event)" />
+                      </div>
+                      <p class="field-hint">{{ state().packageDetailsForm.guestCount }} ضيف</p>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">الكمية</label>
+                      <div class="counter-field-card">
+                        <app-counter-input
+                          [value]="state().packageDetailsForm.quantity"
+                          [min]="1"
+                          [max]="999"
+                          (valueChange)="setPackageQuantity($event)" />
+                      </div>
+                    </div>
                   </div>
-                  <div class="field-group">
-                    <label class="field-label">تضمين التأشيرة</label>
-                    <label class="step-switch">
-                      <span class="step-switch-label">تضمين التأشيرة</span>
-                      <span class="apply-nights-switch">
-                        <input
-                          type="checkbox"
-                          [checked]="state().packageDetailsForm.includeVisa"
-                          (change)="setPackageIncludeVisa($any($event.target).checked)" />
-                        <span class="switch-track" aria-hidden="true"></span>
-                      </span>
-                    </label>
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label">تفعيل الباقة</label>
+                      <label class="toggle-field-card">
+                        <div class="toggle-field-copy">
+                          <span class="toggle-field-title">تنشيط الباقة</span>
+                          <span class="toggle-field-sub">إتاحة الباقة للحجز فور إنشائها</span>
+                        </div>
+                        <span class="apply-nights-switch">
+                          <input
+                            type="checkbox"
+                            [checked]="state().packageDetailsForm.isPackageActive"
+                            (change)="setPackageActive($any($event.target).checked)" />
+                          <span class="switch-track" aria-hidden="true"></span>
+                        </span>
+                      </label>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">تضمين التأشيرة</label>
+                      <label class="toggle-field-card">
+                        <div class="toggle-field-copy">
+                          <span class="toggle-field-title">تضمين التأشيرة</span>
+                          <span class="toggle-field-sub">عرض التأشيرة ضمن مكونات الباقة</span>
+                        </div>
+                        <span class="apply-nights-switch">
+                          <input
+                            type="checkbox"
+                            [checked]="state().packageDetailsForm.includeVisa"
+                            (change)="setPackageIncludeVisa($any($event.target).checked)" />
+                          <span class="switch-track" aria-hidden="true"></span>
+                        </span>
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div class="field-row">
-                  <div class="field-group">
-                    <label class="field-label">تاريخ البداية</label>
-                    <input
-                      class="step-input"
-                      type="date"
-                      [value]="state().packageDetailsForm.startDate"
-                      (input)="setPackageStartDate($any($event.target).value)" />
+                </section>
+
+                <section class="details-form-section">
+                  <div class="details-section-head">
+                    <h3>صلاحية الباقة</h3>
+                    <p>حدد فترة توفر الباقة للوكلاء والعملاء</p>
                   </div>
-                  <div class="field-group">
-                    <label class="field-label">تاريخ النهاية</label>
-                    <input
-                      class="step-input"
-                      type="date"
-                      [value]="state().packageDetailsForm.endDate"
-                      (input)="setPackageEndDate($any($event.target).value)" />
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label">تاريخ البداية</label>
+                      <app-sero-date-picker
+                        [value]="state().packageDetailsForm.startDate"
+                        placeholder="اختر تاريخ البداية"
+                        (valueChange)="setPackageStartDate($event)" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">تاريخ النهاية</label>
+                      <app-sero-date-picker
+                        [value]="state().packageDetailsForm.endDate"
+                        placeholder="اختر تاريخ النهاية"
+                        (valueChange)="setPackageEndDate($event)" />
+                    </div>
                   </div>
-                </div>
-                <div class="field-row">
-                  <div class="field-group">
-                    <label class="field-label">إضافة وسوم</label>
-                    <app-sero-dropdown
-                      [options]="packageTagOptions"
-                      [value]="state().packageDetailsForm.tags"
-                      placeholder="اختر وسمًا"
-                      (valueChange)="setPackageTags($event)" />
+                </section>
+
+                <section class="details-form-section">
+                  <div class="details-section-head">
+                    <h3>التخصيص</h3>
+                    <p>أضف الوسوم المناسبة لتسهيل إدارة الباقة</p>
                   </div>
-                  <div class="field-group">
-                    <label class="field-label">اختر الوكلاء</label>
-                    <app-sero-dropdown
-                      [options]="packageAgentOptions"
-                      [value]="state().packageDetailsForm.agents"
-                      placeholder="اختر وكيلًا"
-                      (valueChange)="setPackageAgents($event)" />
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label">إضافة وسوم</label>
+                      <app-sero-dropdown
+                        [options]="packageTagOptions"
+                        [value]="state().packageDetailsForm.tags"
+                        placeholder="اختر وسمًا"
+                        (valueChange)="setPackageTags($event)" />
+                    </div>
+                    <div class="field-group"></div>
                   </div>
-                </div>
+                </section>
 
                 @if (showPackageDetailsValidation()) {
                   <div class="step-warning">
@@ -516,17 +590,23 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
                     يرجى تعبئة جميع الحقول المطلوبة أعلاه لإكمال الخطوة.
                   </div>
                 }
+                @if (showPrivatePackageAgentValidation()) {
+                  <div class="step-warning">
+                    <span class="material-icons-round step-warn-icon">info</span>
+                    {{ 'packageDefinition.packageType.privateAgentRequired' | translate }}
+                  </div>
+                }
 
                 <div class="step-form-footer">
                   <div class="footer-right"></div>
                   <div class="footer-left">
-                    <button class="btn-outline" type="button" (click)="goToStep(5)">السابق</button>
-                    <button class="btn-primary" type="button" [disabled]="!packageDetailsFormComplete()" (click)="goToStep(7)">التالي</button>
+                    <button class="btn-outline" type="button" (click)="goToStep(6)">السابق</button>
+                    <button class="btn-primary" type="button" [disabled]="!packageDetailsFormComplete() || !pricingFormComplete()" (click)="onCreatePackage()">التالي</button>
                   </div>
                 </div>
               </section>
             }
-            @case (7) {
+            @case (6) {
               <div class="step-section-header">
                 <span class="material-symbols-outlined step-section-icon">payments</span>
                 <div class="step-section-content">
@@ -573,6 +653,44 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
                       (input)="setPricingDiscountPercent($any($event.target).value)" />
                   </div>
                 </div>
+                <div class="field-row pricing-price-row">
+                  <div class="field-group">
+                    <label class="field-label">{{ 'packageDefinition.pricingStep.costPrice' | translate }}</label>
+                    <input
+                      class="step-input"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      [placeholder]="'packageDefinition.pricingStep.costPricePlaceholder' | translate"
+                      [value]="state().pricingForm.costPrice ?? ''"
+                      (input)="setPricingCostPrice($any($event.target).value)" />
+                    <p class="field-hint">{{ formatSar(state().pricingForm.costPrice) }}</p>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">{{ 'packageDefinition.pricingStep.salePrice' | translate }}</label>
+                    <input
+                      class="step-input"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      [placeholder]="'packageDefinition.pricingStep.salePricePlaceholder' | translate"
+                      [value]="state().pricingForm.salePrice ?? ''"
+                      (input)="setPricingSalePrice($any($event.target).value)" />
+                    <p class="field-hint">{{ formatSar(state().pricingForm.salePrice) }}</p>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">{{ 'packageDefinition.pricingStep.finalSalePrice' | translate }}</label>
+                    <input
+                      class="step-input"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      [placeholder]="'packageDefinition.pricingStep.finalSalePricePlaceholder' | translate"
+                      [value]="state().pricingForm.finalSalePrice ?? ''"
+                      (input)="setPricingFinalSalePrice($any($event.target).value)" />
+                    <p class="field-hint">{{ formatSar(state().pricingForm.finalSalePrice) }}</p>
+                  </div>
+                </div>
                 <div class="step-form-footer">
                   <div class="footer-right">
                     <button class="btn-secondary" type="button" (click)="applyPricing()">
@@ -580,17 +698,24 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
                     </button>
                   </div>
                   <div class="footer-left">
-                    <button class="btn-outline" type="button" (click)="goToStep(6)">{{ 'common.buttons.back' | translate }}</button>
-                    <button class="btn-primary" type="button">{{ 'packageDefinition.actions.createPackage' | translate }}</button>
+                    <button class="btn-outline" type="button" (click)="goToStep(5)">{{ 'common.buttons.back' | translate }}</button>
+                    <button class="btn-primary" type="button" [disabled]="!pricingFormComplete()" (click)="goToStep(7)">
+                      {{ 'common.buttons.next' | translate }}
+                    </button>
                   </div>
                 </div>
-                <div class="pricing-final">
-                  <p>{{ 'packageDefinition.pricingStep.finalPackagePrice' | translate }}</p>
-                  <div class="price-value">
-                    {{ state().pricingForm.isApplied ? state().pricingForm.finalPrice : servicesBasePrice }}
-                    <span>{{ 'common.labels.currency' | translate }}</span>
+                @if (showPricingRequiredValidation()) {
+                  <div class="step-warning">
+                    <span class="material-icons-round step-warn-icon">info</span>
+                    {{ 'packageDefinition.pricingStep.requiredWarning' | translate }}
                   </div>
-                </div>
+                }
+                @if (showPricingCostWarning()) {
+                  <div class="step-warning">
+                    <span class="material-icons-round step-warn-icon">warning</span>
+                    {{ 'packageDefinition.pricingStep.costWarning' | translate }}
+                  </div>
+                }
                 <div class="field-row">
                   <div class="field-group">
                     <label class="step-switch">
@@ -835,10 +960,42 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
       gap: 16px;
     }
 
+    .pricing-price-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .field-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
+    }
+
+    .field-span-2 {
+      grid-column: 1 / -1;
+    }
+
+    .details-form-section {
+      border: 1px solid var(--sero-border-light);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--sero-card-bg) 94%, #fff);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .details-section-head h3 {
+      margin: 0;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--sero-text-primary);
+    }
+
+    .details-section-head p {
+      margin: 4px 0 0;
+      font-size: 0.76rem;
+      color: var(--sero-text-secondary);
+      line-height: 1.45;
     }
 
     .field-label {
@@ -857,6 +1014,92 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
 
     .field-counter app-counter-input {
       width: fit-content;
+    }
+
+    .counter-field-card {
+      min-height: 42px;
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      background: var(--sero-card-bg);
+      padding: 4px;
+      width: fit-content;
+    }
+
+    .counter-field-card app-counter-input {
+      width: fit-content;
+    }
+
+    .agent-search-box {
+      position: relative;
+    }
+
+    .agent-search-icon {
+      position: absolute;
+      inset-inline-start: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: var(--sero-text-muted);
+      pointer-events: none;
+    }
+
+    .agent-search-input {
+      padding-inline-start: 34px;
+    }
+
+    .agent-search-results {
+      border: 1px solid var(--sero-border-light);
+      border-radius: 10px;
+      background: var(--sero-card-bg);
+      max-height: 184px;
+      overflow: auto;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .agent-result-item {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      padding: 8px 10px;
+      text-align: start;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+
+    .agent-result-item:hover {
+      background: var(--sero-bg-hover);
+      border-color: var(--sero-border-light);
+    }
+
+    .agent-result-item.selected {
+      background: var(--sero-bg-selected);
+      border-color: color-mix(in srgb, var(--sero-primary) 25%, var(--sero-border-light));
+    }
+
+    .agent-result-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sero-text-primary);
+    }
+
+    .agent-result-meta {
+      font-size: 0.75rem;
+      color: var(--sero-text-secondary);
+      line-height: 1.4;
+    }
+
+    .agent-empty-state {
+      margin: 0;
+      padding: 8px;
+      text-align: center;
+      color: var(--sero-text-muted);
+      font-size: 0.78rem;
     }
 
     .field-hint {
@@ -1039,6 +1282,38 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
       font-weight: 600;
     }
 
+    .toggle-field-card {
+      min-height: 54px;
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      background: var(--sero-card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      cursor: pointer;
+    }
+
+    .toggle-field-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .toggle-field-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--sero-text-primary);
+    }
+
+    .toggle-field-sub {
+      font-size: 0.73rem;
+      color: var(--sero-text-secondary);
+      line-height: 1.35;
+    }
+
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1178,6 +1453,7 @@ const INITIAL_PRICING_FORM: PricingFormValues = {
       }
 
       .field-row,
+      .pricing-price-row,
       .field-grid-4,
       .pricing-grid,
       .pricing-verify {
@@ -1237,13 +1513,19 @@ export class PackageDefinitionPageComponent {
   readonly packageTagOptions: SeroDropdownOption<string>[] =
     PACKAGE_TAGS.map((value) => ({ value, label: value }));
 
-  readonly packageAgentOptions: SeroDropdownOption<string>[] =
-    PACKAGE_AGENTS.map((value) => ({ value, label: value }));
+  get packageTypeOptions(): SeroDropdownOption<'public' | 'private'>[] {
+    return [
+      { value: 'public', label: this.translate.instant('packageDefinition.packageType.public') },
+      { value: 'private', label: this.translate.instant('packageDefinition.packageType.private') },
+    ];
+  }
 
   readonly transportGuestsCount = signal(1);
   private readonly transportAttempted = signal(false);
   private readonly flightAttempted = signal(false);
   private readonly mealAttempted = signal(false);
+  private readonly pricingAttempted = signal(false);
+  readonly agentSearchTerm = signal('');
 
   private readonly _state = signal<PackageDefinitionState>({
     currentStep: 1,
@@ -1270,8 +1552,8 @@ export class PackageDefinitionPageComponent {
       3: s.orderSummary.hasTransport ? 'completed' : 'incomplete',
       4: (s.flights.length > 0 || s.orderSummary.hasTickets) ? 'completed' : 'incomplete',
       5: (s.meals.length > 0 || s.orderSummary.hasMeals) ? 'completed' : 'incomplete',
-      6: this.packageDetailsFormComplete() ? 'completed' : 'incomplete',
-      7: (s.pricingForm.isApplied && s.pricingForm.finalPrice > 0) ? 'completed' : 'incomplete',
+      6: this.pricingFormComplete() ? 'completed' : 'incomplete',
+      7: this.packageDetailsFormComplete() ? 'completed' : 'incomplete',
     };
   });
 
@@ -1416,6 +1698,47 @@ export class PackageDefinitionPageComponent {
     this._state.update((s) => ({ ...s, packageDetailsForm: { ...s.packageDetailsForm, packageTitle: value } }));
   }
 
+  filteredPrivateAgents(): PrivatePackageAgent[] {
+    const term = this.agentSearchTerm().trim().toLowerCase();
+    if (!term) {
+      return PRIVATE_PACKAGE_AGENTS;
+    }
+    return PRIVATE_PACKAGE_AGENTS.filter((agent) =>
+      agent.name.toLowerCase().includes(term)
+      || agent.code.toLowerCase().includes(term)
+      || agent.company.toLowerCase().includes(term)
+    );
+  }
+
+  setAgentSearch(value: string): void {
+    this.agentSearchTerm.set(value);
+  }
+
+  setPackageType(value: 'public' | 'private'): void {
+    this.agentSearchTerm.set('');
+    this._state.update((s) => ({
+      ...s,
+      packageDetailsForm: {
+        ...s.packageDetailsForm,
+        packageType: value,
+        assignedAgentId: value === 'private' ? s.packageDetailsForm.assignedAgentId : undefined,
+        assignedAgentName: value === 'private' ? s.packageDetailsForm.assignedAgentName : undefined,
+      }
+    }));
+  }
+
+  selectAssignedAgent(agent: PrivatePackageAgent): void {
+    this.agentSearchTerm.set(agent.name);
+    this._state.update((s) => ({
+      ...s,
+      packageDetailsForm: {
+        ...s.packageDetailsForm,
+        assignedAgentId: agent.id,
+        assignedAgentName: agent.name,
+      }
+    }));
+  }
+
   setPackageGuestCount(value: number): void {
     const normalized = Number.isFinite(Number(value)) && Number(value) >= 1 ? Math.floor(Number(value)) : 1;
     this._state.update((s) => ({ ...s, packageDetailsForm: { ...s.packageDetailsForm, guestCount: normalized } }));
@@ -1448,10 +1771,6 @@ export class PackageDefinitionPageComponent {
 
   setPackageTags(value: string): void {
     this._state.update((s) => ({ ...s, packageDetailsForm: { ...s.packageDetailsForm, tags: value } }));
-  }
-
-  setPackageAgents(value: string): void {
-    this._state.update((s) => ({ ...s, packageDetailsForm: { ...s.packageDetailsForm, agents: value } }));
   }
 
   get pricingAdjustModeOptions(): SeroDropdownOption<string>[] {
@@ -1493,6 +1812,34 @@ export class PackageDefinitionPageComponent {
     this._state.update((s) => ({ ...s, pricingForm: { ...s.pricingForm, discountPercent: normalized } }));
   }
 
+  setPricingCostPrice(value: string): void {
+    const normalized = this.parseNonNegativeCurrency(value);
+    this._state.update((s) => ({ ...s, pricingForm: { ...s.pricingForm, costPrice: normalized } }));
+  }
+
+  setPricingSalePrice(value: string): void {
+    const normalized = this.parseNonNegativeCurrency(value);
+    this._state.update((s) => ({
+      ...s,
+      pricingForm: {
+        ...s.pricingForm,
+        salePrice: normalized,
+        finalSalePrice: normalized,
+      }
+    }));
+  }
+
+  setPricingFinalSalePrice(value: string): void {
+    const normalized = this.parseNonNegativeCurrency(value);
+    this._state.update((s) => ({
+      ...s,
+      pricingForm: {
+        ...s.pricingForm,
+        finalSalePrice: normalized,
+      }
+    }));
+  }
+
   setPricingHideBreakdown(value: boolean): void {
     this._state.update((s) => ({ ...s, pricingForm: { ...s.pricingForm, hideServiceBreakdown: value } }));
   }
@@ -1502,21 +1849,63 @@ export class PackageDefinitionPageComponent {
   }
 
   applyPricing(): void {
-    const base = this.servicesBasePrice;
+    this.pricingAttempted.set(true);
+    const base = this.state().pricingForm.costPrice ?? this.servicesBasePrice;
     const pricing = this.state().pricingForm;
-    const markup = (base * pricing.markupPercent) / 100;
-    const subtotal = base + markup;
-    const discountAmount = (subtotal * pricing.discountPercent) / 100;
-    const finalPrice = Math.max(subtotal - discountAmount, 0);
+    const salePrice = pricing.adjustPriceMode === 'markup'
+      ? base + ((base * pricing.markupPercent) / 100)
+      : Math.max(base - ((base * pricing.discountPercent) / 100), 0);
+    const finalSalePrice = salePrice;
 
     this._state.update((s) => ({
       ...s,
       pricingForm: {
         ...s.pricingForm,
-        isApplied: true,
-        finalPrice: Number(finalPrice.toFixed(2)),
+        costPrice: Number(base.toFixed(2)),
+        salePrice: Number(salePrice.toFixed(2)),
+        finalSalePrice: Number(finalSalePrice.toFixed(2)),
       }
     }));
+  }
+
+  pricingFormComplete(): boolean {
+    const p = this.state().pricingForm;
+    return p.costPrice !== null && p.salePrice !== null && p.finalSalePrice !== null;
+  }
+
+  showPricingRequiredValidation(): boolean {
+    return this.pricingAttempted() && !this.pricingFormComplete();
+  }
+
+  showPricingCostWarning(): boolean {
+    const p = this.state().pricingForm;
+    if (p.finalSalePrice === null || p.costPrice === null) {
+      return false;
+    }
+    return p.finalSalePrice < p.costPrice;
+  }
+
+  onCreatePackage(): void {
+    this.pricingAttempted.set(true);
+    if (!this.pricingFormComplete()) {
+      return;
+    }
+  }
+
+  formatSar(value: number | null): string {
+    const amount = value ?? 0;
+    return `${amount.toFixed(2)} ${this.translate.instant('common.labels.currency')}`;
+  }
+
+  private parseNonNegativeCurrency(value: string): number | null {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return null;
+    }
+    return Math.max(parsed, 0);
   }
 
   packageDetailsFormComplete(): boolean {
@@ -1526,7 +1915,8 @@ export class PackageDefinitionPageComponent {
       && form.quantity > 0
       && !!form.packageCode.trim()
       && !!form.startDate
-      && !!form.endDate;
+      && !!form.endDate
+      && (form.packageType === 'public' || !!form.assignedAgentId);
   }
 
   showPackageDetailsValidation(): boolean {
@@ -1536,8 +1926,20 @@ export class PackageDefinitionPageComponent {
       || !!form.startDate
       || !!form.endDate
       || form.guestCount > 1
-      || form.quantity > 1;
-    return hasStarted && !this.packageDetailsFormComplete();
+      || form.quantity > 1
+      || form.packageType === 'private';
+    const coreRequiredComplete = !!form.packageTitle.trim()
+      && form.guestCount > 0
+      && form.quantity > 0
+      && !!form.packageCode.trim()
+      && !!form.startDate
+      && !!form.endDate;
+    return hasStarted && !coreRequiredComplete;
+  }
+
+  showPrivatePackageAgentValidation(): boolean {
+    const form = this.state().packageDetailsForm;
+    return form.packageType === 'private' && !form.assignedAgentId;
   }
 
   flightFormComplete(): boolean {
