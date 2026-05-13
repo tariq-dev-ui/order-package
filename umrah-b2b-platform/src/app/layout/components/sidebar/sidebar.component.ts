@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../core/services/layout.service';
 
@@ -23,7 +24,7 @@ interface NavGroup {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   template: `
     <aside class="sero-sidebar">
 
@@ -42,7 +43,7 @@ interface NavGroup {
                [class.active]="isActive(group.route!, group.exact)"
                [routerLink]="group.route">
               <span class="material-icons-round nav-icon">{{ group.icon }}</span>
-              <span class="nav-label">{{ group.label }}</span>
+              <span class="nav-label">{{ group.label | translate }}</span>
             </a>
 
           } @else {
@@ -54,7 +55,7 @@ interface NavGroup {
                       [class.open]="isGroupOpen(group.id)"
                       (click)="toggleGroup(group.id)">
                 <span class="material-icons-round nav-icon">{{ group.icon }}</span>
-                <span class="nav-label">{{ group.label }}</span>
+                <span class="nav-label">{{ group.label | translate }}</span>
                 <span class="material-icons-round nav-chevron"
                       [class.open]="isGroupOpen(group.id)">expand_more</span>
               </button>
@@ -66,7 +67,7 @@ interface NavGroup {
                        [class.active]="isActive(child.route, child.exact)"
                        [routerLink]="child.route">
                       <span class="material-icons-round child-icon">{{ child.icon }}</span>
-                      <span class="child-label">{{ child.label }}</span>
+                      <span class="child-label">{{ child.label | translate }}</span>
                     </a>
                   }
                 </div>
@@ -310,58 +311,116 @@ export class SidebarComponent implements OnInit, OnDestroy {
   readonly navGroups: NavGroup[] = [
     {
       id: 'analytics',
-      label: 'الإحصائيات',
+      label: 'sidebar.nav.statisticsGroup',
       icon: 'bar_chart',
       route: '/admin/analytics'
     },
     {
       id: 'orders',
-      label: 'إدارة الطلبات',
+      label: 'sidebar.nav.ordersGroup',
       icon: 'assignment',
       children: [
-        { label: 'تعريف باقة جديدة', route: '/admin/packages/builder', icon: 'add_circle_outline' },
-        { label: 'باقات الوكلاء',    route: '/admin/packages',         icon: 'inventory',         exact: true },
-        { label: 'طلب جديد',         route: '/admin/orders/new',       icon: 'add_shopping_cart', exact: true },
-        { label: 'طلبات الوكلاء',   route: '/agent/orders',            icon: 'list_alt' }
+        { label: 'sidebar.nav.defineNewPackage', route: '/admin/packages/builder', icon: 'add_circle_outline' },
+        { label: 'sidebar.nav.agentPackages',    route: '/admin/packages',         icon: 'inventory',         exact: true },
+        { label: 'sidebar.nav.newOrder',         route: '/admin/orders/new',       icon: 'add_shopping_cart', exact: true },
+        { label: 'sidebar.nav.agentOrders',      route: '/agent/orders',           icon: 'list_alt' }
       ]
     },
     {
       id: 'operations',
-      label: 'إدارة العمليات',
+      label: 'sidebar.nav.operationsGroup',
       icon: 'tune',
       children: [
-        { label: 'حجوزات الفنادق',  route: '/admin/operations/hotels',    icon: 'hotel' },
-        { label: 'طلبات الفيزا',    route: '/admin/operations/visa',      icon: 'badge' },
-        { label: 'طلبات المواصلات', route: '/admin/operations/transport', icon: 'directions_bus' },
-        { label: 'طلبات الاعاشة',   route: '/admin/operations/catering',  icon: 'restaurant' },
-        { label: 'طلبات الطيران',   route: '/admin/operations/flights',   icon: 'flight' }
+        { label: 'sidebar.nav.hotelBookings',     route: '/admin/operations/hotels',    icon: 'hotel' },
+        { label: 'sidebar.nav.visaRequests',      route: '/admin/operations/visa',      icon: 'badge' },
+        { label: 'sidebar.nav.transportRequests', route: '/admin/operations/transport', icon: 'directions_bus' },
+        { label: 'sidebar.nav.cateringRequests',  route: '/admin/operations/catering',  icon: 'restaurant' },
+        { label: 'sidebar.nav.flightRequests',    route: '/admin/operations/flights',   icon: 'flight' }
       ]
     },
     {
       id: 'pricing',
-      label: 'التسعيرات',
+      label: 'sidebar.nav.pricingGroup',
       icon: 'price_change',
       children: [
-        { label: 'تسعيرات النقل',   route: '/admin/pricing/transport', icon: 'directions_car' },
-        { label: 'تسعيرات التغذية', route: '/admin/pricing/food',      icon: 'restaurant_menu' },
-        { label: 'تسعيرات الفندق',  route: '/admin/pricing/hotel',    icon: 'business' }
+        { label: 'sidebar.nav.transportPricing', route: '/admin/pricing/transport', icon: 'directions_car' },
+        { label: 'sidebar.nav.foodPricing',      route: '/admin/pricing/food',      icon: 'restaurant_menu' },
+        { label: 'sidebar.nav.hotelPricing',     route: '/admin/pricing/hotel',     icon: 'business' }
       ]
     },
     {
       id: 'service',
-      label: 'مركز الخدمة',
+      label: 'sidebar.nav.serviceCenterGroup',
       icon: 'support_agent',
-      route: '/admin/service-center'
+      children: [
+        { label: 'sidebar.nav.newRfq',          route: '/admin/service-center/rfq/new',     icon: 'request_quote', exact: true },
+        { label: 'sidebar.nav.currentRequests', route: '/admin/service-center/rfq/current', icon: 'pending_actions' },
+        { label: 'sidebar.nav.closedRequests',  route: '/admin/service-center/rfq/closed',  icon: 'check_circle_outline' },
+        { label: 'sidebar.nav.customers',       route: '/admin/service-center/customers',   icon: 'people_outline' }
+      ]
     },
     {
       id: 'finance',
-      label: 'الإدارة المالية',
+      label: 'sidebar.nav.financeGroup',
       icon: 'account_balance',
       children: [
-        { label: 'الشجرة المحاسبية', route: '/admin/finance/tree',      icon: 'account_tree' },
-        { label: 'السنة المالية',    route: '/admin/finance/year',      icon: 'calendar_month' },
-        { label: 'القيود المحاسبية', route: '/admin/finance/entries',   icon: 'receipt_long' },
-        { label: 'كشف الحساب',       route: '/admin/finance/statement', icon: 'description' }
+        { label: 'sidebar.nav.accountingTree',  route: '/admin/finance/tree',            icon: 'account_tree' },
+        { label: 'sidebar.nav.financialYear',   route: '/admin/finance/year',            icon: 'calendar_month' },
+        { label: 'sidebar.nav.journalEntries',  route: '/admin/finance/entries',         icon: 'receipt_long' },
+        { label: 'sidebar.nav.accountStatement',route: '/admin/finance/statement',       icon: 'description' },
+        { label: 'sidebar.nav.trialBalance',    route: '/admin/finance/trial-balance',   icon: 'balance' },
+        { label: 'sidebar.nav.openingBalance',  route: '/admin/finance/opening-balance', icon: 'account_balance_wallet' },
+        { label: 'sidebar.nav.cashBox',         route: '/admin/finance/cash',            icon: 'point_of_sale' },
+        { label: 'sidebar.nav.accountRouting',  route: '/admin/finance/account-routing', icon: 'alt_route' },
+        { label: 'sidebar.nav.incomeStatement', route: '/admin/finance/income-statement',icon: 'trending_up' }
+      ]
+    },
+    {
+      id: 'financials',
+      label: 'sidebar.nav.financialsGroup',
+      icon: 'payments',
+      children: [
+        { label: 'sidebar.nav.ownersList',       route: '/admin/financials/owners',    icon: 'format_list_bulleted' },
+        { label: 'sidebar.nav.approvalRequests', route: '/admin/financials/approvals', icon: 'approval' }
+      ]
+    },
+    {
+      id: 'services',
+      label: 'sidebar.nav.servicesGroup',
+      icon: 'category',
+      children: [
+        { label: 'sidebar.nav.hotelsService',      route: '/admin/services/hotels',              icon: 'hotel' },
+        { label: 'sidebar.nav.transportCompanies', route: '/admin/services/transport-companies', icon: 'local_shipping' },
+        { label: 'sidebar.nav.hotelCategories',    route: '/admin/services/hotel-categories',    icon: 'star_rate' }
+      ]
+    },
+    {
+      id: 'agentManagement',
+      label: 'sidebar.nav.agentManagementGroup',
+      icon: 'manage_accounts',
+      children: [
+        { label: 'sidebar.nav.agentsList',      route: '/admin/agents/list',             icon: 'groups' },
+        { label: 'sidebar.nav.accountManagers', route: '/admin/agents/account-managers', icon: 'supervisor_account' }
+      ]
+    },
+    {
+      id: 'users',
+      label: 'sidebar.nav.usersGroup',
+      icon: 'people',
+      children: [
+        { label: 'sidebar.nav.userGroups',   route: '/admin/users/groups',         icon: 'workspaces' },
+        { label: 'sidebar.nav.systemAdmins', route: '/admin/users/system-admins',  icon: 'admin_panel_settings' },
+        { label: 'sidebar.nav.providerUsers',route: '/admin/users/provider-users', icon: 'corporate_fare' },
+        { label: 'sidebar.nav.agentUsers',   route: '/admin/users/agent-users',    icon: 'badge' }
+      ]
+    },
+    {
+      id: 'hotelProviders',
+      label: 'sidebar.nav.hotelProvidersGroup',
+      icon: 'domain',
+      children: [
+        { label: 'sidebar.nav.providersList',  route: '/admin/hotel-providers/list',          icon: 'list_alt' },
+        { label: 'sidebar.nav.subscriptions',  route: '/admin/hotel-providers/subscriptions', icon: 'card_membership' }
       ]
     }
   ];

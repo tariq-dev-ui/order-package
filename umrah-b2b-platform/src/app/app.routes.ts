@@ -28,12 +28,38 @@ export const routes: Routes = [
       { path: 'pricing/food',         loadComponent: emptyPage },
       { path: 'pricing/hotel',        loadComponent: emptyPage },
       // TODO: service center
-      { path: 'service-center',       loadComponent: emptyPage },
+      { path: 'service-center/rfq/new',      loadComponent: emptyPage },
+      { path: 'service-center/rfq/current',  loadComponent: emptyPage },
+      { path: 'service-center/rfq/closed',   loadComponent: emptyPage },
+      { path: 'service-center/customers',    loadComponent: emptyPage },
       // TODO: finance
-      { path: 'finance/tree',         loadComponent: emptyPage },
-      { path: 'finance/year',         loadComponent: emptyPage },
-      { path: 'finance/entries',      loadComponent: emptyPage },
-      { path: 'finance/statement',    loadComponent: emptyPage }
+      { path: 'finance/tree',                loadComponent: emptyPage },
+      { path: 'finance/year',                loadComponent: emptyPage },
+      { path: 'finance/entries',             loadComponent: emptyPage },
+      { path: 'finance/statement',           loadComponent: emptyPage },
+      { path: 'finance/trial-balance',       loadComponent: emptyPage },
+      { path: 'finance/opening-balance',     loadComponent: emptyPage },
+      { path: 'finance/cash',                loadComponent: emptyPage },
+      { path: 'finance/account-routing',     loadComponent: emptyPage },
+      { path: 'finance/income-statement',    loadComponent: emptyPage },
+      // TODO: financials
+      { path: 'financials/owners',                   loadComponent: emptyPage },
+      { path: 'financials/approvals',                loadComponent: emptyPage },
+      // TODO: services
+      { path: 'services/hotels',                     loadComponent: emptyPage },
+      { path: 'services/transport-companies',        loadComponent: emptyPage },
+      { path: 'services/hotel-categories',           loadComponent: emptyPage },
+      // TODO: agent management
+      { path: 'agents/list',                         loadComponent: emptyPage },
+      { path: 'agents/account-managers',             loadComponent: emptyPage },
+      // TODO: users
+      { path: 'users/groups',                        loadComponent: emptyPage },
+      { path: 'users/system-admins',                 loadComponent: emptyPage },
+      { path: 'users/provider-users',                loadComponent: emptyPage },
+      { path: 'users/agent-users',                   loadComponent: emptyPage },
+      // TODO: hotel providers
+      { path: 'hotel-providers/list',                loadComponent: emptyPage },
+      { path: 'hotel-providers/subscriptions',       loadComponent: emptyPage }
     ]
   },
   {
