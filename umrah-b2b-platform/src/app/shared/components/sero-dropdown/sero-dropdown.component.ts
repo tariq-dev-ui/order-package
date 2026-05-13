@@ -1,12 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
+import { DropdownStateService } from '../../../core/services/dropdown-state.service';
 
 export interface SeroDropdownOption<T = string | number> {
   value: T;
   label?: string;
   labelKey?: string;
 }
+
+let _uidCounter = 0;
 
 @Component({
   selector: 'app-sero-dropdown',
@@ -119,13 +133,13 @@ export interface SeroDropdownOption<T = string | number> {
       width: 100%;
       background: var(--sero-card-bg);
       border: 1px solid var(--sero-border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-lg);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.09), 0 2px 10px rgba(15, 23, 42, 0.04);
       padding: 6px;
       z-index: 300;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       max-height: 260px;
       overflow: auto;
     }
@@ -134,30 +148,32 @@ export interface SeroDropdownOption<T = string | number> {
       border: 1px solid transparent;
       background: transparent;
       border-radius: 8px;
-      min-height: 34px;
+      min-height: 38px;
       text-align: start;
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-family: var(--sero-font);
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.8125rem;
+      font-weight: 500;
       color: var(--sero-text-primary);
       cursor: pointer;
       transition: all var(--t-fast);
+      white-space: nowrap;
     }
 
     .sero-dd-option:hover {
-      background: var(--sero-surface-2);
+      background: var(--sero-bg-hover);
       border-color: var(--sero-border-light);
     }
 
     .sero-dd-option.active {
-      background: var(--sero-primary-50);
+      background: var(--sero-bg-selected);
       color: var(--sero-primary-dark);
-      border-color: var(--sero-primary-100);
+      border-color: transparent;
+      font-weight: 600;
     }
   `]
 })
-export class SeroDropdownComponent<T = string | number> {
+export class SeroDropdownComponent<T = string | number> implements OnInit, OnDestroy {
   @Input() options: SeroDropdownOption<T>[] = [];
   @Input() value: T | null = null;
   @Input() placeholder = '';
@@ -168,7 +184,25 @@ export class SeroDropdownComponent<T = string | number> {
 
   isOpen = false;
 
-  constructor(private readonly host: ElementRef<HTMLElement>) {}
+  private readonly uid = `sero-dd-${++_uidCounter}`;
+  private readonly destroy$ = new Subject<void>();
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly ddState = inject(DropdownStateService);
+
+  ngOnInit(): void {
+    this.ddState.closeOthers
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((openId) => {
+        if (openId !== this.uid) {
+          this.isOpen = false;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   get selectedOption(): SeroDropdownOption<T> | undefined {
     return this.options.find((option) => option.value === this.value);
@@ -178,6 +212,9 @@ export class SeroDropdownComponent<T = string | number> {
     event.stopPropagation();
     if (this.disabled) return;
     this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.ddState.requestCloseOthers(this.uid);
+    }
   }
 
   selectOption(option: SeroDropdownOption<T>, event: Event): void {
@@ -193,7 +230,7 @@ export class SeroDropdownComponent<T = string | number> {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (!this.host.nativeElement.contains(event.target as Node)) {
+    if (this.isOpen && !this.host.nativeElement.contains(event.target as Node)) {
       this.isOpen = false;
     }
   }

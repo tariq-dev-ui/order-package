@@ -35,8 +35,10 @@ import { LATEST_ORDERS, LATEST_PRICE_OFFERS, QUICK_ACTIONS, SUMMARY_ITEMS } from
         </div>
       </section>
 
-      <app-latest-orders [orders]="latestOrders"></app-latest-orders>
-      <app-price-offers-table [offers]="latestPriceOffers"></app-price-offers-table>
+      <section class="insights-grid">
+        <app-price-offers-table [offers]="latestPriceOffers"></app-price-offers-table>
+        <app-latest-orders [orders]="latestOrders"></app-latest-orders>
+      </section>
     </section>
   `,
   styles: [`
@@ -44,7 +46,7 @@ import { LATEST_ORDERS, LATEST_PRICE_OFFERS, QUICK_ACTIONS, SUMMARY_ITEMS } from
       display: flex;
       flex-direction: column;
       gap: 14px;
-      background: #fff;
+      background: transparent;
       min-height: calc(100vh - var(--sero-topbar-height) - 32px);
     }
 
@@ -75,9 +77,17 @@ import { LATEST_ORDERS, LATEST_PRICE_OFFERS, QUICK_ACTIONS, SUMMARY_ITEMS } from
       gap: 10px;
     }
 
+    .insights-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+    }
+
     @media (max-width: 1100px) {
       .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .actions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .insights-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 650px) {
@@ -85,6 +95,8 @@ import { LATEST_ORDERS, LATEST_PRICE_OFFERS, QUICK_ACTIONS, SUMMARY_ITEMS } from
       .actions-grid {
         grid-template-columns: 1fr;
       }
+
+      .insights-grid { grid-template-columns: 1fr; }
     }
   `]
 })

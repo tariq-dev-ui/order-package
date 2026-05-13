@@ -13,11 +13,12 @@ export interface QuickActionItem {
 }
 
 export interface LatestOrderItem {
-  packageName: string;
-  orderNumber: string;
-  status: string;
-  price: number;
-  details: string;
+  id: number;
+  title: string;
+  subValue: string;
+  timeAgo: string;
+  travelers: string;
+  tag: 'New' | 'InProgress';
 }
 
 export type OfferType = 'hotel' | 'food' | 'ticket' | 'trip';
@@ -49,39 +50,44 @@ export const QUICK_ACTIONS: QuickActionItem[] = [
 
 export const LATEST_ORDERS: LatestOrderItem[] = [
   {
-    packageName: 'باقة عمرة VIP - رمضان',
-    orderNumber: 'ORD-2026-00143',
-    status: 'مؤكد',
-    price: 12500,
-    details: '5 ليالي مكة + 4 ليالي المدينة + طيران مباشر'
+    id: 173,
+    title: 'إقامة عمرة في مكة - أغسطس 2025',
+    subValue: 'قيد التقدير',
+    timeAgo: 'قبل يوم واحد',
+    travelers: '10 مسافرين',
+    tag: 'New'
   },
   {
-    packageName: 'باقة اقتصادية - شعبان',
-    orderNumber: 'ORD-2026-00142',
-    status: 'قيد المراجعة',
-    price: 6700,
-    details: '3 نجوم + إفطار + نقل جماعي'
+    id: 172,
+    title: 'Umrah Package July 2026',
+    subValue: 'قيد التقدير',
+    timeAgo: 'قبل يوم واحد',
+    travelers: '20 مسافرين',
+    tag: 'New'
   },
   {
-    packageName: 'باقة عائلية',
-    orderNumber: 'ORD-2026-00141',
-    status: 'جديد',
-    price: 9800,
-    details: 'غرف عائلية + خدمة استقبال'
+    id: 170,
+    title: '4x Packages',
+    subValue: '1425 R',
+    timeAgo: '3 أيام مضت',
+    travelers: '1 مسافرين',
+    tag: 'New'
   },
   {
-    packageName: 'باقة رجال أعمال',
-    orderNumber: 'ORD-2026-00140',
-    status: 'مؤكد',
-    price: 15400,
-    details: 'فنادق 5 نجوم + سيارة خاصة'
+    id: 169,
+    title: 'Package For 6 Guests',
+    subValue: '3000 R',
+    timeAgo: '5 أيام مضت',
+    travelers: '10 مسافرين',
+    tag: 'InProgress'
   },
   {
-    packageName: 'باقة نهاية الأسبوع',
-    orderNumber: 'ORD-2026-00139',
-    status: 'قيد المراجعة',
-    price: 5400,
-    details: 'برنامج قصير مع مرشد'
+    id: 168,
+    title: 'Package For 6 Guests',
+    subValue: '3000 R',
+    timeAgo: '10 أيام مضت',
+    travelers: '2 مسافرين',
+    tag: 'InProgress'
   }
 ];
 

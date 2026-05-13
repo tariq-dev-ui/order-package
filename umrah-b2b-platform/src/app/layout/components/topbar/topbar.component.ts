@@ -499,7 +499,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (!this.hostElement.nativeElement.contains(event.target as Node)) {
+    if (this.isRoleMenuOpen && !this.hostElement.nativeElement.contains(event.target as Node)) {
       this.isRoleMenuOpen = false;
     }
   }

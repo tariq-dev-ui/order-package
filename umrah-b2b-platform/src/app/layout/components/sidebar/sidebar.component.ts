@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../core/services/layout.service';
+import { ViewMode, ViewModeService } from '../../../core/services/view-mode.service';
 
 interface NavChild {
   label: string;
@@ -17,6 +18,7 @@ interface NavGroup {
   label: string;
   icon: string;
   route?: string;
+  badge?: string;
   exact?: boolean;
   children?: NavChild[];
 }
@@ -26,11 +28,15 @@ interface NavGroup {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule],
   template: `
-    <aside class="sero-sidebar">
+    <aside class="sero-sidebar" [class.collapsed]="layout.sidebarCollapsed()">
 
       <!-- ── Logo Header ── -->
       <div class="sidebar-header">
-        <img class="sidebar-logo-img" src="/IMG/logo.png" alt="Sero" />
+        @if (layout.sidebarCollapsed()) {
+          <img class="sidebar-mini-logo" src="/IMG/logo.png" alt="Sero" />
+        } @else {
+          <img class="sidebar-logo-img" src="/IMG/logo.png" alt="Sero" />
+        }
       </div>
 
       <!-- ── Navigation ── -->
@@ -41,9 +47,15 @@ interface NavGroup {
             <!-- Direct link -->
             <a class="nav-item"
                [class.active]="isActive(group.route!, group.exact)"
-               [routerLink]="group.route">
+               [routerLink]="group.route"
+               [attr.title]="layout.sidebarCollapsed() ? (group.label | translate) : null">
               <span class="material-icons-round nav-icon">{{ group.icon }}</span>
-              <span class="nav-label">{{ group.label | translate }}</span>
+              @if (!layout.sidebarCollapsed()) {
+                <span class="nav-label">{{ group.label | translate }}</span>
+                @if (group.badge) {
+                  <span class="nav-badge">{{ group.badge }}</span>
+                }
+              }
             </a>
 
           } @else {
@@ -53,14 +65,17 @@ interface NavGroup {
                       class="nav-item has-children"
                       [class.group-active]="isGroupActive(group)"
                       [class.open]="isGroupOpen(group.id)"
-                      (click)="toggleGroup(group.id)">
+                      [attr.title]="layout.sidebarCollapsed() ? (group.label | translate) : null"
+                      (click)="toggleGroup(group.id, $event)">
                 <span class="material-icons-round nav-icon">{{ group.icon }}</span>
-                <span class="nav-label">{{ group.label | translate }}</span>
-                <span class="material-icons-round nav-chevron"
-                      [class.open]="isGroupOpen(group.id)">expand_more</span>
+                @if (!layout.sidebarCollapsed()) {
+                  <span class="nav-label">{{ group.label | translate }}</span>
+                  <span class="material-icons-round nav-chevron"
+                        [class.open]="isGroupOpen(group.id)">expand_more</span>
+                }
               </button>
 
-              @if (isGroupOpen(group.id)) {
+              @if (isGroupOpen(group.id) && !layout.sidebarCollapsed()) {
                 <div class="nav-children">
                   @for (child of group.children; track child.route) {
                     <a class="nav-child"
@@ -70,6 +85,26 @@ interface NavGroup {
                       <span class="child-label">{{ child.label | translate }}</span>
                     </a>
                   }
+                </div>
+              }
+
+              @if (layout.sidebarCollapsed() && popupGroupId === group.id) {
+                <div class="nav-popup"
+                     [style.top.px]="popupTop"
+                     [style.left.px]="popupLeft"
+                     [style.right.px]="popupRight">
+                  <div class="nav-popup-title">{{ group.label | translate }}</div>
+                  <div class="nav-popup-list">
+                    @for (child of group.children; track child.route) {
+                      <a class="nav-popup-child"
+                         [class.active]="isActive(child.route, child.exact)"
+                         [routerLink]="child.route"
+                         (click)="closePopup()">
+                        <span class="material-icons-round child-icon">{{ child.icon }}</span>
+                        <span class="child-label">{{ child.label | translate }}</span>
+                      </a>
+                    }
+                  </div>
                 </div>
               }
             </div>
@@ -97,31 +132,47 @@ interface NavGroup {
       top: 0;
       inset-inline-start: 0;
       z-index: 100;
+      transition: width var(--t-slow);
+      overflow: visible;
+    }
+
+    .sero-sidebar.collapsed {
+      width: var(--sero-sidebar-collapsed);
     }
 
     /* ── Logo Header ── */
     .sidebar-header {
-      height: var(--sero-topbar-height);
-      padding: 0 20px;
+      height: 106px;
+      padding: 6px 10px;
       background: var(--sero-card-bg);
       border-bottom: 1px solid var(--sero-border);
       display: flex;
       align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
     .sidebar-logo-img {
-      height: 36px;
-      width: auto;
+      width: 100%;
+      height: 100%;
+      max-height: 94px;
       object-fit: contain;
       display: block;
+    }
+
+    .sidebar-mini-logo {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      display: block;
+      border-radius: 8px;
     }
 
     /* ── Navigation Scroll Area ── */
     .sidebar-nav {
       flex: 1;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: visible;
       padding: 10px 0 24px;
       scrollbar-width: thin;
       scrollbar-color: color-mix(in srgb, var(--sero-primary) 22%, transparent) transparent;
@@ -192,6 +243,78 @@ interface NavGroup {
       }
     }
 
+    .sero-sidebar.collapsed .nav-item {
+      justify-content: center;
+      width: calc(100% - 12px);
+      margin: 2px 6px;
+      padding: 10px 8px;
+      border-radius: 10px;
+    }
+
+    .sero-sidebar.collapsed .nav-item.has-children .nav-chevron,
+    .sero-sidebar.collapsed .nav-label,
+    .sero-sidebar.collapsed .nav-children {
+      display: none;
+    }
+
+    .sero-sidebar.collapsed .nav-item .nav-icon {
+      font-size: 20px;
+    }
+
+    .nav-group {
+      position: relative;
+    }
+
+    .nav-popup {
+      position: fixed;
+      min-width: 200px;
+      max-width: 220px;
+      background: var(--sero-card-bg);
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      padding: 8px;
+      z-index: 300;
+    }
+
+    .nav-popup-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--sero-text-primary);
+      padding: 4px 8px 8px;
+      border-bottom: 1px solid var(--sero-border-light);
+      margin-bottom: 6px;
+    }
+
+    .nav-popup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-popup-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 7px 8px;
+      text-decoration: none;
+      color: var(--sero-text-secondary);
+      font-size: 0.76rem;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+
+    .nav-popup-child:hover {
+      background: var(--sero-bg-hover);
+      color: var(--sero-text-primary);
+    }
+
+    .nav-popup-child.active {
+      background: var(--sero-bg-selected);
+      color: var(--sero-primary-dark);
+      font-weight: 700;
+    }
+
     .nav-icon {
       font-size: 18px;
       flex-shrink: 0;
@@ -214,6 +337,23 @@ interface NavGroup {
       transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
 
       &.open { transform: rotate(180deg); }
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: var(--sero-primary);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-inline-start: auto;
+      flex-shrink: 0;
     }
 
     /* ── Children Container (connector rail) ── */
@@ -300,6 +440,7 @@ interface NavGroup {
       margin: 1px 0 1px 8px;
       padding: 8px 14px 8px 10px;
     }
+
   `]
 })
 export class SidebarComponent implements OnInit, OnDestroy {
@@ -307,8 +448,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   currentUrl = '';
   openGroups = new Set<string>();
+  popupGroupId: string | null = null;
+  popupTop = 0;
+  popupLeft: number | null = null;
+  popupRight: number | null = null;
 
-  readonly navGroups: NavGroup[] = [
+  navGroups: NavGroup[] = [];
+
+  private readonly adminNavGroups: NavGroup[] = [
     {
       id: 'analytics',
       label: 'sidebar.nav.statisticsGroup',
@@ -425,14 +572,36 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   ];
 
+  private readonly masterNavGroups: NavGroup[] = [
+    { id: 'master-dashboard', label: 'Dashboard', icon: 'dashboard', route: '/master/distributed', exact: true },
+    { id: 'master-packages', label: 'Packages', icon: 'inventory_2', route: '/master/packages', exact: true },
+    { id: 'master-orders', label: 'Orders', icon: 'assignment', route: '/master/orders', badge: '34', exact: true },
+    { id: 'master-quotations', label: 'Quotations', icon: 'request_quote', route: '/master/quotations', exact: true },
+    { id: 'master-subagents', label: 'Subagents', icon: 'supervisor_account', route: '/master/subagents', exact: true }
+  ];
+
+  private readonly subAgentNavGroups: NavGroup[] = [
+    { id: 'agent-marketplace', label: 'Marketplace', icon: 'storefront', route: '/agent/marketplace', exact: true },
+    { id: 'agent-orders', label: 'Orders', icon: 'shopping_bag', route: '/agent/orders' }
+  ];
+
   constructor(
     public readonly layout: LayoutService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly hostElement: ElementRef<HTMLElement>,
+    private readonly viewModeService: ViewModeService
   ) {}
 
   ngOnInit(): void {
+    this.applyNavForMode(this.viewModeService.getCurrentMode());
     this.currentUrl = this.router.url;
     this.autoExpandActive();
+
+    this.viewModeService.selectedView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((mode) => {
+        this.applyNavForMode(mode);
+      });
 
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -440,6 +609,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     ).subscribe(e => {
       this.currentUrl = e.urlAfterRedirects;
       this.autoExpandActive();
+      this.closePopup();
     });
   }
 
@@ -449,6 +619,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   private autoExpandActive(): void {
+    this.openGroups.clear();
     for (const group of this.navGroups) {
       if (group.children?.some(c => this.isActive(c.route, c.exact))) {
         this.openGroups.add(group.id);
@@ -456,12 +627,44 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleGroup(id: string): void {
+  toggleGroup(id: string, event?: Event): void {
+    event?.stopPropagation();
+
+    if (this.layout.sidebarCollapsed()) {
+      const isSamePopup = this.popupGroupId === id;
+      this.popupGroupId = isSamePopup ? null : id;
+
+      if (!isSamePopup && event?.currentTarget instanceof HTMLElement) {
+        const group = this.navGroups.find(item => item.id === id);
+        const itemCount = group?.children?.length ?? 0;
+        const popupHeight = Math.min(window.innerHeight - 24, 56 + (itemCount * 38));
+        const popupWidth = 220;
+        const margin = 12;
+        const buttonRect = event.currentTarget.getBoundingClientRect();
+        this.popupTop = Math.max(margin, Math.min(buttonRect.top, window.innerHeight - popupHeight - margin));
+
+        if (this.isRtl()) {
+          this.popupLeft = null;
+          this.popupRight = Math.max(margin, window.innerWidth - buttonRect.left + 8);
+        } else {
+          this.popupRight = null;
+          this.popupLeft = Math.max(margin, Math.min(buttonRect.right + 8, window.innerWidth - popupWidth - margin));
+        }
+      }
+      return;
+    }
+
     if (this.openGroups.has(id)) {
       this.openGroups.delete(id);
     } else {
       this.openGroups.add(id);
     }
+  }
+
+  closePopup(): void {
+    this.popupGroupId = null;
+    this.popupLeft = null;
+    this.popupRight = null;
   }
 
   isGroupOpen(id: string): boolean {
@@ -477,5 +680,35 @@ export class SidebarComponent implements OnInit, OnDestroy {
   isGroupActive(group: NavGroup): boolean {
     if (group.route) return this.isActive(group.route, group.exact);
     return group.children?.some(c => this.isActive(c.route, c.exact)) ?? false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (this.popupGroupId !== null && this.layout.sidebarCollapsed() && !this.hostElement.nativeElement.contains(event.target as Node)) {
+      this.closePopup();
+    }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.closePopup();
+  }
+
+  private isRtl(): boolean {
+    return document.documentElement.dir === 'rtl'
+      || this.hostElement.nativeElement.closest('[dir="rtl"]') !== null;
+  }
+
+  private applyNavForMode(mode: ViewMode): void {
+    if (mode === 'master') {
+      this.navGroups = this.masterNavGroups;
+    } else if (mode === 'subAgent') {
+      this.navGroups = this.subAgentNavGroups;
+    } else {
+      this.navGroups = this.adminNavGroups;
+    }
+
+    this.closePopup();
+    this.autoExpandActive();
   }
 }

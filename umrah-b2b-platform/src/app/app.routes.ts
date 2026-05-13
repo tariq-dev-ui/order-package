@@ -14,7 +14,7 @@ export const routes: Routes = [
       { path: 'analytics', loadComponent: statisticsPage },
       { path: 'distribution', loadComponent: emptyPage },
       { path: 'packages', loadComponent: emptyPage },
-      { path: 'packages/builder', loadComponent: emptyPage },
+      { path: 'packages/builder', loadComponent: () => import('./features/package-definition/package-definition-page.component').then(m => m.PackageDefinitionPageComponent) },
       { path: 'orders/confirmation/:orderId', loadComponent: emptyPage },
       // TODO: new order form
       { path: 'orders/new', loadComponent: emptyPage },
@@ -70,6 +70,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'distributed', pathMatch: 'full' },
       { path: 'distributed', loadComponent: emptyPage },
       { path: 'packages', loadComponent: emptyPage },
+      { path: 'orders', loadComponent: emptyPage },
+      { path: 'quotations', loadComponent: emptyPage },
       { path: 'subagents', loadComponent: emptyPage },
       { path: 'analytics', loadComponent: emptyPage }
     ]

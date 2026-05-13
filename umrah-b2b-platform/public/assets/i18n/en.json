@@ -682,5 +682,64 @@
   "marketplace": {
     "title":    "Package Marketplace",
     "subtitle": "Browse and book available Umrah packages"
+  },
+
+  "packageDefinition": {
+    "title": "Define New Package",
+    "comingSoon": "This step is under development",
+    "steps": {
+      "makkahHotels":  "Makkah Hotels",
+      "madinahHotels": "Madinah Hotels",
+      "transport":     "Transport",
+      "meals":         "Meals",
+      "tickets":       "Tickets",
+      "review":        "Review",
+      "confirmation":  "Confirmation"
+    },
+    "stepHint": {
+      "makkah":  "Add the Makkah hotels required for this package",
+      "madinah": "Add the Madinah hotels required for this package"
+    },
+    "modes": {
+      "criteria": "By Criteria",
+      "specific":  "Specific Hotel"
+    },
+    "fields": {
+      "neighborhood":    "Neighborhood",
+      "category":        "Category",
+      "roomType":        "Room Type",
+      "roomCount":       "Room Count",
+      "nightsCount":     "Nights Count",
+      "hotelName":       "Hotel Name",
+      "applyNightsToAll":"Apply nights to all"
+    },
+    "actions": {
+      "addMakkahHotel":  "Add Makkah Hotel",
+      "addMadinahHotel": "Add Madinah Hotel",
+      "next":            "Next",
+      "back":            "Back"
+    },
+    "summary": {
+      "title":         "Order Summary",
+      "makkahHotels":  "Makkah Hotels",
+      "madinahHotels": "Madinah Hotels",
+      "services":      "Services",
+      "validDates":    "Valid Dates",
+      "notSpecified":  "Not specified",
+      "visaService":   "Visa Service",
+      "notIncluded":   "Not included",
+      "needHelp":      "Need help?",
+      "helpText":      "Contact our support team 24/7 for assistance.",
+      "transport":     "Transport",
+      "meals":         "Meals",
+      "tickets":       "Tickets",
+      "added":         "Added",
+      "notAdded":      "Not Added",
+      "noHotels":      "No hotels added",
+      "rooms":         "rooms",
+      "nights":        "nights",
+      "criteria":      "By criteria",
+      "specific":      "Specific"
+    }
   }
 }

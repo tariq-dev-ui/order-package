@@ -2,8 +2,9 @@
 // SERO — UMRAH B2B PLATFORM  |  DESIGN SYSTEM v2
 // ============================================================
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&family=Tajawal:wght@200;300;400;500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=El+Messiri:wght@400..700&family=Noto+Kufi+Arabic:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
 // ============================================================
 // SERO DESIGN TOKENS
@@ -76,7 +77,10 @@
   --sero-topbar-border:   var(--sero-border);
 
   // ── Typography ─────────────────────────────────────────────
-  --sero-font:            'Noto Kufi Arabic', 'Tajawal', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --sero-font:            'Noto Kufi Arabic', sans-serif;
+  --sero-font-heading:    'Noto Kufi Arabic', sans-serif;
+  --sero-font-label:      'Noto Kufi Arabic', sans-serif;
+  --sero-font-latin:      'Noto Kufi Arabic', sans-serif;
 
   // ── Spacing scale (4px base) ───────────────────────────────
   --sp-1:   4px;
@@ -180,6 +184,12 @@
   --sidebar-collapsed:    var(--sero-sidebar-collapsed);
   --topbar-height:        var(--sero-topbar-height);
   --font-primary:         var(--sero-font);
+  --font-heading:         var(--sero-font-heading);
+  --font-label:           var(--sero-font-label);
+  --font-latin:           var(--sero-font-latin);
+  // convenience aliases consumed by package-definition components
+  --sero-surface:         var(--sero-card-bg);
+  --sero-text:            var(--sero-text-primary);
   --space-xs:  var(--sp-1);
   --space-sm:  var(--sp-2);
   --space-md:  var(--sp-4);
@@ -214,9 +224,31 @@ body {
   overflow-x: hidden;
 }
 
+input, textarea, select, button {
+  font-family: var(--sero-font);
+}
+
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 button { cursor: pointer; font-family: inherit; }
+
+/* Material Symbols Outlined — base class (not injected automatically) */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
 
 // ============================================================
 // TYPOGRAPHY
@@ -236,6 +268,22 @@ button { cursor: pointer; font-family: inherit; }
 .font-semibold { font-weight: 600; }
 .font-bold     { font-weight: 700; }
 .font-extrabold { font-weight: 800; }
+
+// ── Font-family utilities ───────────────────────────────────
+.font-ui      { font-family: var(--sero-font); }
+.font-heading { font-family: var(--sero-font-heading); }
+.font-label   { font-family: var(--sero-font-label); }
+.font-latin   { font-family: var(--sero-font-latin); }
+
+// ── Heading defaults — El Messiri for premium titles ────────
+h1, h2, h3 {
+  font-family: var(--sero-font-heading);
+  line-height: 1.3;
+}
+h4, h5, h6 {
+  font-family: var(--sero-font);
+  line-height: 1.4;
+}
 
 .text-primary   { color: var(--sero-text-primary); }
 .text-secondary { color: var(--sero-text-secondary); }
@@ -1835,7 +1883,7 @@ select.form-control option:hover,
 // RTL OVERRIDES
 // ============================================================
 [dir="rtl"] {
-  font-family: 'Tajawal', 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--sero-font);
   text-align: right;
 
   // Sidebar RTL is handled inside the component via :host-context([dir="rtl"])

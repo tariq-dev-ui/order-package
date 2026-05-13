@@ -682,5 +682,64 @@
   "marketplace": {
     "title":    "سوق الباقات التجاري",
     "subtitle": "تصفّح وأحجز باقات العمرة المتاحة"
+  },
+
+  "packageDefinition": {
+    "title": "تعريف باقة جديدة",
+    "comingSoon": "هذه الخطوة قيد التطوير",
+    "steps": {
+      "makkahHotels":  "فنادق مكة",
+      "madinahHotels": "فنادق المدينة",
+      "transport":     "النقل",
+      "meals":         "الوجبات",
+      "tickets":       "التذاكر",
+      "review":        "المراجعة",
+      "confirmation":  "التأكيد"
+    },
+    "stepHint": {
+      "makkah":  "أضف فنادق مكة المكرمة المطلوبة في الباقة",
+      "madinah": "أضف فنادق المدينة المنورة المطلوبة في الباقة"
+    },
+    "modes": {
+      "criteria": "بمعايير",
+      "specific":  "فندق محدد"
+    },
+    "fields": {
+      "neighborhood":    "الحي",
+      "category":        "الفئة",
+      "roomType":        "نوع الغرفة",
+      "roomCount":       "عدد الغرف",
+      "nightsCount":     "عدد الليالي",
+      "hotelName":       "اسم الفندق",
+      "applyNightsToAll":"تطبيق الليالي على الجميع"
+    },
+    "actions": {
+      "addMakkahHotel":  "أضف فندق مكة",
+      "addMadinahHotel": "أضف فندق مدينة",
+      "next":            "التالي",
+      "back":            "السابق"
+    },
+    "summary": {
+      "title":         "ملخص الطلب",
+      "makkahHotels":  "فنادق مكة",
+      "madinahHotels": "فنادق المدينة",
+      "services":      "الخدمات",
+      "validDates":    "التواريخ الصالحة",
+      "notSpecified":  "غير محدد",
+      "visaService":   "خدمة التأشيرة",
+      "notIncluded":   "غير مشمولة",
+      "needHelp":      "هل تحتاج إلى مساعدة؟",
+      "helpText":      "تواصل مع فريق الدعم لدينا على مدار الساعة للحصول على المساعدة.",
+      "transport":     "النقل",
+      "meals":         "الوجبات",
+      "tickets":       "التذاكر",
+      "added":         "مضاف",
+      "notAdded":      "غير مضاف",
+      "noHotels":      "لا توجد فنادق مضافة",
+      "rooms":         "غرف",
+      "nights":        "ليالي",
+      "criteria":      "بمعايير",
+      "specific":      "محدد"
+    }
   }
 }

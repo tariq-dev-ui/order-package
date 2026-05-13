@@ -39,7 +39,7 @@ import { LanguageService } from '../../../core/services/language.service';
 
       &.is-ar {
         direction: rtl;
-        font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+        font-family: var(--sero-font-latin);
       }
     }
 
