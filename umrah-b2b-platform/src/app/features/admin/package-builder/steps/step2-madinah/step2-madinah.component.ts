@@ -7,11 +7,12 @@ import { HotelRating } from '../../../../../core/models/enums';
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-step2-madinah',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent, SeroDropdownComponent],
   template: `
     <div class="step-shell animate-fade-in">
       <div class="step-grid">
@@ -68,11 +69,11 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
                   </div>
                   <div class="form-group">
                     <label class="form-label">{{ 'builder.hotels.rating' | translate }}</label>
-                    <select class="form-control" [(ngModel)]="newHotel.rating">
-                      <option [value]="3">{{ 'builder.hotels.stars3' | translate }}</option>
-                      <option [value]="4">{{ 'builder.hotels.stars4' | translate }}</option>
-                      <option [value]="5">{{ 'builder.hotels.stars5' | translate }}</option>
-                    </select>
+                    <app-sero-dropdown
+                      [options]="ratingOptions"
+                      [value]="newHotel.rating || null"
+                      (valueChange)="newHotel.rating = $event">
+                    </app-sero-dropdown>
                   </div>
                   <div class="form-group">
                     <label class="form-label">{{ 'builder.hotels.distanceNabawi' | translate }}</label>
@@ -84,22 +85,19 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
                   </div>
                   <div class="form-group">
                     <label class="form-label">{{ 'builder.hotels.roomType' | translate }}</label>
-                    <select class="form-control" [(ngModel)]="newHotel.roomType">
-                      <option>{{ 'builder.hotels.roomTypes.standard' | translate }}</option>
-                      <option>{{ 'builder.hotels.roomTypes.superior' | translate }}</option>
-                      <option>{{ 'builder.hotels.roomTypes.deluxe' | translate }}</option>
-                      <option>{{ 'builder.hotels.roomTypes.suite' | translate }}</option>
-                      <option>{{ 'builder.hotels.roomTypes.family' | translate }}</option>
-                    </select>
+                    <app-sero-dropdown
+                      [options]="roomTypeOptions"
+                      [value]="newHotel.roomType || null"
+                      (valueChange)="newHotel.roomType = $event">
+                    </app-sero-dropdown>
                   </div>
                   <div class="form-group">
                     <label class="form-label">{{ 'builder.hotels.mealPlan' | translate }}</label>
-                    <select class="form-control" [(ngModel)]="newHotel.mealPlan">
-                      <option>{{ 'builder.hotels.mealPlans.roomOnly' | translate }}</option>
-                      <option>{{ 'builder.hotels.mealPlans.breakfast' | translate }}</option>
-                      <option>{{ 'builder.hotels.mealPlans.halfBoard' | translate }}</option>
-                      <option>{{ 'builder.hotels.mealPlans.fullBoard' | translate }}</option>
-                    </select>
+                    <app-sero-dropdown
+                      [options]="mealPlanOptions"
+                      [value]="newHotel.mealPlan || null"
+                      (valueChange)="newHotel.mealPlan = $event">
+                    </app-sero-dropdown>
                   </div>
                 </div>
                 <div class="flex items-center gap-3 mt-4">
@@ -161,6 +159,24 @@ export class Step2MadinahComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
   @Output() prev = new EventEmitter<void>();
 
+  ratingOptions: SeroDropdownOption<HotelRating>[] = [
+    { value: 3 as HotelRating, labelKey: 'builder.hotels.stars3' },
+    { value: 4 as HotelRating, labelKey: 'builder.hotels.stars4' },
+    { value: 5 as HotelRating, labelKey: 'builder.hotels.stars5' }
+  ];
+  roomTypeOptions: SeroDropdownOption<string>[] = [
+    { value: 'Standard Room', labelKey: 'builder.hotels.roomTypes.standard' },
+    { value: 'Superior Room', labelKey: 'builder.hotels.roomTypes.superior' },
+    { value: 'Deluxe Room', labelKey: 'builder.hotels.roomTypes.deluxe' },
+    { value: 'Suite', labelKey: 'builder.hotels.roomTypes.suite' },
+    { value: 'Family Room', labelKey: 'builder.hotels.roomTypes.family' }
+  ];
+  mealPlanOptions: SeroDropdownOption<string>[] = [
+    { value: 'Room Only', labelKey: 'builder.hotels.mealPlans.roomOnly' },
+    { value: 'Breakfast', labelKey: 'builder.hotels.mealPlans.breakfast' },
+    { value: 'Half Board', labelKey: 'builder.hotels.mealPlans.halfBoard' },
+    { value: 'Full Board', labelKey: 'builder.hotels.mealPlans.fullBoard' }
+  ];
   hotels: HotelService[] = [];
   showForm = false;
   newHotel: Partial<HotelService> = { name: '', rating: HotelRating.FIVE, distanceToHaram: 0.1, nights: 7, roomType: 'Deluxe Room', mealPlan: 'Breakfast', city: 'madinah' };

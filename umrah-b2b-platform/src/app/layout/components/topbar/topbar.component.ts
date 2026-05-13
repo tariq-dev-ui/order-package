@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,13 +37,26 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
         <app-language-switcher />
 
         <!-- Role switcher (demo) -->
-        <div class="role-switcher" [attr.data-mode]="selectedMode">
-          <span class="material-icons-round rs-icon">swap_horiz</span>
-          <select class="rs-select" [value]="selectedMode" (change)="switchRole($event)">
-            <option value="admin">{{ 'topbar.roleView.admin' | translate }}</option>
-            <option value="master">{{ 'topbar.roleView.masterAgent' | translate }}</option>
-            <option value="subAgent">{{ 'topbar.roleView.subAgent' | translate }}</option>
-          </select>
+        <div class="role-switcher sero-dropdown" [attr.data-mode]="selectedMode">
+          <button type="button" class="rs-trigger" (click)="toggleRoleMenu($event)" [attr.aria-expanded]="isRoleMenuOpen">
+            <span class="material-icons-round sero-dropdown-icon">swap_horiz</span>
+            <span class="rs-value">{{ getSelectedModeLabel() | translate }}</span>
+            <span class="material-icons-round rs-chevron" [class.open]="isRoleMenuOpen">expand_more</span>
+          </button>
+
+          @if (isRoleMenuOpen) {
+            <div class="rs-menu">
+              <button type="button" class="rs-option" [class.active]="selectedMode === 'admin'" (click)="selectRole('admin', $event)">
+                {{ 'topbar.roleView.admin' | translate }}
+              </button>
+              <button type="button" class="rs-option" [class.active]="selectedMode === 'master'" (click)="selectRole('master', $event)">
+                {{ 'topbar.roleView.masterAgent' | translate }}
+              </button>
+              <button type="button" class="rs-option" [class.active]="selectedMode === 'subAgent'" (click)="selectRole('subAgent', $event)">
+                {{ 'topbar.roleView.subAgent' | translate }}
+              </button>
+            </div>
+          }
         </div>
 
         <!-- Divider -->
@@ -146,14 +159,9 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
     .role-switcher {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border: 1px solid var(--sero-border);
-      border-radius: 8px;
-      background: var(--sero-surface-2);
-      transition: all var(--t-fast);
-
-      &:hover { border-color: var(--sero-border-strong); background: var(--sero-surface-3); }
+      position: relative;
+      width: 183px;
+      min-height: 31px;
     }
 
     .role-switcher[data-mode='admin'] {
@@ -171,21 +179,79 @@ import { ViewMode, ViewModeService } from '../../../core/services/view-mode.serv
       background: #f2f7fd;
     }
 
-    .rs-icon {
-      font-size: 16px;
-      color: var(--sero-text-muted);
-    }
-
-    .rs-select {
+    .rs-trigger {
+      width: 100%;
+      min-height: 31px;
       border: none;
       background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0;
       font-family: var(--sero-font);
+      cursor: pointer;
+      color: var(--sero-text-primary);
+    }
+
+    .rs-value {
+      flex: 1;
+      min-width: 0;
+      text-align: start;
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rs-chevron {
+      font-size: 18px;
+      color: var(--sero-text-muted);
+      transition: transform var(--t-fast);
+      &.open { transform: rotate(180deg); }
+    }
+
+    .rs-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      inset-inline-start: 0;
+      width: 100%;
+      background: var(--sero-card-bg);
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 200;
+      animation: fadeIn .14s ease;
+    }
+
+    .rs-option {
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 8px;
+      min-height: 34px;
+      text-align: start;
+      padding: 6px 10px;
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--sero-text-primary);
       cursor: pointer;
-      outline: none;
-      min-width: 140px;
+      transition: all var(--t-fast);
+
+      &:hover {
+        background: var(--sero-surface-2);
+        border-color: var(--sero-border-light);
+      }
+
+      &.active {
+        background: var(--sero-primary-50);
+        color: var(--sero-primary-dark);
+        border-color: var(--sero-primary-100);
+      }
     }
 
     // ── Icon buttons ────────────────────────────────────────────
@@ -270,10 +336,12 @@ export class TopbarComponent implements OnInit {
 
   currentAgent: Agent | null = null;
   selectedMode: ViewMode = 'master';
+  isRoleMenuOpen = false;
 
   constructor(
     private readonly agentService: AgentService,
-    private readonly viewModeService: ViewModeService
+    private readonly viewModeService: ViewModeService,
+    private readonly hostElement: ElementRef<HTMLElement>
   ) {}
 
   ngOnInit(): void {
@@ -284,9 +352,31 @@ export class TopbarComponent implements OnInit {
     });
   }
 
-  switchRole(event: Event): void {
-    const mode = (event.target as HTMLSelectElement).value as ViewMode;
+  toggleRoleMenu(event: Event): void {
+    event.stopPropagation();
+    this.isRoleMenuOpen = !this.isRoleMenuOpen;
+  }
+
+  selectRole(mode: ViewMode, event: Event): void {
+    event.stopPropagation();
     this.viewModeService.setMode(mode);
+    this.isRoleMenuOpen = false;
+  }
+
+  getSelectedModeLabel(): string {
+    const labels: Record<ViewMode, string> = {
+      admin: 'topbar.roleView.admin',
+      master: 'topbar.roleView.masterAgent',
+      subAgent: 'topbar.roleView.subAgent'
+    };
+    return labels[this.selectedMode];
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.hostElement.nativeElement.contains(event.target as Node)) {
+      this.isRoleMenuOpen = false;
+    }
   }
 
   getInitials(name: string): string {

@@ -14,11 +14,12 @@ import { DashboardWidget } from '../../../core/models/analytics.model';
 import { Agent } from '../../../core/models/agent.model';
 import { DistributionStatus } from '../../../core/models/enums';
 import { filter } from 'rxjs/operators';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-distributed-packages',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, PackageCardComponent],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, PackageCardComponent, SeroDropdownComponent],
   template: `
     <div class="ma-dashboard animate-fade-in">
 
@@ -76,11 +77,14 @@ import { filter } from 'rxjs/operators';
           </div>
           <div class="flex items-center gap-2">
             <input class="form-control form-control--sm" [(ngModel)]="searchQuery" [placeholder]="'masterAgent.packages.searchPlaceholder' | translate" style="width:200px" />
-            <select class="form-control form-control--sm" [(ngModel)]="filterStatus" style="width:140px">
-              <option value="">{{ 'masterAgent.packages.filterAll' | translate }}</option>
-              <option value="active">{{ 'masterAgent.packages.filterActive' | translate }}</option>
-              <option value="paused">{{ 'masterAgent.packages.filterPaused' | translate }}</option>
-            </select>
+            <div style="width:140px">
+              <app-sero-dropdown
+                size="sm"
+                [options]="statusFilterOptions"
+                [value]="filterStatus"
+                (valueChange)="filterStatus = $event">
+              </app-sero-dropdown>
+            </div>
           </div>
         </div>
 
@@ -215,21 +219,21 @@ import { filter } from 'rxjs/operators';
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">{{ 'masterAgent.modal.selectPkg' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newAlloc.packageId" (ngModelChange)="onPackageChanged()">
-                  <option value="">{{ 'masterAgent.modal.pkgPlaceholder' | translate }}</option>
-                  @for (pkg of rawPackages; track pkg.id) {
-                    <option [value]="pkg.id">{{ pkg.title }}</option>
-                  }
-                </select>
+                <app-sero-dropdown
+                  [options]="packageOptions"
+                  [value]="newAlloc.packageId"
+                  [placeholderKey]="'masterAgent.modal.pkgPlaceholder'"
+                  (valueChange)="newAlloc.packageId = $event; onPackageChanged()">
+                </app-sero-dropdown>
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'masterAgent.modal.selectAgent' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newAlloc.subagentId">
-                  <option value="">{{ 'masterAgent.modal.agentPlaceholder' | translate }}</option>
-                  @for (agent of subagents; track agent.id) {
-                    <option [value]="agent.id">{{ agent.name }} — {{ agent.companyName }}</option>
-                  }
-                </select>
+                <app-sero-dropdown
+                  [options]="subagentOptions"
+                  [value]="newAlloc.subagentId"
+                  [placeholderKey]="'masterAgent.modal.agentPlaceholder'"
+                  (valueChange)="newAlloc.subagentId = $event">
+                </app-sero-dropdown>
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'masterAgent.modal.units' | translate }}</label>
@@ -361,6 +365,11 @@ export class DistributedPackagesComponent implements OnInit {
   newAlloc = { packageId: '', subagentId: '', units: 10, price: 0 };
   currentMasterId = 'master-001';
   isMyPackagesPage = false;
+  statusFilterOptions: SeroDropdownOption<string>[] = [
+    { value: '', labelKey: 'masterAgent.packages.filterAll' },
+    { value: 'active', labelKey: 'masterAgent.packages.filterActive' },
+    { value: 'paused', labelKey: 'masterAgent.packages.filterPaused' }
+  ];
 
   constructor(
     private pkgService: PackageService,
@@ -410,6 +419,20 @@ export class DistributedPackagesComponent implements OnInit {
 
   get displayedPackages(): PackageCardView[] {
     return this.isMyPackagesPage ? this.adminPurchasedPackages : this.filteredPackages;
+  }
+
+  get packageOptions(): SeroDropdownOption<string>[] {
+    return this.rawPackages.map((pkg) => ({
+      value: pkg.id,
+      label: pkg.title
+    }));
+  }
+
+  get subagentOptions(): SeroDropdownOption<string>[] {
+    return this.subagents.map((agent) => ({
+      value: agent.id,
+      label: `${agent.name} — ${agent.companyName}`
+    }));
   }
 
   viewPackage(pkg: PackageCardView): void { console.log('View:', pkg); }

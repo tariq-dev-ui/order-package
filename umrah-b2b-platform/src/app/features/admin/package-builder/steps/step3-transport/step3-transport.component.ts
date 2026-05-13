@@ -7,11 +7,12 @@ import { TransportType } from '../../../../../core/models/enums';
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-step3-transport',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent, SeroDropdownComponent],
   template: `
     <div class="step-shell animate-fade-in">
       <div class="step-grid">
@@ -64,12 +65,11 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.transport.type' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newItem.type">
-                  <option [value]="TransportType.BUS">{{ 'builder.transport.types.bus' | translate }}</option>
-                  <option [value]="TransportType.VIP_BUS">{{ 'builder.transport.types.vipBus' | translate }}</option>
-                  <option [value]="TransportType.VAN">{{ 'builder.transport.types.van' | translate }}</option>
-                  <option [value]="TransportType.PRIVATE_CAR">{{ 'builder.transport.types.privateCar' | translate }}</option>
-                </select>
+                <app-sero-dropdown
+                  [options]="transportTypeOptions"
+                  [value]="newItem.type || null"
+                  (valueChange)="newItem.type = $event">
+                </app-sero-dropdown>
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.transport.provider' | translate }}</label>
@@ -142,6 +142,12 @@ export class Step3TransportComponent implements OnInit {
   @Output() prev = new EventEmitter<void>();
 
   TransportType = TransportType;
+  transportTypeOptions: SeroDropdownOption<TransportType>[] = [
+    { value: TransportType.BUS, labelKey: 'builder.transport.types.bus' },
+    { value: TransportType.VIP_BUS, labelKey: 'builder.transport.types.vipBus' },
+    { value: TransportType.VAN, labelKey: 'builder.transport.types.van' },
+    { value: TransportType.PRIVATE_CAR, labelKey: 'builder.transport.types.privateCar' }
+  ];
   transport: TransportService[] = [];
   showForm = false;
   newItem: Partial<TransportService> = { type: TransportType.BUS, route: '', capacity: 40, isAirConditioned: true, provider: '' };

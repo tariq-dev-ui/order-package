@@ -6,11 +6,14 @@ import { Package, TicketService } from '../../../../../core/models/package.model
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../../../shared/components/sero-dropdown/sero-dropdown.component';
+
+type TicketCabinClass = NonNullable<TicketService['class']>;
 
 @Component({
   selector: 'app-step4-tickets',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent, SeroDropdownComponent],
   template: `
     <div class="step-shell animate-fade-in">
       <div class="step-grid">
@@ -90,11 +93,11 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.tickets.cabinClass' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newItem.class">
-                  <option value="economy">{{ 'builder.tickets.classes.economy' | translate }}</option>
-                  <option value="business">{{ 'builder.tickets.classes.business' | translate }}</option>
-                  <option value="first">{{ 'builder.tickets.classes.first' | translate }}</option>
-                </select>
+                <app-sero-dropdown
+                  [options]="ticketClassOptions"
+                  [value]="newItem.class || null"
+                  (valueChange)="newItem.class = $event">
+                </app-sero-dropdown>
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.tickets.baggage' | translate }}</label>
@@ -154,6 +157,11 @@ export class Step4TicketsComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
   @Output() prev = new EventEmitter<void>();
 
+  ticketClassOptions: SeroDropdownOption<TicketCabinClass>[] = [
+    { value: 'economy', labelKey: 'builder.tickets.classes.economy' },
+    { value: 'business', labelKey: 'builder.tickets.classes.business' },
+    { value: 'first', labelKey: 'builder.tickets.classes.first' }
+  ];
   tickets: TicketService[] = [];
   showForm = false;
   departureStr = '';

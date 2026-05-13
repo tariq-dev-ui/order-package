@@ -8,11 +8,12 @@ import { CustomerInfo, OtherServiceSelection } from '../../../../../core/models/
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-step6-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent, SeroDropdownComponent],
   template: `
     <div class="step-shell animate-fade-in">
       <div class="step-grid">
@@ -89,20 +90,19 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
           </div>
           <div class="form-group">
             <label class="form-label">نوع الحجز</label>
-            <select class="form-control" [(ngModel)]="bookingMode" (ngModelChange)="emitPackageData()">
-              <option [value]="BookingMode.INSTANT">Instant</option>
-              <option [value]="BookingMode.REQUEST">Request</option>
-              <option [value]="BookingMode.MANUAL">Manual</option>
-              <option [value]="BookingMode.INQUIRY">Inquiry</option>
-            </select>
+            <app-sero-dropdown
+              [options]="bookingModeOptions"
+              [value]="bookingMode"
+              (valueChange)="bookingMode = $event; emitPackageData()">
+            </app-sero-dropdown>
           </div>
           <div class="form-group">
             <label class="form-label">حالة التأشيرة</label>
-            <select class="form-control" [(ngModel)]="visaStatus" (ngModelChange)="emitPackageData()">
-              <option [value]="VisaStatus.INCLUDED">Included</option>
-              <option [value]="VisaStatus.NOT_INCLUDED">Not Included</option>
-              <option [value]="VisaStatus.OPTIONAL">Optional</option>
-            </select>
+            <app-sero-dropdown
+              [options]="visaStatusOptions"
+              [value]="visaStatus"
+              (valueChange)="visaStatus = $event; emitPackageData()">
+            </app-sero-dropdown>
           </div>
           <div class="form-group">
             <label class="form-label">تاريخ المغادرة</label>
@@ -110,10 +110,11 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
           </div>
           <div class="form-group">
             <label class="form-label">نوع الباقة</label>
-            <select class="form-control" [(ngModel)]="packageType" (ngModelChange)="emitPackageData()">
-              <option [value]="PackageType.SHARED">Shared</option>
-              <option [value]="PackageType.PRIVATE_RESELL">Private Resell</option>
-            </select>
+            <app-sero-dropdown
+              [options]="packageTypeOptions"
+              [value]="packageType"
+              (valueChange)="packageType = $event; emitPackageData()">
+            </app-sero-dropdown>
           </div>
         </div>
       </div>
@@ -165,6 +166,21 @@ export class Step6DetailsComponent implements OnInit {
   PackageType = PackageType;
   BookingMode = BookingMode;
   VisaStatus = VisaStatus;
+  bookingModeOptions: SeroDropdownOption<BookingMode>[] = [
+    { value: BookingMode.INSTANT, label: 'Instant' },
+    { value: BookingMode.REQUEST, label: 'Request' },
+    { value: BookingMode.MANUAL, label: 'Manual' },
+    { value: BookingMode.INQUIRY, label: 'Inquiry' }
+  ];
+  visaStatusOptions: SeroDropdownOption<VisaStatus>[] = [
+    { value: VisaStatus.INCLUDED, label: 'Included' },
+    { value: VisaStatus.NOT_INCLUDED, label: 'Not Included' },
+    { value: VisaStatus.OPTIONAL, label: 'Optional' }
+  ];
+  packageTypeOptions: SeroDropdownOption<PackageType>[] = [
+    { value: PackageType.SHARED, label: 'Shared' },
+    { value: PackageType.PRIVATE_RESELL, label: 'Private Resell' }
+  ];
 
   title = '';
   description = '';

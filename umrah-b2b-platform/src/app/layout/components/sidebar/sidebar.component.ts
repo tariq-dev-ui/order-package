@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AgentService } from '../../../core/services/agent.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -39,7 +39,7 @@ interface NavItem {
             </div>
           }
         </div>
-        <button class="collapse-btn" (click)="layout.toggle()" [attr.aria-label]="layout.sidebarCollapsed() ? 'Expand' : 'Collapse'">
+        <button class="collapse-btn" (click)="toggleSidebar($event)" [attr.aria-label]="layout.sidebarCollapsed() ? 'Expand' : 'Collapse'">
           <span class="material-icons-round">{{ getCollapseIcon() }}</span>
         </button>
       </div>
@@ -114,7 +114,8 @@ interface NavItem {
                      [routerLink]="item.route"
                      routerLinkActive="active"
                      [routerLinkActiveOptions]="{exact: item.route === '/admin' || item.route === '/master'}"
-                     [attr.title]="layout.sidebarCollapsed() ? (item.labelKey | translate) : null">
+                     [attr.title]="layout.sidebarCollapsed() ? (item.labelKey | translate) : null"
+                     (click)="onNavItemClick(item, $event)">
                     <div class="nav-icon-wrap">
                       <span class="nav-icon material-icons-round">{{ item.icon }}</span>
                     </div>
@@ -160,35 +161,44 @@ interface NavItem {
     </aside>
   `,
   styles: [`
+
+    /* ════ SIDEBAR CONTAINER ════════════════════════════════════════ */
     .sero-sidebar {
       width: var(--sero-sidebar-width);
       height: 100vh;
-      background: var(--sero-card-bg);
+      background: var(--sero-surface-2);
       display: flex;
       flex-direction: column;
       position: fixed;
       left: 0;
       top: 0;
       z-index: 100;
-      transition: width var(--t-slow), box-shadow var(--t-fast);
+      transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
       border-right: 1px solid var(--sero-border);
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+
+      &.collapsed {
+        width: var(--sero-sidebar-collapsed);
+
+        .sidebar-header {
+          justify-content: center;
+          padding: 0.625rem 0.5rem;
+        }
+      }
     }
 
-    .sero-sidebar.collapsed {
-      width: var(--sero-sidebar-collapsed);
-    }
-
+    /* ════ HEADER ════════════════════════════════════════════════════ */
     .sidebar-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px;
-      border-bottom: 1px solid var(--sero-border-light);
-      min-height: 60px;
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid var(--sero-border);
+      background: var(--sero-card-bg);
+      min-height: 56px;
       flex-shrink: 0;
-      background: color-mix(in srgb, var(--sero-app-bg) 55%, white);
+      gap: 0.5rem;
+      transition: padding 200ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .sero-logo {
@@ -196,6 +206,8 @@ interface NavItem {
       align-items: center;
       gap: 9px;
       overflow: hidden;
+      flex: 1;
+      min-width: 0;
     }
 
     .logo-mark {
@@ -207,7 +219,7 @@ interface NavItem {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(58, 71, 42, 0.18);
+      box-shadow: 0 2px 8px rgba(58, 71, 42, 0.20);
 
       .material-icons-round { font-size: 20px; color: #fff; }
     }
@@ -234,26 +246,33 @@ interface NavItem {
       margin-top: 3px;
     }
 
+    /* Toggle button — matches RMS exactly */
     .collapse-btn {
-      background: #fff;
-      border: 1px solid var(--sero-border);
-      color: var(--sero-text-secondary);
-      padding: 5px;
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
+      border: 1px solid var(--sero-border);
+      background: var(--sero-card-bg);
+      color: var(--sero-text-secondary);
       display: flex;
       align-items: center;
-      transition: all 150ms ease;
-      flex-shrink: 0;
+      justify-content: center;
       cursor: pointer;
+      padding: 0;
+      transition: background 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 
       .material-icons-round { font-size: 18px; }
+
       &:hover {
+        background: color-mix(in srgb, var(--sero-primary) 8%, var(--sero-card-bg));
+        border-color: color-mix(in srgb, var(--sero-primary) 35%, transparent);
         color: var(--sero-primary);
-        border-color: color-mix(in srgb, var(--sero-primary) 40%, var(--sero-border));
-        background: color-mix(in srgb, var(--sero-primary-50) 45%, #fff);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
       }
     }
 
+    /* ════ AGENT IDENTITY ════════════════════════════════════════════ */
     .agent-identity {
       display: flex;
       align-items: flex-start;
@@ -265,7 +284,7 @@ interface NavItem {
     }
 
     .agent-avatar-ring {
-      padding: 1px;
+      padding: 2px;
       background: linear-gradient(135deg, var(--sero-gold) 0%, var(--sero-primary-light) 100%);
       border-radius: 50%;
       flex-shrink: 0;
@@ -307,10 +326,7 @@ interface NavItem {
       border: 2px solid rgba(58, 71, 42, 0.12);
     }
 
-    .agent-meta {
-      flex: 1;
-      min-width: 0;
-    }
+    .agent-meta { flex: 1; min-width: 0; }
 
     .agent-name {
       font-size: 0.8125rem;
@@ -350,234 +366,279 @@ interface NavItem {
       &.pill--viewer  { background: #f3f4f6; color: #717985; border: 1px solid #e2e4e8; }
     }
 
+    /* ════ NAV SCROLL AREA ══════════════════════════════════════════ */
     .sidebar-nav {
       flex: 1;
       overflow-y: auto;
-      padding: 8px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
+      overflow-x: hidden;
+      padding: 0.5rem 0;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
-      scrollbar-color: rgba(58, 71, 42, 0.25) transparent;
+      scrollbar-color: color-mix(in srgb, var(--sero-primary) 30%, transparent) transparent;
+
+      &::-webkit-scrollbar { width: 6px; }
+      &::-webkit-scrollbar-track { background: transparent; }
+      &::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--sero-primary) 30%, transparent);
+        border-radius: 3px;
+        &:hover { background: color-mix(in srgb, var(--sero-primary) 50%, transparent); }
+      }
     }
 
+    /* Section captions — RMS style */
     .nav-section-label {
-      font-size: 0.6rem;
+      padding: 0.875rem 1rem 0.25rem;
+      font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.06em;
       color: var(--sero-text-muted);
-      padding: 12px 10px 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: padding 320ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .nav-section-divider {
       height: 1px;
       background: var(--sero-border-light);
-      margin: 10px 10px 4px;
+      margin: 0.875rem 0.5rem 0.25rem;
     }
 
     .nav-item-wrap { position: relative; }
 
+    /* ════ NAV ITEM — exact RMS design ═════════════════════════════ */
     .nav-item {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 9px;
-      color: var(--sero-text-secondary);
+      margin: 2px 8px;
+      padding: 9px 12px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all var(--t-fast);
+      outline: none;
+      user-select: none;
+      color: var(--sero-text-secondary);
+      background: transparent;
+      transition: background 160ms ease, color 160ms ease;
       text-decoration: none;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      position: relative;
+      gap: 10px;
       white-space: nowrap;
-      border-left: 3px solid transparent;
+      border: none;
+      overflow: hidden;
 
-      &:hover {
-        background: var(--sero-app-bg);
-        color: var(--sero-text-primary);
-        border-left-color: color-mix(in srgb, var(--sero-primary) 45%, transparent);
-        .nav-icon-wrap .nav-icon { color: var(--sero-primary-dark); }
+      .nav-icon-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
 
-      &.active {
-        background: color-mix(in srgb, var(--sero-primary-50) 65%, #fff);
-        color: var(--sero-primary-dark);
+      .nav-icon {
+        font-size: 18px;
+        color: var(--sero-text-secondary);
+        transition: color 160ms ease, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .nav-label {
+        flex: 1;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .nav-chevron {
+        flex-shrink: 0;
+        font-size: 14px;
+        color: var(--sero-text-muted);
+        transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1), color 160ms ease;
+      }
+
+      .nav-badge {
+        flex-shrink: 0;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        font-size: 0.6875rem;
         font-weight: 600;
-        border-left-color: var(--sero-primary);
-        .nav-icon-wrap .nav-icon { color: var(--sero-primary-dark); }
+        background: rgba(140, 123, 61, 0.15);
+        color: var(--sero-gold);
+        border: 1px solid rgba(140, 123, 61, 0.30);
+      }
+
+      &:hover:not(.disabled) {
+        background: var(--sero-bg-hover);
+        color: var(--sero-text-primary);
+        .nav-icon { color: var(--sero-primary); transform: scale(1.08); }
+        .nav-chevron { color: var(--sero-text-secondary); }
+      }
+
+      /* Leaf items: selected bg + right-side active bar */
+      &.active:not(.has-children) {
+        background: var(--sero-bg-selected);
+        color: var(--sero-text-primary);
+        .nav-label { font-weight: 500; }
+        .nav-icon { color: var(--sero-primary); }
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset-inline-end: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 55%;
+          background: var(--sero-primary);
+          border-radius: 2px 0 0 2px;
+        }
+      }
+
+      /* Expandable parent when open */
+      &.has-children.active {
+        background: var(--sero-bg-hover);
+        color: var(--sero-text-primary);
+        .nav-icon { color: var(--sero-primary); }
+        .nav-chevron { color: var(--sero-primary); }
       }
 
       &--danger {
         color: #ad4a4a;
-        &:hover { background: #fdeced; color: #8f3838; border-left-color: #dc8b8b; }
+        &:hover { background: #fdeced; color: #8f3838; }
       }
 
-      // Collapsed icon-only mode
+      /* Mini / icon-only mode */
       &.icon-only {
+        margin: 2px 6px;
+        padding: 10px;
         justify-content: center;
-        padding: 10px 0;
+        gap: 0;
 
-        .nav-icon-wrap {
-          width: 36px;
-          height: 36px;
-          border-radius: 9px;
-          background: #fff;
-          border: 1px solid var(--sero-border-light);
-          transition: background var(--t-fast);
+        .nav-icon { font-size: 20px; }
+
+        &:hover:not(.disabled) {
+          background: color-mix(in srgb, var(--sero-primary) 10%, transparent);
+          .nav-icon { color: var(--sero-primary); transform: scale(1.12); }
         }
 
-        &:hover .nav-icon-wrap { background: var(--sero-app-bg); }
-        &.active .nav-icon-wrap {
-          background: var(--sero-primary-50);
-          border-color: color-mix(in srgb, var(--sero-primary) 40%, var(--sero-border-light));
+        &.active {
+          background: color-mix(in srgb, var(--sero-primary) 14%, transparent);
+          &::after { display: none; }
         }
       }
     }
 
-    .nav-icon-wrap {
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      border-radius: 7px;
-      transition: background var(--t-fast);
-    }
-
-    .nav-icon {
-      font-size: 18px;
-      color: var(--sero-text-secondary);
-      transition: color var(--t-fast);
-    }
-
-    .nav-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-
-    .nav-chevron { font-size: 15px; color: var(--sero-text-muted); }
-
-    .nav-badge {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 10px;
-      background: rgba(140,123,61,.3);
-      color: #e0c870;
-      border: 1px solid rgba(140,123,61,.4);
-    }
-
+    /* ════ SUBMENU ══════════════════════════════════════════════════ */
     .nav-children {
-      padding-left: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      margin-top: 2px;
-      padding-bottom: 4px;
+      border-inline-start: 1px solid var(--sero-border);
+      margin-inline-start: 20px;
+      padding: 2px 0;
     }
 
     .nav-child {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 8px;
+      margin: 2px 8px 2px 0;
       padding: 6px 10px;
-      border-radius: 7px;
-      font-size: 0.78rem;
-      font-weight: 500;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 400;
       color: var(--sero-text-secondary);
       cursor: pointer;
-      transition: all var(--t-fast);
+      transition: background 160ms ease, color 160ms ease;
       text-decoration: none;
       white-space: nowrap;
+      gap: 8px;
 
-      .child-dot { font-size: 14px; }
+      .child-dot {
+        font-size: 15px;
+        color: var(--sero-text-muted);
+        flex-shrink: 0;
+        transition: color 160ms ease;
+      }
 
-      &:hover { background: var(--sero-app-bg); color: var(--sero-text-primary); }
-      &.active { color: var(--sero-primary-dark); font-weight: 700; }
-    }
+      &::before {
+        content: '';
+        position: absolute;
+        inset-inline-start: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--sero-border-light);
+      }
 
-    .sidebar-footer {
-      padding: 8px;
-      border-top: 1px solid var(--sero-border-light);
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      flex-shrink: 0;
-      background: color-mix(in srgb, var(--sero-app-bg) 35%, #fff);
-    }
+      &:hover { background: var(--sero-bg-hover); color: var(--sero-text-primary); }
 
-    @media (max-width: 1023px) {
-      .sero-sidebar {
-        box-shadow: var(--shadow-lg);
+      &.active {
+        color: var(--sero-primary-dark);
+        font-weight: 600;
+        .child-dot { color: var(--sero-primary); }
+        &::before { background: var(--sero-primary); }
       }
     }
 
+    /* ════ FOOTER ════════════════════════════════════════════════════ */
+    .sidebar-footer {
+      padding: 0.5rem;
+      border-top: 1px solid var(--sero-border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex-shrink: 0;
+      background: var(--sero-card-bg);
+    }
+
+    /* ════ RESPONSIVE ════════════════════════════════════════════════ */
+    @media (max-width: 1023px) {
+      .sero-sidebar {
+        box-shadow: rgba(58, 71, 42, 0.12) 0px 4px 8px, rgba(58, 71, 42, 0.08) 0px 16px 32px -8px;
+      }
+
+      .nav-item {
+        margin: 4px 8px;
+        border-radius: 10px;
+        padding: 10px 14px;
+        .nav-icon { font-size: 20px; }
+        .nav-label { font-size: 0.875rem; }
+      }
+
+      .nav-child {
+        padding: 8px 12px;
+        .child-dot { font-size: 16px; }
+      }
+    }
+
+    /* ════ RTL ═══════════════════════════════════════════════════════ */
     :host-context([dir="rtl"]) .sero-sidebar {
       left: auto;
       right: 0;
       border-right: none;
       border-left: 1px solid var(--sero-border);
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
     }
 
-    :host-context([dir="rtl"]) .sidebar-header {
-      flex-direction: row-reverse;
-    }
-
-    :host-context([dir="rtl"]) .sero-logo {
-      flex-direction: row-reverse;
-    }
-
-    :host-context([dir="rtl"]) .agent-identity {
-      flex-direction: row-reverse;
-      text-align: right;
-    }
-
-    :host-context([dir="rtl"]) .agent-meta {
-      text-align: right;
-    }
+    :host-context([dir="rtl"]) .sidebar-header { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .sero-logo { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .agent-identity { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .agent-meta { text-align: right; }
+    :host-context([dir="rtl"]) .role-pill { flex-direction: row-reverse; }
+    :host-context([dir="rtl"]) .nav-section-label { text-align: right; }
 
     :host-context([dir="rtl"]) .nav-item {
       flex-direction: row-reverse;
-      text-align: right;
-    }
-
-    :host-context([dir="rtl"]) .nav-item {
-      border-left: none;
-      border-right: 3px solid transparent;
-    }
-
-    :host-context([dir="rtl"]) .nav-item:hover,
-    :host-context([dir="rtl"]) .nav-item.active {
-      border-right-color: var(--sero-primary);
-    }
-
-    :host-context([dir="rtl"]) .nav-badge {
-      margin-right: 0;
-      margin-left: auto;
-    }
-
-    :host-context([dir="rtl"]) .nav-chevron {
-      transform: scaleX(-1);
+      &.icon-only { flex-direction: row; }
+      &.active:not(.has-children)::after { border-radius: 0 2px 2px 0; }
     }
 
     :host-context([dir="rtl"]) .nav-children {
-      padding-left: 0;
-      padding-right: 40px;
+      margin-inline-start: 0;
+      margin-inline-end: 20px;
     }
 
     :host-context([dir="rtl"]) .nav-child {
       flex-direction: row-reverse;
-      text-align: right;
-    }
-
-    :host-context([dir="rtl"]) .nav-section-label {
-      text-align: right;
-    }
-
-    :host-context([dir="rtl"]) .role-pill {
-      flex-direction: row-reverse;
+      margin: 2px 0 2px 8px;
     }
   `]
 })
@@ -622,6 +683,7 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
+    private router: Router,
     public langService: LanguageService,
     public layout: LayoutService
   ) {}
@@ -637,7 +699,36 @@ export class SidebarComponent implements OnInit {
     if (this.layout.sidebarCollapsed()) return rtl ? 'chevron_left' : 'chevron_right';
     return rtl ? 'chevron_right' : 'chevron_left';
   }
-  toggleExpand(item: NavItem): void { item.expanded = !item.expanded; }
+  toggleSidebar(event?: Event): void {
+    event?.stopPropagation();
+    this.layout.toggle();
+  }
+
+  toggleExpand(item: NavItem): void {
+    // Fix: one click should reveal menu data even in collapsed mode.
+    if (this.layout.sidebarCollapsed()) {
+      this.layout.sidebarCollapsed.set(false);
+      item.expanded = true;
+      return;
+    }
+
+    item.expanded = !item.expanded;
+  }
+
+  onNavItemClick(item: NavItem, event: Event): void {
+    if (!this.layout.sidebarCollapsed()) {
+      return;
+    }
+
+    // Keep first click effective even in collapsed mode.
+    event.preventDefault();
+    event.stopPropagation();
+    this.layout.sidebarCollapsed.set(false);
+
+    if (item.route) {
+      this.router.navigateByUrl(item.route);
+    }
+  }
 
   canSee(item: NavItem): boolean {
     if (!this.currentAgent) return false;

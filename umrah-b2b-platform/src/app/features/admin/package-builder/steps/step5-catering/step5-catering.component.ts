@@ -6,11 +6,12 @@ import { Package, CateringService } from '../../../../../core/models/package.mod
 import { OrderSummaryData } from '../../../../../core/models/package-builder-ui.model';
 import { PackageBuilderUiService } from '../../../../../core/services/package-builder-ui.service';
 import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-step5-catering',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, OrderSummaryComponent, SeroDropdownComponent],
   template: `
     <div class="step-shell animate-fade-in">
       <div class="step-grid">
@@ -60,20 +61,19 @@ import { OrderSummaryComponent } from '../../components/order-summary/order-summ
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.catering.mealsPerDay' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newItem.mealsPerDay">
-                  <option [value]="1">{{ 'builder.catering.meals.one' | translate }}</option>
-                  <option [value]="2">{{ 'builder.catering.meals.two' | translate }}</option>
-                  <option [value]="3">{{ 'builder.catering.meals.three' | translate }}</option>
-                </select>
+                <app-sero-dropdown
+                  [options]="mealsPerDayOptions"
+                  [value]="newItem.mealsPerDay || null"
+                  (valueChange)="newItem.mealsPerDay = $event">
+                </app-sero-dropdown>
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'builder.catering.serviceLocation' | translate }}</label>
-                <select class="form-control" [(ngModel)]="newItem.serviceLocation">
-                  <option>{{ 'builder.catering.locations.hotelRestaurant' | translate }}</option>
-                  <option>{{ 'builder.catering.locations.roomService' | translate }}</option>
-                  <option>{{ 'builder.catering.locations.diningHall' | translate }}</option>
-                  <option>{{ 'builder.catering.locations.hotelAndRoom' | translate }}</option>
-                </select>
+                <app-sero-dropdown
+                  [options]="serviceLocationOptions"
+                  [value]="newItem.serviceLocation || null"
+                  (valueChange)="newItem.serviceLocation = $event">
+                </app-sero-dropdown>
               </div>
               <div class="form-group" style="grid-column:1/-1">
                 <label class="form-label">{{ 'builder.catering.dietary' | translate }}</label>
@@ -134,6 +134,17 @@ export class Step5CateringComponent implements OnInit {
   @Output() next = new EventEmitter<void>();
   @Output() prev = new EventEmitter<void>();
 
+  mealsPerDayOptions: SeroDropdownOption<number>[] = [
+    { value: 1, labelKey: 'builder.catering.meals.one' },
+    { value: 2, labelKey: 'builder.catering.meals.two' },
+    { value: 3, labelKey: 'builder.catering.meals.three' }
+  ];
+  serviceLocationOptions: SeroDropdownOption<string>[] = [
+    { value: 'Hotel Restaurant', labelKey: 'builder.catering.locations.hotelRestaurant' },
+    { value: 'Room Service', labelKey: 'builder.catering.locations.roomService' },
+    { value: 'Dining Hall', labelKey: 'builder.catering.locations.diningHall' },
+    { value: 'Hotel & Room Service', labelKey: 'builder.catering.locations.hotelAndRoom' }
+  ];
   catering: CateringService[] = [];
   showForm = false;
   newItem: Partial<CateringService> = { provider: '', mealsPerDay: 3, serviceLocation: 'Hotel Restaurant', mealTypes: ['Breakfast', 'Lunch', 'Dinner'], dietaryOptions: ['Halal'] };

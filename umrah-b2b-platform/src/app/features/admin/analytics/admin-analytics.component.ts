@@ -6,11 +6,12 @@ import { AnalyticsService } from '../../../core/services/analytics.service';
 import {
   DistributionAnalytics, DashboardWidget, AgentPerformance, PackagePerformanceMetric
 } from '../../../core/models/analytics.model';
+import { SeroDropdownComponent, SeroDropdownOption } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
 
 @Component({
   selector: 'app-admin-analytics',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, SeroDropdownComponent],
   template: `
     <div class="analytics-dashboard animate-fade-in">
 
@@ -21,11 +22,14 @@ import {
           <p class="page-subtitle">{{ 'analytics.adminSubtitle' | translate }}</p>
         </div>
         <div class="flex items-center gap-2">
-          <select class="form-control form-control--sm">
-            <option>{{ 'analytics.periodSelect.last30' | translate }}</option>
-            <option>{{ 'analytics.periodSelect.last90' | translate }}</option>
-            <option>{{ 'analytics.periodSelect.thisYear' | translate }}</option>
-          </select>
+          <div style="width: 170px;">
+            <app-sero-dropdown
+              size="sm"
+              [options]="periodOptions"
+              [value]="selectedPeriod"
+              (valueChange)="selectedPeriod = $event">
+            </app-sero-dropdown>
+          </div>
           <button class="btn btn--secondary btn--sm">
             <span class="material-icons-round">download</span>
             {{ 'common.buttons.export' | translate }}
@@ -385,6 +389,12 @@ export class AdminAnalyticsComponent implements OnInit {
   analytics: DistributionAnalytics | null = null;
   widgets: DashboardWidget[] = [];
   maxRevenue = 0;
+  selectedPeriod = 'last30';
+  periodOptions: SeroDropdownOption<string>[] = [
+    { value: 'last30', labelKey: 'analytics.periodSelect.last30' },
+    { value: 'last90', labelKey: 'analytics.periodSelect.last90' },
+    { value: 'thisYear', labelKey: 'analytics.periodSelect.thisYear' }
+  ];
 
   constructor(private analyticsService: AnalyticsService) {}
 
