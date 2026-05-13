@@ -25,10 +25,75 @@ export interface OrderSummary {
   hasTickets: boolean;
 }
 
+export interface FlightSelection {
+  departureCountry: string;
+  departureCity: string;
+  arrivalCountry: string;
+  arrivalCity: string;
+  tripType: string;
+  travelClass: string;
+  airline: string;
+  seats: number;
+}
+
+export interface FlightFormValues {
+  departureCountry: string;
+  departureCity: string;
+  arrivalCountry: string;
+  arrivalCity: string;
+  tripType: string;
+  travelClass: string;
+  airline: string;
+  seats: number;
+}
+
+export interface MealSelection {
+  foodType: string;
+  mealPlan: string;
+  guests: number;
+}
+
+export interface MealFormValues {
+  foodType: string;
+  mealPlan: string;
+  guests: number;
+}
+
+export interface PackageDetailsFormValues {
+  packageTitle: string;
+  guestCount: number;
+  quantity: number;
+  packageCode: string;
+  startDate: string;
+  endDate: string;
+  isPackageActive: boolean;
+  includeVisa: boolean;
+  tags: string;
+  agents: string;
+}
+
+export interface PricingFormValues {
+  adjustPriceMode: string;
+  markupPercent: number;
+  discountPercent: number;
+  hideServiceBreakdown: boolean;
+  verifiedLocked: boolean;
+  isApplied: boolean;
+  finalPrice: number;
+}
+
 export interface PackageDefinitionState {
   currentStep: number;
   applyNightsToAll: boolean;
   globalNights: number;
+  tripRoute: string;
+  transportType: string;
+  flightForm: FlightFormValues;
+  flights: FlightSelection[];
+  mealForm: MealFormValues;
+  meals: MealSelection[];
+  packageDetailsForm: PackageDetailsFormValues;
+  pricingForm: PricingFormValues;
   orderSummary: OrderSummary;
 }
 

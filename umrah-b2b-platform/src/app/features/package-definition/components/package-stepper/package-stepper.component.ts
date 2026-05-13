@@ -19,11 +19,15 @@ import { PackageStep } from '../../package-definition.models';
                   (click)="stepClicked.emit(step.id)"
                   [attr.aria-current]="step.id === currentStep ? 'step' : null">
             <div class="step-circle">
-              @if (step.id < currentStep) {
-                <span class="material-symbols-outlined">check</span>
-              } @else {
-                <span class="material-symbols-outlined">{{ step.icon }}</span>
-              }
+              <span class="material-symbols-outlined">{{ step.icon }}</span>
+              <span
+                class="step-status-badge"
+                [class.completed]="getStepStatus(step.id) === 'completed'"
+                [class.incomplete]="getStepStatus(step.id) === 'incomplete'">
+                <span class="material-symbols-outlined">
+                  {{ getStepStatus(step.id) === 'completed' ? 'check' : 'close' }}
+                </span>
+              </span>
             </div>
             <span class="step-label">{{ step.label | translate }}</span>
           </button>
@@ -75,6 +79,8 @@ import { PackageStep } from '../../package-definition.models';
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      overflow: visible;
       border: 2px solid var(--sero-border);
       background: var(--sero-card-bg);
       color: var(--sero-text-secondary);
@@ -102,6 +108,38 @@ import { PackageStep } from '../../package-definition.models';
       border-color: var(--sero-primary);
       background: color-mix(in srgb, var(--sero-primary) 10%, transparent);
       color: var(--sero-primary);
+    }
+
+    .step-status-badge {
+      position: absolute;
+      top: -5px;
+      inset-inline-end: -5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+    }
+
+    .step-status-badge .material-symbols-outlined {
+      font-size: 10px;
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+    }
+
+    .step-status-badge.completed {
+      background: color-mix(in srgb, var(--sero-primary) 86%, #fff);
+      color: #fff;
+    }
+
+    .step-status-badge.incomplete {
+      background: #fee2e2;
+      color: #b42318;
+      border-color: #fecaca;
     }
 
     .step-label {
@@ -141,7 +179,12 @@ import { PackageStep } from '../../package-definition.models';
   `]
 })
 export class PackageStepperComponent {
+  @Input() stepStatuses: Record<number, 'completed' | 'incomplete'> = {};
   @Input() steps: PackageStep[] = [];
   @Input() currentStep = 1;
   @Output() stepClicked = new EventEmitter<number>();
+
+  getStepStatus(stepId: number): 'completed' | 'incomplete' {
+    return this.stepStatuses[stepId] ?? 'incomplete';
+  }
 }

@@ -47,6 +47,27 @@ export const SPECIFIC_HOTELS_MAKKAH = [
   'فندق الشهداء',
 ];
 
+export const TRANSPORT_TYPES = [
+  'باص',
+  'فان',
+  'سيارة خاصة',
+  'ليموزين',
+  'ميني باص',
+];
+
+export const TRIP_ROUTES = [
+  'JED-MAD',
+  'JED-MAD-MAK-JED',
+  'JED-MAK',
+  'JED-MAK & MAD HTL-MAD APT',
+  'JED-MAK-JED',
+  'JED-MAK-MAD',
+  'JED-MAK-MAD-MAD AIRPORT',
+  'JED-MAK-MAD-MAK',
+  'JED-MAK-MAD-MAK-JED',
+  'MAD AIRPORT-MAD-MAK-JED',
+];
+
 export const SPECIFIC_HOTELS_MADINAH = [
   'Dar al alhekma Hotel',
   'New Hotel',
@@ -54,4 +75,72 @@ export const SPECIFIC_HOTELS_MADINAH = [
   'Dar Al rahma hotel',
   'Al noor Hotel',
   'TESSST HOTEL',
+];
+
+export const FLIGHT_COUNTRIES = [
+  'المملكة العربية السعودية',
+  'باكستان',
+  'ماليزيا',
+];
+
+export const FLIGHT_DEFAULT_ARRIVAL_COUNTRY = 'المملكة العربية السعودية';
+
+export const FLIGHT_DEPARTURE_CITIES_BY_COUNTRY: Record<string, string[]> = {
+  'المملكة العربية السعودية': ['جدة', 'الرياض', 'الدمام', 'المدينة'],
+  'باكستان': ['إسلام آباد', 'كراتشي', 'لاهور'],
+  'ماليزيا': ['كوالالمبور', 'بينانغ', 'جوهور بهرو'],
+};
+
+export const FLIGHT_ARRIVAL_CITIES_BY_COUNTRY: Record<string, string[]> = {
+  'المملكة العربية السعودية': ['جدة', 'الرياض', 'الدمام', 'المدينة', 'مكة'],
+  'باكستان': ['إسلام آباد', 'كراتشي', 'لاهور'],
+  'ماليزيا': ['كوالالمبور', 'بينانغ', 'جوهور بهرو'],
+};
+
+export const FLIGHT_TRIP_TYPES = [
+  'ذهاب فقط',
+  'ذهاب وعودة',
+];
+
+export const FLIGHT_TRAVEL_CLASSES = [
+  'اقتصادية',
+  'الأعمال',
+  'الأولى',
+];
+
+export const FLIGHT_AIRLINES = [
+  'الخطوط السعودية',
+  'طيران ناس',
+  'طيران أديل',
+  'نسما للطيران',
+  'السعودية الخليجية',
+];
+
+export const FOOD_TYPES = [
+  'بوفيه',
+  'وجبات فردية',
+  'وجبات معلبة',
+  'ضيافة خفيفة',
+];
+
+export const MEAL_PLANS = [
+  'إفطار فقط',
+  'نصف إقامة',
+  'إقامة كاملة',
+  'حسب الطلب',
+];
+
+export const PACKAGE_TAGS = [
+  'اقتصادية',
+  'عائلية',
+  'VIP',
+  'موسم رمضان',
+  'عروض خاصة',
+];
+
+export const PACKAGE_AGENTS = [
+  'وكيل الرياض',
+  'وكيل جدة',
+  'وكيل الدمام',
+  'وكيل المدينة',
 ];

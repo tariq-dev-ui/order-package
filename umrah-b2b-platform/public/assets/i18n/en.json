@@ -717,7 +717,8 @@
       "addMakkahHotel":  "Add Makkah Hotel",
       "addMadinahHotel": "Add Madinah Hotel",
       "next":            "Next",
-      "back":            "Back"
+      "back":            "Back",
+      "createPackage":   "Create Package"
     },
     "summary": {
       "title":         "Order Summary",
@@ -740,6 +741,25 @@
       "nights":        "nights",
       "criteria":      "By criteria",
       "specific":      "Specific"
+    },
+    "pricingStep": {
+      "title": "Pricing",
+      "subtitle": "Set the final package selling price",
+      "totalServices": "Total services",
+      "adjustPrice": "Adjust price",
+      "selectAdjustment": "Select adjustment type",
+      "markup": "Markup",
+      "discount": "Discount",
+      "apply": "Apply",
+      "finalPackagePrice": "Final package price",
+      "hideBreakdown": "Hide service breakdown from agent and show final price only",
+      "verificationStatus": "Verification / lock status",
+      "verifiedLocked": "Verified — locked",
+      "verifiedLockedDesc": "Prices are final and cannot be changed after approval",
+      "adjustments": {
+        "markup": "Markup",
+        "discount": "Discount"
+      }
     }
   }
 }

@@ -694,7 +694,7 @@
       "tickets":       "التذاكر",
       "food":          "الطعام",
       "other":         "أخرى",
-      "pricing":       "Pricing"
+      "pricing":       "التسعير"
     },
     "stepHint": {
       "makkah":  "أضف فنادق مكة المكرمة المطلوبة في الباقة",
@@ -717,7 +717,8 @@
       "addMakkahHotel":  "أضف فندق مكة",
       "addMadinahHotel": "أضف فندق مدينة",
       "next":            "التالي",
-      "back":            "السابق"
+      "back":            "السابق",
+      "createPackage":   "إنشاء الباقة"
     },
     "summary": {
       "title":         "ملخص الطلب",
@@ -740,6 +741,25 @@
       "nights":        "ليالي",
       "criteria":      "بمعايير",
       "specific":      "محدد"
+    },
+    "pricingStep": {
+      "title": "التسعير",
+      "subtitle": "تحديد السعر النهائي للباقة",
+      "totalServices": "إجمالي الخدمات",
+      "adjustPrice": "تعديل السعر",
+      "selectAdjustment": "اختر نوع التعديل",
+      "markup": "هامش الربح",
+      "discount": "الخصم",
+      "apply": "تطبيق",
+      "finalPackagePrice": "السعر النهائي للباقة",
+      "hideBreakdown": "إخفاء تفاصيل الخدمات عن الوكيل وإظهار السعر النهائي فقط",
+      "verificationStatus": "حالة الاعتماد / القفل",
+      "verifiedLocked": "تم التحقق — مقفل",
+      "verifiedLockedDesc": "الأسعار نهائية ولا يمكن تعديلها بعد الاعتماد",
+      "adjustments": {
+        "markup": "هامش الربح",
+        "discount": "الخصم"
+      }
     }
   }
 }

@@ -22,6 +22,12 @@ interface SpecificHotelCard {
   imageUrl: string;
 }
 
+interface AccordionForm {
+  roomType: string;
+  roomCount: number;
+  nightsCount: number;
+}
+
 @Component({
   selector: 'app-hotel-step-form',
   standalone: true,
@@ -108,6 +114,8 @@ interface SpecificHotelCard {
             </div>
           </div>
         } @else {
+
+          <!-- Specific mode toolbar — filter fields only, never reflect selection -->
           <div class="specific-toolbar">
             <div class="field-row">
               <div class="field-group">
@@ -116,9 +124,9 @@ interface SpecificHotelCard {
                 </label>
                 <app-sero-dropdown
                   [options]="neighborhoodOptions"
-                  [value]="form().neighborhood"
+                  [value]="selectedDistrictFilter()"
                   [placeholderKey]="'packageDefinition.fields.neighborhood'"
-                  (valueChange)="patch({ neighborhood: $event })" />
+                  (valueChange)="onDistrictFilterChange($event)" />
               </div>
 
               <div class="field-group">
@@ -130,20 +138,15 @@ interface SpecificHotelCard {
                   <input
                     class="hotel-search-input"
                     type="text"
-                    [value]="hotelSearchTerm()"
+                    [value]="hotelSearchQuery()"
                     [attr.placeholder]="'ابحث عن اسم الفندق'"
-                    [attr.list]="hotelDatalistId"
-                    (input)="setHotelSearch($any($event.target).value)" />
+                    (input)="hotelSearchQuery.set($any($event.target).value)" />
                 </div>
-                <datalist [id]="hotelDatalistId">
-                  @for (hotel of specificHotelCards; track hotel.id) {
-                    <option [value]="hotel.name"></option>
-                  }
-                </datalist>
               </div>
             </div>
           </div>
 
+          <!-- Hotel cards list -->
           <div class="specific-results">
             @if (filteredHotelCards.length === 0) {
               <div class="specific-empty">
@@ -152,7 +155,7 @@ interface SpecificHotelCard {
             } @else {
               @for (hotel of filteredHotelCards; track hotel.id) {
                 <div class="specific-card" [class.open]="openedHotelId === hotel.id">
-                  <button type="button" class="specific-card-head" (click)="toggleHotelAccordion(hotel)">
+                  <button type="button" class="specific-card-head" (click)="toggleHotelCard(hotel)">
                     <div class="specific-info">
                       <h3 class="specific-hotel-name">{{ hotel.name }}</h3>
                       <div class="specific-meta">
@@ -177,9 +180,9 @@ interface SpecificHotelCard {
                         </label>
                         <app-sero-dropdown
                           [options]="roomTypeOptions"
-                          [value]="form().roomType"
+                          [value]="getHotelForm(hotel.id).roomType"
                           [placeholderKey]="'packageDefinition.fields.roomType'"
-                          (valueChange)="patch({ roomType: $event })" />
+                          (valueChange)="patchAccordion(hotel.id, { roomType: $event })" />
                       </div>
 
                       <div class="counter-row-grid">
@@ -188,10 +191,10 @@ interface SpecificHotelCard {
                             {{ 'packageDefinition.fields.roomCount' | translate }}
                           </label>
                           <app-counter-input
-                            [value]="form().roomCount"
-                            [min]="1"
+                            [value]="getHotelForm(hotel.id).roomCount"
+                            [min]="0"
                             [max]="50"
-                            (valueChange)="patch({ roomCount: $event })" />
+                            (valueChange)="patchAccordion(hotel.id, { roomCount: $event })" />
                         </div>
 
                         <div class="counter-group">
@@ -199,12 +202,27 @@ interface SpecificHotelCard {
                             {{ 'packageDefinition.fields.nightsCount' | translate }}
                           </label>
                           <app-counter-input
-                            [value]="form().nightsCount"
-                            [min]="1"
+                            [value]="getHotelForm(hotel.id).nightsCount"
+                            [min]="0"
                             [max]="60"
-                            (valueChange)="patch({ nightsCount: $event })" />
+                            (valueChange)="patchAccordion(hotel.id, { nightsCount: $event })" />
                         </div>
                       </div>
+
+                      <div class="specific-inline-actions">
+                        <button
+                          class="btn-inline-add"
+                          type="button"
+                          [disabled]="!canAddHotel(hotel)"
+                          [attr.title]="!canAddHotel(hotel) ? 'يرجى اختيار نوع الغرفة وعدد الغرف وعدد الليالي' : null"
+                          (click)="submitSpecific(hotel)">
+                          <span class="material-symbols-outlined">add_circle</span>
+                          إضافة
+                        </button>
+                      </div>
+                      @if (!canAddHotel(hotel)) {
+                        <p class="specific-helper-text">يرجى اختيار نوع الغرفة وعدد الغرف وعدد الليالي</p>
+                      }
                     </div>
                   }
                 </div>
@@ -217,10 +235,12 @@ interface SpecificHotelCard {
 
       <!-- Action buttons -->
       <div class="form-actions">
-        <button class="btn-add-hotel btn-primary" type="button" (click)="submit()">
-          <span class="material-symbols-outlined">add_circle</span>
-          {{ addLabel | translate }}
-        </button>
+        @if (form().mode === 'criteria') {
+          <button class="btn-add-hotel btn-primary" type="button" (click)="submitCriteria()">
+            <span class="material-symbols-outlined">add_circle</span>
+            {{ addLabel | translate }}
+          </button>
+        }
         <button class="btn-next btn-ghost" type="button" (click)="next.emit()">
           {{ 'packageDefinition.actions.next' | translate }}
           <span class="material-symbols-outlined">chevron_left</span>
@@ -312,10 +332,15 @@ interface SpecificHotelCard {
     }
 
     .specific-card {
-      border: 1px solid color-mix(in srgb, var(--sero-primary) 32%, var(--sero-border));
+      border: 1px solid var(--sero-border);
       border-radius: 12px;
-      background: #fff;
+      background: var(--sero-surface);
       overflow: hidden;
+      transition: border-color var(--t-fast);
+    }
+
+    .specific-card.open {
+      border-color: color-mix(in srgb, var(--sero-primary) 40%, var(--sero-border));
     }
 
     .specific-results {
@@ -346,11 +371,16 @@ interface SpecificHotelCard {
       cursor: pointer;
     }
 
+    .specific-card.open .specific-card-head {
+      background: color-mix(in srgb, var(--sero-primary) 4%, transparent);
+    }
+
     .specific-info {
       display: flex;
       flex-direction: column;
       gap: 4px;
       min-width: 0;
+      flex: 1;
     }
 
     .specific-hotel-name {
@@ -385,8 +415,8 @@ interface SpecificHotelCard {
     }
 
     .specific-thumb {
-      width: 94px;
-      height: 76px;
+      width: 80px;
+      height: 66px;
       border-radius: 10px;
       border: 1px solid var(--sero-border);
       background:
@@ -404,6 +434,7 @@ interface SpecificHotelCard {
 
     .specific-chevron.open {
       transform: rotate(180deg);
+      color: var(--sero-primary);
     }
 
     .specific-controls {
@@ -411,7 +442,54 @@ interface SpecificHotelCard {
       flex-direction: column;
       gap: 12px;
       border-top: 1px solid var(--sero-border-light);
-      padding: 12px;
+      padding: 14px 12px;
+      background: color-mix(in srgb, var(--sero-primary) 2%, var(--sero-card-bg));
+    }
+
+    .specific-inline-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-inline-add {
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--sero-primary);
+      background: var(--sero-primary);
+      color: #fff;
+      font-family: var(--sero-font);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity var(--t-fast), transform var(--t-fast);
+    }
+
+    .btn-inline-add:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-inline-add:disabled {
+      background: #d8dde6;
+      border-color: #d8dde6;
+      color: #ffffff;
+      cursor: not-allowed;
+      opacity: 1;
+      transform: none;
+    }
+
+    .btn-inline-add .material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    .specific-helper-text {
+      margin: -4px 0 0;
+      font-size: 0.76rem;
+      color: var(--sero-text-secondary);
     }
 
     .counter-row-grid {
@@ -532,21 +610,16 @@ export class HotelStepFormComponent implements OnChanges {
   @Output() applyNightsToAllChange = new EventEmitter<boolean>();
   @Output() next = new EventEmitter<void>();
 
-  readonly categories = HOTEL_CATEGORIES;
-  readonly roomTypes = ROOM_TYPES;
-
-  neighborhoods: string[] = MAKKAH_NEIGHBORHOODS;
-  hotels: string[] = SPECIFIC_HOTELS_MAKKAH;
-  addLabel = 'packageDefinition.actions.addMakkahHotel';
-  openedHotelId: string | null = null;
-  hotelSearchTerm = signal('');
-  specificHotelCards: SpecificHotelCard[] = [];
-
   readonly categoryOptions: SeroDropdownOption<string>[] =
     HOTEL_CATEGORIES.map((value) => ({ value, label: value }));
   readonly roomTypeOptions: SeroDropdownOption<string>[] =
     ROOM_TYPES.map((value) => ({ value, label: value }));
 
+  neighborhoods: string[] = MAKKAH_NEIGHBORHOODS;
+  addLabel = 'packageDefinition.actions.addMakkahHotel';
+  specificHotelCards: SpecificHotelCard[] = [];
+
+  // Criteria mode form — only used when mode === 'criteria'
   form = signal<HotelFormValues>({
     mode: 'criteria',
     neighborhood: '',
@@ -557,91 +630,160 @@ export class HotelStepFormComponent implements OnChanges {
     hotelName: '',
   });
 
+  // Specific mode: filter state — drives toolbar inputs, never reflects a selection
+  selectedDistrictFilter = signal<string>('');
+  hotelSearchQuery = signal<string>('');
+
+  // Specific mode: which accordion card is open (null = none)
+  openedHotelId: string | null = null;
+
+  // Specific mode: room details inside the open accordion, independent from filter state
+  private hotelCardForms = signal<Record<string, AccordionForm>>({});
+
   ngOnChanges(): void {
     this.neighborhoods = this.city === 'makkah' ? MAKKAH_NEIGHBORHOODS : MADINAH_NEIGHBORHOODS;
-    this.hotels = this.city === 'makkah' ? SPECIFIC_HOTELS_MAKKAH : SPECIFIC_HOTELS_MADINAH;
     this.addLabel = this.city === 'makkah'
       ? 'packageDefinition.actions.addMakkahHotel'
       : 'packageDefinition.actions.addMadinahHotel';
     this.specificHotelCards = this.buildSpecificHotelCards();
-    this.openedHotelId = this.specificHotelCards[0]?.id ?? null;
+    this.openedHotelId = null;
+    this.selectedDistrictFilter.set('');
+    this.hotelSearchQuery.set('');
+    this.hotelCardForms.set(this.buildInitialHotelCardForms());
   }
 
   get neighborhoodOptions(): SeroDropdownOption<string>[] {
     return this.neighborhoods.map((value) => ({ value, label: value }));
   }
 
-  get hotelOptions(): SeroDropdownOption<string>[] {
-    return this.hotels.map((value) => ({ value, label: value }));
-  }
-
-  get hotelDatalistId(): string {
-    return `specific-hotel-list-${this.city}`;
-  }
-
   get filteredHotelCards(): SpecificHotelCard[] {
-    const neighborhoodFilter = (this.form().neighborhood || '').trim();
-    const searchFilter = this.hotelSearchTerm().trim().toLowerCase();
+    const districtFilter = this.selectedDistrictFilter().trim();
+    const searchFilter = this.hotelSearchQuery().trim().toLowerCase();
 
     return this.specificHotelCards.filter((hotel) => {
-      const neighborhoodMatches = !neighborhoodFilter || hotel.neighborhood === neighborhoodFilter;
+      const districtMatches = !districtFilter || hotel.neighborhood === districtFilter;
       const searchMatches = !searchFilter || hotel.name.toLowerCase().includes(searchFilter);
-      return neighborhoodMatches && searchMatches;
+      return districtMatches && searchMatches;
     });
   }
 
-  setHotelSearch(value: string): void {
-    this.hotelSearchTerm.set(value);
+  onDistrictFilterChange(value: string): void {
+    this.selectedDistrictFilter.set(value);
+    // Close accordion if the opened hotel is no longer in the filtered results
+    if (this.openedHotelId !== null) {
+      const stillVisible = this.filteredHotelCards.some((h) => h.id === this.openedHotelId);
+      if (!stillVisible) {
+        this.openedHotelId = null;
+      }
+    }
   }
 
-  toggleHotelAccordion(hotel: SpecificHotelCard): void {
-    this.openedHotelId = this.openedHotelId === hotel.id ? null : hotel.id;
-    this.patch({ hotelName: hotel.name, neighborhood: hotel.neighborhood });
-    this.hotelSearchTerm.set(hotel.name);
+  toggleHotelCard(hotel: SpecificHotelCard): void {
+    if (this.openedHotelId === hotel.id) {
+      this.openedHotelId = null;
+    } else {
+      this.openedHotelId = hotel.id;
+      // Selecting a hotel should not keep the toolbar in filtered mode.
+      this.selectedDistrictFilter.set('');
+      this.hotelSearchQuery.set('');
+    }
+  }
+
+  patchAccordion(hotelId: string, partial: Partial<AccordionForm>): void {
+    this.hotelCardForms.update((forms) => ({
+      ...forms,
+      [hotelId]: { ...this.getHotelForm(hotelId), ...partial },
+    }));
   }
 
   starIndexes(count: number): number[] {
     return Array.from({ length: count }, (_, index) => index);
   }
 
+  setMode(mode: HotelMode): void {
+    this.form.update((f) => ({ ...f, mode, neighborhood: '', category: '', hotelName: '' }));
+    this.openedHotelId = null;
+    this.selectedDistrictFilter.set('');
+    this.hotelSearchQuery.set('');
+    this.hotelCardForms.set(this.buildInitialHotelCardForms());
+  }
+
+  patch(partial: Partial<HotelFormValues>): void {
+    this.form.update((f) => ({ ...f, ...partial }));
+  }
+
+  submitSpecific(hotel: SpecificHotelCard): void {
+    if (!this.canAddHotel(hotel)) {
+      return;
+    }
+
+    const af = this.getHotelForm(hotel.id);
+    const selection: HotelSelection = {
+      id: `${this.city}-${Date.now()}`,
+      mode: 'specific',
+      neighborhood: hotel.neighborhood,
+      category: '',
+      roomType: af.roomType,
+      roomCount: af.roomCount,
+      nightsCount: af.nightsCount,
+      hotelName: hotel.name,
+    };
+    this.hotelAdded.emit(selection);
+    this.patchAccordion(hotel.id, { roomType: '', roomCount: 0, nightsCount: 0 });
+    this.openedHotelId = null;
+  }
+
+  submitCriteria(): void {
+    const f = this.form();
+    const selection: HotelSelection = {
+      id: `${this.city}-${Date.now()}`,
+      mode: 'criteria',
+      neighborhood: f.neighborhood,
+      category: f.category,
+      roomType: f.roomType,
+      roomCount: f.roomCount,
+      nightsCount: f.nightsCount,
+      hotelName: '',
+    };
+    this.hotelAdded.emit(selection);
+  }
+
   private buildSpecificHotelCards(): SpecificHotelCard[] {
+    const hotels = this.city === 'makkah' ? SPECIFIC_HOTELS_MAKKAH : SPECIFIC_HOTELS_MADINAH;
     const fallbackNeighborhood = this.neighborhoods[0] || '-';
     const images = [
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=420&q=80',
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=420&q=80',
       'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=420&q=80',
-      'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=420&q=80'
+      'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=420&q=80',
     ];
 
-    return this.hotels.map((name, index) => ({
+    return hotels.map((name, index) => ({
       id: `${this.city}-specific-${index}`,
       name,
       neighborhood: this.neighborhoods[index % this.neighborhoods.length] || fallbackNeighborhood,
       stars: 4 + (index % 2),
-      imageUrl: images[index % images.length]
+      imageUrl: images[index % images.length],
     }));
   }
 
-  setMode(mode: HotelMode): void {
-    this.form.update(f => ({ ...f, mode, neighborhood: '', category: '', hotelName: '' }));
+  getHotelForm(hotelId: string): AccordionForm {
+    return this.hotelCardForms()[hotelId] ?? { roomType: '', roomCount: 0, nightsCount: 0 };
   }
 
-  patch(partial: Partial<HotelFormValues>): void {
-    this.form.update(f => ({ ...f, ...partial }));
+  canAddHotel(hotel: SpecificHotelCard): boolean {
+    if (!hotel || this.openedHotelId !== hotel.id) {
+      return false;
+    }
+
+    const form = this.getHotelForm(hotel.id);
+    return !!form.roomType && form.roomCount > 0 && form.nightsCount > 0;
   }
 
-  submit(): void {
-    const f = this.form();
-    const selection: HotelSelection = {
-      id: `${this.city}-${Date.now()}`,
-      mode: f.mode,
-      neighborhood: f.mode === 'criteria' ? f.neighborhood : '',
-      category: f.mode === 'criteria' ? f.category : '',
-      roomType: f.roomType,
-      roomCount: f.roomCount,
-      nightsCount: f.nightsCount,
-      hotelName: f.mode === 'specific' ? f.hotelName : '',
-    };
-    this.hotelAdded.emit(selection);
+  private buildInitialHotelCardForms(): Record<string, AccordionForm> {
+    return this.specificHotelCards.reduce<Record<string, AccordionForm>>((acc, hotel) => {
+      acc[hotel.id] = { roomType: '', roomCount: 0, nightsCount: 0 };
+      return acc;
+    }, {});
   }
 }

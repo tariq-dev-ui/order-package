@@ -35,13 +35,11 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
                       {{ hotel.mode === 'specific' ? hotel.hotelName : hotel.category }}
                     </span>
                     <span class="hotel-meta">
-                      @if (hotel.mode !== 'specific') {
-                        <span>{{ hotel.neighborhood }}</span>
-                        <span>&bull;</span>
-                      }
+                      <span>{{ hotel.roomType }}</span>
+                      <span>&bull;</span>
                       <span>{{ hotel.roomCount }} {{ 'packageDefinition.summary.rooms' | translate }}</span>
                       <span>&bull;</span>
-                      {{ hotel.nightsCount }} {{ 'packageDefinition.summary.nights' | translate }}
+                      <span>{{ hotel.nightsCount }} {{ 'packageDefinition.summary.nights' | translate }}</span>
                     </span>
                   </div>
                   <span class="mode-badge" [class.specific]="hotel.mode === 'specific'">
@@ -77,13 +75,11 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
                       {{ hotel.mode === 'specific' ? hotel.hotelName : hotel.category }}
                     </span>
                     <span class="hotel-meta">
-                      @if (hotel.mode !== 'specific') {
-                        <span>{{ hotel.neighborhood }}</span>
-                        <span>&bull;</span>
-                      }
+                      <span>{{ hotel.roomType }}</span>
+                      <span>&bull;</span>
                       <span>{{ hotel.roomCount }} {{ 'packageDefinition.summary.rooms' | translate }}</span>
                       <span>&bull;</span>
-                      {{ hotel.nightsCount }} {{ 'packageDefinition.summary.nights' | translate }}
+                      <span>{{ hotel.nightsCount }} {{ 'packageDefinition.summary.nights' | translate }}</span>
                     </span>
                   </div>
                   <span class="mode-badge" [class.specific]="hotel.mode === 'specific'">
@@ -108,9 +104,19 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
         </summary>
         <div class="section-body services-list">
           @for (service of services; track service.label) {
-            <div class="service-row" [class.active]="service.active">
-              <span class="service-label">{{ service.label }}:</span>
-              <span class="service-inline-status">{{ service.active ? service.addedText : service.emptyText }}</span>
+            <div class="hotel-card service-card" [class.is-active]="service.active">
+              <div class="hotel-card-row">
+                <span class="material-icons-round hotel-icon">{{ service.icon }}</span>
+                <div class="hotel-info">
+                  <span class="hotel-name">{{ service.label }}</span>
+                  <span class="hotel-meta">
+                    {{ service.active ? service.addedText : service.emptyText }}
+                  </span>
+                </div>
+                <span class="mode-badge" [class.specific]="service.active">
+                  {{ service.active ? 'مضاف' : 'غير مضاف' }}
+                </span>
+              </div>
             </div>
           }
         </div>
@@ -392,25 +398,14 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
 
     .services-list { gap: 6px; }
 
-    .service-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-      padding: 7px 8px;
-      border-radius: 8px;
-      background: transparent;
+    .service-card {
+      border-color: var(--sero-border-light);
+      background: color-mix(in srgb, var(--sero-app-bg) 88%, #fff);
     }
 
-    .service-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--sero-text);
-    }
-
-    .service-inline-status {
-      font-size: 0.78rem;
-      color: var(--sero-text-secondary);
-      line-height: 1.45;
+    .service-card.is-active {
+      border-color: color-mix(in srgb, var(--sero-primary) 28%, var(--sero-border));
+      background: color-mix(in srgb, var(--sero-primary) 5%, #fff);
     }
   `]
 })
@@ -427,11 +422,11 @@ export class OrderSummarySidebarComponent {
     return this.services.filter((service) => service.active).length;
   }
 
-  get services(): Array<{ label: string; active: boolean; emptyText: string; addedText: string }> {
+  get services(): Array<{ label: string; icon: string; active: boolean; emptyText: string; addedText: string }> {
     return [
-      { label: 'النقل', active: this.summary.hasTransport, emptyText: 'لم تتم إضافة نقل', addedText: 'تمت إضافة نقل' },
-      { label: 'وجبات', active: this.summary.hasMeals, emptyText: 'لم تتم إضافة خطط وجبات', addedText: 'تمت إضافة خطط وجبات' },
-      { label: 'تذاكر', active: this.summary.hasTickets, emptyText: 'No tickets added', addedText: 'Tickets added' }
+      { label: 'النقل', icon: 'airport_shuttle', active: this.summary.hasTransport, emptyText: 'لم تتم إضافة نقل', addedText: 'تمت إضافة نقل' },
+      { label: 'وجبات', icon: 'restaurant', active: this.summary.hasMeals, emptyText: 'لم تتم إضافة خطط وجبات', addedText: 'تمت إضافة خطط وجبات' },
+      { label: 'تذاكر', icon: 'flight', active: this.summary.hasTickets, emptyText: 'لم تتم إضافة تذاكر', addedText: 'تمت إضافة تذاكر' }
     ];
   }
 }
