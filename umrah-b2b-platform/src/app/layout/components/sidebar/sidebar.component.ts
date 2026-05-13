@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AgentService } from '../../../core/services/agent.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { LayoutService } from '../../../core/services/layout.service';
@@ -160,71 +160,54 @@ interface NavItem {
     </aside>
   `,
   styles: [`
-    // ── SERO Sidebar shell ──────────────────────────────────────
     .sero-sidebar {
       width: var(--sero-sidebar-width);
       height: 100vh;
-      background: var(--sero-sidebar-bg);
+      background: var(--sero-card-bg);
       display: flex;
       flex-direction: column;
       position: fixed;
       left: 0;
       top: 0;
       z-index: 100;
-      transition: width var(--t-slow);
+      transition: width var(--t-slow), box-shadow var(--t-fast);
       overflow: hidden;
-      border-right: 1px solid var(--sero-sidebar-border);
-
-      // Subtle gradient depth
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0; right: 0;
-        width: 1px;
-        height: 100%;
-        background: linear-gradient(
-          180deg,
-          rgba(255,255,255,.06) 0%,
-          rgba(140,123,61,.15) 40%,
-          rgba(255,255,255,.03) 100%
-        );
-        pointer-events: none;
-      }
+      border-right: 1px solid var(--sero-border);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
     }
 
     .sero-sidebar.collapsed {
       width: var(--sero-sidebar-collapsed);
     }
 
-    // ── Header ─────────────────────────────────────────────────
     .sidebar-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 16px;
-      border-bottom: 1px solid var(--sero-sidebar-border);
-      min-height: 70px;
+      padding: 12px;
+      border-bottom: 1px solid var(--sero-border-light);
+      min-height: 60px;
       flex-shrink: 0;
+      background: color-mix(in srgb, var(--sero-app-bg) 55%, white);
     }
 
     .sero-logo {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 9px;
       overflow: hidden;
     }
 
     .logo-mark {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-light) 100%);
-      border-radius: 10px;
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-dark) 100%);
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(58,71,42,.4);
-      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 4px 12px rgba(58, 71, 42, 0.18);
 
       .material-icons-round { font-size: 20px; color: #fff; }
     }
@@ -236,58 +219,62 @@ interface NavItem {
     }
 
     .logo-sero {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
-      color: #fff;
-      letter-spacing: 0.18em;
+      color: var(--sero-text-primary);
+      letter-spacing: 0.1em;
       line-height: 1;
     }
 
     .logo-tagline {
       font-size: 0.62rem;
-      color: rgba(255,255,255,.4);
+      color: var(--sero-text-muted);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-top: 3px;
     }
 
     .collapse-btn {
-      background: transparent;
-      border: none;
-      color: rgba(255,255,255,.35);
-      padding: 4px;
-      border-radius: 6px;
+      background: #fff;
+      border: 1px solid var(--sero-border);
+      color: var(--sero-text-secondary);
+      padding: 5px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      transition: all var(--t-fast);
+      transition: all 150ms ease;
       flex-shrink: 0;
       cursor: pointer;
 
       .material-icons-round { font-size: 18px; }
-      &:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.07); }
+      &:hover {
+        color: var(--sero-primary);
+        border-color: color-mix(in srgb, var(--sero-primary) 40%, var(--sero-border));
+        background: color-mix(in srgb, var(--sero-primary-50) 45%, #fff);
+      }
     }
 
-    // ── Agent identity ─────────────────────────────────────────
     .agent-identity {
       display: flex;
       align-items: flex-start;
-      gap: 11px;
-      padding: 16px;
-      border-bottom: 1px solid var(--sero-sidebar-border);
+      gap: 10px;
+      padding: 12px;
+      border-bottom: 1px solid var(--sero-border-light);
       flex-shrink: 0;
+      background: var(--sero-card-bg);
     }
 
     .agent-avatar-ring {
-      padding: 2px;
-      background: linear-gradient(135deg, var(--sero-gold) 0%, var(--sero-gold-light) 100%);
+      padding: 1px;
+      background: linear-gradient(135deg, var(--sero-gold) 0%, var(--sero-primary-light) 100%);
       border-radius: 50%;
       flex-shrink: 0;
     }
 
     .agent-avatar {
-      width: 36px;
-      height: 36px;
-      background: var(--sero-sidebar-bg-2);
+      width: 34px;
+      height: 34px;
+      background: var(--sero-primary-dark);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -295,21 +282,21 @@ interface NavItem {
       font-size: 0.8rem;
       font-weight: 700;
       color: #fff;
-      border: 1.5px solid var(--sero-sidebar-bg);
+      border: 1.5px solid #fff;
     }
 
     .agent-identity-mini {
       display: flex;
       justify-content: center;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--sero-sidebar-border);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--sero-border-light);
       flex-shrink: 0;
     }
 
     .agent-avatar-sm {
-      width: 38px;
-      height: 38px;
-      background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-light) 100%);
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--sero-primary) 0%, var(--sero-primary-dark) 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -317,7 +304,7 @@ interface NavItem {
       font-size: 0.8rem;
       font-weight: 700;
       color: #fff;
-      border: 2px solid rgba(140,123,61,.4);
+      border: 2px solid rgba(58, 71, 42, 0.12);
     }
 
     .agent-meta {
@@ -328,7 +315,7 @@ interface NavItem {
     .agent-name {
       font-size: 0.8125rem;
       font-weight: 700;
-      color: rgba(255,255,255,.92);
+      color: var(--sero-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -336,7 +323,7 @@ interface NavItem {
 
     .agent-company {
       font-size: 0.72rem;
-      color: rgba(255,255,255,.38);
+      color: var(--sero-text-muted);
       margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
@@ -357,22 +344,21 @@ interface NavItem {
 
       .material-icons-round { font-size: 10px; }
 
-      &.pill--admin   { background: rgba(180,60,60,.25); color: #f5a0a0; border: 1px solid rgba(180,60,60,.3); }
-      &.pill--master  { background: rgba(140,123,61,.3); color: #e0c870; border: 1px solid rgba(140,123,61,.4); }
-      &.pill--agent   { background: rgba(45,107,160,.25); color: #90c0e8; border: 1px solid rgba(45,107,160,.35); }
-      &.pill--viewer  { background: rgba(255,255,255,.07); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.12); }
+      &.pill--admin   { background: #fdeced; color: #b74848; border: 1px solid #f6cbcd; }
+      &.pill--master  { background: #f8f3e4; color: #8a6f21; border: 1px solid #eadba9; }
+      &.pill--agent   { background: #edf4fb; color: #39698f; border: 1px solid #cde0f1; }
+      &.pill--viewer  { background: #f3f4f6; color: #717985; border: 1px solid #e2e4e8; }
     }
 
-    // ── Navigation ─────────────────────────────────────────────
     .sidebar-nav {
       flex: 1;
       overflow-y: auto;
-      padding: 10px 8px;
+      padding: 8px 8px;
       display: flex;
       flex-direction: column;
       gap: 1px;
-
-      &::-webkit-scrollbar { width: 0; }
+      scrollbar-width: thin;
+      scrollbar-color: rgba(58, 71, 42, 0.25) transparent;
     }
 
     .nav-section-label {
@@ -380,13 +366,13 @@ interface NavItem {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,.22);
-      padding: 14px 10px 6px;
+      color: var(--sero-text-muted);
+      padding: 12px 10px 5px;
     }
 
     .nav-section-divider {
       height: 1px;
-      background: var(--sero-sidebar-border);
+      background: var(--sero-border-light);
       margin: 10px 10px 4px;
     }
 
@@ -397,43 +383,35 @@ interface NavItem {
       align-items: center;
       gap: 10px;
       padding: 8px 10px;
-      border-radius: 8px;
-      color: var(--sero-sidebar-text);
+      border-radius: 9px;
+      color: var(--sero-text-secondary);
       cursor: pointer;
       transition: all var(--t-fast);
       text-decoration: none;
       font-size: 0.8125rem;
-      font-weight: 500;
+      font-weight: 600;
       position: relative;
       white-space: nowrap;
+      border-left: 3px solid transparent;
 
       &:hover {
-        background: rgba(255,255,255,.055);
-        color: var(--sero-sidebar-text-hover);
-
-        .nav-icon-wrap .nav-icon { color: rgba(255,255,255,.7); }
+        background: var(--sero-app-bg);
+        color: var(--sero-text-primary);
+        border-left-color: color-mix(in srgb, var(--sero-primary) 45%, transparent);
+        .nav-icon-wrap .nav-icon { color: var(--sero-primary-dark); }
       }
 
       &.active {
-        background: rgba(58,71,42,.55);
-        color: var(--sero-sidebar-text-active);
+        background: color-mix(in srgb, var(--sero-primary-50) 65%, #fff);
+        color: var(--sero-primary-dark);
         font-weight: 600;
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 6px; bottom: 6px;
-          width: 3px;
-          background: var(--sero-gold);
-          border-radius: 0 2px 2px 0;
-        }
-
-        .nav-icon-wrap .nav-icon { color: var(--sero-gold-light); }
+        border-left-color: var(--sero-primary);
+        .nav-icon-wrap .nav-icon { color: var(--sero-primary-dark); }
       }
 
       &--danger {
-        color: rgba(240,120,120,.65);
-        &:hover { background: rgba(180,60,60,.15); color: #f5a0a0; }
+        color: #ad4a4a;
+        &:hover { background: #fdeced; color: #8f3838; border-left-color: #dc8b8b; }
       }
 
       // Collapsed icon-only mode
@@ -445,24 +423,15 @@ interface NavItem {
           width: 36px;
           height: 36px;
           border-radius: 9px;
-          background: rgba(255,255,255,.04);
+          background: #fff;
+          border: 1px solid var(--sero-border-light);
           transition: background var(--t-fast);
         }
 
-        &:hover .nav-icon-wrap { background: rgba(255,255,255,.1); }
-        &.active .nav-icon-wrap { background: rgba(58,71,42,.7); }
-
-        // Gold dot for active in collapsed
-        &.active::after {
-          content: '';
-          position: absolute;
-          bottom: 6px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 4px;
-          height: 4px;
-          background: var(--sero-gold);
-          border-radius: 50%;
+        &:hover .nav-icon-wrap { background: var(--sero-app-bg); }
+        &.active .nav-icon-wrap {
+          background: var(--sero-primary-50);
+          border-color: color-mix(in srgb, var(--sero-primary) 40%, var(--sero-border-light));
         }
       }
     }
@@ -480,13 +449,13 @@ interface NavItem {
 
     .nav-icon {
       font-size: 18px;
-      color: var(--sero-sidebar-text);
+      color: var(--sero-text-secondary);
       transition: color var(--t-fast);
     }
 
     .nav-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
-    .nav-chevron { font-size: 15px; color: rgba(255,255,255,.25); }
+    .nav-chevron { font-size: 15px; color: var(--sero-text-muted); }
 
     .nav-badge {
       font-size: 0.6rem;
@@ -500,7 +469,6 @@ interface NavItem {
       border: 1px solid rgba(140,123,61,.4);
     }
 
-    // ── Children ───────────────────────────────────────────────
     .nav-children {
       padding-left: 40px;
       display: flex;
@@ -518,7 +486,7 @@ interface NavItem {
       border-radius: 7px;
       font-size: 0.78rem;
       font-weight: 500;
-      color: rgba(255,255,255,.45);
+      color: var(--sero-text-secondary);
       cursor: pointer;
       transition: all var(--t-fast);
       text-decoration: none;
@@ -526,32 +494,31 @@ interface NavItem {
 
       .child-dot { font-size: 14px; }
 
-      &:hover { background: rgba(255,255,255,.05); color: rgba(255,255,255,.8); }
-      &.active { color: var(--sero-gold-light); font-weight: 600; }
+      &:hover { background: var(--sero-app-bg); color: var(--sero-text-primary); }
+      &.active { color: var(--sero-primary-dark); font-weight: 700; }
     }
 
-    // ── Footer ─────────────────────────────────────────────────
     .sidebar-footer {
       padding: 8px;
-      border-top: 1px solid var(--sero-sidebar-border);
+      border-top: 1px solid var(--sero-border-light);
       display: flex;
       flex-direction: column;
       gap: 1px;
       flex-shrink: 0;
-      background: rgba(0,0,0,.15);
+      background: color-mix(in srgb, var(--sero-app-bg) 35%, #fff);
     }
 
-    // ── RTL overrides ──────────────────────────────────────────
+    @media (max-width: 1023px) {
+      .sero-sidebar {
+        box-shadow: var(--shadow-lg);
+      }
+    }
+
     :host-context([dir="rtl"]) .sero-sidebar {
       left: auto;
       right: 0;
       border-right: none;
-      border-left: 1px solid var(--sero-sidebar-border);
-    }
-
-    :host-context([dir="rtl"]) .sero-sidebar::after {
-      right: auto;
-      left: 0;
+      border-left: 1px solid var(--sero-border);
     }
 
     :host-context([dir="rtl"]) .sidebar-header {
@@ -576,10 +543,14 @@ interface NavItem {
       text-align: right;
     }
 
-    :host-context([dir="rtl"]) .nav-item.active::before {
-      left: auto;
-      right: 0;
-      border-radius: 2px 0 0 2px;
+    :host-context([dir="rtl"]) .nav-item {
+      border-left: none;
+      border-right: 3px solid transparent;
+    }
+
+    :host-context([dir="rtl"]) .nav-item:hover,
+    :host-context([dir="rtl"]) .nav-item.active {
+      border-right-color: var(--sero-primary);
     }
 
     :host-context([dir="rtl"]) .nav-badge {
@@ -651,7 +622,6 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
-    private router: Router,
     public langService: LanguageService,
     public layout: LayoutService
   ) {}
