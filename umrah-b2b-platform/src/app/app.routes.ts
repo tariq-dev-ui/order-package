@@ -3,6 +3,8 @@ import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.compone
 
 const emptyPage = () => import('./features/shared/placeholder/placeholder.component').then(m => m.PlaceholderComponent);
 const statisticsPage = () => import('./features/admin/statistics/statistics-page.component').then(m => m.StatisticsPageComponent);
+const transportPricingPage = () => import('./features/admin/transport-pricing/transport-pricing-page.component').then(m => m.TransportPricingPageComponent);
+const transportPricingFormPage = () => import('./features/admin/transport-pricing/transport-pricing-form-page.component').then(m => m.TransportPricingFormPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -25,7 +27,8 @@ export const routes: Routes = [
       { path: 'operations/catering',  loadComponent: emptyPage },
       { path: 'operations/flights',   loadComponent: emptyPage },
       // TODO: pricing
-      { path: 'pricing/transport',    loadComponent: emptyPage },
+      { path: 'pricing/transport/new', loadComponent: transportPricingFormPage },
+      { path: 'pricing/transport',    loadComponent: transportPricingPage },
       { path: 'pricing/food',         loadComponent: emptyPage },
       { path: 'pricing/hotel',        loadComponent: emptyPage },
       // TODO: service center
