@@ -11,14 +11,14 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
     <aside class="summary-panel">
       <h3 class="summary-title">
         <span class="material-icons-round">receipt_long</span>
-        {{ 'packageDefinition.summary.title' | translate }}
+        تفاصيل الطلب
       </h3>
 
       <!-- Makkah Hotels -->
       <details class="summary-section" open>
         <summary class="section-header">
           <span class="section-icon material-icons-round">apartment</span>
-          <span class="section-label">{{ 'packageDefinition.summary.makkahHotels' | translate }}</span>
+          <span class="section-label">إقامة مكة</span>
           <span class="section-count">{{ summary.makkahHotels.length }}</span>
           <span class="material-icons-round chevron">expand_more</span>
         </summary>
@@ -60,7 +60,7 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
       <details class="summary-section" open>
         <summary class="section-header">
           <span class="section-icon material-icons-round">apartment</span>
-          <span class="section-label">{{ 'packageDefinition.summary.madinahHotels' | translate }}</span>
+          <span class="section-label">إقامة المدينة</span>
           <span class="section-count">{{ summary.madinahHotels.length }}</span>
           <span class="material-icons-round chevron">expand_more</span>
         </summary>
@@ -102,18 +102,15 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
       <details class="summary-section" open>
         <summary class="section-header">
           <span class="section-icon material-icons-round">miscellaneous_services</span>
-          <span class="section-label">{{ 'packageDefinition.summary.services' | translate }}</span>
+          <span class="section-label">الخدمات</span>
           <span class="section-count">{{ activeServicesCount }}/3</span>
           <span class="material-icons-round chevron">expand_more</span>
         </summary>
         <div class="section-body services-list">
-          @for (service of services; track service.labelKey) {
+          @for (service of services; track service.label) {
             <div class="service-row" [class.active]="service.active">
-              <span class="material-icons-round service-icon">{{ service.icon }}</span>
-              <span class="service-label">{{ service.labelKey | translate }}</span>
-              <span class="service-status" [class.active]="service.active">
-                {{ (service.active ? 'packageDefinition.summary.added' : 'packageDefinition.summary.notAdded') | translate }}
-              </span>
+              <span class="service-label">{{ service.label }}:</span>
+              <span class="service-inline-status">{{ service.active ? service.addedText : service.emptyText }}</span>
             </div>
           }
         </div>
@@ -397,45 +394,23 @@ import { OrderSummary, HotelSelection } from '../../package-definition.models';
 
     .service-row {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 7px 8px;
       border-radius: 8px;
-      background: var(--sero-app-bg);
-      border: 1px solid var(--sero-border-light);
-      transition: border-color var(--t-fast), background var(--t-fast);
+      background: transparent;
     }
-
-    .service-row.active {
-      border-color: color-mix(in srgb, var(--sero-primary) 30%, var(--sero-border));
-      background: color-mix(in srgb, var(--sero-primary) 6%, var(--sero-card-bg));
-    }
-
-    .service-icon { font-size: 18px; color: var(--sero-text-secondary); }
-    .service-row.active .service-icon { color: var(--sero-primary); }
 
     .service-label {
-      flex: 1;
-      font-size: 0.8125rem;
+      font-size: 0.8rem;
+      font-weight: 700;
       color: var(--sero-text);
     }
 
-    .service-status {
-      font-size: 0.7rem;
-      font-weight: 700;
-      border-radius: 999px;
-      padding: 2px 9px;
+    .service-inline-status {
+      font-size: 0.78rem;
       color: var(--sero-text-secondary);
-      background: var(--sero-surface-3);
-      border: 1px solid var(--sero-border);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .service-status.active {
-      color: var(--sero-success);
-      background: var(--sero-success-bg);
-      border-color: var(--sero-success-border);
+      line-height: 1.45;
     }
   `]
 })
@@ -452,11 +427,11 @@ export class OrderSummarySidebarComponent {
     return this.services.filter((service) => service.active).length;
   }
 
-  get services(): Array<{ icon: string; labelKey: string; active: boolean }> {
+  get services(): Array<{ label: string; active: boolean; emptyText: string; addedText: string }> {
     return [
-      { icon: 'directions_bus', labelKey: 'packageDefinition.summary.transport', active: this.summary.hasTransport },
-      { icon: 'restaurant', labelKey: 'packageDefinition.summary.meals', active: this.summary.hasMeals },
-      { icon: 'flight', labelKey: 'packageDefinition.summary.tickets', active: this.summary.hasTickets }
+      { label: 'النقل', active: this.summary.hasTransport, emptyText: 'لم تتم إضافة نقل', addedText: 'تمت إضافة نقل' },
+      { label: 'وجبات', active: this.summary.hasMeals, emptyText: 'لم تتم إضافة خطط وجبات', addedText: 'تمت إضافة خطط وجبات' },
+      { label: 'تذاكر', active: this.summary.hasTickets, emptyText: 'No tickets added', addedText: 'Tickets added' }
     ];
   }
 }

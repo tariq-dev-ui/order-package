@@ -691,10 +691,10 @@
       "makkahHotels":  "فنادق مكة",
       "madinahHotels": "فنادق المدينة",
       "transport":     "النقل",
-      "meals":         "الوجبات",
       "tickets":       "التذاكر",
-      "review":        "المراجعة",
-      "confirmation":  "التأكيد"
+      "food":          "الطعام",
+      "other":         "أخرى",
+      "pricing":       "Pricing"
     },
     "stepHint": {
       "makkah":  "أضف فنادق مكة المكرمة المطلوبة في الباقة",
@@ -735,7 +735,7 @@
       "tickets":       "التذاكر",
       "added":         "مضاف",
       "notAdded":      "غير مضاف",
-      "noHotels":      "لا توجد فنادق مضافة",
+      "noHotels":      "لم تتم إضافة أي فندق",
       "rooms":         "غرف",
       "nights":        "ليالي",
       "criteria":      "بمعايير",

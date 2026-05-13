@@ -14,6 +14,14 @@ import {
   SPECIFIC_HOTELS_MADINAH,
 } from '../../package-definition.mock';
 
+interface SpecificHotelCard {
+  id: string;
+  name: string;
+  neighborhood: string;
+  stars: number;
+  imageUrl: string;
+}
+
 @Component({
   selector: 'app-hotel-step-form',
   standalone: true,
@@ -104,17 +112,6 @@ import {
             <div class="field-row">
               <div class="field-group">
                 <label class="field-label">
-                  {{ 'packageDefinition.fields.hotelName' | translate }}
-                </label>
-                <app-sero-dropdown
-                  [options]="hotelOptions"
-                  [value]="form().hotelName"
-                  [placeholderKey]="'packageDefinition.fields.hotelName'"
-                  (valueChange)="patch({ hotelName: $event })" />
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">
                   {{ 'packageDefinition.fields.neighborhood' | translate }}
                 </label>
                 <app-sero-dropdown
@@ -123,63 +120,96 @@ import {
                   [placeholderKey]="'packageDefinition.fields.neighborhood'"
                   (valueChange)="patch({ neighborhood: $event })" />
               </div>
+
+              <div class="field-group">
+                <label class="field-label">
+                  {{ 'packageDefinition.fields.hotelName' | translate }}
+                </label>
+                <div class="hotel-search-wrap">
+                  <span class="material-icons-round hotel-search-icon">search</span>
+                  <input
+                    class="hotel-search-input"
+                    type="text"
+                    [value]="hotelSearchTerm()"
+                    [attr.placeholder]="'ابحث عن اسم الفندق'"
+                    [attr.list]="hotelDatalistId"
+                    (input)="setHotelSearch($any($event.target).value)" />
+                </div>
+                <datalist [id]="hotelDatalistId">
+                  @for (hotel of specificHotelCards; track hotel.id) {
+                    <option [value]="hotel.name"></option>
+                  }
+                </datalist>
+              </div>
             </div>
           </div>
 
-          <div class="specific-card">
-            <div class="specific-card-head">
-              <div class="specific-info">
-                <h3 class="specific-hotel-name">{{ selectedHotelName }}</h3>
-                <div class="specific-meta">
-                  <span class="material-icons-round">place</span>
-                  <span>{{ selectedNeighborhood }}</span>
-                </div>
-                <div class="specific-rating">
-                  <span class="material-icons-round">star</span>
-                  <span class="material-icons-round">star</span>
-                  <span class="material-icons-round">star</span>
-                  <span class="material-icons-round">star</span>
-                </div>
+          <div class="specific-results">
+            @if (filteredHotelCards.length === 0) {
+              <div class="specific-empty">
+                لا توجد فنادق مطابقة لهذا الحي أو البحث.
               </div>
-              <div class="specific-thumb" aria-hidden="true"></div>
-            </div>
+            } @else {
+              @for (hotel of filteredHotelCards; track hotel.id) {
+                <div class="specific-card" [class.open]="openedHotelId === hotel.id">
+                  <button type="button" class="specific-card-head" (click)="toggleHotelAccordion(hotel)">
+                    <div class="specific-info">
+                      <h3 class="specific-hotel-name">{{ hotel.name }}</h3>
+                      <div class="specific-meta">
+                        <span class="material-icons-round">place</span>
+                        <span>{{ hotel.neighborhood }}</span>
+                      </div>
+                      <div class="specific-rating">
+                        @for (starIndex of starIndexes(hotel.stars); track starIndex) {
+                          <span class="material-icons-round">star</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="specific-thumb" [style.background-image]="'url(' + hotel.imageUrl + ')'" aria-hidden="true"></div>
+                    <span class="material-icons-round specific-chevron" [class.open]="openedHotelId === hotel.id">expand_more</span>
+                  </button>
 
-            <div class="specific-controls">
-              <div class="field-group">
-                <label class="field-label">
-                  {{ 'packageDefinition.fields.roomType' | translate }}
-                </label>
-                <app-sero-dropdown
-                  [options]="roomTypeOptions"
-                  [value]="form().roomType"
-                  [placeholderKey]="'packageDefinition.fields.roomType'"
-                  (valueChange)="patch({ roomType: $event })" />
-              </div>
+                  @if (openedHotelId === hotel.id) {
+                    <div class="specific-controls">
+                      <div class="field-group">
+                        <label class="field-label">
+                          {{ 'packageDefinition.fields.roomType' | translate }}
+                        </label>
+                        <app-sero-dropdown
+                          [options]="roomTypeOptions"
+                          [value]="form().roomType"
+                          [placeholderKey]="'packageDefinition.fields.roomType'"
+                          (valueChange)="patch({ roomType: $event })" />
+                      </div>
 
-              <div class="counter-row-grid">
-                <div class="counter-group">
-                  <label class="field-label">
-                    {{ 'packageDefinition.fields.roomCount' | translate }}
-                  </label>
-                  <app-counter-input
-                    [value]="form().roomCount"
-                    [min]="1"
-                    [max]="50"
-                    (valueChange)="patch({ roomCount: $event })" />
+                      <div class="counter-row-grid">
+                        <div class="counter-group">
+                          <label class="field-label">
+                            {{ 'packageDefinition.fields.roomCount' | translate }}
+                          </label>
+                          <app-counter-input
+                            [value]="form().roomCount"
+                            [min]="1"
+                            [max]="50"
+                            (valueChange)="patch({ roomCount: $event })" />
+                        </div>
+
+                        <div class="counter-group">
+                          <label class="field-label">
+                            {{ 'packageDefinition.fields.nightsCount' | translate }}
+                          </label>
+                          <app-counter-input
+                            [value]="form().nightsCount"
+                            [min]="1"
+                            [max]="60"
+                            (valueChange)="patch({ nightsCount: $event })" />
+                        </div>
+                      </div>
+                    </div>
+                  }
                 </div>
-
-                <div class="counter-group">
-                  <label class="field-label">
-                    {{ 'packageDefinition.fields.nightsCount' | translate }}
-                  </label>
-                  <app-counter-input
-                    [value]="form().nightsCount"
-                    [min]="1"
-                    [max]="60"
-                    (valueChange)="patch({ nightsCount: $event })" />
-                </div>
-              </div>
-            </div>
+              }
+            }
           </div>
         }
 
@@ -285,17 +315,35 @@ import {
       border: 1px solid color-mix(in srgb, var(--sero-primary) 32%, var(--sero-border));
       border-radius: 12px;
       background: #fff;
-      padding: 14px;
+      overflow: hidden;
+    }
+
+    .specific-results {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
+    }
+
+    .specific-empty {
+      font-size: 0.82rem;
+      color: var(--sero-text-secondary);
+      border: 1px dashed var(--sero-border);
+      border-radius: 10px;
+      background: var(--sero-surface-2);
+      padding: 12px;
     }
 
     .specific-card-head {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 12px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: start;
+      padding: 12px;
+      cursor: pointer;
     }
 
     .specific-info {
@@ -342,23 +390,78 @@ import {
       border-radius: 10px;
       border: 1px solid var(--sero-border);
       background:
-        linear-gradient(140deg, rgba(58, 71, 42, 0.18), rgba(58, 71, 42, 0.05)),
-        url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=320&q=80');
+        linear-gradient(140deg, rgba(58, 71, 42, 0.18), rgba(58, 71, 42, 0.05));
       background-size: cover;
       background-position: center;
       flex-shrink: 0;
+    }
+
+    .specific-chevron {
+      color: var(--sero-text-muted);
+      transition: transform var(--t-fast);
+      flex-shrink: 0;
+    }
+
+    .specific-chevron.open {
+      transform: rotate(180deg);
     }
 
     .specific-controls {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      border-top: 1px solid var(--sero-border-light);
+      padding: 12px;
     }
 
     .counter-row-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+
+    .hotel-search-wrap {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--sero-border);
+      border-radius: 10px;
+      background: var(--sero-card-bg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+    }
+
+    .hotel-search-wrap:hover {
+      border-color: var(--sero-border-strong);
+      background: var(--sero-surface-2);
+    }
+
+    .hotel-search-wrap:focus-within {
+      border-color: var(--sero-primary);
+      box-shadow: 0 0 0 3px rgba(58, 71, 42, 0.1);
+      background: var(--sero-card-bg);
+    }
+
+    .hotel-search-icon {
+      font-size: 18px;
+      color: var(--sero-text-muted);
+      flex-shrink: 0;
+    }
+
+    .hotel-search-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: var(--sero-font);
+      font-size: 0.84rem;
+      color: var(--sero-text-primary);
+    }
+
+    .hotel-search-input::placeholder {
+      color: var(--sero-text-muted);
     }
 
     /* Actions */
@@ -435,6 +538,9 @@ export class HotelStepFormComponent implements OnChanges {
   neighborhoods: string[] = MAKKAH_NEIGHBORHOODS;
   hotels: string[] = SPECIFIC_HOTELS_MAKKAH;
   addLabel = 'packageDefinition.actions.addMakkahHotel';
+  openedHotelId: string | null = null;
+  hotelSearchTerm = signal('');
+  specificHotelCards: SpecificHotelCard[] = [];
 
   readonly categoryOptions: SeroDropdownOption<string>[] =
     HOTEL_CATEGORIES.map((value) => ({ value, label: value }));
@@ -457,6 +563,8 @@ export class HotelStepFormComponent implements OnChanges {
     this.addLabel = this.city === 'makkah'
       ? 'packageDefinition.actions.addMakkahHotel'
       : 'packageDefinition.actions.addMadinahHotel';
+    this.specificHotelCards = this.buildSpecificHotelCards();
+    this.openedHotelId = this.specificHotelCards[0]?.id ?? null;
   }
 
   get neighborhoodOptions(): SeroDropdownOption<string>[] {
@@ -467,12 +575,51 @@ export class HotelStepFormComponent implements OnChanges {
     return this.hotels.map((value) => ({ value, label: value }));
   }
 
-  get selectedHotelName(): string {
-    return this.form().hotelName || this.hotels[0] || '-';
+  get hotelDatalistId(): string {
+    return `specific-hotel-list-${this.city}`;
   }
 
-  get selectedNeighborhood(): string {
-    return this.form().neighborhood || this.neighborhoods[0] || '-';
+  get filteredHotelCards(): SpecificHotelCard[] {
+    const neighborhoodFilter = (this.form().neighborhood || '').trim();
+    const searchFilter = this.hotelSearchTerm().trim().toLowerCase();
+
+    return this.specificHotelCards.filter((hotel) => {
+      const neighborhoodMatches = !neighborhoodFilter || hotel.neighborhood === neighborhoodFilter;
+      const searchMatches = !searchFilter || hotel.name.toLowerCase().includes(searchFilter);
+      return neighborhoodMatches && searchMatches;
+    });
+  }
+
+  setHotelSearch(value: string): void {
+    this.hotelSearchTerm.set(value);
+  }
+
+  toggleHotelAccordion(hotel: SpecificHotelCard): void {
+    this.openedHotelId = this.openedHotelId === hotel.id ? null : hotel.id;
+    this.patch({ hotelName: hotel.name, neighborhood: hotel.neighborhood });
+    this.hotelSearchTerm.set(hotel.name);
+  }
+
+  starIndexes(count: number): number[] {
+    return Array.from({ length: count }, (_, index) => index);
+  }
+
+  private buildSpecificHotelCards(): SpecificHotelCard[] {
+    const fallbackNeighborhood = this.neighborhoods[0] || '-';
+    const images = [
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=420&q=80',
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=420&q=80',
+      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=420&q=80',
+      'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=420&q=80'
+    ];
+
+    return this.hotels.map((name, index) => ({
+      id: `${this.city}-specific-${index}`,
+      name,
+      neighborhood: this.neighborhoods[index % this.neighborhoods.length] || fallbackNeighborhood,
+      stars: 4 + (index % 2),
+      imageUrl: images[index % images.length]
+    }));
   }
 
   setMode(mode: HotelMode): void {

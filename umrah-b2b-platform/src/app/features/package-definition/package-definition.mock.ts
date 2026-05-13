@@ -4,18 +4,18 @@ export const PACKAGE_STEPS: PackageStep[] = [
   { id: 1, label: 'packageDefinition.steps.makkahHotels', icon: 'apartment' },
   { id: 2, label: 'packageDefinition.steps.madinahHotels', icon: 'apartment' },
   { id: 3, label: 'packageDefinition.steps.transport',     icon: 'directions_bus' },
-  { id: 4, label: 'packageDefinition.steps.meals',         icon: 'restaurant' },
-  { id: 5, label: 'packageDefinition.steps.tickets',       icon: 'flight' },
-  { id: 6, label: 'packageDefinition.steps.review',        icon: 'checklist' },
-  { id: 7, label: 'packageDefinition.steps.confirmation',  icon: 'check_circle' },
+  { id: 4, label: 'packageDefinition.steps.tickets',       icon: 'flight' },
+  { id: 5, label: 'packageDefinition.steps.food',          icon: 'restaurant' },
+  { id: 6, label: 'packageDefinition.steps.other',         icon: 'checklist' },
+  { id: 7, label: 'packageDefinition.steps.pricing',       icon: 'payments' },
 ];
 
 export const MAKKAH_NEIGHBORHOODS = [
-  'العزيزية', 'المسفلة', 'أجياد', 'الحجون', 'البيبان', 'النوارية', 'شيشة',
+  'العزيزية', 'الحرم', 'الرصيفة', 'Not Mention',
 ];
 
 export const MADINAH_NEIGHBORHOODS = [
-  'قباء', 'العوالي', 'المطار', 'السلام', 'المناخة', 'العيون',
+  'الحرم', 'Not Mention',
 ];
 
 export const HOTEL_CATEGORIES = ['ECONOMY', 'luxury', 'normal'];
@@ -25,19 +25,33 @@ export const ROOM_TYPES = [
 ];
 
 export const SPECIFIC_HOTELS_MAKKAH = [
-  'فندق مكة كونكورد',
-  'برج البيت',
-  'هيلتون مكة',
-  'ماريوت مكة',
-  'موفنبيك برج حفصة',
-  'شيراتون مكة',
-  'هيات ريجنسي مكة',
+  'Hotel One',
+  'فندق دار الايمان',
+  'Al safwa Hotel',
+  'Barakkah hotel',
+  'فندق التاج الأبيض',
+  'hotel 5',
+  'فندق مقاصد الشريعة',
+  'هوليداي إن مكة العزيزية',
+  'A',
+  'مسار علي',
+  'فندق جديد',
+  'فندق سيرو',
+  'Sero',
+  'SERO HOTEL 1',
+  'Dar Al Mowhdeen',
+  'فندق روحة المقام',
+  'أجياد الاصيل',
+  'فندق ميسان المقام',
+  'فندق مناسك الفضيلة',
+  'فندق الشهداء',
 ];
 
 export const SPECIFIC_HOTELS_MADINAH = [
-  'موفنبيك المدينة',
-  'هيلتون المدينة',
-  'أنوار المدينة',
-  'كراون بلازا المدينة',
-  'رافلز المدينة',
+  'Dar al alhekma Hotel',
+  'New Hotel',
+  'Sherton Hotel',
+  'Dar Al rahma hotel',
+  'Al noor Hotel',
+  'TESSST HOTEL',
 ];

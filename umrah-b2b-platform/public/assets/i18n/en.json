@@ -691,10 +691,10 @@
       "makkahHotels":  "Makkah Hotels",
       "madinahHotels": "Madinah Hotels",
       "transport":     "Transport",
-      "meals":         "Meals",
       "tickets":       "Tickets",
-      "review":        "Review",
-      "confirmation":  "Confirmation"
+      "food":          "Food",
+      "other":         "Other",
+      "pricing":       "Pricing"
     },
     "stepHint": {
       "makkah":  "Add the Makkah hotels required for this package",
@@ -735,7 +735,7 @@
       "tickets":       "Tickets",
       "added":         "Added",
       "notAdded":      "Not Added",
-      "noHotels":      "No hotels added",
+      "noHotels":      "No hotel added yet",
       "rooms":         "rooms",
       "nights":        "nights",
       "criteria":      "By criteria",
