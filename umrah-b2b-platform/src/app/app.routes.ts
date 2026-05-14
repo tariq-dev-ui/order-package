@@ -6,6 +6,7 @@ const statisticsPage = () => import('./features/admin/statistics/statistics-page
 const transportPricingPage = () => import('./features/admin/transport-pricing/transport-pricing-page.component').then(m => m.TransportPricingPageComponent);
 const transportPricingFormPage = () => import('./features/admin/transport-pricing/transport-pricing-form-page.component').then(m => m.TransportPricingFormPageComponent);
 const foodPricingPage = () => import('./features/admin/food-pricing/food-pricing-page.component').then(m => m.FoodPricingPageComponent);
+const hotelPricingPage = () => import('./features/admin/hotel-pricing/hotel-pricing-page.component').then(m => m.HotelPricingPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -33,7 +34,7 @@ export const routes: Routes = [
       { path: 'pricing/transport/view/:id', loadComponent: transportPricingFormPage },
       { path: 'pricing/transport',    loadComponent: transportPricingPage },
       { path: 'pricing/food',         loadComponent: foodPricingPage },
-      { path: 'pricing/hotel',        loadComponent: emptyPage },
+      { path: 'pricing/hotel',         loadComponent: hotelPricingPage },
       // TODO: service center
       { path: 'service-center/rfq/new',      loadComponent: emptyPage },
       { path: 'service-center/rfq/current',  loadComponent: emptyPage },

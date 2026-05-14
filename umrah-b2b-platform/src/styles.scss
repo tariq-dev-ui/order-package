@@ -5,6 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=El+Messiri:wght@400..700&family=Noto+Kufi+Arabic:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+@import '@angular/cdk/overlay-prebuilt.css';
 
 // ============================================================
 // SERO DESIGN TOKENS
@@ -75,6 +76,11 @@
   --sero-topbar-height:   70px;
   --sero-topbar-bg:       #ffffff;
   --sero-topbar-border:   var(--sero-border);
+
+  // Overlay layers
+  --sero-z-overlay:        10000;
+  --sero-z-dropdown:       10020;
+  --sero-z-status-popover:  10030;
 
   // ── Typography ─────────────────────────────────────────────
   --sero-font:            'Noto Kufi Arabic', sans-serif;
@@ -222,6 +228,20 @@ body {
   background: var(--sero-app-bg);
   line-height: 1.6;
   overflow-x: hidden;
+}
+
+.cdk-overlay-container {
+  z-index: var(--sero-z-overlay);
+}
+
+.sero-dd-overlay-pane {
+  z-index: var(--sero-z-dropdown);
+  pointer-events: auto;
+}
+
+.status-confirm-overlay-pane {
+  z-index: var(--sero-z-status-popover);
+  pointer-events: auto;
 }
 
 input, textarea, select, button {
@@ -1942,12 +1962,17 @@ select.form-control option:hover,
     box-shadow: 0 14px 38px rgba(23, 33, 16, 0.22), 0 4px 12px rgba(23, 33, 16, 0.14);
     border: 1px solid color-mix(in srgb, #3f5331 18%, #d9d3c7);
     animation: sero-calendar-in 160ms ease-out;
-    background: #f7f4ec;
+    background: var(--sero-card-bg);
+  }
+
+  .mat-datepicker-content-container,
+  .mat-calendar-content {
+    background: var(--sero-card-bg);
   }
 
   .mat-calendar {
     font-family: var(--sero-font);
-    background: #f7f4ec;
+    background: var(--sero-card-bg);
   }
 
   .mat-calendar-header {
@@ -1980,7 +2005,7 @@ select.form-control option:hover,
 
   .mat-calendar-body-active .mat-calendar-body-cell-content,
   .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content {
-    background: color-mix(in srgb, #7f9552 18%, #f7f4ec);
+    background: color-mix(in srgb, #7f9552 18%, var(--sero-card-bg));
   }
 
   .mat-calendar-body-today:not(.mat-calendar-body-selected) .mat-calendar-body-cell-content {

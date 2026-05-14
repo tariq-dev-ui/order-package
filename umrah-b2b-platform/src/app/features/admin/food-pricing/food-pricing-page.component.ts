@@ -3,7 +3,8 @@ import { Component, HostListener, OnDestroy } from '@angular/core';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
 import { StatusTogglePillComponent } from '../../../shared/components/status-toggle-pill/status-toggle-pill.component';
-import { FoodPricingPackageFormComponent } from './food-pricing-package-form.component';
+import { TableFilterHeaderComponent } from '../../../shared/components/table-filter-header/table-filter-header.component';
+import { FoodPricingPackageFormComponent, FoodPricingPackageFormMode } from './food-pricing-package-form.component';
 import {
   FOOD_PRICING_CATERING_COMPANY_OPTIONS,
   FOOD_PRICING_DEFAULT_FILTERS,
@@ -21,7 +22,14 @@ import {
 @Component({
   selector: 'app-food-pricing-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, StatusTogglePillComponent, FoodPricingPackageFormComponent],
+  imports: [
+    CommonModule,
+    SeroDropdownComponent,
+    SeroDatePickerComponent,
+    StatusTogglePillComponent,
+    TableFilterHeaderComponent,
+    FoodPricingPackageFormComponent,
+  ],
   template: `
     <section class="food-pricing-page" dir="rtl">
       <header class="page-head">
@@ -36,7 +44,7 @@ import {
       }
 
       <section class="surface-card">
-        @if (!filtersHidden) {
+        <app-table-filter-header [(expanded)]="filtersExpanded">
           <div class="filters-grid">
             <div class="field-group">
               <label>تاريخ البداية</label>
@@ -83,15 +91,12 @@ import {
               </app-sero-dropdown>
             </div>
           </div>
-        }
+        </app-table-filter-header>
 
         <div class="actions-bar">
           <div class="filters-actions">
             <button type="button" class="btn btn--primary btn--sm" (click)="search()">بحث</button>
             <button type="button" class="btn btn--secondary btn--sm" (click)="clear()">مسح</button>
-            <button type="button" class="btn btn--secondary btn--sm" (click)="toggleFilters()">
-              {{ filtersHidden ? 'إظهار' : 'إخفاء' }}
-            </button>
           </div>
 
           <button type="button" class="btn btn--primary btn--sm add-package-btn" (click)="openPackageForm()">
@@ -196,60 +201,15 @@ import {
         </footer>
       </section>
 
-      @if (viewedRow) {
-        <div class="details-modal-backdrop" (click)="closeDetails()">
-          <section class="details-modal" role="dialog" aria-modal="true" aria-labelledby="food-details-title" (click)="$event.stopPropagation()">
-            <header class="details-modal-head">
-              <h2 id="food-details-title">تفاصيل باقة التغذية</h2>
-              <button type="button" class="details-close-btn" (click)="closeDetails()" aria-label="إغلاق">
-                <span class="material-icons-round">close</span>
-              </button>
-            </header>
-
-            <div class="details-grid">
-              <div class="details-item">
-                <span>رمز الباقة</span>
-                <strong>{{ viewedRow.code }}</strong>
-              </div>
-              <div class="details-item">
-                <span>عنوان الباقة</span>
-                <strong>{{ viewedRow.title }}</strong>
-              </div>
-              <div class="details-item">
-                <span>شركة التموين</span>
-                <strong>{{ viewedRow.cateringCompany }}</strong>
-              </div>
-              <div class="details-item">
-                <span>نوع الطعام</span>
-                <strong>{{ viewedRow.foodType }}</strong>
-              </div>
-              <div class="details-item">
-                <span>خطة الوجبات</span>
-                <strong>{{ viewedRow.mealPlan }}</strong>
-              </div>
-              <div class="details-item">
-                <span>تاريخ البداية</span>
-                <strong>{{ viewedRow.startDate }}</strong>
-              </div>
-              <div class="details-item">
-                <span>تاريخ النهاية</span>
-                <strong>{{ viewedRow.endDate }}</strong>
-              </div>
-              <div class="details-item">
-                <span>فعال</span>
-                <strong>{{ viewedRow.isActive ? 'فعال' : 'غير فعال' }}</strong>
-              </div>
-            </div>
-          </section>
-        </div>
-      }
-
       @if (packageFormOpen) {
         <div class="package-modal-backdrop" (click)="closePackageForm()">
           <app-food-pricing-package-form
+            [mode]="packageFormMode"
             [companyOptions]="editableCateringCompanyOptions"
-            (saved)="savePackage($event)"
-            (cancelled)="closePackageForm()"
+            [initialData]="selectedPackageData"
+            (save)="savePackage($event)"
+            (close)="closePackageForm()"
+            (switchToEdit)="switchPackageFormToEdit()"
             (click)="$event.stopPropagation()">
           </app-food-pricing-package-form>
         </div>
@@ -574,111 +534,6 @@ import {
       width: 72px;
     }
 
-    .details-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(15, 23, 42, 0.32);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .details-modal {
-      width: min(680px, 100%);
-      background: #fff;
-      border: 1px solid var(--sero-border-light);
-      border-radius: 10px;
-      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
-      overflow: hidden;
-      animation: detailsModalIn 0.14s ease-out;
-    }
-
-    .details-modal-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--sero-border-light);
-    }
-
-    .details-modal-head h2 {
-      margin: 0;
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--sero-text-primary);
-    }
-
-    .details-close-btn {
-      width: 30px;
-      height: 30px;
-      border: 1px solid var(--sero-border);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--sero-text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-    }
-
-    .details-close-btn:hover {
-      background: var(--sero-primary-50);
-      border-color: var(--sero-primary-100);
-      color: var(--sero-primary);
-    }
-
-    .details-close-btn .material-icons-round {
-      font-size: 18px;
-    }
-
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      padding: 16px;
-    }
-
-    .details-item {
-      border: 1px solid var(--sero-border-light);
-      border-radius: 8px;
-      background: var(--sero-surface-2);
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 10px 12px;
-      min-width: 0;
-    }
-
-    .details-item span {
-      color: var(--sero-text-muted);
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    .details-item strong {
-      color: var(--sero-text-primary);
-      font-size: 0.82rem;
-      font-weight: 800;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    @keyframes detailsModalIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px) scale(0.99);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
     .package-modal-backdrop {
       position: fixed;
       inset: 0;
@@ -708,8 +563,7 @@ import {
     }
 
     @media (max-width: 760px) {
-      .filters-grid,
-      .details-grid {
+      .filters-grid {
         grid-template-columns: 1fr;
       }
 
@@ -734,10 +588,12 @@ export class FoodPricingPageComponent implements OnDestroy {
   }));
 
   filters: FoodPricingFilterState = { ...FOOD_PRICING_DEFAULT_FILTERS };
-  filtersHidden = false;
+  filtersExpanded = true;
   openedActionMenuId: string | null = null;
-  viewedRow: FoodPricingRow | null = null;
   packageFormOpen = false;
+  packageFormMode: FoodPricingPackageFormMode = 'create';
+  selectedPackageRow: FoodPricingRow | null = null;
+  selectedPackageData: FoodPricingPackageModel | null = null;
   successMessage = '';
   private successMessageTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -817,9 +673,6 @@ export class FoodPricingPageComponent implements OnDestroy {
     this.openedActionMenuId = null;
   }
 
-  toggleFilters(): void {
-    this.filtersHidden = !this.filtersHidden;
-  }
 
   toggleActionMenu(rowId: string, event: Event): void {
     event.stopPropagation();
@@ -828,12 +681,13 @@ export class FoodPricingPageComponent implements OnDestroy {
 
   viewRow(row: FoodPricingRow, event: Event): void {
     event.stopPropagation();
-    this.viewedRow = { ...row };
+    this.openPackageForm('view', row);
     this.openedActionMenuId = null;
   }
 
-  editRow(_row: FoodPricingRow, event: Event): void {
+  editRow(row: FoodPricingRow, event: Event): void {
     event.stopPropagation();
+    this.openPackageForm('edit', row);
     this.openedActionMenuId = null;
   }
 
@@ -843,6 +697,9 @@ export class FoodPricingPageComponent implements OnDestroy {
     this.filteredRows = this.getFilteredRows();
     this.currentPage = Math.min(this.currentPage, this.totalPages);
     this.openedActionMenuId = null;
+    if (this.selectedPackageRow?.id === rowId) {
+      this.closePackageForm();
+    }
   }
 
   toggleRowStatus(rowId: string, isActive: boolean): void {
@@ -851,16 +708,16 @@ export class FoodPricingPageComponent implements OnDestroy {
     this.filteredRows = this.getFilteredRows();
     this.currentPage = Math.min(this.currentPage, this.totalPages);
 
-    if (this.viewedRow?.id === rowId) {
-      this.viewedRow = { ...this.viewedRow, isActive };
+    if (this.selectedPackageRow?.id === rowId) {
+      this.selectedPackageRow = { ...this.selectedPackageRow, isActive };
+      this.selectedPackageData = this.toPackageModel(this.selectedPackageRow);
     }
   }
 
-  closeDetails(): void {
-    this.viewedRow = null;
-  }
-
-  openPackageForm(): void {
+  openPackageForm(mode: FoodPricingPackageFormMode = 'create', row: FoodPricingRow | null = null): void {
+    this.packageFormMode = mode;
+    this.selectedPackageRow = row ? { ...row } : null;
+    this.selectedPackageData = row ? this.toPackageModel(row) : null;
     this.packageFormOpen = true;
     this.openedActionMenuId = null;
     this.successMessage = '';
@@ -868,9 +725,27 @@ export class FoodPricingPageComponent implements OnDestroy {
 
   closePackageForm(): void {
     this.packageFormOpen = false;
+    this.selectedPackageRow = null;
+    this.selectedPackageData = null;
+    this.packageFormMode = 'create';
+  }
+
+  switchPackageFormToEdit(): void {
+    if (!this.selectedPackageRow) {
+      return;
+    }
+
+    this.packageFormMode = 'edit';
   }
 
   savePackage(packageValue: FoodPricingPackageModel): void {
+    if (this.packageFormMode === 'edit' && this.selectedPackageRow) {
+      this.updatePackage(this.selectedPackageRow.id, packageValue);
+      this.closePackageForm();
+      this.showSuccessMessage('تم حفظ التعديلات بنجاح');
+      return;
+    }
+
     const fallbackFoodType = this.foodTypeOptions.find((option) => option.value !== 'all')?.value ?? '';
     const fallbackMealPlan = this.mealPlanOptions.find((option) => option.value !== 'all')?.value ?? '';
     const newRow: FoodPricingRow = {
@@ -884,7 +759,7 @@ export class FoodPricingPageComponent implements OnDestroy {
     this.allRows = [newRow, ...this.allRows];
     this.filteredRows = this.getFilteredRows();
     this.currentPage = 1;
-    this.packageFormOpen = false;
+    this.closePackageForm();
     this.showSuccessMessage('تمت إضافة باقة التموين بنجاح');
   }
 
@@ -896,8 +771,7 @@ export class FoodPricingPageComponent implements OnDestroy {
   @HostListener('document:keydown.escape')
   closeOverlayOnEscape(): void {
     this.openedActionMenuId = null;
-    this.viewedRow = null;
-    this.packageFormOpen = false;
+    this.closePackageForm();
   }
 
   goToPreviousPage(): void {
@@ -910,6 +784,24 @@ export class FoodPricingPageComponent implements OnDestroy {
     if (this.currentPage < this.totalPages) {
       this.currentPage += 1;
     }
+  }
+
+  private updatePackage(rowId: string, packageValue: FoodPricingPackageModel): void {
+    // Future backend integration: replace this local update with an update-package API call.
+    this.allRows = this.allRows.map((row) => row.id === rowId ? { ...row, ...packageValue } : row);
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+  }
+
+  private toPackageModel(row: FoodPricingRow): FoodPricingPackageModel {
+    return {
+      code: row.code,
+      title: row.title,
+      cateringCompany: row.cateringCompany,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      isActive: row.isActive,
+    };
   }
 
   private getFilteredRows(): FoodPricingRow[] {

@@ -1,12 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import {
+  ConnectedOverlayPositionChange,
+  ConnectedPosition,
+  Overlay,
+  OverlayModule,
+  ScrollStrategy,
+} from '@angular/cdk/overlay';
+import { Component, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-status-toggle-pill',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, OverlayModule],
   template: `
-    <span class="status-toggle-wrap" (click)="$event.stopPropagation()">
+    <span
+      class="status-toggle-wrap"
+      cdkOverlayOrigin
+      #statusOrigin="cdkOverlayOrigin"
+      (click)="$event.stopPropagation()">
       <button
         type="button"
         class="status-toggle-pill"
@@ -15,25 +26,37 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
         [class.is-inactive]="!isActive"
         [attr.aria-checked]="isActive"
         [attr.aria-label]="ariaLabel"
+        [attr.aria-expanded]="confirmationOpen"
         (click)="openConfirmation($event)">
         <span class="material-icons-round status-toggle-icon">{{ isActive ? 'check' : 'close' }}</span>
         <span>{{ isActive ? activeLabel : inactiveLabel }}</span>
       </button>
-
-      @if (confirmationOpen) {
-        <div
-          class="status-confirm-popover"
-          role="dialog"
-          aria-modal="false"
-          (click)="$event.stopPropagation()">
-          <p>{{ isActive ? deactivateMessage : activateMessage }}</p>
-          <div class="status-confirm-actions">
-            <button type="button" class="confirm-btn confirm-btn--primary" (click)="confirmChange($event)">تأكيد</button>
-            <button type="button" class="confirm-btn confirm-btn--secondary" (click)="cancelChange($event)">إلغاء</button>
-          </div>
-        </div>
-      }
     </span>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="statusOrigin"
+      [cdkConnectedOverlayOpen]="confirmationOpen"
+      [cdkConnectedOverlayPositions]="popoverPositions"
+      [cdkConnectedOverlayPanelClass]="popoverPanelClasses"
+      [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+      [cdkConnectedOverlayPush]="true"
+      [cdkConnectedOverlayViewportMargin]="8"
+      (detach)="closeConfirmation()"
+      (positionChange)="onPositionChange($event)">
+      <div
+        class="status-confirm-popover"
+        [class.opens-above]="opensAbove"
+        role="dialog"
+        aria-modal="false"
+        (click)="$event.stopPropagation()">
+        <p>{{ isActive ? deactivateMessage : activateMessage }}</p>
+        <div class="status-confirm-actions">
+          <button type="button" class="confirm-btn confirm-btn--primary" (click)="confirmChange($event)">تأكيد</button>
+          <button type="button" class="confirm-btn confirm-btn--secondary" (click)="cancelChange($event)">إلغاء</button>
+        </div>
+      </div>
+    </ng-template>
   `,
   styles: [`
     :host {
@@ -42,7 +65,6 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
     }
 
     .status-toggle-wrap {
-      position: relative;
       display: inline-flex;
       justify-content: center;
     }
@@ -95,18 +117,19 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
     }
 
     .status-confirm-popover {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 50%;
-      z-index: 80;
       width: 190px;
       border: 1px solid var(--sero-border-light);
       border-radius: 8px;
       background: var(--sero-card-bg);
       box-shadow: var(--shadow-xl);
       padding: 10px;
-      transform: translateX(-50%);
       animation: confirmIn 0.14s ease-out;
+      transform-origin: top center;
+    }
+
+    .status-confirm-popover.opens-above {
+      animation-name: confirmInAbove;
+      transform-origin: bottom center;
     }
 
     .status-confirm-popover p {
@@ -160,11 +183,22 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
     @keyframes confirmIn {
       from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-4px) scale(0.96);
+        transform: translateY(-4px) scale(0.96);
       }
       to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes confirmInAbove {
+      from {
+        opacity: 0;
+        transform: translateY(4px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
     }
   `],
@@ -178,6 +212,41 @@ export class StatusTogglePillComponent {
   @Output() statusChange = new EventEmitter<boolean>();
 
   confirmationOpen = false;
+  opensAbove = false;
+  readonly popoverPanelClasses = ['status-confirm-overlay-pane'];
+  readonly popoverPositions: ConnectedPosition[] = [
+    {
+      originX: 'center',
+      originY: 'bottom',
+      overlayX: 'center',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+    {
+      originX: 'center',
+      originY: 'top',
+      overlayX: 'center',
+      overlayY: 'bottom',
+      offsetY: -8,
+    },
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8,
+    },
+  ];
+
+  private readonly overlay = inject(Overlay);
+  readonly scrollStrategy: ScrollStrategy = this.overlay.scrollStrategies.reposition();
 
   get ariaLabel(): string {
     const nextLabel = this.isActive ? this.inactiveLabel : this.activeLabel;
@@ -186,27 +255,33 @@ export class StatusTogglePillComponent {
 
   openConfirmation(event: Event): void {
     event.stopPropagation();
+    this.opensAbove = false;
     this.confirmationOpen = true;
   }
 
   confirmChange(event: Event): void {
     event.stopPropagation();
-    this.confirmationOpen = false;
+    this.closeConfirmation();
     this.statusChange.emit(!this.isActive);
   }
 
   cancelChange(event: Event): void {
     event.stopPropagation();
-    this.confirmationOpen = false;
+    this.closeConfirmation();
+  }
+
+  onPositionChange(event: ConnectedOverlayPositionChange): void {
+    this.opensAbove = event.connectionPair.overlayY === 'bottom';
   }
 
   @HostListener('document:click')
   closeConfirmation(): void {
     this.confirmationOpen = false;
+    this.opensAbove = false;
   }
 
   @HostListener('document:keydown.escape')
   closeConfirmationOnEscape(): void {
-    this.confirmationOpen = false;
+    this.closeConfirmation();
   }
 }

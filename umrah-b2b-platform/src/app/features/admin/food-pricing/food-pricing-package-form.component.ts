@@ -15,96 +15,118 @@ type FoodPricingPackageFormControls = {
 };
 
 type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControls, 'isActive'>;
+export type FoodPricingPackageFormMode = 'create' | 'view' | 'edit';
 
 @Component({
   selector: 'app-food-pricing-package-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SeroDropdownComponent, SeroDatePickerComponent],
   template: `
-    <form class="package-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <form class="package-form" [class.is-view-mode]="isViewMode" [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <header class="package-form-head">
         <div>
-          <h2>إضافة باقة تموين جديدة</h2>
-          <p>أدخل تفاصيل باقة التموين أدناه</p>
+          <h2>{{ formTitle }}</h2>
+          <p>{{ formSubtitle }}</p>
         </div>
       </header>
 
       <div class="package-form-grid">
         <div class="form-field">
-          <label class="field-label" for="food-package-code">رمز الباقة <span class="required-mark">*</span></label>
-          <input
-            id="food-package-code"
-            class="form-control"
-            [class.is-invalid]="isInvalid('code')"
-            type="text"
-            autocomplete="off"
-            placeholder="أدخل رمز الباقة"
-            formControlName="code" />
-          @if (isInvalid('code')) {
-            <span class="field-error">هذا الحقل مطلوب</span>
+          <label class="field-label" for="food-package-code">رمز الباقة @if (!isViewMode) { <span class="required-mark">*</span> }</label>
+          @if (isViewMode) {
+            <div class="readonly-control">{{ form.controls.code.value || '-' }}</div>
+          } @else {
+            <input
+              id="food-package-code"
+              class="form-control"
+              [class.is-invalid]="isInvalid('code')"
+              type="text"
+              autocomplete="off"
+              placeholder="أدخل رمز الباقة"
+              formControlName="code" />
+            @if (isInvalid('code')) {
+              <span class="field-error">هذا الحقل مطلوب</span>
+            }
           }
         </div>
 
         <div class="form-field">
-          <label class="field-label" for="food-package-title">عنوان الباقة <span class="required-mark">*</span></label>
-          <input
-            id="food-package-title"
-            class="form-control"
-            [class.is-invalid]="isInvalid('title')"
-            type="text"
-            autocomplete="off"
-            placeholder="أدخل عنوان الباقة"
-            formControlName="title" />
-          @if (isInvalid('title')) {
-            <span class="field-error">هذا الحقل مطلوب</span>
+          <label class="field-label" for="food-package-title">عنوان الباقة @if (!isViewMode) { <span class="required-mark">*</span> }</label>
+          @if (isViewMode) {
+            <div class="readonly-control">{{ form.controls.title.value || '-' }}</div>
+          } @else {
+            <input
+              id="food-package-title"
+              class="form-control"
+              [class.is-invalid]="isInvalid('title')"
+              type="text"
+              autocomplete="off"
+              placeholder="أدخل عنوان الباقة"
+              formControlName="title" />
+            @if (isInvalid('title')) {
+              <span class="field-error">هذا الحقل مطلوب</span>
+            }
           }
         </div>
 
         <div class="form-field">
-          <label class="field-label">شركة التموين <span class="required-mark">*</span></label>
-          <div class="field-control" [class.is-invalid]="isInvalid('cateringCompany')">
-            <app-sero-dropdown
-              [options]="companyOptions"
-              [value]="form.controls.cateringCompany.value"
-              placeholder="اختر شركة التموين"
-              (valueChange)="setControlValue('cateringCompany', $event)">
-            </app-sero-dropdown>
-          </div>
-          @if (isInvalid('cateringCompany')) {
-            <span class="field-error">هذا الحقل مطلوب</span>
+          <label class="field-label">شركة التموين @if (!isViewMode) { <span class="required-mark">*</span> }</label>
+          @if (isViewMode) {
+            <div class="readonly-control">{{ form.controls.cateringCompany.value || '-' }}</div>
+          } @else {
+            <div class="field-control" [class.is-invalid]="isInvalid('cateringCompany')">
+              <app-sero-dropdown
+                [options]="companyOptions"
+                [value]="form.controls.cateringCompany.value"
+                placeholder="اختر شركة التموين"
+                (valueChange)="setControlValue('cateringCompany', $event)">
+              </app-sero-dropdown>
+            </div>
+            @if (isInvalid('cateringCompany')) {
+              <span class="field-error">هذا الحقل مطلوب</span>
+            }
           }
         </div>
 
         <div class="form-field">
-          <label class="field-label">تاريخ البداية <span class="required-mark">*</span></label>
-          <div class="field-control" [class.is-invalid]="isInvalid('startDate')">
-            <app-sero-date-picker
-              [value]="form.controls.startDate.value"
-              placeholder="mm/dd/yyyy"
-              (valueChange)="setControlValue('startDate', $event)">
-            </app-sero-date-picker>
-          </div>
-          @if (isInvalid('startDate')) {
-            <span class="field-error">هذا الحقل مطلوب</span>
+          <label class="field-label">تاريخ البداية @if (!isViewMode) { <span class="required-mark">*</span> }</label>
+          @if (isViewMode) {
+            <div class="readonly-control" dir="ltr">{{ form.controls.startDate.value || '-' }}</div>
+          } @else {
+            <div class="field-control" [class.is-invalid]="isInvalid('startDate')">
+              <app-sero-date-picker
+                [value]="form.controls.startDate.value"
+                placeholder="mm/dd/yyyy"
+                (valueChange)="setControlValue('startDate', $event)">
+              </app-sero-date-picker>
+            </div>
+            @if (isInvalid('startDate')) {
+              <span class="field-error">هذا الحقل مطلوب</span>
+            }
           }
         </div>
 
         <div class="form-field">
           <label class="field-label">تاريخ النهاية</label>
-          <app-sero-date-picker
-            [value]="form.controls.endDate.value"
-            placeholder="mm/dd/yyyy"
-            (valueChange)="setControlValue('endDate', $event)">
-          </app-sero-date-picker>
+          @if (isViewMode) {
+            <div class="readonly-control" dir="ltr">{{ form.controls.endDate.value || '-' }}</div>
+          } @else {
+            <app-sero-date-picker
+              [value]="form.controls.endDate.value"
+              placeholder="mm/dd/yyyy"
+              (valueChange)="setControlValue('endDate', $event)">
+            </app-sero-date-picker>
+          }
         </div>
 
         <div class="form-field active-form-field">
           <label class="field-label">فعال</label>
-          <label class="active-toggle">
+          <label class="active-toggle" [class.is-readonly]="isViewMode">
             <span class="active-state">{{ form.controls.isActive.value ? 'فعال' : 'غير فعال' }}</span>
             <span class="switch-control">
               <input
                 type="checkbox"
+                [disabled]="isViewMode"
                 [checked]="form.controls.isActive.value"
                 (change)="setActive($any($event.target).checked)" />
               <span class="switch-track" aria-hidden="true"></span>
@@ -114,14 +136,25 @@ type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControl
       </div>
 
       <footer class="package-form-actions">
-        <button type="submit" class="btn btn--primary">
-          <span class="material-icons-round">save</span>
-          <span>حفظ الباقة</span>
-        </button>
-        <button type="button" class="btn btn--secondary" (click)="cancelled.emit()">
-          <span class="material-icons-round">close</span>
-          <span>إلغاء</span>
-        </button>
+        @if (isViewMode) {
+          <button type="button" class="btn btn--primary" (click)="switchToEdit.emit()">
+            <span class="material-icons-round">edit</span>
+            <span>تعديل</span>
+          </button>
+          <button type="button" class="btn btn--secondary" (click)="close.emit()">
+            <span class="material-icons-round">close</span>
+            <span>إغلاق</span>
+          </button>
+        } @else {
+          <button type="submit" class="btn btn--primary">
+            <span class="material-icons-round">save</span>
+            <span>{{ mode === 'edit' ? 'حفظ التعديلات' : 'حفظ الباقة' }}</span>
+          </button>
+          <button type="button" class="btn btn--secondary" (click)="close.emit()">
+            <span class="material-icons-round">close</span>
+            <span>إلغاء</span>
+          </button>
+        }
       </footer>
     </form>
   `,
@@ -217,6 +250,20 @@ type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControl
       outline-offset: 1px;
     }
 
+    .readonly-control {
+      min-height: 42px;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--sero-surface-2) 54%, var(--sero-card-bg));
+      color: var(--sero-text-primary);
+      display: flex;
+      align-items: center;
+      padding: 9px 12px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      box-sizing: border-box;
+    }
+
     .field-error {
       color: var(--sero-danger);
       font-size: 0.68rem;
@@ -246,6 +293,17 @@ type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControl
       background: var(--sero-surface-2);
     }
 
+    .active-toggle.is-readonly {
+      cursor: default;
+      border-color: var(--sero-border-light);
+      background: color-mix(in srgb, var(--sero-surface-2) 54%, var(--sero-card-bg));
+    }
+
+    .active-toggle.is-readonly:hover {
+      border-color: var(--sero-border-light);
+      background: color-mix(in srgb, var(--sero-surface-2) 54%, var(--sero-card-bg));
+    }
+
     .active-state {
       color: var(--sero-text-primary);
       font-size: 0.84rem;
@@ -267,6 +325,10 @@ type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControl
       cursor: pointer;
       margin: 0;
       z-index: 2;
+    }
+
+    .switch-control input:disabled {
+      cursor: default;
     }
 
     .switch-track {
@@ -347,7 +409,8 @@ type FoodPricingPackageTextControl = Exclude<keyof FoodPricingPackageFormControl
 })
 export class FoodPricingPackageFormComponent {
   @Input() companyOptions: SeroDropdownOption<string>[] = [];
-  @Input() set packageValue(value: FoodPricingPackageModel | null) {
+  @Input() mode: FoodPricingPackageFormMode = 'create';
+  @Input() set initialData(value: FoodPricingPackageModel | null | undefined) {
     this.form.reset({
       code: value?.code ?? '',
       title: value?.title ?? '',
@@ -359,8 +422,9 @@ export class FoodPricingPackageFormComponent {
     this.submitted = false;
   }
 
-  @Output() saved = new EventEmitter<FoodPricingPackageModel>();
-  @Output() cancelled = new EventEmitter<void>();
+  @Output() save = new EventEmitter<FoodPricingPackageModel>();
+  @Output() close = new EventEmitter<void>();
+  @Output() switchToEdit = new EventEmitter<void>();
 
   submitted = false;
 
@@ -373,7 +437,39 @@ export class FoodPricingPackageFormComponent {
     isActive: new FormControl(true, { nonNullable: true }),
   });
 
+  get isViewMode(): boolean {
+    return this.mode === 'view';
+  }
+
+  get formTitle(): string {
+    if (this.mode === 'view') {
+      return 'عرض باقة التموين';
+    }
+
+    if (this.mode === 'edit') {
+      return 'تعديل باقة التموين';
+    }
+
+    return 'إضافة باقة تموين جديدة';
+  }
+
+  get formSubtitle(): string {
+    if (this.mode === 'view') {
+      return 'استعرض تفاصيل باقة التموين بدون تعديل';
+    }
+
+    if (this.mode === 'edit') {
+      return 'حدّث تفاصيل باقة التموين أدناه';
+    }
+
+    return 'أدخل تفاصيل باقة التموين أدناه';
+  }
+
   setControlValue(controlName: FoodPricingPackageTextControl, value: string): void {
+    if (this.isViewMode) {
+      return;
+    }
+
     const control = this.form.controls[controlName];
     control.setValue(value);
     control.markAsDirty();
@@ -381,6 +477,10 @@ export class FoodPricingPackageFormComponent {
   }
 
   setActive(isActive: boolean): void {
+    if (this.isViewMode) {
+      return;
+    }
+
     this.form.controls.isActive.setValue(isActive);
     this.form.controls.isActive.markAsDirty();
   }
@@ -391,6 +491,10 @@ export class FoodPricingPackageFormComponent {
   }
 
   submit(): void {
+    if (this.isViewMode) {
+      return;
+    }
+
     this.submitted = true;
     this.form.markAllAsTouched();
 
@@ -399,7 +503,7 @@ export class FoodPricingPackageFormComponent {
     }
 
     const value = this.form.getRawValue();
-    this.saved.emit({
+    this.save.emit({
       code: value.code.trim(),
       title: value.title.trim(),
       cateringCompany: value.cateringCompany,

@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {
+  ConnectedOverlayPositionChange,
+  ConnectedPosition,
+  Overlay,
+  OverlayModule,
+  ScrollStrategy,
+} from '@angular/cdk/overlay';
+import {
   Component,
   ElementRef,
   EventEmitter,
@@ -25,10 +32,23 @@ let _uidCounter = 0;
 @Component({
   selector: 'app-sero-dropdown',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, OverlayModule, TranslateModule],
   template: `
-    <div class="sero-dd" [class.is-open]="isOpen" [class.is-disabled]="disabled" [class.size-sm]="size === 'sm'">
-      <button type="button" class="sero-dd-trigger" [disabled]="disabled" (click)="toggle($event)">
+    <div
+      class="sero-dd"
+      cdkOverlayOrigin
+      #dropdownOrigin="cdkOverlayOrigin"
+      [class.is-open]="isOpen"
+      [class.is-disabled]="disabled"
+      [class.size-sm]="size === 'sm'">
+      <button
+        type="button"
+        class="sero-dd-trigger"
+        [disabled]="disabled"
+        [attr.aria-expanded]="isOpen"
+        [attr.aria-controls]="menuId"
+        aria-haspopup="listbox"
+        (click)="toggle($event)">
         <span class="sero-dd-value" [class.is-placeholder]="!selectedOption">
           @if (selectedOption) {
             {{ selectedOption.labelKey ? (selectedOption.labelKey | translate) : selectedOption.label }}
@@ -38,21 +58,40 @@ let _uidCounter = 0;
         </span>
         <span class="material-icons-round sero-dd-chevron" [class.open]="isOpen">expand_more</span>
       </button>
-
-      @if (isOpen) {
-        <div class="sero-dd-menu">
-          @for (option of options; track option.value) {
-            <button
-              type="button"
-              class="sero-dd-option"
-              [class.active]="isOptionSelected(option)"
-              (click)="selectOption(option, $event)">
-              {{ option.labelKey ? (option.labelKey | translate) : option.label }}
-            </button>
-          }
-        </div>
-      }
     </div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="dropdownOrigin"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayPositions]="overlayPositions"
+      [cdkConnectedOverlayWidth]="overlayWidth"
+      [cdkConnectedOverlayMinWidth]="overlayWidth"
+      [cdkConnectedOverlayPanelClass]="overlayPanelClasses"
+      [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+      [cdkConnectedOverlayPush]="true"
+      [cdkConnectedOverlayViewportMargin]="8"
+      (detach)="close()"
+      (positionChange)="onPositionChange($event)">
+      <div
+        class="sero-dd-menu"
+        [class.opens-above]="opensAbove"
+        [id]="menuId"
+        role="listbox"
+        (click)="$event.stopPropagation()">
+        @for (option of options; track option.value) {
+          <button
+            type="button"
+            class="sero-dd-option"
+            role="option"
+            [class.active]="isOptionSelected(option)"
+            [attr.aria-selected]="isOptionSelected(option)"
+            (click)="selectOption(option, $event)">
+            {{ option.labelKey ? (option.labelKey | translate) : option.label }}
+          </button>
+        }
+      </div>
+    </ng-template>
   `,
   styles: [`
     :host { display: block; width: 100%; }
@@ -127,9 +166,7 @@ let _uidCounter = 0;
     }
 
     .sero-dd-menu {
-      position: absolute;
-      top: calc(100% + 6px);
-      inset-inline-start: 0;
+      position: static;
       width: 100%;
       background: var(--sero-card-bg);
       border: 1px solid var(--sero-border);
@@ -142,6 +179,14 @@ let _uidCounter = 0;
       gap: 2px;
       max-height: 260px;
       overflow: auto;
+      animation: seroDropdownEnter 140ms ease-out;
+      transform-origin: top center;
+      scrollbar-width: thin;
+      scrollbar-color: var(--sero-border-strong) transparent;
+    }
+
+    .sero-dd-menu.opens-above {
+      transform-origin: bottom center;
     }
 
     .sero-dd-option {
@@ -171,6 +216,32 @@ let _uidCounter = 0;
       border-color: transparent;
       font-weight: 600;
     }
+
+    @keyframes seroDropdownEnter {
+      from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .sero-dd-menu.opens-above {
+      animation-name: seroDropdownEnterAbove;
+    }
+
+    @keyframes seroDropdownEnterAbove {
+      from {
+        opacity: 0;
+        transform: translateY(4px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
   `]
 })
 export class SeroDropdownComponent<T = string | number> implements OnInit, OnDestroy {
@@ -183,18 +254,58 @@ export class SeroDropdownComponent<T = string | number> implements OnInit, OnDes
   @Output() valueChange = new EventEmitter<T>();
 
   isOpen = false;
+  opensAbove = false;
+  overlayWidth: number | string = '';
+  readonly overlayPanelClasses = ['sero-dd-overlay-pane'];
+  readonly overlayPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 6,
+      panelClass: 'sero-dd-overlay-below',
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetY: -6,
+      panelClass: 'sero-dd-overlay-above',
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 6,
+      panelClass: 'sero-dd-overlay-below',
+    },
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      offsetY: -6,
+      panelClass: 'sero-dd-overlay-above',
+    },
+  ];
 
   private readonly uid = `sero-dd-${++_uidCounter}`;
+  readonly menuId = `${this.uid}-menu`;
   private readonly destroy$ = new Subject<void>();
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly ddState = inject(DropdownStateService);
+  private readonly overlay = inject(Overlay);
+  readonly scrollStrategy: ScrollStrategy = this.overlay.scrollStrategies.reposition();
 
   ngOnInit(): void {
     this.ddState.closeOthers
       .pipe(takeUntil(this.destroy$))
       .subscribe((openId) => {
         if (openId !== this.uid) {
-          this.isOpen = false;
+          this.close();
         }
       });
   }
@@ -211,21 +322,52 @@ export class SeroDropdownComponent<T = string | number> implements OnInit, OnDes
   toggle(event: Event): void {
     event.stopPropagation();
     if (this.disabled) return;
-    this.isOpen = !this.isOpen;
+
     if (this.isOpen) {
-      this.ddState.requestCloseOthers(this.uid);
+      this.close();
+      return;
     }
+
+    this.open();
   }
 
   selectOption(option: SeroDropdownOption<T>, event: Event): void {
     event.stopPropagation();
     this.value = option.value;
     this.valueChange.emit(option.value);
-    this.isOpen = false;
+    this.close();
   }
 
   isOptionSelected(option: SeroDropdownOption<T>): boolean {
     return option.value === this.value;
+  }
+
+  open(): void {
+    this.overlayWidth = this.host.nativeElement.getBoundingClientRect().width;
+    this.opensAbove = false;
+    this.isOpen = true;
+    this.ddState.requestCloseOthers(this.uid);
+  }
+
+  close(): void {
+    this.isOpen = false;
+    this.opensAbove = false;
+  }
+
+  onPositionChange(event: ConnectedOverlayPositionChange): void {
+    this.opensAbove = event.connectionPair.overlayY === 'bottom';
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (this.isOpen) {
+      this.overlayWidth = this.host.nativeElement.getBoundingClientRect().width;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.close();
   }
 
   @HostListener('document:click', ['$event'])

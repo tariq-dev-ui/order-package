@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
 import { StatusTogglePillComponent } from '../../../shared/components/status-toggle-pill/status-toggle-pill.component';
+import { TableFilterHeaderComponent } from '../../../shared/components/table-filter-header/table-filter-header.component';
 import {
   TRANSPORT_PRICING_COMPANY_OPTIONS,
   TRANSPORT_PRICING_DEFAULT_FILTERS,
@@ -21,7 +22,7 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
 @Component({
   selector: 'app-transport-pricing-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, StatusTogglePillComponent],
+  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, StatusTogglePillComponent, TableFilterHeaderComponent],
   template: `
     <section class="transport-pricing-page" dir="rtl">
       <header class="page-head">
@@ -29,7 +30,7 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
       </header>
 
       <section class="surface-card">
-        @if (!filtersHidden) {
+        <app-table-filter-header [(expanded)]="filtersExpanded">
           <div class="filters-grid">
             <div class="field-group">
               <label>تاريخ البداية</label>
@@ -67,15 +68,12 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
               </app-sero-dropdown>
             </div>
           </div>
-        }
+        </app-table-filter-header>
 
         <div class="actions-bar">
           <div class="filters-actions">
             <button type="button" class="btn btn--primary btn--sm" (click)="search()">بحث</button>
             <button type="button" class="btn btn--secondary btn--sm" (click)="clear()">مسح</button>
-            <button type="button" class="btn btn--secondary btn--sm" (click)="toggleFilters()">
-              {{ filtersHidden ? 'إظهار' : 'إخفاء' }}
-            </button>
           </div>
 
           <button type="button" class="btn btn--primary btn--sm add-btn" (click)="openCreateForm()">
@@ -828,7 +826,7 @@ export class TransportPricingPageComponent {
   }));
 
   filters: TransportPricingFilterState = { ...TRANSPORT_PRICING_DEFAULT_FILTERS };
-  filtersHidden = false;
+  filtersExpanded = true;
   openedActionMenuId: string | null = null;
   editingRowId: string | null = null;
   editDraft: TransportPricingRow | null = null;
@@ -893,9 +891,6 @@ export class TransportPricingPageComponent {
     this.openedActionMenuId = null;
   }
 
-  toggleFilters(): void {
-    this.filtersHidden = !this.filtersHidden;
-  }
 
   openCreateForm(): void {
     void this.router.navigate(['/admin/pricing/transport/new']);
