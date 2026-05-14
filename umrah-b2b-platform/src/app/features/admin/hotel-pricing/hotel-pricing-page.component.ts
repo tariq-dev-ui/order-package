@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnDestroy, inject } from '@angular/core';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
-import { StatusTogglePillComponent } from '../../../shared/components/status-toggle-pill/status-toggle-pill.component';
 import { TableFilterHeaderComponent } from '../../../shared/components/table-filter-header/table-filter-header.component';
 import {
   HOTEL_PRICING_DEFAULT_FILTERS,
@@ -23,7 +22,6 @@ import { HotelPricingPolicyService } from './hotel-pricing-policy.service';
     CommonModule,
     SeroDropdownComponent,
     SeroDatePickerComponent,
-    StatusTogglePillComponent,
     TableFilterHeaderComponent,
     HotelPricingPolicyFormComponent,
   ],
@@ -129,14 +127,13 @@ import { HotelPricingPolicyService } from './hotel-pricing-policy.service';
                     <td class="count-cell">{{ policy.agentsCount }}</td>
                     <td class="count-cell">{{ policy.hotelsCount }}</td>
                     <td>
-                      <app-status-toggle-pill
-                        [isActive]="policy.isActive"
-                        activeLabel="فعال"
-                        inactiveLabel="غير فعال"
-                        activateMessage="هل تريد تفعيل هذه السياسة؟"
-                        deactivateMessage="هل تريد إلغاء تفعيل هذه السياسة؟"
-                        (statusChange)="toggleStatus(policy, $event)">
-                      </app-status-toggle-pill>
+                      <span
+                        class="status-pill"
+                        [class.status-pill--active]="policy.isActive"
+                        [class.status-pill--inactive]="!policy.isActive">
+                        <span class="material-icons-round status-pill-icon">{{ policy.isActive ? 'check' : 'close' }}</span>
+                        <span>{{ policy.isActive ? 'فعال' : 'غير فعال' }}</span>
+                      </span>
                     </td>
                     <td class="action-cell">
                       <div class="action-menu-wrap" (click)="$event.stopPropagation()">
@@ -400,6 +397,37 @@ import { HotelPricingPolicyService } from './hotel-pricing-policy.service';
     .count-cell {
       text-align: center;
       font-weight: 700;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 54px;
+      min-height: 24px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .status-pill--active {
+      color: var(--sero-success);
+      background: var(--sero-success-bg);
+      border-color: var(--sero-success-border);
+    }
+
+    .status-pill--inactive {
+      color: var(--sero-danger);
+      background: var(--sero-danger-bg);
+      border-color: var(--sero-danger-border);
+    }
+
+    .status-pill-icon {
+      font-size: 14px;
+      line-height: 1;
     }
 
     .empty-cell {
@@ -741,13 +769,6 @@ export class HotelPricingPageComponent implements OnDestroy {
   cancelDelete(event: Event): void {
     event.stopPropagation();
     this.pendingDeleteId = null;
-  }
-
-  toggleStatus(policy: HotelPricingPolicy, isActive: boolean): void {
-    this.service.toggleStatus(policy.id, isActive);
-    this.filteredPolicies = this.filteredPolicies.map((p) =>
-      p.id === policy.id ? { ...p, isActive } : p
-    );
   }
 
   toggleStatusFromMenu(policy: HotelPricingPolicy, event: Event): void {
