@@ -17,9 +17,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
           <button
             type="button"
             class="filter-toggle-btn"
+            [class.has-label]="showToggleLabel"
             (click)="toggle()"
             [attr.aria-expanded]="expanded"
             aria-label="تبديل عرض الفلاتر">
+            @if (showToggleLabel) {
+              <span class="filter-toggle-label">{{ expanded ? collapseLabel : expandLabel }}</span>
+            }
             <span class="material-icons-round toggle-icon" [class.is-expanded]="expanded">expand_more</span>
           </button>
         }
@@ -88,6 +92,20 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       flex-shrink: 0;
     }
 
+    .filter-toggle-btn.has-label {
+      width: auto;
+      min-width: 112px;
+      padding: 0 10px;
+      gap: 6px;
+      border-radius: 8px;
+    }
+
+    .filter-toggle-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
     .filter-toggle-btn:hover {
       background: var(--sero-surface-2);
       border-color: var(--sero-border-strong);
@@ -129,10 +147,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   `],
 })
 export class TableFilterHeaderComponent {
-  @Input() title = 'الفلاتر';
-  @Input() subtitle = 'تخصيص النتائج';
-  @Input() expanded = true;
-  @Input() collapsible = true;
+    @Input() title = 'الفلاتر';
+    @Input() subtitle = 'تخصيص النتائج';
+    @Input() expanded = true;
+    @Input() collapsible = true;
+  @Input() showToggleLabel = false;
+  @Input() expandLabel = 'إظهار الفلاتر';
+  @Input() collapseLabel = 'إخفاء الفلاتر';
   @Output() expandedChange = new EventEmitter<boolean>();
 
   toggle(): void {

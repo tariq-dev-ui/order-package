@@ -7,6 +7,9 @@ const transportPricingPage = () => import('./features/admin/transport-pricing/tr
 const transportPricingFormPage = () => import('./features/admin/transport-pricing/transport-pricing-form-page.component').then(m => m.TransportPricingFormPageComponent);
 const foodPricingPage = () => import('./features/admin/food-pricing/food-pricing-page.component').then(m => m.FoodPricingPageComponent);
 const hotelPricingPage = () => import('./features/admin/hotel-pricing/hotel-pricing-page.component').then(m => m.HotelPricingPageComponent);
+const hotelsPage = () => import('./features/admin/hotels/hotels-page.component').then(m => m.HotelsPageComponent);
+const hotelCategoriesPage = () => import('./features/admin/hotel-categories/hotel-categories-page.component').then(m => m.HotelCategoriesPageComponent);
+const transportCompaniesPage = () => import('./features/admin/transport-companies/transport-companies-page.component').then(m => m.TransportCompaniesPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -54,9 +57,9 @@ export const routes: Routes = [
       { path: 'financials/owners',                   loadComponent: emptyPage },
       { path: 'financials/approvals',                loadComponent: emptyPage },
       // TODO: services
-      { path: 'services/hotels',                     loadComponent: emptyPage },
-      { path: 'services/transport-companies',        loadComponent: emptyPage },
-      { path: 'services/hotel-categories',           loadComponent: emptyPage },
+      { path: 'services/hotels',                     loadComponent: hotelsPage },
+      { path: 'services/transport-companies',        loadComponent: transportCompaniesPage },
+      { path: 'services/hotel-categories',           loadComponent: hotelCategoriesPage },
       // TODO: agent management
       { path: 'agents/list',                         loadComponent: emptyPage },
       { path: 'agents/account-managers',             loadComponent: emptyPage },
