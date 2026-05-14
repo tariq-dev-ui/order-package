@@ -1,0 +1,816 @@
+import { CommonModule } from '@angular/common';
+import { Component, HostListener } from '@angular/core';
+import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
+import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
+import {
+  FOOD_PRICING_CATERING_COMPANY_OPTIONS,
+  FOOD_PRICING_DEFAULT_FILTERS,
+  FOOD_PRICING_FOOD_TYPE_OPTIONS,
+  FOOD_PRICING_ITEMS_PER_PAGE_OPTIONS,
+  FOOD_PRICING_MEAL_PLAN_OPTIONS,
+  FOOD_PRICING_ROWS,
+  FOOD_PRICING_STATUS_OPTIONS,
+  FoodPricingFilterState,
+  FoodPricingRow,
+  FoodPricingStatusFilter,
+} from './food-pricing.mock';
+
+@Component({
+  selector: 'app-food-pricing-page',
+  standalone: true,
+  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent],
+  template: `
+    <section class="food-pricing-page" dir="rtl">
+      <header class="page-head">
+        <h1>تسعيرات التغذية</h1>
+      </header>
+
+      <section class="surface-card">
+        @if (!filtersHidden) {
+          <div class="filters-grid">
+            <div class="field-group">
+              <label>تاريخ البداية</label>
+              <app-sero-date-picker
+                [value]="filters.startDate"
+                placeholder="mm/dd/yyyy"
+                (valueChange)="onStartDateChange($event)">
+              </app-sero-date-picker>
+            </div>
+
+            <div class="field-group">
+              <label>الحالة</label>
+              <app-sero-dropdown
+                [options]="statusOptions"
+                [value]="filters.status"
+                (valueChange)="onStatusChange($event)">
+              </app-sero-dropdown>
+            </div>
+
+            <div class="field-group">
+              <label>شركة التموين</label>
+              <app-sero-dropdown
+                [options]="cateringCompanyOptions"
+                [value]="filters.cateringCompany"
+                (valueChange)="onCateringCompanyChange($event)">
+              </app-sero-dropdown>
+            </div>
+
+            <div class="field-group">
+              <label>نوع الطعام</label>
+              <app-sero-dropdown
+                [options]="foodTypeOptions"
+                [value]="filters.foodType"
+                (valueChange)="onFoodTypeChange($event)">
+              </app-sero-dropdown>
+            </div>
+
+            <div class="field-group">
+              <label>خطة الوجبات</label>
+              <app-sero-dropdown
+                [options]="mealPlanOptions"
+                [value]="filters.mealPlan"
+                (valueChange)="onMealPlanChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+        }
+
+        <div class="actions-bar">
+          <div class="filters-actions">
+            <button type="button" class="btn btn--primary btn--sm" (click)="search()">بحث</button>
+            <button type="button" class="btn btn--secondary btn--sm" (click)="clear()">مسح</button>
+            <button type="button" class="btn btn--secondary btn--sm" (click)="toggleFilters()">
+              {{ filtersHidden ? 'إظهار' : 'إخفاء' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="food-table">
+            <thead>
+              <tr>
+                <th>رمز الباقة</th>
+                <th>عنوان الباقة</th>
+                <th>تاريخ البداية</th>
+                <th>تاريخ النهاية</th>
+                <th>فعال</th>
+                <th>الإجراء</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (pagedRows.length === 0) {
+                <tr>
+                  <td colspan="6" class="empty-cell">لا توجد بيانات</td>
+                </tr>
+              } @else {
+                @for (row of pagedRows; track row.id) {
+                  <tr>
+                    <td>{{ row.code }}</td>
+                    <td>{{ row.title }}</td>
+                    <td>{{ row.startDate }}</td>
+                    <td>{{ row.endDate }}</td>
+                    <td>
+                      <span class="status-pill" [class.status-pill--active]="row.isActive" [class.status-pill--inactive]="!row.isActive">
+                        {{ row.isActive ? 'فعال' : 'غير فعال' }}
+                      </span>
+                    </td>
+                    <td class="action-cell">
+                      <div class="action-menu-wrap" (click)="$event.stopPropagation()">
+                        <button
+                          type="button"
+                          class="table-action-btn"
+                          [class.is-open]="openedActionMenuId === row.id"
+                          (click)="toggleActionMenu(row.id, $event)"
+                          aria-haspopup="menu"
+                          [attr.aria-expanded]="openedActionMenuId === row.id"
+                          aria-label="إجراءات">
+                          ...
+                        </button>
+
+                        @if (openedActionMenuId === row.id) {
+                          <div class="row-actions-menu" role="menu">
+                            <button type="button" class="row-action-item" role="menuitem" (click)="viewRow(row, $event)">
+                              <span class="material-icons-round">visibility</span>
+                              <span>عرض</span>
+                            </button>
+                            <button type="button" class="row-action-item" role="menuitem" (click)="editRow(row, $event)">
+                              <span class="material-icons-round">edit</span>
+                              <span>تعديل</span>
+                            </button>
+                            <button type="button" class="row-action-item row-action-item--danger" role="menuitem" (click)="deleteRow(row.id, $event)">
+                              <span class="material-icons-round">delete</span>
+                              <span>حذف</span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="pagination-bar">
+          <div class="pagination-controls">
+            <button type="button" class="pager-btn" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+              <span class="material-icons-round">chevron_right</span>
+            </button>
+            <button type="button" class="pager-btn" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+              <span class="material-icons-round">chevron_left</span>
+            </button>
+
+            <span class="page-counter">{{ rangeStart }} – {{ rangeEnd }} of {{ totalItemsCount }}</span>
+
+            <div class="items-per-page">
+              <app-sero-dropdown
+                [options]="itemsPerPageDropdownOptions"
+                [value]="itemsPerPage"
+                size="sm"
+                (valueChange)="onItemsPerPageChange($event)">
+              </app-sero-dropdown>
+              <span>Items per page:</span>
+            </div>
+          </div>
+        </footer>
+      </section>
+
+      @if (viewedRow) {
+        <div class="details-modal-backdrop" (click)="closeDetails()">
+          <section class="details-modal" role="dialog" aria-modal="true" aria-labelledby="food-details-title" (click)="$event.stopPropagation()">
+            <header class="details-modal-head">
+              <h2 id="food-details-title">تفاصيل باقة التغذية</h2>
+              <button type="button" class="details-close-btn" (click)="closeDetails()" aria-label="إغلاق">
+                <span class="material-icons-round">close</span>
+              </button>
+            </header>
+
+            <div class="details-grid">
+              <div class="details-item">
+                <span>رمز الباقة</span>
+                <strong>{{ viewedRow.code }}</strong>
+              </div>
+              <div class="details-item">
+                <span>عنوان الباقة</span>
+                <strong>{{ viewedRow.title }}</strong>
+              </div>
+              <div class="details-item">
+                <span>شركة التموين</span>
+                <strong>{{ viewedRow.cateringCompany }}</strong>
+              </div>
+              <div class="details-item">
+                <span>نوع الطعام</span>
+                <strong>{{ viewedRow.foodType }}</strong>
+              </div>
+              <div class="details-item">
+                <span>خطة الوجبات</span>
+                <strong>{{ viewedRow.mealPlan }}</strong>
+              </div>
+              <div class="details-item">
+                <span>تاريخ البداية</span>
+                <strong>{{ viewedRow.startDate }}</strong>
+              </div>
+              <div class="details-item">
+                <span>تاريخ النهاية</span>
+                <strong>{{ viewedRow.endDate }}</strong>
+              </div>
+              <div class="details-item">
+                <span>فعال</span>
+                <strong>{{ viewedRow.isActive ? 'فعال' : 'غير فعال' }}</strong>
+              </div>
+            </div>
+          </section>
+        </div>
+      }
+    </section>
+  `,
+  styles: [`
+    .food-pricing-page {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .page-head h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--sero-text-primary);
+    }
+
+    .surface-card {
+      background: #fff;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px 14px;
+      padding: 14px;
+      border-bottom: 1px solid var(--sero-border-light);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .field-group label {
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--sero-text-secondary);
+    }
+
+    .actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .filters-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .table-wrap {
+      padding: 0 0 8px;
+      overflow-x: auto;
+    }
+
+    .food-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    .food-table thead tr {
+      background: var(--sero-primary);
+    }
+
+    .food-table th {
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px 12px;
+      white-space: nowrap;
+    }
+
+    .food-table td {
+      border-bottom: 1px solid var(--sero-border-light);
+      color: var(--sero-text-primary);
+      font-size: 0.76rem;
+      text-align: center;
+      padding: 10px 12px;
+      white-space: nowrap;
+    }
+
+    .food-table tbody tr:hover {
+      background: #fbfcfa;
+    }
+
+    .food-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .empty-cell {
+      color: var(--sero-text-muted);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .status-pill--active {
+      color: var(--sero-success);
+      background: var(--sero-success-bg);
+    }
+
+    .status-pill--inactive {
+      color: var(--sero-danger);
+      background: var(--sero-danger-bg);
+    }
+
+    .table-action-btn {
+      min-width: 32px;
+      height: 26px;
+      border-radius: 8px;
+      border: 1px solid var(--sero-border);
+      background: #fff;
+      color: var(--sero-text-secondary);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
+    }
+
+    .table-action-btn:hover,
+    .table-action-btn.is-open {
+      background: var(--sero-primary-50);
+      border-color: var(--sero-primary-100);
+      color: var(--sero-primary-dark);
+    }
+
+    .table-action-btn.is-open {
+      box-shadow: 0 0 0 3px rgba(58, 71, 42, 0.08);
+    }
+
+    .action-cell {
+      position: relative;
+      overflow: visible;
+    }
+
+    .action-menu-wrap {
+      position: relative;
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    .row-actions-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      inset-inline-end: 0;
+      z-index: 50;
+      min-width: 132px;
+      padding: 6px;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
+      transform-origin: top right;
+      animation: actionMenuIn 0.14s ease-out;
+    }
+
+    .food-table tbody tr:nth-last-child(-n + 2) .row-actions-menu {
+      top: auto;
+      bottom: calc(100% + 6px);
+      transform-origin: bottom right;
+    }
+
+    .row-action-item {
+      width: 100%;
+      min-height: 34px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--sero-text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 7px 9px;
+      font-family: var(--sero-font);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-align: start;
+      cursor: pointer;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    }
+
+    .row-action-item .material-icons-round {
+      font-size: 17px;
+      color: var(--sero-text-muted);
+      transition: color var(--t-fast);
+    }
+
+    .row-action-item:hover {
+      background: var(--sero-primary-50);
+      border-color: var(--sero-primary-100);
+      color: var(--sero-primary-dark);
+      transform: translateX(-1px);
+    }
+
+    .row-action-item:hover .material-icons-round {
+      color: var(--sero-primary);
+    }
+
+    .row-action-item--danger {
+      color: var(--sero-danger);
+    }
+
+    .row-action-item--danger .material-icons-round,
+    .row-action-item--danger:hover .material-icons-round {
+      color: var(--sero-danger);
+    }
+
+    .row-action-item--danger:hover {
+      background: var(--sero-danger-bg);
+      border-color: var(--sero-danger-border);
+      color: var(--sero-danger);
+    }
+
+    @keyframes actionMenuIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .pagination-bar {
+      border-top: 1px solid var(--sero-border-light);
+      padding: 10px 14px;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pager-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--sero-text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    }
+
+    .pager-btn:hover:not(:disabled) {
+      background: var(--sero-primary-50);
+      border-color: var(--sero-primary-100);
+      color: var(--sero-primary);
+    }
+
+    .pager-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .pager-btn .material-icons-round {
+      font-size: 18px;
+    }
+
+    .page-counter {
+      color: var(--sero-text-secondary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      min-width: 84px;
+      text-align: center;
+      direction: ltr;
+    }
+
+    .items-per-page {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--sero-text-secondary);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .items-per-page app-sero-dropdown {
+      width: 72px;
+    }
+
+    .details-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .details-modal {
+      width: min(680px, 100%);
+      background: #fff;
+      border: 1px solid var(--sero-border-light);
+      border-radius: 10px;
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+      animation: detailsModalIn 0.14s ease-out;
+    }
+
+    .details-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--sero-border-light);
+    }
+
+    .details-modal-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--sero-text-primary);
+    }
+
+    .details-close-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--sero-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--sero-text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    }
+
+    .details-close-btn:hover {
+      background: var(--sero-primary-50);
+      border-color: var(--sero-primary-100);
+      color: var(--sero-primary);
+    }
+
+    .details-close-btn .material-icons-round {
+      font-size: 18px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .details-item {
+      border: 1px solid var(--sero-border-light);
+      border-radius: 8px;
+      background: var(--sero-surface-2);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px 12px;
+      min-width: 0;
+    }
+
+    .details-item span {
+      color: var(--sero-text-muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .details-item strong {
+      color: var(--sero-text-primary);
+      font-size: 0.82rem;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @keyframes detailsModalIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .filters-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .filters-grid,
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-bar,
+      .pagination-controls {
+        justify-content: flex-start;
+      }
+    }
+  `],
+})
+export class FoodPricingPageComponent {
+  readonly statusOptions = FOOD_PRICING_STATUS_OPTIONS;
+  readonly cateringCompanyOptions = FOOD_PRICING_CATERING_COMPANY_OPTIONS;
+  readonly foodTypeOptions = FOOD_PRICING_FOOD_TYPE_OPTIONS;
+  readonly mealPlanOptions = FOOD_PRICING_MEAL_PLAN_OPTIONS;
+  readonly itemsPerPageOptions = FOOD_PRICING_ITEMS_PER_PAGE_OPTIONS;
+
+  readonly itemsPerPageDropdownOptions = this.itemsPerPageOptions.map((count) => ({
+    value: count,
+    label: String(count),
+  }));
+
+  filters: FoodPricingFilterState = { ...FOOD_PRICING_DEFAULT_FILTERS };
+  filtersHidden = false;
+  openedActionMenuId: string | null = null;
+  viewedRow: FoodPricingRow | null = null;
+
+  private allRows: FoodPricingRow[] = [...FOOD_PRICING_ROWS];
+  private filteredRows: FoodPricingRow[] = [...this.allRows];
+
+  currentPage = 1;
+  itemsPerPage = this.itemsPerPageOptions[0];
+
+  get totalItemsCount(): number {
+    return this.filteredRows.length;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.totalItemsCount / this.itemsPerPage));
+  }
+
+  get rangeStart(): number {
+    if (this.totalItemsCount === 0) {
+      return 0;
+    }
+
+    return ((this.currentPage - 1) * this.itemsPerPage) + 1;
+  }
+
+  get rangeEnd(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.totalItemsCount);
+  }
+
+  get pagedRows(): FoodPricingRow[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredRows.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  onStartDateChange(value: string): void {
+    this.filters = { ...this.filters, startDate: value };
+  }
+
+  onStatusChange(value: FoodPricingStatusFilter): void {
+    this.filters = { ...this.filters, status: value };
+  }
+
+  onCateringCompanyChange(value: string): void {
+    this.filters = { ...this.filters, cateringCompany: value };
+  }
+
+  onFoodTypeChange(value: string): void {
+    this.filters = { ...this.filters, foodType: value };
+  }
+
+  onMealPlanChange(value: string): void {
+    this.filters = { ...this.filters, mealPlan: value };
+  }
+
+  onItemsPerPageChange(count: number): void {
+    this.itemsPerPage = count;
+    this.currentPage = 1;
+  }
+
+  search(): void {
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = 1;
+    this.openedActionMenuId = null;
+  }
+
+  clear(): void {
+    this.filters = { ...FOOD_PRICING_DEFAULT_FILTERS };
+    this.filteredRows = [...this.allRows];
+    this.currentPage = 1;
+    this.itemsPerPage = this.itemsPerPageOptions[0];
+    this.openedActionMenuId = null;
+  }
+
+  toggleFilters(): void {
+    this.filtersHidden = !this.filtersHidden;
+  }
+
+  toggleActionMenu(rowId: string, event: Event): void {
+    event.stopPropagation();
+    this.openedActionMenuId = this.openedActionMenuId === rowId ? null : rowId;
+  }
+
+  viewRow(row: FoodPricingRow, event: Event): void {
+    event.stopPropagation();
+    this.viewedRow = { ...row };
+    this.openedActionMenuId = null;
+  }
+
+  editRow(_row: FoodPricingRow, event: Event): void {
+    event.stopPropagation();
+    this.openedActionMenuId = null;
+  }
+
+  deleteRow(rowId: string, event: Event): void {
+    event.stopPropagation();
+    this.allRows = this.allRows.filter((row) => row.id !== rowId);
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+    this.openedActionMenuId = null;
+  }
+
+  closeDetails(): void {
+    this.viewedRow = null;
+  }
+
+  @HostListener('document:click')
+  closeOpenActionMenu(): void {
+    this.openedActionMenuId = null;
+  }
+
+  @HostListener('document:keydown.escape')
+  closeOverlayOnEscape(): void {
+    this.openedActionMenuId = null;
+    this.viewedRow = null;
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage -= 1;
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage += 1;
+    }
+  }
+
+  private getFilteredRows(): FoodPricingRow[] {
+    return this.allRows.filter((row) => {
+      const dateMatch = !this.filters.startDate || row.startDate === this.filters.startDate;
+      const statusMatch = this.filters.status === 'all'
+        || (this.filters.status === 'فعال' && row.isActive)
+        || (this.filters.status === 'غير فعال' && !row.isActive);
+      const companyMatch = this.filters.cateringCompany === 'all' || row.cateringCompany === this.filters.cateringCompany;
+      const foodTypeMatch = this.filters.foodType === 'all' || row.foodType === this.filters.foodType;
+      const mealPlanMatch = this.filters.mealPlan === 'all' || row.mealPlan === this.filters.mealPlan;
+
+      return dateMatch && statusMatch && companyMatch && foodTypeMatch && mealPlanMatch;
+    });
+  }
+}
