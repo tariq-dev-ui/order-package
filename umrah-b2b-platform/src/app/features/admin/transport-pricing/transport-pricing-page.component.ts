@@ -199,18 +199,21 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
                               <span class="material-icons-round">visibility</span>
                               <span>عرض</span>
                             </button>
-                            <button type="button" class="row-action-item" role="menuitem" (click)="startEdit(row, $event)">
+                            <button
+                              type="button"
+                              class="row-action-item"
+                              role="menuitem"
+                              (click)="startEdit(row, $event)">
                               <span class="material-icons-round">edit</span>
                               <span>تعديل</span>
                             </button>
                             <button
                               type="button"
-                              class="row-action-item"
+                              class="row-action-item row-action-item--danger"
                               role="menuitem"
-                              [disabled]="!isRowEditing(row.code)"
-                              (click)="saveEdit(row.code, $event)">
-                              <span class="material-icons-round">save</span>
-                              <span>حفظ</span>
+                              (click)="deleteRow(row.code, $event)">
+                              <span class="material-icons-round">delete</span>
+                              <span>حذف</span>
                             </button>
                           </div>
                         }
@@ -522,6 +525,24 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
 
     .row-action-item:hover:not(:disabled) .material-icons-round {
       color: var(--sero-primary);
+    }
+
+    .row-action-item--danger {
+      color: var(--sero-danger);
+    }
+
+    .row-action-item--danger .material-icons-round {
+      color: var(--sero-danger);
+    }
+
+    .row-action-item--danger:hover:not(:disabled) {
+      background: var(--sero-danger-bg);
+      border-color: var(--sero-danger-border);
+      color: var(--sero-danger);
+    }
+
+    .row-action-item--danger:hover:not(:disabled) .material-icons-round {
+      color: var(--sero-danger);
     }
 
     .row-action-item:disabled {
@@ -902,8 +923,9 @@ export class TransportPricingPageComponent {
 
   openDetails(row: TransportPricingRow, event: Event): void {
     event.stopPropagation();
-    this.viewedRow = { ...row };
     this.openedActionMenuId = null;
+    // Navigate to view page with the package code as ID
+    void this.router.navigate(['/admin/pricing/transport/view', row.code]);
   }
 
   closeDetails(): void {
@@ -934,6 +956,21 @@ export class TransportPricingPageComponent {
     this.currentPage = Math.min(this.currentPage, this.totalPages);
     this.editingRowId = null;
     this.editDraft = null;
+    this.openedActionMenuId = null;
+  }
+
+  deleteRow(rowCode: string, event: Event): void {
+    event.stopPropagation();
+    this.store.deleteRow(rowCode);
+    this.allRows = this.store.getRows();
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+
+    if (this.editingRowId === rowCode) {
+      this.editingRowId = null;
+      this.editDraft = null;
+    }
+
     this.openedActionMenuId = null;
   }
 

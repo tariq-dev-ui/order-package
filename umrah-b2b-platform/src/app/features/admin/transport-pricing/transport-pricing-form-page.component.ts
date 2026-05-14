@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
 import {
@@ -20,10 +20,10 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
   template: `
     <section class="transport-form-page" dir="rtl">
       <header class="page-head">
-        <h1>إضافة باقة نقل جديد</h1>
+        <h1>{{ isViewMode ? 'عرض باقة النقل' : 'إضافة باقة نقل جديد' }}</h1>
       </header>
 
-      <form class="surface-card" (submit)="onSave($event)" novalidate>
+      <form [class.view-mode]="isViewMode" class="surface-card" (submit)="onSave($event)" novalidate>
         <div class="form-grid">
           <div class="field-group">
             <label class="field-label" for="package-code">رمز الباقة <span class="required-mark">*</span></label>
@@ -31,6 +31,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
               id="package-code"
               class="form-control"
               [class.is-invalid]="isFieldInvalid('code')"
+              [disabled]="isViewMode"
               type="text"
               autocomplete="off"
               [value]="form.code"
@@ -46,6 +47,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
               id="package-name"
               class="form-control"
               [class.is-invalid]="isFieldInvalid('packageName')"
+              [disabled]="isViewMode"
               type="text"
               autocomplete="off"
               [value]="form.packageName"
@@ -60,6 +62,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
             <div class="field-control" [class.is-invalid]="isFieldInvalid('startDate')">
               <app-sero-date-picker
                 [value]="form.startDate"
+                [disabled]="isViewMode"
                 placeholder="اختر تاريخ البداية"
                 (valueChange)="setTextField('startDate', $event)">
               </app-sero-date-picker>
@@ -74,6 +77,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
             <div class="field-control" [class.is-invalid]="isFieldInvalid('endDate')">
               <app-sero-date-picker
                 [value]="form.endDate"
+                [disabled]="isViewMode"
                 placeholder="اختر تاريخ الانتهاء"
                 (valueChange)="setTextField('endDate', $event)">
               </app-sero-date-picker>
@@ -89,6 +93,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
               <app-sero-dropdown
                 [options]="companyOptions"
                 [value]="form.company"
+                [disabled]="isViewMode"
                 placeholder="اختر اسم الشركة"
                 (valueChange)="setTextField('company', $event)">
               </app-sero-dropdown>
@@ -104,6 +109,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
               <app-sero-dropdown
                 [options]="vehicleOptions"
                 [value]="form.vehicleType"
+                [disabled]="isViewMode"
                 placeholder="اختر اسم نوع السيارة"
                 (valueChange)="setTextField('vehicleType', $event)">
               </app-sero-dropdown>
@@ -115,11 +121,12 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
 
           <div class="field-group active-field">
             <label class="field-label">فعال</label>
-            <label class="active-toggle">
+            <label [class.disabled]="isViewMode" class="active-toggle">
               <span class="active-state">{{ form.isActive ? 'نعم' : 'لا' }}</span>
               <span class="switch-control">
                 <input
                   type="checkbox"
+                  [disabled]="isViewMode"
                   [checked]="form.isActive"
                   (change)="setActive($any($event.target).checked)" />
                 <span class="switch-track" aria-hidden="true"></span>
@@ -149,6 +156,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
                     <td><span class="trip-route" dir="ltr">{{ trip.route }}</span></td>
                     <td>
                       <input
+                        [disabled]="isViewMode"
                         class="price-input"
                         type="number"
                         min="0"
@@ -169,16 +177,25 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
           </div>
         }
 
-        <footer class="form-actions">
-          <button type="submit" class="btn btn--primary">
-            <span class="material-icons-round">save</span>
-            <span>حفظ</span>
-          </button>
-          <button type="button" class="btn btn--secondary" (click)="cancel()">
-            <span class="material-icons-round">close</span>
-            <span>إلغاء</span>
-          </button>
-        </footer>
+        @if (!isViewMode) {
+          <footer class="form-actions">
+            <button type="submit" class="btn btn--primary">
+              <span class="material-icons-round">save</span>
+              <span>حفظ</span>
+            </button>
+            <button type="button" class="btn btn--secondary" (click)="cancel()">
+              <span class="material-icons-round">close</span>
+              <span>إلغاء</span>
+            </button>
+          </footer>
+        } @else {
+          <footer class="form-actions">
+            <button type="button" class="btn btn--secondary" (click)="cancel()">
+              <span class="material-icons-round">arrow_back</span>
+              <span>العودة</span>
+            </button>
+          </footer>
+        }
       </form>
     </section>
   `,
@@ -265,6 +282,17 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
       background: var(--sero-surface-2);
     }
 
+    .active-toggle.disabled {
+      cursor: not-allowed;
+      background: var(--sero-bg-subtle);
+      border-color: var(--sero-border);
+    }
+
+    .active-toggle.disabled:hover {
+      border-color: var(--sero-border);
+      background: var(--sero-bg-subtle);
+    }
+
     .active-state {
       color: var(--sero-text-primary);
       font-size: 0.84rem;
@@ -285,6 +313,10 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
       cursor: pointer;
       margin: 0;
       z-index: 2;
+    }
+
+    .switch-control input:disabled {
+      cursor: not-allowed;
     }
 
     .switch-track {
@@ -314,6 +346,20 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
 
     .switch-control input:checked + .switch-track::after {
       transform: translateX(16px);
+    }
+
+    .form-control:disabled {
+      background: var(--sero-bg-subtle);
+      border-color: var(--sero-border);
+      color: var(--sero-text-secondary);
+      cursor: not-allowed;
+    }
+
+    .price-input:disabled {
+      background: var(--sero-bg-subtle);
+      border-color: var(--sero-border);
+      color: var(--sero-text-secondary);
+      cursor: not-allowed;
     }
 
     .trips-section {
@@ -444,6 +490,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
 })
 export class TransportPricingFormPageComponent {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly store = inject(TransportPricingLocalStoreService);
 
   readonly companyOptions = TRANSPORT_PRICING_COMPANY_OPTIONS.filter((option) => option.value !== 'all');
@@ -460,20 +507,55 @@ export class TransportPricingFormPageComponent {
 
   form: TransportPricingFormValue = createTransportPricingFormValue();
   saveAttempted = false;
+  isViewMode = false;
+
+  constructor() {
+    this.route.paramMap.subscribe((params) => {
+      const rowCode = params.get('id');
+      this.isViewMode = Boolean(rowCode);
+
+      if (rowCode) {
+        this.loadViewData(rowCode);
+      }
+    });
+  }
+
+  private loadViewData(id: string): void {
+    const row = this.store.getRow(id);
+
+    if (!row) {
+      void this.router.navigate(['/admin/pricing/transport']);
+      return;
+    }
+
+    this.form = {
+      code: row.code,
+      packageName: row.title,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      company: row.company,
+      vehicleType: row.vehicleType,
+      isActive: row.isActive,
+      trips: this.form.trips,
+    };
+  }
 
   get showRequiredWarning(): boolean {
     return this.saveAttempted && !this.isFormValid();
   }
 
   setTextField(field: RequiredTransportPricingField, value: string): void {
+    if (this.isViewMode) return;
     this.form = { ...this.form, [field]: value };
   }
 
   setActive(isActive: boolean): void {
+    if (this.isViewMode) return;
     this.form = { ...this.form, isActive };
   }
 
   setTripPrice(id: string, value: string): void {
+    if (this.isViewMode) return;
     const unitPrice = Math.max(Number(value) || 0, 0);
     this.form = {
       ...this.form,
@@ -487,6 +569,8 @@ export class TransportPricingFormPageComponent {
 
   onSave(event: Event): void {
     event.preventDefault();
+    if (this.isViewMode) return;
+
     this.saveAttempted = true;
 
     if (!this.isFormValid()) {

@@ -28,6 +28,7 @@ export const routes: Routes = [
       { path: 'operations/flights',   loadComponent: emptyPage },
       // TODO: pricing
       { path: 'pricing/transport/new', loadComponent: transportPricingFormPage },
+      { path: 'pricing/transport/view/:id', loadComponent: transportPricingFormPage },
       { path: 'pricing/transport',    loadComponent: transportPricingPage },
       { path: 'pricing/food',         loadComponent: emptyPage },
       { path: 'pricing/hotel',        loadComponent: emptyPage },

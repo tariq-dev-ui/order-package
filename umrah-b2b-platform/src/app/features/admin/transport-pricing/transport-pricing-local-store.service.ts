@@ -13,6 +13,11 @@ export class TransportPricingLocalStoreService {
     return this.rows.map((row) => ({ ...row }));
   }
 
+  getRow(rowCode: string): TransportPricingRow | null {
+    const row = this.rows.find((currentRow) => currentRow.code === rowCode);
+    return row ? { ...row } : null;
+  }
+
   savePackage(form: TransportPricingFormValue): void {
     const row: TransportPricingRow = {
       code: form.code.trim(),
@@ -29,5 +34,9 @@ export class TransportPricingLocalStoreService {
 
   updateRow(row: TransportPricingRow): void {
     this.rows = this.rows.map((existingRow) => existingRow.code === row.code ? { ...row } : existingRow);
+  }
+
+  deleteRow(rowCode: string): void {
+    this.rows = this.rows.filter((row) => row.code !== rowCode);
   }
 }
