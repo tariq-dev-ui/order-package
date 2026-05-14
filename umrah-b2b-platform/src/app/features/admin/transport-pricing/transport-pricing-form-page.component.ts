@@ -20,7 +20,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
   template: `
     <section class="transport-form-page" dir="rtl">
       <header class="page-head">
-        <h1>{{ isViewMode ? 'عرض باقة النقل' : 'إضافة باقة نقل جديد' }}</h1>
+        <h1>{{ pageTitle }}</h1>
       </header>
 
       <form [class.view-mode]="isViewMode" class="surface-card" (submit)="onSave($event)" novalidate>
@@ -31,7 +31,7 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
               id="package-code"
               class="form-control"
               [class.is-invalid]="isFieldInvalid('code')"
-              [disabled]="isViewMode"
+              [disabled]="isViewMode || isEditMode"
               type="text"
               autocomplete="off"
               [value]="form.code"
@@ -177,22 +177,28 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
           </div>
         }
 
-        @if (!isViewMode) {
-          <footer class="form-actions">
-            <button type="submit" class="btn btn--primary">
-              <span class="material-icons-round">save</span>
-              <span>حفظ</span>
-            </button>
-            <button type="button" class="btn btn--secondary" (click)="cancel()">
-              <span class="material-icons-round">close</span>
-              <span>إلغاء</span>
-            </button>
-          </footer>
-        } @else {
+        @if (saveSuccess) {
+          <div class="success-banner">
+            تم حفظ التعديلات بنجاح
+          </div>
+        }
+
+        @if (isViewMode) {
           <footer class="form-actions">
             <button type="button" class="btn btn--secondary" (click)="cancel()">
               <span class="material-icons-round">arrow_back</span>
               <span>العودة</span>
+            </button>
+          </footer>
+        } @else {
+          <footer class="form-actions">
+            <button type="submit" class="btn btn--primary" [disabled]="saveSuccess">
+              <span class="material-icons-round">save</span>
+              <span>{{ isEditMode ? 'حفظ التعديلات' : 'حفظ' }}</span>
+            </button>
+            <button type="button" class="btn btn--secondary" (click)="cancel()" [disabled]="saveSuccess">
+              <span class="material-icons-round">close</span>
+              <span>إلغاء</span>
             </button>
           </footer>
         }
@@ -461,6 +467,17 @@ type RequiredTransportPricingField = 'code' | 'packageName' | 'startDate' | 'end
       padding: 10px 12px;
     }
 
+    .success-banner {
+      margin: 12px 14px 0;
+      border: 1px solid var(--sero-success-border, #a3d9a5);
+      border-radius: 8px;
+      background: var(--sero-success-bg, #f0faf0);
+      color: var(--sero-success, #2d7a2d);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 10px 12px;
+    }
+
     .form-actions {
       display: flex;
       align-items: center;
@@ -507,13 +524,25 @@ export class TransportPricingFormPageComponent {
 
   form: TransportPricingFormValue = createTransportPricingFormValue();
   saveAttempted = false;
-  isViewMode = false;
+  saveSuccess = false;
+
+  readonly mode: 'create' | 'view' | 'edit';
+
+  get isViewMode(): boolean { return this.mode === 'view'; }
+  get isEditMode(): boolean { return this.mode === 'edit'; }
+
+  get pageTitle(): string {
+    if (this.mode === 'view') return 'عرض باقة النقل';
+    if (this.mode === 'edit') return 'تعديل تسعير النقل';
+    return 'إضافة باقة نقل جديد';
+  }
 
   constructor() {
+    const segment = this.route.snapshot.url[2]?.path;
+    this.mode = segment === 'edit' ? 'edit' : segment === 'view' ? 'view' : 'create';
+
     this.route.paramMap.subscribe((params) => {
       const rowCode = params.get('id');
-      this.isViewMode = Boolean(rowCode);
-
       if (rowCode) {
         this.loadViewData(rowCode);
       }
@@ -569,7 +598,7 @@ export class TransportPricingFormPageComponent {
 
   onSave(event: Event): void {
     event.preventDefault();
-    if (this.isViewMode) return;
+    if (this.isViewMode || this.saveSuccess) return;
 
     this.saveAttempted = true;
 
@@ -577,8 +606,14 @@ export class TransportPricingFormPageComponent {
       return;
     }
 
-    this.store.savePackage(this.form);
-    void this.router.navigate(['/admin/pricing/transport']);
+    if (this.isEditMode) {
+      this.store.updatePackage(this.form);
+      this.saveSuccess = true;
+      setTimeout(() => void this.router.navigate(['/admin/pricing/transport']), 1200);
+    } else {
+      this.store.savePackage(this.form);
+      void this.router.navigate(['/admin/pricing/transport']);
+    }
   }
 
   cancel(): void {

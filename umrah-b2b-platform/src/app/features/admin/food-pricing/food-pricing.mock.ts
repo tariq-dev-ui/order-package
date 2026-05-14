@@ -11,14 +11,17 @@ export interface FoodPricingFilterState {
   mealPlan: string;
 }
 
-export interface FoodPricingRow {
-  id: string;
+export interface FoodPricingPackageModel {
   code: string;
   title: string;
+  cateringCompany: string;
   startDate: string;
   endDate: string;
   isActive: boolean;
-  cateringCompany: string;
+}
+
+export interface FoodPricingRow extends FoodPricingPackageModel {
+  id: string;
   foodType: string;
   mealPlan: string;
 }

@@ -32,6 +32,19 @@ export class TransportPricingLocalStoreService {
     this.rows = [row, ...this.rows.filter((existingRow) => existingRow.code !== row.code)];
   }
 
+  updatePackage(form: TransportPricingFormValue): void {
+    const code = form.code.trim();
+    this.rows = this.rows.map((row) => row.code !== code ? row : {
+      code,
+      title: form.packageName.trim(),
+      vehicleType: form.vehicleType,
+      company: form.company,
+      startDate: form.startDate,
+      endDate: form.endDate,
+      isActive: form.isActive,
+    });
+  }
+
   updateRow(row: TransportPricingRow): void {
     this.rows = this.rows.map((existingRow) => existingRow.code === row.code ? { ...row } : existingRow);
   }

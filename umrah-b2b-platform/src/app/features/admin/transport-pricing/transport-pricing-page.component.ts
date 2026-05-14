@@ -3,6 +3,7 @@ import { Component, HostListener, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
+import { StatusTogglePillComponent } from '../../../shared/components/status-toggle-pill/status-toggle-pill.component';
 import {
   TRANSPORT_PRICING_COMPANY_OPTIONS,
   TRANSPORT_PRICING_DEFAULT_FILTERS,
@@ -20,7 +21,7 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
 @Component({
   selector: 'app-transport-pricing-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent],
+  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, StatusTogglePillComponent],
   template: `
     <section class="transport-pricing-page" dir="rtl">
       <header class="page-head">
@@ -175,9 +176,14 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
                           <span class="table-switch-track" aria-hidden="true"></span>
                         </label>
                       } @else {
-                        <span class="status-pill" [class.status-pill--active]="row.isActive" [class.status-pill--inactive]="!row.isActive">
-                          {{ row.isActive ? 'نعم' : 'لا' }}
-                        </span>
+                        <app-status-toggle-pill
+                          [isActive]="row.isActive"
+                          activeLabel="نعم"
+                          inactiveLabel="لا"
+                          activateMessage="هل تريد تفعيل العنصر؟"
+                          deactivateMessage="هل تريد إلغاء التفعيل؟"
+                          (statusChange)="toggleRowStatus(row.code, $event)">
+                        </app-status-toggle-pill>
                       }
                     </td>
                     <td class="action-cell">
@@ -411,27 +417,6 @@ type EditableTransportPricingField = 'title' | 'vehicleType' | 'company' | 'star
       color: var(--sero-text-muted);
       padding: 16px;
       text-align: center;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 0.68rem;
-      font-weight: 700;
-    }
-
-    .status-pill--active {
-      color: var(--sero-success);
-      background: var(--sero-success-bg);
-    }
-
-    .status-pill--inactive {
-      color: var(--sero-danger);
-      background: var(--sero-danger-bg);
     }
 
     .table-action-btn {
@@ -934,9 +919,8 @@ export class TransportPricingPageComponent {
 
   startEdit(row: TransportPricingRow, event: Event): void {
     event.stopPropagation();
-    this.editingRowId = row.code;
-    this.editDraft = { ...row };
     this.openedActionMenuId = null;
+    void this.router.navigate(['/admin/pricing/transport/edit', row.code]);
   }
 
   saveEdit(rowCode: string, event: Event): void {
@@ -972,6 +956,27 @@ export class TransportPricingPageComponent {
     }
 
     this.openedActionMenuId = null;
+  }
+
+  toggleRowStatus(rowCode: string, isActive: boolean): void {
+    const row = this.allRows.find((currentRow) => currentRow.code === rowCode);
+    if (!row) {
+      return;
+    }
+
+    // Future backend integration: replace this local update with a status API call.
+    this.store.updateRow({ ...row, isActive });
+    this.allRows = this.store.getRows();
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+
+    if (this.editingRowId === rowCode && this.editDraft) {
+      this.editDraft = { ...this.editDraft, isActive };
+    }
+
+    if (this.viewedRow?.code === rowCode) {
+      this.viewedRow = { ...this.viewedRow, isActive };
+    }
   }
 
   isRowEditing(rowCode: string): boolean {

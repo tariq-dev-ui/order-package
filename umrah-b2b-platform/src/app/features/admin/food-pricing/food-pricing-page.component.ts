@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { SeroDatePickerComponent } from '../../../shared/components/sero-date-picker/sero-date-picker.component';
 import { SeroDropdownComponent } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
+import { StatusTogglePillComponent } from '../../../shared/components/status-toggle-pill/status-toggle-pill.component';
+import { FoodPricingPackageFormComponent } from './food-pricing-package-form.component';
 import {
   FOOD_PRICING_CATERING_COMPANY_OPTIONS,
   FOOD_PRICING_DEFAULT_FILTERS,
@@ -11,6 +13,7 @@ import {
   FOOD_PRICING_ROWS,
   FOOD_PRICING_STATUS_OPTIONS,
   FoodPricingFilterState,
+  FoodPricingPackageModel,
   FoodPricingRow,
   FoodPricingStatusFilter,
 } from './food-pricing.mock';
@@ -18,12 +21,19 @@ import {
 @Component({
   selector: 'app-food-pricing-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent],
+  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, StatusTogglePillComponent, FoodPricingPackageFormComponent],
   template: `
     <section class="food-pricing-page" dir="rtl">
       <header class="page-head">
         <h1>تسعيرات التغذية</h1>
       </header>
+
+      @if (successMessage) {
+        <div class="success-message" role="status">
+          <span class="material-icons-round">check_circle</span>
+          <span>{{ successMessage }}</span>
+        </div>
+      }
 
       <section class="surface-card">
         @if (!filtersHidden) {
@@ -83,6 +93,11 @@ import {
               {{ filtersHidden ? 'إظهار' : 'إخفاء' }}
             </button>
           </div>
+
+          <button type="button" class="btn btn--primary btn--sm add-package-btn" (click)="openPackageForm()">
+            <span class="material-icons-round">add</span>
+            <span>إضافة باقة تموين</span>
+          </button>
         </div>
 
         <div class="table-wrap">
@@ -110,9 +125,14 @@ import {
                     <td>{{ row.startDate }}</td>
                     <td>{{ row.endDate }}</td>
                     <td>
-                      <span class="status-pill" [class.status-pill--active]="row.isActive" [class.status-pill--inactive]="!row.isActive">
-                        {{ row.isActive ? 'فعال' : 'غير فعال' }}
-                      </span>
+                      <app-status-toggle-pill
+                        [isActive]="row.isActive"
+                        activeLabel="فعال"
+                        inactiveLabel="غير فعال"
+                        activateMessage="هل تريد تفعيل العنصر؟"
+                        deactivateMessage="هل تريد إلغاء التفعيل؟"
+                        (statusChange)="toggleRowStatus(row.id, $event)">
+                      </app-status-toggle-pill>
                     </td>
                     <td class="action-cell">
                       <div class="action-menu-wrap" (click)="$event.stopPropagation()">
@@ -223,6 +243,17 @@ import {
           </section>
         </div>
       }
+
+      @if (packageFormOpen) {
+        <div class="package-modal-backdrop" (click)="closePackageForm()">
+          <app-food-pricing-package-form
+            [companyOptions]="editableCateringCompanyOptions"
+            (saved)="savePackage($event)"
+            (cancelled)="closePackageForm()"
+            (click)="$event.stopPropagation()">
+          </app-food-pricing-package-form>
+        </div>
+      }
     </section>
   `,
   styles: [`
@@ -236,6 +267,26 @@ import {
       font-size: 1rem;
       font-weight: 800;
       color: var(--sero-text-primary);
+    }
+
+    .success-message {
+      border: 1px solid var(--sero-success-border);
+      border-radius: 8px;
+      background: var(--sero-success-bg);
+      color: var(--sero-success);
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+      animation: successIn 0.18s ease-out;
+    }
+
+    .success-message .material-icons-round {
+      font-size: 18px;
     }
 
     .surface-card {
@@ -270,7 +321,7 @@ import {
     .actions-bar {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
       padding: 12px 14px;
@@ -281,6 +332,16 @@ import {
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .add-package-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .add-package-btn .material-icons-round {
+      font-size: 16px;
     }
 
     .table-wrap {
@@ -328,27 +389,6 @@ import {
       color: var(--sero-text-muted);
       padding: 16px;
       text-align: center;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 48px;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 0.68rem;
-      font-weight: 700;
-    }
-
-    .status-pill--active {
-      color: var(--sero-success);
-      background: var(--sero-success-bg);
-    }
-
-    .status-pill--inactive {
-      color: var(--sero-danger);
-      background: var(--sero-danger-bg);
     }
 
     .table-action-btn {
@@ -639,6 +679,28 @@ import {
       }
     }
 
+    .package-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: color-mix(in srgb, var(--sero-text-primary) 32%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    @keyframes successIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 1100px) {
       .filters-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -658,9 +720,10 @@ import {
     }
   `],
 })
-export class FoodPricingPageComponent {
+export class FoodPricingPageComponent implements OnDestroy {
   readonly statusOptions = FOOD_PRICING_STATUS_OPTIONS;
   readonly cateringCompanyOptions = FOOD_PRICING_CATERING_COMPANY_OPTIONS;
+  readonly editableCateringCompanyOptions = FOOD_PRICING_CATERING_COMPANY_OPTIONS.filter((option) => option.value !== 'all');
   readonly foodTypeOptions = FOOD_PRICING_FOOD_TYPE_OPTIONS;
   readonly mealPlanOptions = FOOD_PRICING_MEAL_PLAN_OPTIONS;
   readonly itemsPerPageOptions = FOOD_PRICING_ITEMS_PER_PAGE_OPTIONS;
@@ -674,6 +737,9 @@ export class FoodPricingPageComponent {
   filtersHidden = false;
   openedActionMenuId: string | null = null;
   viewedRow: FoodPricingRow | null = null;
+  packageFormOpen = false;
+  successMessage = '';
+  private successMessageTimer: ReturnType<typeof setTimeout> | null = null;
 
   private allRows: FoodPricingRow[] = [...FOOD_PRICING_ROWS];
   private filteredRows: FoodPricingRow[] = [...this.allRows];
@@ -704,6 +770,12 @@ export class FoodPricingPageComponent {
   get pagedRows(): FoodPricingRow[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredRows.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  ngOnDestroy(): void {
+    if (this.successMessageTimer) {
+      clearTimeout(this.successMessageTimer);
+    }
   }
 
   onStartDateChange(value: string): void {
@@ -773,8 +845,47 @@ export class FoodPricingPageComponent {
     this.openedActionMenuId = null;
   }
 
+  toggleRowStatus(rowId: string, isActive: boolean): void {
+    // Future backend integration: replace this local update with a status API call.
+    this.allRows = this.allRows.map((row) => row.id === rowId ? { ...row, isActive } : row);
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+
+    if (this.viewedRow?.id === rowId) {
+      this.viewedRow = { ...this.viewedRow, isActive };
+    }
+  }
+
   closeDetails(): void {
     this.viewedRow = null;
+  }
+
+  openPackageForm(): void {
+    this.packageFormOpen = true;
+    this.openedActionMenuId = null;
+    this.successMessage = '';
+  }
+
+  closePackageForm(): void {
+    this.packageFormOpen = false;
+  }
+
+  savePackage(packageValue: FoodPricingPackageModel): void {
+    const fallbackFoodType = this.foodTypeOptions.find((option) => option.value !== 'all')?.value ?? '';
+    const fallbackMealPlan = this.mealPlanOptions.find((option) => option.value !== 'all')?.value ?? '';
+    const newRow: FoodPricingRow = {
+      id: `food-${Date.now()}`,
+      ...packageValue,
+      foodType: fallbackFoodType,
+      mealPlan: fallbackMealPlan,
+    };
+
+    // Future backend integration: replace this local insert with a create-package API call.
+    this.allRows = [newRow, ...this.allRows];
+    this.filteredRows = this.getFilteredRows();
+    this.currentPage = 1;
+    this.packageFormOpen = false;
+    this.showSuccessMessage('تمت إضافة باقة التموين بنجاح');
   }
 
   @HostListener('document:click')
@@ -786,6 +897,7 @@ export class FoodPricingPageComponent {
   closeOverlayOnEscape(): void {
     this.openedActionMenuId = null;
     this.viewedRow = null;
+    this.packageFormOpen = false;
   }
 
   goToPreviousPage(): void {
@@ -812,5 +924,18 @@ export class FoodPricingPageComponent {
 
       return dateMatch && statusMatch && companyMatch && foodTypeMatch && mealPlanMatch;
     });
+  }
+
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+
+    if (this.successMessageTimer) {
+      clearTimeout(this.successMessageTimer);
+    }
+
+    this.successMessageTimer = setTimeout(() => {
+      this.successMessage = '';
+      this.successMessageTimer = null;
+    }, 3200);
   }
 }
