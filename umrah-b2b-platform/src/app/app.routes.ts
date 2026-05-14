@@ -10,6 +10,9 @@ const hotelPricingPage = () => import('./features/admin/hotel-pricing/hotel-pric
 const hotelsPage = () => import('./features/admin/hotels/hotels-page.component').then(m => m.HotelsPageComponent);
 const hotelCategoriesPage = () => import('./features/admin/hotel-categories/hotel-categories-page.component').then(m => m.HotelCategoriesPageComponent);
 const transportCompaniesPage = () => import('./features/admin/transport-companies/transport-companies-page.component').then(m => m.TransportCompaniesPageComponent);
+const newRfqPage = () => import('./features/admin/new-rfq/new-rfq-page.component').then(m => m.NewRfqPageComponent);
+const agentPackagesPage = () => import('./features/admin/agent-packages/agent-packages-page.component').then(m => m.AgentPackagesPageComponent);
+const agentPackageFormPage = () => import('./features/admin/agent-packages/agent-package-form-page.component').then(m => m.AgentPackageFormPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -20,8 +23,11 @@ export const routes: Routes = [
       { path: '', loadComponent: statisticsPage },
       { path: 'analytics', loadComponent: statisticsPage },
       { path: 'distribution', loadComponent: emptyPage },
-      { path: 'packages', loadComponent: emptyPage },
-      { path: 'packages/builder', loadComponent: () => import('./features/package-definition/package-definition-page.component').then(m => m.PackageDefinitionPageComponent) },
+      { path: 'packages/new',       loadComponent: agentPackageFormPage },
+      { path: 'packages/edit/:id',  loadComponent: agentPackageFormPage },
+      { path: 'packages/view/:id',  loadComponent: agentPackageFormPage },
+      { path: 'packages',           loadComponent: agentPackagesPage },
+      { path: 'packages/builder',   loadComponent: () => import('./features/package-definition/package-definition-page.component').then(m => m.PackageDefinitionPageComponent) },
       { path: 'orders/confirmation/:orderId', loadComponent: emptyPage },
       // TODO: new order form
       { path: 'orders/new', loadComponent: emptyPage },
@@ -39,7 +45,8 @@ export const routes: Routes = [
       { path: 'pricing/food',         loadComponent: foodPricingPage },
       { path: 'pricing/hotel',         loadComponent: hotelPricingPage },
       // TODO: service center
-      { path: 'service-center/rfq/new',      loadComponent: emptyPage },
+      { path: 'rfq/new',                     loadComponent: newRfqPage },
+      { path: 'service-center/rfq/new',      loadComponent: newRfqPage },
       { path: 'service-center/rfq/current',  loadComponent: emptyPage },
       { path: 'service-center/rfq/closed',   loadComponent: emptyPage },
       { path: 'service-center/customers',    loadComponent: emptyPage },
