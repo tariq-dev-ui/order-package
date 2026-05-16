@@ -1,0 +1,261 @@
+.add-account-dialog {
+  min-width: 560px;
+  max-width: 620px;
+  padding: 0;
+
+  // ── Header ──────────────────────────────────────────────────────
+  .dialog-header {
+    padding: 24px 24px 20px;
+    background: linear-gradient(to left, rgba(58, 71, 42, 0.04), rgba(58, 71, 42, 0.01));
+    border-bottom: 1px solid var(--app-border, #e8ede5);
+
+    .dialog-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--app-heading, #3a472a);
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+  }
+
+  // ── Content ──────────────────────────────────────────────────────
+  .dialog-content {
+    padding: 24px;
+    min-height: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    .add-account-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      // Full-width field (parent account)
+      .form-field--full {
+        width: 100%;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: flex-start;
+
+        .form-field { width: 100%; }
+      }
+
+      @media (max-width: 600px) {
+        .form-row { grid-template-columns: 1fr; gap: 16px; }
+      }
+    }
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────
+  .dialog-actions {
+    padding: 16px 24px 20px;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--app-bg, #f8f9f7);
+    border-top: 1px solid var(--app-border, #e8ede5);
+
+    button {
+      min-width: 100px;
+      height: 40px;
+      font-weight: 500;
+      border-radius: 6px;
+
+      &[mat-button] { color: var(--app-text-primary, #2a3524); }
+
+      &[mat-raised-button] {
+        box-shadow: 0 2px 4px rgba(58, 71, 42, 0.15);
+        transition: all 0.2s ease;
+        &:hover:not(:disabled) {
+          box-shadow: 0 4px 8px rgba(58, 71, 42, 0.2);
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// ── Locked parent account display ────────────────────────────────
+.parent-locked {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &__label {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.55);
+    padding-inline-start: 4px;
+  }
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px;
+    border: 1px solid var(--app-border, #e8ede5);
+    border-radius: 6px;
+    background: rgba(58, 71, 42, 0.04);
+    min-height: 50px;
+    box-sizing: border-box;
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--app-text-primary, #2a3524);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__lock {
+    font-size: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    color: var(--app-text-secondary, #9da395);
+    opacity: 0.6;
+  }
+}
+
+// ── Suffix icon inside parent field ──────────────────────────────
+.parent-suffix-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  color: var(--app-heading, #3a472a);
+  opacity: 0.55;
+}
+
+// ── Autocomplete option rows ──────────────────────────────────────
+// (panel lives in CDK overlay, outside :host — use global styles)
+.parent-opt {
+  // mat-option enforces its own height; we override the inner content
+  .parent-opt__row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .parent-opt__code {
+    font-family: 'Courier New', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #3a472a;
+    background: #e8ede5;
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .parent-opt__sep {
+    color: #c5cdb9;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .parent-opt__name {
+    font-size: 13px;
+    color: #2a3524;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .parent-opt__badges {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+  }
+
+  .parent-opt__tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+
+    &--branch { background: #edf0eb; color: #5c6652; }
+  }
+
+  .parent-opt__level {
+    font-size: 10px;
+    font-weight: 600;
+    color: #a3a89b;
+    background: #f0f2ee;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  &--empty {
+    color: #a3a89b !important;
+    font-size: 13px;
+    justify-content: center;
+  }
+}
+
+// ── Dark theme ────────────────────────────────────────────────────
+:host-context(.dark-theme) {
+  .add-account-dialog {
+    .dialog-header {
+      background: linear-gradient(to left, rgba(58, 71, 42, 0.12), rgba(58, 71, 42, 0.04));
+      border-bottom-color: var(--app-border-dark, #3a472a);
+      .dialog-title { color: var(--app-heading-dark, #e6e9e0); }
+    }
+    .dialog-actions {
+      background: var(--app-bg-dark, #1e2419);
+      border-top-color: var(--app-border-dark, #3a472a);
+      button[mat-button] { color: var(--app-text-primary-dark, #e6e9e0); }
+    }
+  }
+
+  .parent-locked {
+    &__label { color: rgba(255,255,255,0.45); }
+    &__chip {
+      border-color: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+    }
+    &__name { color: #c5c9bf; }
+    &__lock  { color: #7b8574; }
+  }
+
+  .parent-suffix-icon { color: #9da395; }
+
+  .parent-opt {
+    .parent-opt__code  { background: rgba(58,71,42,0.25); color: #9da395; }
+    .parent-opt__name  { color: #c5c9bf; }
+    .parent-opt__tag--branch { background: rgba(255,255,255,0.07); color: #7b8574; }
+    .parent-opt__level { background: rgba(255,255,255,0.06); color: #7b8574; }
+  }
+}
+
+// ── RTL ───────────────────────────────────────────────────────────
+[dir="rtl"] {
+  .add-account-dialog .dialog-actions { justify-content: flex-start; }
+}
+
+// ── Responsive ───────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .add-account-dialog {
+    min-width: 100%;
+    max-width: 100%;
+    .dialog-header  { padding: 20px 20px 16px; }
+    .dialog-content { padding: 20px; }
+    .dialog-actions { padding: 16px 20px; }
+  }
+}

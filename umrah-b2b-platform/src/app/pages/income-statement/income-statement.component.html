@@ -1,0 +1,312 @@
+<div class="income-statement-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="chart-line"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>قائمة الدخل</h1>
+          <p class="page-description" translate>عرض قائمة الدخل وتحليل الإيرادات والمصروفات</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="exportToPDF()"
+        class="action-btn"
+      >
+        <tabler-icon name="download"></tabler-icon>
+        <span translate>تصدير التقرير</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section (نفس تصميم ميزان المراجعة) -->
+  <div class="filters-section">
+    <h3 class="filters-title" translate>معايير البحث</h3>
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>الحساب</mat-label>
+        <mat-select [(ngModel)]="selectedAccountId" (selectionChange)="onAccountChange($any($event).value)">
+          <mat-option [value]="''">
+            <span translate>الكل</span>
+          </mat-option>
+          <mat-option>
+            <ngx-mat-select-search
+              [formControl]="accountSearchControl"
+              [placeholderLabel]="'ابحث هنا...' | translate"
+              [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+            ></ngx-mat-select-search>
+          </mat-option>
+          @for (account of filteredAccounts(); track account.id) {
+            <mat-option [value]="account.id">
+              {{ account.code }} - {{ dir() === 'rtl' ? account.name : account.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>من تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [ngModel]="dateFrom()"
+          (dateChange)="dateFrom.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>إلى تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [ngModel]="dateTo()"
+          (dateChange)="dateTo.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="searchReports()"
+        class="search-btn"
+      >
+        <tabler-icon name="search" class="icon-18"></tabler-icon>
+        <span translate>بحث</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    <!-- Table Toolbar: Search and Export -->
+    <div class="table-toolbar">
+      <div class="search-box">
+        <div class="search-wrapper">
+          <tabler-icon name="search" class="search-icon"></tabler-icon>
+          <input
+            type="text"
+            class="search-input"
+            [ngModel]="tableSearchQuery()"
+            (ngModelChange)="tableSearchQuery.set($event); onTableSearchChange()"
+            [placeholder]="'ابحث هنا...' | translate"
+          />
+          @if (tableSearchQuery()) {
+            <button
+              type="button"
+              class="clear-search-btn"
+              (click)="clearTableSearch()"
+            >
+              <tabler-icon name="x"></tabler-icon>
+            </button>
+          }
+        </div>
+      </div>
+      
+      <div class="export-buttons">
+        <button
+          mat-stroked-button
+          (click)="exportToPDF()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-type-pdf" class="icon-18"></tabler-icon>
+          <span translate>تصدير PDF</span>
+        </button>
+        <button
+          mat-stroked-button
+          (click)="exportToExcel()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-excel" class="icon-18"></tabler-icon>
+          <span translate>تصدير Excel</span>
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <div class="report-content">
+        <div class="income-statement-professional">
+          <!-- Income Statement Table -->
+          <table class="professional-statement-table">
+            <thead>
+              <tr>
+                <th class="account-column" translate>الحساب</th>
+                <th class="code-column" translate>الكود</th>
+                <th class="amount-column">{{ 'المبلغ (ريال)' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- REVENUE SECTION -->
+              <tr class="main-section-header">
+                <td colspan="3">
+                  <strong translate>الإيرادات</strong>
+                </td>
+              </tr>
+
+              <!-- Operating Revenue -->
+              @if (getOperatingRevenue().length > 0) {
+                @for (item of getOperatingRevenue(); track item.id) {
+                  <tr class="data-row">
+                    <td class="account-name">{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td class="account-code">{{ item.accountCode }}</td>
+                    <td class="amount positive-amount">{{ formatCurrency(item.amount) }}</td>
+                  </tr>
+                }
+              }
+
+              <!-- Non-Operating Revenue -->
+              @if (getNonOperatingRevenue().length > 0) {
+                <tr class="sub-section-header">
+                  <td colspan="3" translate>الإيرادات غير التشغيلية</td>
+                </tr>
+                @for (item of getNonOperatingRevenue(); track item.id) {
+                  <tr class="data-row">
+                    <td class="account-name">{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td class="account-code">{{ item.accountCode }}</td>
+                    <td class="amount positive-amount">{{ formatCurrency(item.amount) }}</td>
+                  </tr>
+                }
+                <tr class="subtotal-row">
+                  <td colspan="2" class="subtotal-label" translate>إجمالي الإيرادات غير التشغيلية</td>
+                  <td class="subtotal-amount positive-amount">{{ formatCurrency(getTotalNonOperatingRevenue()) }}</td>
+                </tr>
+              }
+
+              <!-- Total Revenue -->
+              <tr class="total-row revenue-total-row">
+                <td colspan="2" class="total-label" translate>إجمالي الإيرادات</td>
+                <td class="total-amount positive-total">{{ formatCurrency(getTotalRevenue()) }}</td>
+              </tr>
+
+              <!-- Spacer -->
+              <tr class="spacer-row">
+                <td colspan="3"></td>
+              </tr>
+
+              <!-- EXPENSES SECTION -->
+              <tr class="main-section-header">
+                <td colspan="3">
+                  <strong translate>المصروفات</strong>
+                </td>
+              </tr>
+
+              <!-- Operating Expenses -->
+              @if (getOperatingExpenses().length > 0) {
+                @for (item of getOperatingExpenses(); track item.id) {
+                  <tr class="data-row">
+                    <td class="account-name">{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td class="account-code">{{ item.accountCode }}</td>
+                    <td class="amount negative-amount">{{ formatCurrency(item.amount) }}</td>
+                  </tr>
+                }
+              }
+
+              <!-- Admin Expenses -->
+              @if (getAdminExpenses().length > 0) {
+                <tr class="sub-section-header">
+                  <td colspan="3" translate>المصروفات الإدارية والعمومية</td>
+                </tr>
+                @for (item of getAdminExpenses(); track item.id) {
+                  <tr class="data-row">
+                    <td class="account-name">{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td class="account-code">{{ item.accountCode }}</td>
+                    <td class="amount negative-amount">{{ formatCurrency(item.amount) }}</td>
+                  </tr>
+                }
+                <tr class="subtotal-row">
+                  <td colspan="2" class="subtotal-label" translate>إجمالي المصروفات الإدارية</td>
+                  <td class="subtotal-amount negative-amount">{{ formatCurrency(getTotalAdminExpenses()) }}</td>
+                </tr>
+              }
+
+              <!-- Other Expenses -->
+              @if (getOtherExpenses().length > 0) {
+                <tr class="sub-section-header">
+                  <td colspan="3" translate>مصروفات أخرى</td>
+                </tr>
+                @for (item of getOtherExpenses(); track item.id) {
+                  <tr class="data-row">
+                    <td class="account-name">{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td class="account-code">{{ item.accountCode }}</td>
+                    <td class="amount negative-amount">{{ formatCurrency(item.amount) }}</td>
+                  </tr>
+                }
+                <tr class="subtotal-row">
+                  <td colspan="2" class="subtotal-label" translate>إجمالي المصروفات الأخرى</td>
+                  <td class="subtotal-amount negative-amount">{{ formatCurrency(getTotalOtherExpenses()) }}</td>
+                </tr>
+              }
+
+              <!-- Total Expenses -->
+              <tr class="total-row expense-total-row">
+                <td colspan="2" class="total-label" translate>إجمالي المصروفات</td>
+                <td class="total-amount negative-total">{{ formatCurrency(getTotalExpenses()) }}</td>
+              </tr>
+
+              <!-- Spacer -->
+              <tr class="spacer-row">
+                <td colspan="3"></td>
+              </tr>
+
+              <!-- NET INCOME -->
+              <tr class="net-income-row" [class.profit-row]="getNetIncome() >= 0" [class.loss-row]="getNetIncome() < 0">
+                <td colspan="2" class="net-income-label">
+                  <strong>
+                    @if (getNetIncome() >= 0) {
+                      <span translate>صافي الربح</span>
+                    } @else {
+                      <span translate>صافي الخسارة</span>
+                    }
+                  </strong>
+                </td>
+                <td class="net-income-amount" [class.net-profit]="getNetIncome() >= 0" [class.net-loss]="getNetIncome() < 0">
+                  <strong>
+                    @if (getNetIncome() >= 0) {
+                      {{ formatCurrency(getNetIncome()) }}
+                    } @else {
+                      ({{ formatCurrency(Math.abs(getNetIncome())) }})
+                    }
+                  </strong>
+                </td>
+              </tr>
+
+              @if (getFilteredItems().length === 0) {
+                <tr>
+                  <td colspan="3" class="no-data-cell">
+                    <div class="no-data-message">
+                      <tabler-icon name="file-search"></tabler-icon>
+                      <p translate>لا توجد بيانات للفترة المحددة</p>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <!-- Footer Note -->
+          @if (getFilteredItems().length > 0) {
+            <div class="report-footer">
+              <p class="footer-note">
+                <tabler-icon name="info-circle"></tabler-icon>
+                <span translate>البيانات معتمدة على القيود المرحلة فعلياً وفق المبدأ الاستحقاقي</span>
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,465 @@
+<div class="create-journal-entry-container">
+  <!-- Page Header -->
+  <div class="page-header" [dir]="dir()">
+    <div class="header-content">
+      <div class="header-info">
+        <button mat-icon-button (click)="cancel()" class="back-btn" type="button" aria-label="رجوع">
+          <mat-icon [class.rtl-flip]="dir() === 'rtl'">arrow_back</mat-icon>
+        </button>
+        <div class="page-icon" aria-hidden="true">
+          <i-tabler name="notebook" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">
+            @if (viewMode) {
+              <span translate>عرض القيد</span>
+            } @else if (editMode) {
+              <span translate>تعديل القيد</span>
+            } @else {
+              <span translate>إنشاء قيد جديد</span>
+            }
+          </h1>
+          <p class="page-description">
+            @if (viewMode) {
+              <span translate>تفاصيل القيد للعرض فقط</span>
+            } @else if (editMode) {
+              <span translate>تعديل بيانات القيد والأسطر</span>
+            } @else {
+              <span translate>إدخال قيد محاسبي جديد</span>
+            }
+          </p>
+        </div>
+      </div>
+      @if (!viewMode && !editMode) {
+        <div class="header-actions">
+          <button 
+            mat-icon-button 
+            (click)="resetForm()"
+            [matTooltip]="dir() === 'rtl' ? 'إعادة تعيين النموذج' : 'Reset Form'"
+            class="reset-btn"
+            type="button"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="form-content">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <form [formGroup]="entryForm" class="entry-form">
+        <!-- Entry Header -->
+        <div class="form-section">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>رقم السند</mat-label>
+              <input matInput [value]="autoEntryNumber()" readonly class="readonly-field">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>تاريخ القيد</mat-label>
+              <input matInput [matDatepicker]="picker" [formControl]="dateControl">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              @if (dateControl.hasError('required') && dateControl.touched) {
+                <mat-error translate>تاريخ القيد مطلوب</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>عنوان القيد</mat-label>
+              <input matInput [formControl]="descriptionControl">
+              @if (descriptionControl.hasError('required') && descriptionControl.touched) {
+                <mat-error translate>عنوان القيد مطلوب</mat-error>
+              }
+              @if (descriptionControl.hasError('maxlength')) {
+                <mat-error translate>العنوان طويل جداً (الحد الأقصى 500 حرف)</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>الرقم المرجعي</mat-label>
+              <input matInput [formControl]="referenceControl" placeholder="{{ dir() === 'rtl' ? 'اختياري' : 'Optional' }}">
+            </mat-form-field>
+          </div>
+
+          <div class="cost-center-row">
+            <mat-form-field appearance="outline" class="cost-center-field">
+              <mat-label translate>مركز التكلفة</mat-label>
+              <mat-select 
+                [formControl]="generalCostCenterControl"
+                (selectionChange)="onGeneralCostCenterChange($event.value)"
+              >
+                <div class="select-search-box" (click)="$event.stopPropagation()">
+                  <input 
+                    type="text"
+                    class="search-input"
+                    [value]="costCenterSearchQuery()"
+                    (input)="costCenterSearchQuery.set($any($event.target).value)"
+                    [placeholder]="dir() === 'rtl' ? 'بحث...' : 'Search...'"
+                    autocomplete="off"
+                  >
+                </div>
+
+                <mat-option value="">{{ dir() === 'rtl' ? 'لا يوجد' : 'None' }}</mat-option>
+                @if (filteredCostCenters().length > 0) {
+                  @for (center of filteredCostCenters(); track center.id) {
+                    <mat-option [value]="center.id">
+                      {{ dir() === 'rtl' ? center.nameAr : center.nameEn }}
+                    </mat-option>
+                  }
+                } @else {
+                  <div class="no-results">
+                    <span translate>لا توجد نتائج</span>
+                  </div>
+                }
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <!-- Entry Lines -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3 translate>بنود القيد</h3>
+            @if (!viewMode) {
+              <button 
+                type="button"
+                mat-raised-button 
+                color="primary"
+                (click)="addLine()"
+                class="add-line-btn"
+              >
+                <i-tabler name="plus" class="icon-18"></i-tabler>
+                <span translate>إضافة بند</span>
+              </button>
+            }
+          </div>
+
+          <div class="lines-table-container">
+            <table class="lines-table">
+              <thead>
+              <tr>
+                <th translate>الحساب</th>
+                <th class="amount-col" translate>مدين</th>
+                <th class="amount-col" translate>دائن</th>
+                <th translate>الوصف</th>
+                @if (!viewMode) {
+                  <th class="actions-col" translate>الإجراءات</th>
+                }
+              </tr>
+              </thead>
+              <tbody formArrayName="lines">
+                @for (line of linesFormArray.controls; track $index) {
+                  <tr [formGroupName]="$index">
+                    <!-- Account -->
+                    <td>
+                      @if (viewMode) {
+                        <span>{{ getAccountDisplayName(line.get('accountId')?.value) }}</span>
+                      } @else {
+                        <mat-form-field appearance="outline" class="account-field">
+                          <mat-select [formControl]="getLineControl(line, 'accountId')">
+                            <div class="select-search-box" (click)="$event.stopPropagation()">
+                              <input 
+                                type="text"
+                                class="search-input"
+                                [value]="accountSearchQuery()"
+                                (input)="filterAccounts($any($event.target).value)"
+                                [placeholder]="dir() === 'rtl' ? 'ابحث عن الحساب...' : 'Search account...'"
+                                autocomplete="off"
+                              >
+                            </div>
+                            
+                            @if (filteredAccounts().length > 0) {
+                              @for (account of filteredAccounts(); track account.id) {
+                                <mat-option [value]="account.id">
+                                  {{ account.code }} - {{ dir() === 'rtl' ? account.name : account.nameEn }}
+                                </mat-option>
+                              }
+                            } @else {
+                              <div class="no-results">
+                                <span translate>لا توجد نتائج</span>
+                              </div>
+                            }
+                          </mat-select>
+                          @if (getLineControl(line, 'accountId').hasError('required') && getLineControl(line, 'accountId').touched) {
+                            <mat-error translate>الحساب مطلوب</mat-error>
+                          }
+                        </mat-form-field>
+                      }
+                    </td>
+
+                    <!-- Debit -->
+                    <td class="amount-col">
+                      <mat-form-field appearance="outline" class="amount-field">
+                        <input 
+                          matInput 
+                          type="number"
+                          [formControl]="getLineControl(line, 'debit')"
+                          (input)="calculateTotals()"
+                          min="0"
+                          step="0.01"
+                        >
+                        @if (getLineControl(line, 'debit').hasError('required') && getLineControl(line, 'debit').touched) {
+                          <mat-error translate>مطلوب</mat-error>
+                        }
+                        @if (getLineControl(line, 'debit').hasError('min')) {
+                          <mat-error translate>يجب أن يكون أكبر من أو يساوي صفر</mat-error>
+                        }
+                      </mat-form-field>
+                    </td>
+
+                    <!-- Credit -->
+                    <td class="amount-col">
+                      <mat-form-field appearance="outline" class="amount-field">
+                        <input 
+                          matInput 
+                          type="number"
+                          [formControl]="getLineControl(line, 'credit')"
+                          (input)="calculateTotals()"
+                          min="0"
+                          step="0.01"
+                        >
+                        @if (getLineControl(line, 'credit').hasError('required') && getLineControl(line, 'credit').touched) {
+                          <mat-error translate>مطلوب</mat-error>
+                        }
+                        @if (getLineControl(line, 'credit').hasError('min')) {
+                          <mat-error translate>يجب أن يكون أكبر من أو يساوي صفر</mat-error>
+                        }
+                      </mat-form-field>
+                    </td>
+
+                    <!-- Description -->
+                    <td>
+                      <mat-form-field appearance="outline" class="description-field">
+                        <input matInput [formControl]="getLineControl(line, 'description')">
+                      </mat-form-field>
+                    </td>
+
+                    <!-- Actions -->
+                    @if (!viewMode) {
+                      <td class="actions-col">
+                        <button 
+                          type="button"
+                          mat-icon-button 
+                          color="warn"
+                          (click)="removeLine($index)"
+                          [disabled]="linesFormArray.length <= 2"
+                          [class.disabled-btn]="linesFormArray.length <= 2"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+
+            @if (linesFormArray.length < 2) {
+              <div class="error-message">
+                <mat-icon>error</mat-icon>
+                <span translate>يجب إضافة بندين على الأقل</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Totals Summary -->
+        <div class="totals-section">
+          <div class="totals-row">
+            <div class="total-item">
+              <span class="total-label" translate>إجمالي المدين:</span>
+              <span class="total-value debit">{{ formatCurrency(getTotals().totalDebit) }}</span>
+            </div>
+            <div class="total-item">
+              <span class="total-label" translate>إجمالي الدائن:</span>
+              <span class="total-value credit">{{ formatCurrency(getTotals().totalCredit) }}</span>
+            </div>
+            <div class="total-item">
+              <span class="total-label" translate>الفرق:</span>
+              <span 
+                class="total-value"
+                [class.balanced]="isBalanced()"
+                [class.unbalanced]="!isBalanced()"
+              >
+                {{ formatCurrency(getAbsoluteDifference()) }}
+              </span>
+            </div>
+            <div class="balance-status">
+              @if (isBalanced()) {
+                <mat-icon class="balanced-icon">check_circle</mat-icon>
+                <span class="balanced-text" translate>متوازن</span>
+              } @else {
+                <mat-icon class="unbalanced-icon">error</mat-icon>
+                <span class="unbalanced-text" translate>غير متوازن</span>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+
+  <!-- Excel Upload Section -->
+  @if (!viewMode) {
+    <div class="excel-upload-section">
+      <div class="upload-header">
+        <h3>
+          <i-tabler name="upload" class="icon-20"></i-tabler>
+          <span translate>رفع البيانات من ملف Excel</span>
+        </h3>
+      </div>
+      <div class="upload-content">
+        <div class="upload-info">
+          <p class="info-text">
+            <i-tabler name="info-circle" class="icon-16"></i-tabler>
+            <span translate>يجب أن تكون البيانات المرفوعة حسب الملف المرفق.</span>
+          </p>
+          <p class="info-text">
+            <i-tabler name="alert-circle" class="icon-16"></i-tabler>
+            <span translate>يجب إدخال قيمة واحدة فقط إما في خانة الدائن أو المدين وليس كلاهما معاً في نفس الصف.</span>
+          </p>
+          <div class="template-download">
+            <button 
+              mat-stroked-button 
+              (click)="downloadTemplate()"
+              class="template-btn"
+            >
+              <i-tabler name="download" class="icon-18"></i-tabler>
+              <span translate>تحميل النموذج</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="upload-row">
+          <div class="cost-center-selector">
+            <div class="selector-box" (click)="toggleCostCenterDropdown()">
+              <div class="selected-value">
+                @if (excelCostCenter()) {
+                  <span class="selected-text">{{ getCostCenterName(excelCostCenter()) }}</span>
+                } @else {
+                  <span class="placeholder-text" translate>اختر مركز التكلفة</span>
+                }
+              </div>
+              <mat-icon class="dropdown-icon" [class.open]="showCostCenterDropdown()">
+                {{ showCostCenterDropdown() ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </div>
+            
+            @if (showCostCenterDropdown()) {
+              <div class="cost-center-dropdown" (click)="$event.stopPropagation()">
+                <div class="dropdown-search">
+                  <input 
+                    type="text"
+                    class="search-input"
+                    [value]="costCenterSearchQuery()"
+                    (input)="costCenterSearchQuery.set($any($event.target).value)"
+                    [placeholder]="dir() === 'rtl' ? 'ابحث عن مركز التكلفة...' : 'Search cost center...'"
+                    autocomplete="off"
+                    #searchInput
+                  >
+                </div>
+                <div class="dropdown-options">
+                  @if (filteredCostCenters().length > 0) {
+                    @for (center of filteredCostCenters(); track center.id) {
+                      <div 
+                        class="option-item"
+                        [class.selected]="excelCostCenter() === center.id"
+                        (click)="selectCostCenter(center.id)"
+                      >
+                        <div class="option-content">
+                          <span class="option-name">{{ dir() === 'rtl' ? center.nameAr : center.nameEn }}</span>
+                          <span class="option-id">{{ center.id }}</span>
+                        </div>
+                        @if (excelCostCenter() === center.id) {
+                          <mat-icon class="check-icon">check</mat-icon>
+                        }
+                      </div>
+                    }
+                  } @else {
+                    <div class="no-results">
+                      <i-tabler name="search-off" class="icon-24"></i-tabler>
+                      <span translate>لا توجد نتائج</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <input 
+            type="file" 
+            #fileInput 
+            accept=".xlsx,.xls"
+            (change)="onFileSelected($event)"
+            style="display: none"
+            [disabled]="!excelCostCenter()"
+          >
+          <button 
+            mat-raised-button 
+            color="accent"
+            (click)="fileInput.click()"
+            [disabled]="!excelCostCenter()"
+            class="upload-btn"
+          >
+            <i-tabler name="upload" class="icon-18"></i-tabler>
+            <span translate>رفع ملف Excel</span>
+          </button>
+        </div>
+
+        @if (!excelCostCenter()) {
+          <p class="warning-message" translate>يجب اختيار مركز التكلفة أولاً لتفعيل رفع الملف</p>
+        }
+
+        @if (uploadedFile()) {
+          <div class="uploaded-file-info">
+            <div class="file-info-content">
+              <i-tabler name="file-check" class="icon-24"></i-tabler>
+              <div class="file-details">
+                <span class="file-name">{{ uploadedFile()!.name }}</span>
+                <span class="file-meta">{{ uploadedFile()!.linesCount }} {{ dir() === 'rtl' ? 'بند مستورد' : 'entries imported' }} • {{ (uploadedFile()!.size / 1024).toFixed(2) }} KB</span>
+              </div>
+            </div>
+            <button 
+              mat-icon-button 
+              (click)="removeUploadedFile()"
+              [matTooltip]="dir() === 'rtl' ? 'حذف الملف والبنود المستوردة' : 'Remove file and imported entries'"
+              class="remove-file-btn"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Page Actions -->
+  <div class="page-actions">
+    <button mat-button (click)="cancel()" [disabled]="isSaving()">
+      <span translate>إلغاء</span>
+    </button>
+    @if (!viewMode) {
+      <button 
+        mat-raised-button 
+        color="primary"
+        (click)="saveEntry()"
+        [disabled]="isSaving() || entryForm.invalid || !isBalanced()"
+      >
+        @if (isSaving()) {
+          <mat-spinner diameter="20" class="spinner"></mat-spinner>
+        }
+        <span translate>حفظ</span>
+      </button>
+    }
+  </div>
+</div>

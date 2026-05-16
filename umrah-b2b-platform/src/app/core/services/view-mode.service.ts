@@ -17,6 +17,12 @@ export class ViewModeService {
     private readonly router: Router,
     private readonly agentService: AgentService
   ) {
+    const routeMode = this.getModeFromUrl(this.router.url || '/');
+    if (routeMode && routeMode !== this.mode$.value) {
+      this.mode$.next(routeMode);
+      this.persistMode(routeMode);
+    }
+
     this.syncAgentForMode(this.mode$.value);
     this.ensureRouteMatchesMode(this.mode$.value);
 
@@ -52,18 +58,22 @@ export class ViewModeService {
   }
 
   private isRouteAllowedForMode(url: string, mode: ViewMode): boolean {
+    const routeMode = this.getModeFromUrl(url);
+    return !routeMode || routeMode === mode;
+  }
+
+  private getModeFromUrl(url: string): ViewMode | null {
     if (url.startsWith('/admin')) {
-      return mode === 'admin';
+      return 'admin';
     }
     if (url.startsWith('/master')) {
-      return mode === 'master';
+      return 'master';
     }
     if (url.startsWith('/agent')) {
-      return mode === 'subAgent';
+      return 'subAgent';
     }
 
-    // Keep neutral or non-existing utility routes unaffected.
-    return true;
+    return null;
   }
 
   private getDefaultRoute(mode: ViewMode): string {

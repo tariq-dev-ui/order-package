@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/User/sero-rms-analyses/**)",
+      "Bash(ls /mnt/c/Users/User/order-package/umrah-b2b-platform/src/app/)",
+      "Read(//mnt/c/Users/User/order-package/umrah-b2b-platform/src/**)",
+      "Bash(ls /mnt/c/Users/User/order-package/umrah-b2b-platform/src/app/features/admin/)",
+      "Read(//mnt/c/Users/User/order-package/umrah-b2b-platform/src/app/features/**)",
+      "PowerShell(head -50)"
+    ]
+  }
+}

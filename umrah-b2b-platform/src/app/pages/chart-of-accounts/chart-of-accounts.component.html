@@ -1,0 +1,286 @@
+<div class="asb-wrap">
+
+  <!-- ══════════════════════════════════════════════════
+       Page Header  (unified page-header styles)
+  ═══════════════════════════════════════════════════ -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <i-tabler name="building-bank" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>دليل الحسابات</h1>
+          <p class="page-description" translate>هيكل الحسابات المحاسبية وأرقامها</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="action-btn" (click)="exportToExcel()">
+          <i-tabler name="file-spreadsheet"></i-tabler>
+          <span translate>تصدير</span>
+        </button>
+        <button type="button" class="action-btn b2b-btn" (click)="addRootAccount()">
+          <mat-icon>add</mat-icon>
+          <span translate>إضافة حساب</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       Content area
+  ═══════════════════════════════════════════════════ -->
+  <div class="asb-content">
+
+    <!-- ── Toolbar ───────────────────────────────────── -->
+    <div class="asb-toolbar">
+      <div class="asb-search">
+        <mat-icon class="asb-search__icon" aria-hidden="true">search</mat-icon>
+        <input
+          class="asb-search__input"
+          type="text"
+          [value]="searchQuery()"
+          (input)="onSearch($any($event.target).value)"
+          [placeholder]="'بحث برقم أو اسم الحساب...' | translate"
+          aria-label="بحث في الحسابات"
+        />
+        @if (searchQuery()) {
+          <button class="asb-search__clear" type="button" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+      <span class="asb-toolbar__sep"></span>
+      <span class="asb-stat asb-stat--total"
+        [matTooltip]="'إجمالي الحسابات' | translate" matTooltipPosition="above">
+        <i-tabler name="stack-2" class="icon-13"></i-tabler>
+        {{ tableStats().total }}
+      </span>
+      <span class="asb-stat asb-stat--active"
+        [matTooltip]="'حسابات نشطة' | translate" matTooltipPosition="above">
+        <i-tabler name="circle-check" class="icon-13"></i-tabler>
+        {{ tableStats().active }}
+      </span>
+      <span class="asb-stat asb-stat--leaf"
+        [matTooltip]="'حسابات تفصيلية' | translate" matTooltipPosition="above">
+        <i-tabler name="git-branch" class="icon-13"></i-tabler>
+        {{ tableStats().leaves }}
+      </span>
+    </div>
+
+    <!-- ── Content ───────────────────────────────────── -->
+    @if (isLoading()) {
+
+      <div class="asb-loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+
+    } @else if (searchQuery()) {
+
+      <!-- Search Results -->
+      <div class="asb-search-results">
+        @if (filteredAccounts().length > 0) {
+          @for (account of filteredAccounts(); track account.id) {
+            <div class="asb-result" [class.asb-result--disabled]="account.isParent">
+              <span class="asb-result__pip" [attr.data-type]="account.type"></span>
+              <div class="asb-result__body">
+                <span class="asb-result__name">{{ getAccountDisplayName(account) }}</span>
+                <code class="asb-result__code">{{ account.code }}</code>
+              </div>
+              <div class="asb-result__trail">
+                @if (account.isParent) {
+                  <span class="asb-tag asb-tag--parent" translate>رئيسي</span>
+                } @else {
+                  <span class="asb-tag asb-tag--leaf" translate>تفصيلي</span>
+                }
+              </div>
+              <div class="asb-result__actions" (click)="$event.stopPropagation()">
+                <button mat-icon-button class="asb-act asb-act--edit"
+                  (click)="editAccount(account)"
+                  [matTooltip]="'تعديل' | translate" matTooltipPosition="above">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                @if (!account.isParent) {
+                  <button mat-icon-button class="asb-act asb-act--del"
+                    (click)="deleteAccount(account)"
+                    [matTooltip]="'حذف' | translate" matTooltipPosition="above">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="asb-empty">
+            <mat-icon class="asb-empty__icon">search_off</mat-icon>
+            <p class="asb-empty__text">
+              <span translate>لا توجد نتائج لـ</span>&nbsp;<strong>"{{ searchQuery() }}"</strong>
+            </p>
+            <button class="asb-btn asb-btn--ghost asb-btn--sm" type="button"
+              (click)="clearSearch()" translate>
+              مسح البحث
+            </button>
+          </div>
+        }
+      </div>
+
+    } @else {
+
+      <!-- ══════════════════════════════════════════════
+           Account Sections
+      ═══════════════════════════════════════════════ -->
+      <div class="asb-sections">
+        @for (cat of categories(); track cat.typeId) {
+
+          <div class="asb-section" [attr.data-type]="cat.type">
+
+            <!-- ── Section Header ──────────────────── -->
+            <div class="asb-section__head" [attr.data-type]="cat.type">
+
+              <div class="asb-section__main" (click)="toggleSection(cat.typeId)" role="button"
+                [attr.aria-expanded]="isSectionOpen(cat.typeId)">
+                <div class="asb-section__icon" [attr.data-type]="cat.type">
+                  <i-tabler [name]="getAccountTypeIcon(cat.type)" class="icon-17"></i-tabler>
+                </div>
+                <div class="asb-section__title">
+                  <span class="asb-section__name">{{ cat.label }}</span>
+                  <code class="asb-section__root-code">{{ cat.rootNode.account.code }}</code>
+                </div>
+                <span class="asb-section__count">{{ cat.totalCount }} <span translate>حساب</span></span>
+                <mat-icon class="asb-section__chevron"
+                  [class.asb-section__chevron--open]="isSectionOpen(cat.typeId)">
+                  expand_more
+                </mat-icon>
+              </div>
+
+              <span class="asb-section__sep" aria-hidden="true"></span>
+
+              <button
+                type="button"
+                class="asb-add-sub-btn"
+                (click)="addChildAccount(cat.rootNode.account)"
+                [matTooltip]="('إضافة حساب فرعي تحت' | translate) + ' ' + cat.label"
+                matTooltipPosition="above"
+              >
+                <i-tabler name="plus" class="icon-14"></i-tabler>
+                <span translate>إضافة حساب فرعي</span>
+              </button>
+
+              <span class="asb-section__sep" aria-hidden="true"></span>
+
+              <button
+                type="button"
+                class="asb-zero-btn"
+                (click)="openZeroPaddingDialog(cat)"
+                [matTooltip]="'إلحاق صفر بأرقام حسابات هذا التصنيف' | translate"
+                matTooltipPosition="above"
+              >
+                <i-tabler name="circle-plus" class="icon-14"></i-tabler>
+                <span translate>إضافة خانة صفرية</span>
+              </button>
+
+            </div>
+
+            <!-- ── Section Body ────────────────────── -->
+            @if (isSectionOpen(cat.typeId)) {
+              <div class="asb-section__body">
+
+                @if (cat.visibleItems.length > 0) {
+                  @for (item of cat.visibleItems; track item.account.id) {
+                    <div
+                      class="asb-item"
+                      [class.asb-item--branch]="item.hasChildren"
+                      [class.asb-item--leaf]="!item.hasChildren"
+                      [class.asb-item--updated]="updatedCodeIds().has(item.account.id)"
+                      [style.padding-inline-start.px]="12 + (item.depth - 1) * 22"
+                    >
+                      <div class="asb-item__lead">
+                        @if (item.hasChildren) {
+                          <button
+                            type="button"
+                            class="asb-toggle"
+                            [class.asb-toggle--open]="isNodeExpanded(item.account.id)"
+                            (click)="toggleNode(item.account.id)"
+                            [attr.aria-label]="isNodeExpanded(item.account.id) ? 'طي' : 'توسيع'"
+                          >
+                            <mat-icon class="asb-toggle__icon mat-icon-rtl-mirror">chevron_right</mat-icon>
+                          </button>
+                        } @else {
+                          <span class="asb-leaf-dot" aria-hidden="true"></span>
+                        }
+                      </div>
+
+                      <div class="asb-item__body">
+                        <span class="asb-item__name"
+                          [class.asb-item__name--branch]="item.hasChildren">
+                          {{ getAccountDisplayName(item.account) }}
+                        </span>
+                        <code class="asb-item__code"
+                          [class.asb-item__code--flash]="updatedCodeIds().has(item.account.id)">
+                          {{ item.account.code }}
+                        </code>
+                      </div>
+
+                      <div class="asb-item__trail">
+                        @if (!item.account.isActive) {
+                          <span class="asb-tag asb-tag--inactive" translate>موقوف</span>
+                        }
+                        @if (item.hasChildren) {
+                          <span class="asb-tag asb-tag--branch" translate>رئيسي</span>
+                        }
+                      </div>
+
+                      <div class="asb-item__actions" (click)="$event.stopPropagation()">
+                        @if (item.hasChildren) {
+                          <button mat-icon-button class="asb-act asb-act--zero"
+                            (click)="openZeroPaddingDialogForNode(item)"
+                            [matTooltip]="'إضافة خانة صفرية' | translate" matTooltipPosition="above">
+                            <i-tabler name="circle-plus" class="icon-14"></i-tabler>
+                          </button>
+                        }
+                        <button mat-icon-button class="asb-act asb-act--add"
+                          (click)="addChildAccount(item.account)"
+                          [matTooltip]="'إضافة فرعي' | translate" matTooltipPosition="above">
+                          <mat-icon>add</mat-icon>
+                        </button>
+                        <button mat-icon-button class="asb-act asb-act--edit"
+                          (click)="editAccount(item.account)"
+                          [matTooltip]="'تعديل' | translate" matTooltipPosition="above">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        @if (!item.hasChildren) {
+                          <button mat-icon-button class="asb-act asb-act--del"
+                            (click)="deleteAccount(item.account)"
+                            [matTooltip]="'حذف' | translate" matTooltipPosition="above">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        }
+                      </div>
+
+                    </div>
+                  }
+                } @else {
+                  <div class="asb-section__empty">
+                    <span translate>لا توجد حسابات في هذا التصنيف</span>
+                    <button class="asb-btn asb-btn--ghost asb-btn--sm" type="button"
+                      (click)="addChildAccount(cat.rootNode.account)" translate>
+                      إضافة حساب
+                    </button>
+                  </div>
+                }
+
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+
+    }
+
+  </div>
+  <!-- /asb-content -->
+
+</div>
+<!-- /asb-wrap -->

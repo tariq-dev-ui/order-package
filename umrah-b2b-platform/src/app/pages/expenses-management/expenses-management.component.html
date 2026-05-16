@@ -1,0 +1,243 @@
+<div class="expenses-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="wallet"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>إدارة المصروفات</h1>
+          <p class="page-description" translate>إدارة المصروفات العامة ومراقبة السجلات المالية والتقارير المرتبطة بها</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="addNewExpense()"
+        class="action-btn"
+      >
+        <tabler-icon name="plus"></tabler-icon>
+        <span translate>إضافة مصروف</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section - Unified Design -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filters-header-row">
+        <!-- Filter Button -->
+        <div class="filter-button-wrapper" #filterButtonContainer>
+          <button 
+            type="button"
+            class="filter-main-btn"
+            (click)="showFilterMenu.set(!showFilterMenu())">
+            <tabler-icon name="filter"></tabler-icon>
+            <span translate>فلتر</span>
+            @if (activeFilters().length > 0) {
+              <span class="filter-badge">{{ activeFilters().length }}</span>
+            }
+          </button>
+          
+          <!-- Filter Dropdown Menu -->
+          @if (showFilterMenu()) {
+            <div class="filter-main-dropdown">
+              @if (getAvailableFilters().length > 0) {
+                @for (filterType of getAvailableFilters(); track filterType.id) {
+                  <button 
+                    class="filter-item" 
+                    (click)="addFilter(filterType)">
+                    <tabler-icon [name]="filterType.icon"></tabler-icon>
+                    <span>{{ filterType.label }}</span>
+                  </button>
+                }
+              } @else {
+                <div class="filter-empty">
+                  <span translate>لا توجد فلاتر متاحة</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-field-wrapper">
+          <div class="search-icon">
+            <tabler-icon name="search"></tabler-icon>
+          </div>
+          <div class="search-divider"></div>
+          <input 
+            type="text" 
+            class="search-input"
+            [value]="filterForm.get('search')?.value || ''"
+            [placeholder]="'ابحث بالاسم بالعربي أو الإنجليزي...' | translate"
+            (input)="updateFilterValue('search', $any($event.target).value)"
+            (blur)="onFilterChange()">
+        </div>
+
+        <!-- Export Button -->
+        <button 
+          type="button"
+          class="export-btn"
+          (click)="exportExpenses()">
+          <tabler-icon name="download"></tabler-icon>
+          <span translate>تصدير</span>
+        </button>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (activeFilters().length > 0) {
+        <div class="active-filters-display">
+          @for (filter of activeFilters(); track filter.id) {
+            <div class="active-filter-item">
+              <div class="filter-item-header">
+                <tabler-icon [name]="getFilterIcon(filter.id)"></tabler-icon>
+                <span class="filter-item-label">{{ filter.label }}</span>
+                <button 
+                  class="remove-filter-btn" 
+                  (click)="removeFilter(filter.id)" 
+                  type="button">
+                  <tabler-icon name="x"></tabler-icon>
+                </button>
+              </div>
+              <div class="filter-item-input">
+                @if (filter.type === 'text') {
+                  <input 
+                    type="text" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    [placeholder]="getFilterPlaceholder(filter.id)"
+                    (input)="updateFilterValue(filter.id, $any($event.target).value)"
+                    (blur)="onFilterChange()">
+                }
+                
+                @if (filter.type === 'date') {
+                  <input 
+                    type="date" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                }
+                
+                @if (filter.type === 'select') {
+                  <select 
+                    class="filter-select"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                    <option value="">{{ 'اختر...' | translate }}</option>
+                    @for (option of getFilterOptions(filter.id); track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                }
+              </div>
+            </div>
+          }
+          <button 
+            class="clear-all-filters-btn" 
+            (click)="clearFilters()" 
+            type="button">
+            <tabler-icon name="trash"></tabler-icon>
+            <span translate>مسح الكل</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    <div class="table-container">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p translate>جاري التحميل...</p>
+        </div>
+      } @else {
+        <table mat-table [dataSource]="dataSource" class="expenses-table">
+          <!-- الاسم بالإنجليزي Column -->
+          <ng-container matColumnDef="nameEn">
+            <th mat-header-cell *matHeaderCellDef translate>الاسم بالإنجليزي</th>
+            <td mat-cell *matCellDef="let expense">{{ expense.nameEn }}</td>
+          </ng-container>
+
+          <!-- الاسم بالعربي Column -->
+          <ng-container matColumnDef="nameAr">
+            <th mat-header-cell *matHeaderCellDef translate>الاسم بالعربي</th>
+            <td mat-cell *matCellDef="let expense">{{ expense.nameAr }}</td>
+          </ng-container>
+
+          <!-- الحالة Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef translate>الحالة</th>
+            <td mat-cell *matCellDef="let expense">
+              <span class="status-chip" [ngClass]="getStatusClass(expense.isActive)">
+                <tabler-icon 
+                  [name]="expense.isActive ? 'check-circle' : 'pause-circle'"
+                  class="status-icon"
+                ></tabler-icon>
+                {{ getStatusText(expense.isActive) | translate }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- تاريخ الإنشاء Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef translate>تاريخ الإنشاء</th>
+            <td mat-cell *matCellDef="let expense">{{ formatDate(expense.createdAt) }}</td>
+          </ng-container>
+
+          <!-- تاريخ التحديث Column -->
+          <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef translate>تاريخ التحديث</th>
+            <td mat-cell *matCellDef="let expense">{{ formatDate(expense.updatedAt) }}</td>
+          </ng-container>
+
+          <!-- الإجراءات Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef translate>الحدث</th>
+            <td mat-cell *matCellDef="let expense">
+              <div class="action-btns">
+                <button mat-icon-button class="action-icon-btn btn-delete" (click)="deleteExpense(expense)" matTooltip="حذف" matTooltipPosition="above"><tabler-icon name="trash"></tabler-icon></button>
+                <button mat-icon-button class="action-icon-btn btn-edit"   (click)="editExpense(expense)"   matTooltip="تعديل" matTooltipPosition="above"><tabler-icon name="pencil"></tabler-icon></button>
+                <button mat-icon-button class="action-icon-btn btn-toggle" [class.active]="expense.isActive" (click)="toggleStatus(expense)" [matTooltip]="expense.isActive ? 'تعطيل' : 'تفعيل'" matTooltipPosition="above"><tabler-icon [name]="expense.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon></button>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Headers and Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="expense-row"></tr>
+
+          <!-- No Data Row -->
+          <tr class="no-data-row" *matNoDataRow>
+            <td [attr.colspan]="displayedColumns.length">
+              <div class="no-data-container">
+                <div class="no-data-content">
+                  <tabler-icon name="wallet-off" class="no-data-icon"></tabler-icon>
+                  <p class="no-data-text" translate>لا توجد مصروفات</p>
+                  <button mat-raised-button color="primary" (click)="addNewExpense()">
+                    <tabler-icon name="plus"></tabler-icon>
+                    <span translate>إضافة أول مصروف</span>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Paginator -->
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          [pageIndex]="pageIndex"
+          (page)="onPageChange($event)"
+        ></mat-paginator>
+      }
+    </div>
+  </div>
+</div>
+

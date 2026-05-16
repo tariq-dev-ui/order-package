@@ -2,6 +2,8 @@
 // SERO — UMRAH B2B PLATFORM  |  DESIGN SYSTEM v2
 // ============================================================
 
+@use '../public/scss/components/page-header';
+
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=El+Messiri:wght@400..700&family=Noto+Kufi+Arabic:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
@@ -196,6 +198,14 @@
   // convenience aliases consumed by package-definition components
   --sero-surface:         var(--sero-card-bg);
   --sero-text:            var(--sero-text-primary);
+  // Financial prototype aliases. These keep transferred RMS finance pages
+  // on the app theme without depending on RMS theme variables.
+  --app-bg:               var(--sero-app-bg);
+  --app-card-bg:          var(--sero-card-bg);
+  --app-border:           var(--sero-border-light);
+  --app-heading:          var(--sero-primary);
+  --app-text-primary:     var(--sero-text-primary);
+  --app-text-secondary:   var(--sero-text-secondary);
   --space-xs:  var(--sp-1);
   --space-sm:  var(--sp-2);
   --space-md:  var(--sp-4);
@@ -925,6 +935,26 @@ select.form-control option:hover,
     gap: var(--sp-2);
     flex-shrink: 0;
   }
+}
+
+app-account-statement .page-header,
+app-account-routing .page-header,
+app-banks-management .page-header,
+app-chart-of-accounts .page-header,
+app-cost-centers .page-header,
+app-create-journal-entry .page-header,
+app-expenses-management .page-header,
+app-financial-reports .page-header,
+app-fiscal-year .page-header,
+app-import-entries .page-header,
+app-income-statement .page-header,
+app-items-services-management .page-header,
+app-journal-entries .page-header,
+app-pending-entries .page-header,
+app-tax-expense-entry .page-header,
+app-taxes-fees-management .page-header,
+app-unapproved-entries .page-header {
+  display: block;
 }
 
 // ============================================================

@@ -1,0 +1,94 @@
+@use "@angular/material" as mat;
+
+$sero-primary-palette: (
+  50: #f2f4ee,
+  100: #d9e0cf,
+  200: #b6c9a2,
+  300: #8fab72,
+  400: #678d4d,
+  500: #3a472a,
+  600: #344224,
+  700: #2d3821,
+  800: #25301b,
+  900: #1e2613,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: #fff,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  ),
+);
+
+$sero-accent-palette: (
+  50: #f9f5e8,
+  100: #ede5c2,
+  200: #ddd099,
+  300: #ccba6e,
+  400: #bfab50,
+  500: #8c7b3d,
+  600: #7c6e36,
+  700: #6e5f28,
+  800: #60521f,
+  900: #4a3f15,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  ),
+);
+
+$sero-warn-palette: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  ),
+);
+
+$mat-primary: mat.m2-define-palette($sero-primary-palette, 500);
+$mat-accent: mat.m2-define-palette($sero-accent-palette, 500);
+$mat-warn: mat.m2-define-palette($sero-warn-palette, 500);
+
+$sero-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $mat-primary,
+    accent: $mat-accent,
+    warn: $mat-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: "'Noto Kufi Arabic', sans-serif",
+  ),
+));
+
+@include mat.core();
+@include mat.all-component-themes($sero-theme);

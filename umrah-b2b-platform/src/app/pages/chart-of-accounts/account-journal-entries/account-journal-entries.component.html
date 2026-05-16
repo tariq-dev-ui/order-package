@@ -1,0 +1,186 @@
+<div class="journal-entries-container">
+  <!-- Account Header -->
+  <div class="account-header">
+    <div class="account-info">
+      <div class="account-title-section">
+        <h2 class="account-title">{{ getDisplayName() }}</h2>
+        <span class="account-code">كود: {{ account.code }}</span>
+      </div>
+      @if (accountBalance) {
+        <div class="account-balance-section">
+          <div class="balance-item">
+            <span class="balance-label" translate>الرصيد الافتتاحي:</span>
+            <span class="balance-value">{{ formatCurrency(accountBalance.openingBalance) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+          </div>
+          <div class="balance-item">
+            <span class="balance-label" translate>إجمالي المدين:</span>
+            <span class="balance-value debit">{{ formatCurrency(accountBalance.totalDebit) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+          </div>
+          <div class="balance-item">
+            <span class="balance-label" translate>إجمالي الدائن:</span>
+            <span class="balance-value credit">{{ formatCurrency(accountBalance.totalCredit) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+          </div>
+          <div class="balance-item total">
+            <span class="balance-label" translate>الرصيد الحالي:</span>
+            <span class="balance-value" [class.positive]="accountBalance.currentBalance >= 0" [class.negative]="accountBalance.currentBalance < 0">
+              {{ formatCurrency(accountBalance.currentBalance) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span>
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>من تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" [value]="dateFrom()" (dateChange)="dateFrom.set($event.value); onDateFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>إلى تاريخ</mat-label>
+        <input matInput [matDatepicker]="pickerTo" [value]="dateTo()" (dateChange)="dateTo.set($event.value); onDateFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field search-field">
+        <mat-label translate>بحث</mat-label>
+        <input 
+          matInput 
+          [value]="searchQuery()"
+          (input)="onSearch($any($event.target).value)"
+          placeholder="ابحث في الوصف أو المرجع..."
+        >
+        <mat-icon matPrefix>search</mat-icon>
+        @if (searchQuery()) {
+          <button matSuffix mat-icon-button (click)="onSearch('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <button 
+        mat-raised-button 
+        (click)="clearFilters()"
+        class="clear-filters-btn"
+      >
+        <i-tabler name="x" class="icon-18"></i-tabler>
+        <span translate>مسح الفلاتر</span>
+      </button>
+
+      <button 
+        mat-raised-button 
+        color="primary"
+        (click)="exportToCSV()"
+        class="export-btn"
+      >
+        <i-tabler name="download" class="icon-18"></i-tabler>
+        <span translate>تصدير CSV</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Entries Table -->
+  <div class="table-section">
+    @if (entries().length === 0) {
+      <div class="empty-state">
+        <i-tabler name="file-off" class="empty-icon"></i-tabler>
+        <h3 translate>لا توجد إدخالات</h3>
+        <p translate>لا توجد إدخالات يومية مسجلة لهذا الحساب</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="dataSource" matSort class="entries-table">
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="date" translate>التاريخ</th>
+          <td mat-cell *matCellDef="let entry">{{ formatDate(entry.date) }}</td>
+        </ng-container>
+
+        <!-- Entry Number Column -->
+        <ng-container matColumnDef="entryNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="entryNumber" translate>رقم الإدخال</th>
+          <td mat-cell *matCellDef="let entry">
+            <span class="entry-number">{{ entry.entryNumber }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="description" translate>الوصف</th>
+          <td mat-cell *matCellDef="let entry">
+            <div class="description-cell">
+              <span class="description-text">{{ getDescription(entry) }}</span>
+              @if (entry.reference) {
+                <span class="reference-badge" [attr.data-type]="entry.referenceType">
+                  <i-tabler [name]="getReferenceTypeIcon(entry.referenceType)" class="icon-14"></i-tabler>
+                  {{ entry.reference }}
+                </span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Debit Column -->
+        <ng-container matColumnDef="debit">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="debit" translate>مدين</th>
+          <td mat-cell *matCellDef="let entry" class="amount-cell debit">
+            @if (entry.debit > 0) {
+              {{ formatCurrency(entry.debit) }}
+            } @else {
+              <span class="zero-amount">-</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Credit Column -->
+        <ng-container matColumnDef="credit">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="credit" translate>دائن</th>
+          <td mat-cell *matCellDef="let entry" class="amount-cell credit">
+            @if (entry.credit > 0) {
+              {{ formatCurrency(entry.credit) }}
+            } @else {
+              <span class="zero-amount">-</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Balance Column -->
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="balance" translate>الرصيد</th>
+          <td mat-cell *matCellDef="let entry" class="amount-cell balance" [class.positive]="entry.balance >= 0" [class.negative]="entry.balance < 0">
+            {{ formatCurrency(entry.balance) }}
+          </td>
+        </ng-container>
+
+        <!-- Reference Column -->
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef translate>المرجع</th>
+          <td mat-cell *matCellDef="let entry">
+            @if (entry.reference) {
+              <span class="reference-type" [attr.data-type]="entry.referenceType">
+                {{ getReferenceTypeLabel(entry.referenceType) }}
+              </span>
+            } @else {
+              <span class="no-reference">-</span>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="entry-row"></tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 50, 100]"
+        [pageSize]="pageSize()"
+        [length]="totalEntries()"
+        (page)="pageIndex.set($event.pageIndex); pageSize.set($event.pageSize)"
+      ></mat-paginator>
+    }
+  </div>
+</div>

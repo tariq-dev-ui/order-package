@@ -1,0 +1,291 @@
+<div class="journal-entries-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon" aria-hidden="true">
+          <i-tabler name="notebook" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>القيود اليومية</h1>
+          <p class="page-description" translate>إنشاء واعتماد وترحيل القيود المحاسبية</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button 
+          mat-raised-button 
+          color="primary"
+          (click)="createEntry()"
+          class="action-btn primary-btn"
+        >
+          <i-tabler name="plus" class="icon-18"></i-tabler>
+          <span translate>إنشاء قيد جديد</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          (click)="createTaxExpenseEntry()"
+          class="action-btn"
+        >
+          <i-tabler name="receipt-tax" class="icon-18"></i-tabler>
+          <span translate>قيد مصروف ضريبي</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          (click)="importEntries()"
+          class="action-btn import-btn"
+        >
+          <i-tabler name="file-import" class="icon-18"></i-tabler>
+          <span translate>استيراد القيود</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          (click)="filterByStatus('draft')"
+          [class.active]="statusFilter() === 'draft'"
+          class="action-btn"
+        >
+          <i-tabler name="file-text" class="icon-18"></i-tabler>
+          <span translate>القيود المعلقة</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          (click)="filterUnbalanced()"
+          [class.active]="showUnbalanced()"
+          class="action-btn"
+        >
+          <i-tabler name="alert-circle" class="icon-18"></i-tabler>
+          <span translate>القيود غير المعتمدة</span>
+        </button>
+        <button 
+          mat-stroked-button 
+          (click)="filterUnposted()"
+          [class.active]="showUnposted()"
+          class="action-btn"
+        >
+          <i-tabler name="clock" class="icon-18"></i-tabler>
+          <span translate>القيود غير المرحلة</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <h3 class="filters-title" translate>جميع القيود</h3>
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>نوع القيد</mat-label>
+        <mat-select [(ngModel)]="entryTypeFilter">
+          <mat-option value="">{{ 'الكل' | translate }}</mat-option>
+          <mat-option value="sales" translate>مبيعات</mat-option>
+          <mat-option value="receipt" translate>سند قبض</mat-option>
+          <mat-option value="payment" translate>سند صرف</mat-option>
+          <mat-option value="general" translate>قيد يومي</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>الحساب</mat-label>
+        <mat-select [(ngModel)]="accountIdFilter">
+          <mat-option value="">{{ 'الكل' | translate }}</mat-option>
+          @for (acc of accounts(); track acc.id) {
+            <mat-option [value]="acc.id">
+              {{ acc.code }} - {{ dir() === 'rtl' ? acc.name : acc.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>من تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [ngModel]="dateFrom()"
+          (dateChange)="dateFrom.set($event.value); onDateFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>إلى تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [ngModel]="dateTo()"
+          (dateChange)="dateTo.set($event.value); onDateFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="filters-row second-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>رقم المستند</mat-label>
+        <input
+          matInput
+          [(ngModel)]="documentNumberFilter"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field search-field">
+        <mat-label translate>البيان</mat-label>
+        <input
+          matInput
+          [(ngModel)]="descriptionFilter"
+        />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSearch()"
+        class="search-btn"
+      >
+        <i-tabler name="search" class="icon-18"></i-tabler>
+        <span translate>بحث</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Entries Table -->
+  <div class="table-section">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else if (dataSource.data.length === 0) {
+      <div class="empty-state">
+        <i-tabler name="file-off" class="empty-icon"></i-tabler>
+        <h3 translate>لا توجد قيود</h3>
+        <p translate>لا توجد إدخالات يومية مسجلة</p>
+        <button 
+          mat-raised-button 
+          color="primary"
+          (click)="createEntry()"
+          class="create-first-btn"
+        >
+          <i-tabler name="plus" class="icon-18"></i-tabler>
+          <span translate>إنشاء أول قيد</span>
+        </button>
+      </div>
+    } @else {
+      <div class="table-card">
+        <table mat-table [dataSource]="dataSource" matSort class="entries-table">
+          <!-- Document Number Column -->
+          <ng-container matColumnDef="documentNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="documentNumber" translate>رقم المستند</th>
+            <td mat-cell *matCellDef="let entry">
+              {{ entry.entryNumber }}
+            </td>
+          </ng-container>
+
+          <!-- Entry Type Column -->
+          <ng-container matColumnDef="entryType">
+            <th mat-header-cell *matHeaderCellDef translate>نوع القيد</th>
+            <td mat-cell *matCellDef="let entry">
+              {{ getEntryTypeName(entry) }}
+            </td>
+          </ng-container>
+
+          <!-- Entry Number Column -->
+          <ng-container matColumnDef="entryNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="entryNumber" translate>رقم القيد</th>
+            <td mat-cell *matCellDef="let entry">
+              <span class="entry-number">{{ entry.entryNumber }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Total Amount Column -->
+          <ng-container matColumnDef="totalAmount">
+            <th mat-header-cell *matHeaderCellDef class="text-right" translate>قيمة القيد</th>
+            <td mat-cell *matCellDef="let entry" class="text-right">
+              <span class="amount">{{ formatCurrency(entry.totalDebit || entry.totalCredit) }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef translate>البيان</th>
+            <td mat-cell *matCellDef="let entry">
+              <span class="description-text">{{ getDescription(entry) }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Date Column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="date" translate>تاريخ القيد</th>
+            <td mat-cell *matCellDef="let entry">{{ formatDate(entry.date) }}</td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef translate>الحالة</th>
+            <td mat-cell *matCellDef="let entry">
+              <mat-chip [color]="getStatusColor(entry.status)">
+                {{ getStatusLabel(entry.status) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Created At Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt" translate>تاريخ الإنشاء</th>
+            <td mat-cell *matCellDef="let entry">{{ formatDate(entry.createdAt) }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef translate>الإجراءات</th>
+            <td mat-cell *matCellDef="let entry">
+              <div class="action-btns">
+                <button mat-icon-button class="action-icon-btn btn-info"   (click)="printEntry(entry, $event)"                   matTooltip="طباعة" matTooltipPosition="above"><tabler-icon name="printer"></tabler-icon></button>
+                <button mat-icon-button class="action-icon-btn btn-edit"   [disabled]="entry.status === 'posted'" (click)="editEntry(entry); $event.stopPropagation()" matTooltip="تعديل" matTooltipPosition="above"><tabler-icon name="pencil"></tabler-icon></button>
+                <button mat-icon-button class="action-icon-btn btn-view"   (click)="viewEntry(entry); $event.stopPropagation()"  matTooltip="عرض" matTooltipPosition="above"><tabler-icon name="eye"></tabler-icon></button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 25, 50, 100]"
+          [pageSize]="pageSize()"
+          [length]="totalEntries()"
+          (page)="onPageChange($event)"
+        ></mat-paginator>
+
+        <div class="table-footer">
+          <span class="items-count">
+            <span translate>عدد العناصر</span>
+            <strong>{{ dataSource.data.length }}</strong>
+          </span>
+          <div class="footer-actions">
+            <div class="export-buttons-group">
+              <button
+                type="button"
+                class="action-btn action-btn--export"
+                (click)="exportToExcel()"
+              >
+                <tabler-icon name="file-spreadsheet"></tabler-icon>
+                <span>تصدير إلى Excel</span>
+              </button>
+              <button
+                type="button"
+                class="action-btn action-btn--export action-btn--pdf"
+                (click)="exportToPDF()"
+              >
+                <tabler-icon name="file-type-pdf"></tabler-icon>
+                <span>تصدير إلى PDF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

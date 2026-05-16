@@ -1,0 +1,110 @@
+<div class="add-service-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title" translate>إضافة خدمة</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <tabler-icon name="x"></tabler-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div class="dialog-content">
+    <form [formGroup]="serviceForm">
+      <!-- Service Type -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label translate>نوع الخدمة</mat-label>
+        <mat-select formControlName="serviceType">
+          @for (type of serviceTypes; track type.value) {
+            <mat-option [value]="type.value">{{ type.label }}</mat-option>
+          }
+        </mat-select>
+        @if (serviceForm.get('serviceType')?.hasError('required') && serviceForm.get('serviceType')?.touched) {
+          <mat-error translate>هذا الحقل مطلوب</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Existing Services for Selected Type -->
+      @if (filteredServices().length > 0) {
+        <div class="existing-services-section">
+          <h4 class="section-title" translate>الخدمات الموجودة في هذا النوع</h4>
+          <div class="services-list">
+            @for (service of filteredServices(); track service.id) {
+              <div class="service-item">
+                <div class="service-info">
+                  <div class="service-name-ar">{{ service.nameAr }}</div>
+                  <div class="service-name-en">{{ service.nameEn }}</div>
+                </div>
+                <div class="service-prices">
+                  <span class="price-label" translate>شراء:</span>
+                  <span class="price-value purchase">{{ formatPrice(service.purchasePrice) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+                  <span class="price-label" translate>بيع:</span>
+                  <span class="price-value selling">{{ formatPrice(service.sellingPrice) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Service Name (Arabic) -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label translate>اسم الخدمة (عربي)</mat-label>
+        <input matInput formControlName="nameAr" placeholder="أدخل اسم الخدمة بالعربية">
+        @if (serviceForm.get('nameAr')?.hasError('required') && serviceForm.get('nameAr')?.touched) {
+          <mat-error translate>هذا الحقل مطلوب</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Service Name (English) -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label translate>اسم الخدمة (إنجليزي)</mat-label>
+        <input matInput formControlName="nameEn" placeholder="Enter service name in English">
+        @if (serviceForm.get('nameEn')?.hasError('required') && serviceForm.get('nameEn')?.touched) {
+          <mat-error translate>هذا الحقل مطلوب</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Purchase Price -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label translate>سعر الخدمة (شراء)</mat-label>
+        <input matInput type="number" formControlName="purchasePrice" min="0" step="0.01" placeholder="0.00">
+        <span matTextSuffix class="currency-suffix"><span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+        @if (serviceForm.get('purchasePrice')?.hasError('required') && serviceForm.get('purchasePrice')?.touched) {
+          <mat-error translate>هذا الحقل مطلوب</mat-error>
+        }
+        @if (serviceForm.get('purchasePrice')?.hasError('min') && serviceForm.get('purchasePrice')?.touched) {
+          <mat-error translate>السعر يجب أن يكون أكبر من صفر</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Selling Price -->
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label translate>سعر الخدمة (بيع)</mat-label>
+        <input matInput type="number" formControlName="sellingPrice" min="0" step="0.01" placeholder="0.00">
+        <span matTextSuffix class="currency-suffix"><span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+        @if (serviceForm.get('sellingPrice')?.hasError('required') && serviceForm.get('sellingPrice')?.touched) {
+          <mat-error translate>هذا الحقل مطلوب</mat-error>
+        }
+        @if (serviceForm.get('sellingPrice')?.hasError('min') && serviceForm.get('sellingPrice')?.touched) {
+          <mat-error translate>السعر يجب أن يكون أكبر من صفر</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-btn" translate>إلغاء</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      class="save-btn"
+      [disabled]="!serviceForm.valid"
+      translate
+    >
+      حفظ
+    </button>
+  </div>
+</div>
+

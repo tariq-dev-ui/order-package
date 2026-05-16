@@ -1,0 +1,438 @@
+.taxes-fees-container {
+  min-height: 100vh;
+  background: var(--app-bg);
+  font-family: 'Noto Kufi Arabic';
+  transition: background-color 0.3s ease;
+}
+
+// Category Tabs
+.category-tabs {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--app-border);
+  
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--app-text-secondary);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    tabler-icon {
+      width: 18px;
+      height: 18px;
+    }
+    
+    &:hover {
+      background: var(--app-bg);
+      color: var(--app-heading);
+    }
+    
+    &.active {
+      color: var(--app-heading);
+      border-bottom-color: var(--app-heading);
+      background: var(--app-bg);
+      font-weight: 600;
+    }
+  }
+}
+
+// Filters Section
+.filters-section {
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+  padding: 0 1.5rem;
+  
+  .filters-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+    
+    .search-field {
+      width: 100%;
+      
+      tabler-icon {
+        color: var(--app-text-secondary);
+      }
+    }
+    
+    .clear-filters-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      height: 56px;
+      white-space: nowrap;
+      
+      tabler-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+// Taxes and Fees Container
+.table-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+  position: relative;
+  
+  .taxes-fees-container-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--app-card-bg);
+    opacity: 0.95;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    
+    p {
+      color: var(--app-text-secondary);
+      margin: 0;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Tax/Fee Cards
+.tax-fee-card {
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--app-heading);
+  }
+  
+  .card-header {
+    background: var(--app-bg);
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--app-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    
+    .item-info {
+      flex: 1;
+      
+      .item-name-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        
+        .item-name {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--app-heading);
+          margin: 0;
+          transition: color 0.3s ease;
+        }
+        
+        .type-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.375rem 0.75rem;
+          border-radius: 0.375rem;
+          font-size: 0.75rem;
+          font-weight: 600;
+          white-space: nowrap;
+          
+          tabler-icon {
+            width: 14px;
+            height: 14px;
+          }
+          
+          &.type-tax {
+            background-color: #fee2e2;
+            color: #dc2626;
+            
+            tabler-icon {
+              color: #dc2626;
+            }
+          }
+          
+          &.type-fee {
+            background-color: #b2e8dc;
+            color: #03a88f;
+            
+            tabler-icon {
+              color: #03a88f;
+            }
+          }
+        }
+      }
+      
+      .item-description {
+        font-size: 0.875rem;
+        color: var(--app-text-secondary);
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+    
+    .item-status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        
+        .status-icon {
+          width: 16px;
+          height: 16px;
+        }
+        
+        &.status-active {
+          background-color: #dcfce7;
+          color: #16a34a;
+          
+          .status-icon {
+            color: #16a34a;
+          }
+        }
+        
+        &.status-inactive {
+          background-color: #f3f4f6;
+          color: #6b7280;
+          
+          .status-icon {
+            color: #6b7280;
+          }
+        }
+      }
+      
+      .item-actions {
+        display: flex;
+        gap: 0.25rem;
+        
+        .action-btn {
+          width: 36px;
+          height: 36px;
+          padding: 0;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background-color: var(--app-bg);
+            transform: scale(1.1);
+          }
+          
+          &.delete-btn {
+            &:hover {
+              background-color: rgba(220, 38, 38, 0.1);
+              
+              tabler-icon {
+                color: #dc2626;
+              }
+            }
+          }
+          
+          tabler-icon {
+            width: 18px;
+            height: 18px;
+            color: var(--app-text-secondary);
+            transition: color 0.3s ease;
+          }
+          
+          &:hover tabler-icon {
+            color: var(--app-heading);
+          }
+        }
+      }
+    }
+  }
+  
+  .card-details {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      .detail-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--app-text-secondary);
+        font-weight: 500;
+        
+        tabler-icon {
+          width: 16px;
+          height: 16px;
+          color: var(--app-heading);
+        }
+      }
+      
+      .detail-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--app-text-primary);
+        
+        &.highlight {
+          font-size: 1.125rem;
+          color: var(--app-heading);
+          font-weight: 700;
+        }
+        
+        .mandatory-chip {
+          display: inline-block;
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.25rem;
+          font-size: 0.75rem;
+          font-weight: 600;
+          background-color: #fef3c7;
+          color: #d97706;
+          
+          &.mandatory-chip {
+            background-color: #fee2e2;
+            color: #dc2626;
+          }
+        }
+      }
+    }
+  }
+}
+
+// No Data Container
+.no-data-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-border);
+  border-radius: 0.5rem;
+  
+  .no-data-content {
+    .no-data-icon {
+      width: 4rem;
+      height: 4rem;
+      color: var(--app-border);
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+    
+    .no-data-text {
+      color: var(--app-text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+    
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      tabler-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .filters-section {
+    .filters-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      
+      .clear-filters-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .tax-fee-card {
+    .card-details {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    padding: 0 1rem;
+    
+    .filters-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .table-section {
+    padding: 0 1rem 2rem;
+  }
+  
+  .tax-fee-card {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      
+      .item-status {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    
+    .card-details {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .category-tabs {
+    padding: 0 1rem;
+    overflow-x: auto;
+    
+    .tab-button {
+      white-space: nowrap;
+      padding: 0.75rem 1rem;
+    }
+  }
+}
+

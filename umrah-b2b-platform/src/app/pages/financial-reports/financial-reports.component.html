@@ -1,0 +1,437 @@
+<div class="financial-reports-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="report-analytics"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>التقارير المالية</h1>
+          <p class="page-description" translate>عرض جميع التقارير المالية للمراجعة والتحليل المالي الشامل</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="exportReport()"
+        class="action-btn"
+      >
+        <tabler-icon name="download"></tabler-icon>
+        <span translate>تصدير التقرير</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Type Tabs -->
+  <div class="category-tabs">
+    <button 
+      mat-button 
+      [class.active]="selectedReportType === 'account-statement'"
+      (click)="switchReportType('account-statement')"
+      class="tab-button"
+    >
+      <tabler-icon name="file-text"></tabler-icon>
+      <span translate>كشف حساب</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedReportType === 'trial-balance'"
+      (click)="switchReportType('trial-balance')"
+      class="tab-button"
+    >
+      <tabler-icon name="scale"></tabler-icon>
+      <span translate>ميزان المراجعة</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedReportType === 'income-statement'"
+      (click)="switchReportType('income-statement')"
+      class="tab-button"
+    >
+      <tabler-icon name="chart-line"></tabler-icon>
+      <span translate>قائمة الدخل</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedReportType === 'cost-centers'"
+      (click)="switchReportType('cost-centers')"
+      class="tab-button"
+    >
+      <tabler-icon name="building-store"></tabler-icon>
+      <span translate>مراكز التكلفة</span>
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <h3 class="filters-title" translate>معايير البحث</h3>
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>الحساب</mat-label>
+        <mat-select [(ngModel)]="selectedAccountId" (selectionChange)="onAccountChange($event.value)">
+          <mat-option>
+            <ngx-mat-select-search
+              [formControl]="accountSearchControl"
+              [placeholderLabel]="'ابحث هنا...' | translate"
+              [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+            ></ngx-mat-select-search>
+          </mat-option>
+          @for (account of filteredAccounts(); track account.id) {
+            <mat-option [value]="account.id">
+              {{ account.code }} - {{ dir() === 'rtl' ? account.name : account.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>من تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [ngModel]="dateFrom()"
+          (dateChange)="dateFrom.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>إلى تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [ngModel]="dateTo()"
+          (dateChange)="dateTo.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="searchReports()"
+        class="search-btn"
+      >
+        <i-tabler name="search" class="icon-18"></i-tabler>
+        <span translate>بحث</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Reports Content -->
+  <div class="table-section">
+    <!-- Table Toolbar: Search and Export -->
+    <div class="table-toolbar">
+      <div class="search-box">
+        <div class="search-wrapper">
+          <tabler-icon name="search" class="search-icon"></tabler-icon>
+          <input
+            type="text"
+            class="search-input"
+            [ngModel]="tableSearchQuery()"
+            (ngModelChange)="tableSearchQuery.set($event); onTableSearchChange()"
+            [placeholder]="'ابحث هنا...' | translate"
+          />
+          @if (tableSearchQuery()) {
+            <button
+              type="button"
+              class="clear-search-btn"
+              (click)="clearTableSearch()"
+            >
+              <tabler-icon name="x"></tabler-icon>
+            </button>
+          }
+        </div>
+      </div>
+      
+      <div class="export-buttons">
+        <button
+          mat-stroked-button
+          (click)="exportToPDF()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-type-pdf" class="icon-18"></tabler-icon>
+          <span translate>تصدير PDF</span>
+        </button>
+        <button
+          mat-stroked-button
+          (click)="exportToExcel()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-excel" class="icon-18"></tabler-icon>
+          <span translate>تصدير Excel</span>
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <!-- Account Statement Report -->
+      @if (selectedReportType === 'account-statement') {
+        <div class="report-content">
+          <div class="report-table-wrapper">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th class="text-end" translate>الرصيد</th>
+                  <th class="text-end" translate>مدين</th>
+                  <th class="text-end" translate>دائن</th>
+                  <th translate>رقم المستند</th>
+                  <th translate>التاريخ</th>
+                  <th translate>البيان</th>
+                  <th translate>مركز التكلفة</th>
+                  <th translate>أُضيف بواسطة</th>
+                  <th translate>تاريخ الإضافة</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of getFilteredAccountStatements(); track item.id) {
+                  <tr>
+                    <td class="text-end font-weight-bold">{{ formatCurrency(item.balance) }}</td>
+                    <td class="text-end">{{ item.debit > 0 ? formatCurrency(item.debit) : '-' }}</td>
+                    <td class="text-end">{{ item.credit > 0 ? formatCurrency(item.credit) : '-' }}</td>
+                    <td>
+                      @if (item.documentNumber) {
+                        <button 
+                          type="button"
+                          class="document-number-link"
+                          (click)="openEntryDetails(item)">
+                          {{ item.documentNumber }}
+                        </button>
+                      } @else {
+                        <span class="document-number-placeholder">-</span>
+                      }
+                    </td>
+                    <td>{{ formatDate(item.date) }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.costCenter || '-' }}</td>
+                    <td>{{ item.addedBy || '-' }}</td>
+                    <td>{{ item.addedDate ? formatDate(item.addedDate) : '-' }}</td>
+                  </tr>
+                }
+                @if (getFilteredAccountStatements().length === 0) {
+                  <tr>
+                    <td colspan="9" class="text-center no-data-cell">
+                      <span translate>لا توجد بيانات</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Trial Balance Report -->
+      @if (selectedReportType === 'trial-balance') {
+        <div class="report-content">
+          <div class="report-table-wrapper">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th translate>رقم الحساب</th>
+                  <th translate>اسم الحساب</th>
+                  <th colspan="2" translate>الرصيد الافتتاحي</th>
+                  <th translate>إجمالي المدين</th>
+                  <th translate>إجمالي الدائن</th>
+                  <th colspan="2" translate>الرصيد النهائي</th>
+                </tr>
+                <tr class="sub-header">
+                  <th></th>
+                  <th></th>
+                  <th translate>مدين</th>
+                  <th translate>دائن</th>
+                  <th></th>
+                  <th></th>
+                  <th translate>مدين</th>
+                  <th translate>دائن</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of getFilteredTrialBalanceItems(); track item.id) {
+                  <tr>
+                    <td>{{ item.accountCode }}</td>
+                    <td>{{ dir() === 'rtl' ? item.accountName : item.accountNameEn }}</td>
+                    <td>
+                      @if (item.openingBalanceDebit > 0) {
+                        {{ formatCurrency(item.openingBalanceDebit) }}
+                      } @else {
+                        <span class="empty-value">-</span>
+                      }
+                    </td>
+                    <td>
+                      @if (item.openingBalanceCredit > 0) {
+                        {{ formatCurrency(item.openingBalanceCredit) }}
+                      } @else {
+                        <span class="empty-value">-</span>
+                      }
+                    </td>
+                    <td>{{ formatCurrency(item.totalDebit) }}</td>
+                    <td>{{ formatCurrency(item.totalCredit) }}</td>
+                    <td>
+                      @if (item.closingBalanceDebit > 0) {
+                        {{ formatCurrency(item.closingBalanceDebit) }}
+                      } @else {
+                        <span class="empty-value">-</span>
+                      }
+                    </td>
+                    <td>
+                      @if (item.closingBalanceCredit > 0) {
+                        {{ formatCurrency(item.closingBalanceCredit) }}
+                      } @else {
+                        <span class="empty-value">-</span>
+                      }
+                    </td>
+                  </tr>
+                }
+                @if (getFilteredTrialBalanceItems().length === 0) {
+                  <tr>
+                    <td colspan="8" class="text-center no-data-cell">
+                      <span translate>لا توجد بيانات</span>
+                    </td>
+                  </tr>
+                } @else {
+                  <!-- Totals Row -->
+                  <tr class="totals-row">
+                    <td colspan="2" class="font-weight-bold" translate>الإجمالي</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalOpeningDebit()) }}</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalOpeningCredit()) }}</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalDebit()) }}</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalCredit()) }}</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalClosingDebit()) }}</td>
+                    <td class="font-weight-bold">{{ formatCurrency(getTotalClosingCredit()) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Income Statement Report -->
+      @if (selectedReportType === 'income-statement') {
+        <div class="report-content">
+          <div class="report-table-wrapper">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th translate>الفئة</th>
+                  <th translate>البند</th>
+                  <th class="text-end" translate>المبلغ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Revenue Section -->
+                <tr class="section-header">
+                  <td colspan="3" translate>الإيرادات</td>
+                </tr>
+                @for (item of getFilteredIncomeStatements(); track item.id) {
+                  @if (item.type === 'revenue') {
+                    <tr>
+                      <td>{{ item.category }}</td>
+                      <td>{{ item.item }}</td>
+                      <td class="text-end revenue">{{ formatCurrency(item.amount) }}</td>
+                    </tr>
+                  }
+                }
+                <tr class="section-total">
+                  <td colspan="2" translate>إجمالي الإيرادات</td>
+                  <td class="text-end font-weight-bold revenue">{{ formatCurrency(getTotalRevenue()) }}</td>
+                </tr>
+
+                <!-- Expenses Section -->
+                <tr class="section-header">
+                  <td colspan="3" translate>المصروفات</td>
+                </tr>
+                @for (item of getFilteredIncomeStatements(); track item.id) {
+                  @if (item.type === 'expense') {
+                    <tr>
+                      <td>{{ item.category }}</td>
+                      <td>{{ item.item }}</td>
+                      <td class="text-end expense">{{ formatCurrency(item.amount) }}</td>
+                    </tr>
+                  }
+                }
+                <tr class="section-total">
+                  <td colspan="2" translate>إجمالي المصروفات</td>
+                  <td class="text-end font-weight-bold expense">{{ formatCurrency(getTotalExpenses()) }}</td>
+                </tr>
+
+                <!-- Net Income -->
+                <tr class="net-income-row">
+                  <td colspan="2" translate>صافي الدخل</td>
+                  <td class="text-end font-weight-bold" [class.revenue]="getNetIncome() >= 0" [class.expense]="getNetIncome() < 0">
+                    {{ formatCurrency(getNetIncome()) }}
+                  </td>
+                </tr>
+
+                @if (getFilteredIncomeStatements().length === 0) {
+                  <tr>
+                    <td colspan="3" class="text-center no-data-cell">
+                      <span translate>لا توجد بيانات</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Cost Centers Report -->
+      @if (selectedReportType === 'cost-centers') {
+        <div class="report-content">
+          <div class="report-table-wrapper">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th translate>الكود</th>
+                  <th translate>الاسم بالعربية</th>
+                  <th translate>الاسم بالإنجليزية</th>
+                  <th translate>الوصف</th>
+                  <th translate>الحالة</th>
+                  <th translate>تاريخ الإنشاء</th>
+                  <th translate>آخر تحديث</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (center of getFilteredCostCenters(); track center.id) {
+                  <tr>
+                    <td>{{ center.code }}</td>
+                    <td>{{ center.nameAr }}</td>
+                    <td>{{ center.nameEn }}</td>
+                    <td>{{ center.description || '-' }}</td>
+                    <td>
+                      @if (center.isActive) {
+                        <span class="status-badge status-active" translate>نشط</span>
+                      } @else {
+                        <span class="status-badge status-inactive" translate>غير نشط</span>
+                      }
+                    </td>
+                    <td>{{ center.createdAt ? formatDate(center.createdAt) : '-' }}</td>
+                    <td>{{ center.updatedAt ? formatDate(center.updatedAt) : '-' }}</td>
+                  </tr>
+                }
+                @if (getFilteredCostCenters().length === 0) {
+                  <tr>
+                    <td colspan="7" class="text-center no-data-cell">
+                      <span translate>لا توجد بيانات</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

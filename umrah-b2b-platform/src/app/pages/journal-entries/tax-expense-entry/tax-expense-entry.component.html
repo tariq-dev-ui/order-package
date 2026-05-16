@@ -1,0 +1,207 @@
+<div class="tax-expense-container" [dir]="dir()">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <button mat-icon-button (click)="cancel()" class="back-btn" type="button" aria-label="رجوع">
+          <mat-icon [class.rtl-flip]="dirIsRtl">arrow_back</mat-icon>
+        </button>
+        <div class="page-icon" aria-hidden="true">
+          <i-tabler name="receipt-tax" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>قيد مصروف ضريبي</h1>
+          <p class="page-description" translate>إنشاء قيد مصروف مع احتساب الضريبة</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entry Info -->
+  <div class="card entry-info-card" [formGroup]="entryForm">
+    <h2 class="card-title" translate>بيانات القيد</h2>
+
+    <div class="info-grid">
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>قيمة القيد</mat-label>
+        <input matInput type="number" formControlName="amount" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>نسبة الضريبة</mat-label>
+        <input matInput type="number" formControlName="taxRate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>تاريخ القيد</mat-label>
+        <input matInput [matDatepicker]="entryDate" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="entryDate"></mat-datepicker-toggle>
+        <mat-datepicker #entryDate></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field description-field">
+        <mat-label translate>البيان</mat-label>
+        <input matInput formControlName="description" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>رقم الفاتورة</mat-label>
+        <input matInput formControlName="invoiceNumber" />
+      </mat-form-field>
+
+      <div class="field supplier-field">
+        <mat-form-field appearance="outline" class="supplier-select">
+          <mat-label translate>المورد الضريبي</mat-label>
+          <mat-select formControlName="taxSupplierId">
+            <mat-option value="">{{ dirIsRtl ? 'بدون' : 'None' }}</mat-option>
+            @for (s of taxSuppliers(); track s.id) {
+              <mat-option [value]="s.id">
+                {{ s.name }} - {{ s.taxNumber }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button color="primary" class="add-supplier-btn" (click)="openAddSupplierDialog()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>من حساب</mat-label>
+        <mat-select formControlName="fromAccountId">
+          @for (acc of accounts; track acc.id) {
+            <mat-option [value]="acc.id">
+              {{ acc.code }} - {{ dirIsRtl ? acc.name : acc.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>إلى حساب</mat-label>
+        <mat-select formControlName="toAccountId">
+          @for (acc of accounts; track acc.id) {
+            <mat-option [value]="acc.id">
+              {{ acc.code }} - {{ dirIsRtl ? acc.name : acc.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field">
+        <mat-label translate>مركز التكلفة</mat-label>
+        <mat-select formControlName="costCenterId">
+          @for (cc of costCenters; track cc.id) {
+            <mat-option [value]="cc.id">
+              {{ dirIsRtl ? cc.nameAr : cc.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Details Table -->
+  <div class="card details-card">
+    <div class="details-header">
+      <h2 class="card-title" translate>التفاصيل</h2>
+      <button mat-stroked-button color="primary" (click)="addDetailRow()">
+        <i-tabler name="plus" class="icon-18"></i-tabler>
+        <span translate>إضافة سطر</span>
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="details.controls" class="details-table">
+      <ng-container matColumnDef="debit">
+        <th mat-header-cell *matHeaderCellDef translate>مدين</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput type="number" formControlName="debit" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="credit">
+        <th mat-header-cell *matHeaderCellDef translate>دائن</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput type="number" formControlName="credit" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="account">
+        <th mat-header-cell *matHeaderCellDef translate>الحساب</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="inner-field">
+            <mat-select formControlName="accountId">
+              @for (acc of accounts; track acc.id) {
+                <mat-option [value]="acc.id">
+                  {{ acc.code }} - {{ dirIsRtl ? acc.name : acc.nameEn }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="costCenter">
+        <th mat-header-cell *matHeaderCellDef translate>مركز التكلفة</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="inner-field">
+            <mat-select formControlName="costCenterId">
+              @for (cc of costCenters; track cc.id) {
+                <mat-option [value]="cc.id">
+                  {{ dirIsRtl ? cc.nameAr : cc.nameEn }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef translate>البيان</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput formControlName="description" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="invoiceNumber">
+        <th mat-header-cell *matHeaderCellDef translate>رقم الفاتورة</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput formControlName="invoiceNumber" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="taxNumber">
+        <th mat-header-cell *matHeaderCellDef translate>الرقم الضريبي</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput formControlName="taxNumber" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="companyName">
+        <th mat-header-cell *matHeaderCellDef translate>الشركة</th>
+        <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+          <input matInput formControlName="companyName" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row; let i = index">
+          <button mat-icon-button color="warn" (click)="removeDetailRow(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['debit','credit','account','costCenter','description','invoiceNumber','taxNumber','companyName','actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['debit','credit','account','costCenter','description','invoiceNumber','taxNumber','companyName','actions'];"></tr>
+    </table>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions-bar">
+    <button mat-button (click)="cancel()" translate>إلغاء</button>
+    <button mat-raised-button color="primary" (click)="save()" translate>حفظ القيد</button>
+  </div>
+</div>
+

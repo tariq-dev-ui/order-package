@@ -1,0 +1,540 @@
+// Professional Income Statement Styles
+// ألوان الهوية – متوافقة مع الوضع الفاتح والداكن
+.income-statement-container {
+  padding: 24px;
+  background: var(--theme-bg);
+  min-height: 100vh;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  background: var(--theme-bg-card);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: var(--theme-shadow-sm);
+  border: 1px solid var(--theme-border);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .page-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
+    border-radius: 12px;
+    color: var(--theme-text-inverse);
+    font-size: 24px;
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--theme-text-primary);
+  }
+
+  .page-description {
+    font-size: 14px;
+    color: var(--theme-text-secondary);
+    margin: 4px 0 0 0;
+  }
+}
+
+// Filters Section – نفس تصميم ميزان المراجعة
+.filters-section {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1.5rem;
+  margin-bottom: 16px;
+  padding: 16px 16px 14px;
+  background: var(--theme-bg-card);
+  border-radius: 8px;
+  box-shadow: var(--theme-shadow-sm);
+
+  .filters-title {
+    margin: 0 0 12px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--theme-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to left,
+      color-mix(in srgb, var(--theme-primary) 8%, transparent),
+      color-mix(in srgb, var(--theme-accent) 6%, transparent)
+    );
+    box-shadow: var(--theme-shadow-sm);
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 30% 30%,
+        var(--theme-accent),
+        var(--theme-primary)
+      );
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent) 18%, transparent);
+    }
+  }
+
+  .filters-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 16px;
+    align-items: flex-start;
+
+    .filter-field {
+      width: 100%;
+
+      // Field chrome: _luxury-form-system.scss
+    }
+
+    .search-btn {
+      align-self: stretch;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      height: 48px;
+      min-width: 120px;
+      padding: 0 20px;
+      margin: 0;
+      box-sizing: border-box;
+
+      .icon-18 {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .filters-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .filters-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filters-row {
+      grid-template-columns: 1fr;
+
+      .search-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.table-section {
+  background: var(--theme-bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--theme-shadow-sm);
+  border: 1px solid var(--theme-border);
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--theme-border);
+
+  .search-box {
+    flex: 1;
+    max-width: 400px;
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        color: var(--theme-text-tertiary);
+        font-size: 20px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px 40px 10px 12px;
+        border: 1px solid var(--theme-border);
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--theme-bg-card);
+        color: var(--theme-text-primary);
+
+        &:focus {
+          outline: none;
+          border-color: var(--theme-primary);
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 20%, transparent);
+        }
+      }
+
+      .clear-search-btn {
+        position: absolute;
+        left: 8px;
+        padding: 4px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--theme-text-tertiary);
+
+        &:hover {
+          color: var(--theme-text-primary);
+        }
+      }
+    }
+  }
+
+  .export-buttons {
+    display: flex;
+    gap: 8px;
+
+    .export-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+}
+
+// جدول قائمة الدخل – تصميم مبسط
+.income-statement-professional {
+  .professional-statement-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border: 1px solid var(--theme-border);
+
+    thead th {
+      padding: 10px 12px;
+      text-align: right;
+      font-weight: 600;
+      font-size: 13px;
+      background: var(--theme-bg-secondary);
+      color: var(--theme-text-primary);
+      border-bottom: 1px solid var(--theme-border);
+
+      &.account-column {
+        width: 50%;
+      }
+
+      &.code-column {
+        width: 20%;
+        text-align: center;
+      }
+
+      &.amount-column {
+        width: 30%;
+        text-align: left;
+      }
+    }
+
+    tbody {
+      .main-section-header td {
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--theme-text-primary);
+        border-bottom: 1px solid var(--theme-border);
+        background: var(--theme-bg-hover);
+      }
+
+      .sub-section-header td {
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--theme-text-secondary);
+        border-bottom: 1px solid var(--theme-border-secondary);
+      }
+
+      .data-row td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--theme-border-secondary);
+        color: var(--theme-text-primary);
+      }
+
+      .data-row:hover {
+        background: var(--theme-bg-hover);
+      }
+
+      .account-name {
+        padding-right: 24px;
+      }
+
+      .account-code {
+        text-align: center;
+        color: var(--theme-text-tertiary);
+        font-size: 13px;
+      }
+
+      .amount {
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .subtotal-row td {
+        padding: 8px 12px;
+        border-top: 1px solid var(--theme-border);
+        font-weight: 600;
+        font-size: 13px;
+        background: var(--theme-bg-hover);
+      }
+
+      .subtotal-label {
+        color: var(--theme-text-primary);
+      }
+
+      .subtotal-amount {
+        text-align: left;
+        font-weight: 700;
+      }
+
+      .total-row td {
+        padding: 10px 12px;
+        border-top: 2px solid var(--theme-border);
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .total-label {
+        color: var(--theme-text-primary);
+      }
+
+      .total-amount {
+        text-align: left;
+      }
+
+      .revenue-total-row {
+        background: color-mix(in srgb, var(--theme-success) 12%, var(--theme-bg-card));
+      }
+
+      .expense-total-row {
+        background: color-mix(in srgb, var(--theme-danger) 8%, var(--theme-bg-card));
+      }
+
+      .net-income-row td {
+        padding: 12px;
+        border-top: 2px solid var(--theme-border);
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .net-income-row.profit-row {
+        background: color-mix(in srgb, var(--theme-success) 15%, var(--theme-bg-card));
+      }
+
+      .net-income-row.profit-row .net-income-amount {
+        color: var(--theme-success);
+      }
+
+      .net-income-row.loss-row {
+        background: color-mix(in srgb, var(--theme-danger) 12%, var(--theme-bg-card));
+      }
+
+      .net-income-row.loss-row .net-income-amount {
+        color: var(--theme-danger);
+      }
+
+      .net-income-amount {
+        text-align: left;
+      }
+
+      .spacer-row {
+        height: 12px;
+
+        td {
+          border: none;
+          padding: 0;
+          background: transparent;
+        }
+      }
+
+      .no-data-cell {
+        padding: 32px;
+        text-align: center;
+        border: none;
+        color: var(--theme-text-tertiary);
+      }
+    }
+
+    .positive-amount {
+      color: var(--theme-success);
+    }
+
+    .negative-amount {
+      color: var(--theme-danger);
+    }
+
+    .positive-total {
+      color: var(--theme-success);
+    }
+
+    .negative-total {
+      color: var(--theme-danger);
+    }
+  }
+
+  .report-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--theme-border);
+
+    .footer-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 12px;
+      color: var(--theme-text-tertiary);
+
+      tabler-icon {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Loading overlay
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+
+  p {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+  }
+}
+
+// No data message
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 12px;
+  color: var(--theme-text-tertiary);
+
+  tabler-icon {
+    font-size: 48px;
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .income-statement-professional .professional-statement-table {
+    font-size: 12px;
+
+    thead th {
+      font-size: 12px;
+      padding: 8px 10px;
+    }
+
+    tbody .data-row td,
+    tbody .subtotal-row td,
+    tbody .total-row td {
+      padding: 6px 10px;
+    }
+
+    tbody .account-name {
+      padding-right: 16px !important;
+    }
+  }
+}
+
+// Print Styles
+@media print {
+  .page-header,
+  .filters-section,
+  .table-toolbar {
+    display: none;
+  }
+
+  .income-statement-container {
+    background: #fff;
+    padding: 0;
+  }
+
+  .table-section {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .professional-statement-table {
+    .data-row:hover {
+      background-color: transparent !important;
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .search-wrapper {
+    .search-icon {
+      right: auto;
+      left: 12px;
+    }
+
+    .clear-search-btn {
+      left: auto;
+      right: 8px;
+    }
+  }
+
+  .professional-statement-table {
+    thead th,
+    tbody td {
+      text-align: right;
+
+      &.code-column {
+        text-align: center;
+      }
+
+      &.amount-column,
+      &.amount {
+        text-align: left;
+      }
+    }
+  }
+}

@@ -1,0 +1,219 @@
+<div class="pending-entries-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <button mat-icon-button (click)="goBack()" class="back-btn" type="button" aria-label="رجوع">
+          <mat-icon [class.rtl-flip]="dir() === 'rtl'">arrow_back</mat-icon>
+        </button>
+        <div class="page-icon" aria-hidden="true">
+          <i-tabler name="file-text" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>القيود المعلقة</h1>
+          <p class="page-description" translate>عرض وإدارة القيود ذات الحالة المعلقة</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Criteria -->
+  <div class="search-section">
+    <h3 class="section-title">
+      <i-tabler name="search" class="icon-20"></i-tabler>
+      <span translate>معايير البحث</span>
+    </h3>
+
+    <form [formGroup]="searchForm" class="search-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>نوع القيد</mat-label>
+          <mat-select formControlName="entryType">
+            <mat-option value="">{{ dir() === 'rtl' ? 'الكل' : 'All' }}</mat-option>
+            @for (type of entryTypes; track type.id) {
+              <mat-option [value]="type.id">
+                {{ dir() === 'rtl' ? type.nameAr : type.nameEn }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>الحساب</mat-label>
+          <mat-select formControlName="accountId">
+            <mat-option value="">{{ dir() === 'rtl' ? 'الكل' : 'All' }}</mat-option>
+            @for (account of accounts(); track account.id) {
+              <mat-option [value]="account.id">
+                {{ account.code }} - {{ dir() === 'rtl' ? account.name : account.nameEn }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom">
+          <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="dateTo">
+          <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>رقم المستند</mat-label>
+          <input matInput formControlName="documentNumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>البيان</mat-label>
+          <input matInput formControlName="description">
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onSearch()"
+            class="search-btn"
+          >
+            <i-tabler name="search" class="icon-18"></i-tabler>
+            <span translate>بحث</span>
+          </button>
+          <button
+            mat-stroked-button
+            (click)="clearFilters()"
+            class="clear-btn"
+          >
+            <i-tabler name="x" class="icon-18"></i-tabler>
+            <span translate>مسح</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Table -->
+  <div class="table-section">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else if (dataSource.data.length === 0) {
+      <div class="empty-state">
+        <i-tabler name="file-off" class="empty-icon"></i-tabler>
+        <h3 translate>لا توجد قيود معلقة</h3>
+        <p translate>لا توجد قيود معلقة مطابقة لمعايير البحث</p>
+      </div>
+    } @else {
+      <div class="table-card">
+        <table mat-table [dataSource]="dataSource" matSort class="entries-table">
+          <!-- Document Number -->
+          <ng-container matColumnDef="documentNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header translate>رقم المستند</th>
+            <td mat-cell *matCellDef="let entry">
+              <span class="document-number">{{ entry.entryNumber }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Entry Type -->
+          <ng-container matColumnDef="entryType">
+            <th mat-header-cell *matHeaderCellDef translate>نوع القيد</th>
+            <td mat-cell *matCellDef="let entry">
+              <mat-chip class="type-chip">{{ getEntryTypeName('general') }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Entry Number -->
+          <ng-container matColumnDef="entryNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header translate>رقم القيد</th>
+            <td mat-cell *matCellDef="let entry">
+              <span class="entry-number">{{ entry.entryNumber }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Total Amount -->
+          <ng-container matColumnDef="totalAmount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="amount-col" translate>قيمة القيد</th>
+            <td mat-cell *matCellDef="let entry" class="amount-col">
+              <span class="amount">{{ formatCurrency(entry.totalDebit) }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Description -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef translate>البيان</th>
+            <td mat-cell *matCellDef="let entry">
+              <span class="description">{{ getDescription(entry) }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Date -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header translate>تاريخ القيد</th>
+            <td mat-cell *matCellDef="let entry">{{ formatDate(entry.date) }}</td>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef translate>حالة القيد</th>
+            <td mat-cell *matCellDef="let entry">
+              <mat-chip color="warn" translate>معلق</mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef translate>الإجراءات</th>
+            <td mat-cell *matCellDef="let entry">
+              <div class="actions-cell">
+                <button 
+                  mat-icon-button 
+                  [matTooltip]="dir() === 'rtl' ? 'عرض' : 'View'"
+                  (click)="viewEntry(entry); $event.stopPropagation()"
+                  class="action-btn view-btn"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  [matTooltip]="dir() === 'rtl' ? 'تعديل' : 'Edit'"
+                  (click)="editEntry(entry); $event.stopPropagation()"
+                  class="action-btn edit-btn"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  [matTooltip]="dir() === 'rtl' ? 'طباعة' : 'Print'"
+                  (click)="printEntry(entry, $event)"
+                  class="action-btn print-btn"
+                >
+                  <mat-icon>print</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr 
+            mat-row 
+            *matRowDef="let row; columns: displayedColumns"
+            class="data-row"
+          ></tr>
+        </table>
+
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          [pageSize]="10"
+          [showFirstLastButtons]="true"
+        ></mat-paginator>
+      </div>
+    }
+  </div>
+</div>

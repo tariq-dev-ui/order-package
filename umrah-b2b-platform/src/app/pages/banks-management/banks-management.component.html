@@ -1,0 +1,462 @@
+<div class="banks-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="building-bank"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>إدارة البنوك</h1>
+          <p class="page-description" translate>إدارة بيانات البنوك والحسابات البنكية المرتبطة بالنظام وطرق الدفع</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="selectedView === 'accounts' ? addNewBankAccount() : addNewPaymentMethod()"
+        class="action-btn"
+      >
+        <tabler-icon name="plus"></tabler-icon>
+        <span translate>{{ selectedView === 'accounts' ? 'إضافة حساب بنكي' : 'إضافة طريقة دفع' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- View Tabs -->
+  <div class="view-tabs">
+    <button 
+      mat-button 
+      [class.active]="selectedView === 'accounts'"
+      (click)="switchView('accounts')"
+      class="tab-button"
+    >
+      <tabler-icon name="building-bank"></tabler-icon>
+      <span translate>الحسابات البنكية</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedView === 'payment-methods'"
+      (click)="switchView('payment-methods')"
+      class="tab-button"
+    >
+      <tabler-icon name="credit-card"></tabler-icon>
+      <span translate>طرق الدفع</span>
+    </button>
+  </div>
+
+  <!-- Filters Section - Unified Design -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filters-header-row">
+        <!-- Filter Button -->
+        <div class="filter-button-wrapper" #filterButtonContainer>
+          <button 
+            type="button"
+            class="filter-main-btn"
+            (click)="showFilterMenu.set(!showFilterMenu())">
+            <tabler-icon name="filter"></tabler-icon>
+            <span translate>فلتر</span>
+            @if (activeFilters().length > 0) {
+              <span class="filter-badge">{{ activeFilters().length }}</span>
+            }
+          </button>
+          
+          <!-- Filter Dropdown Menu -->
+          @if (showFilterMenu()) {
+            <div class="filter-main-dropdown">
+              @if (getAvailableFilters().length > 0) {
+                @for (filterType of getAvailableFilters(); track filterType.id) {
+                  <button 
+                    class="filter-item" 
+                    (click)="addFilter(filterType)">
+                    <tabler-icon [name]="filterType.icon"></tabler-icon>
+                    <span>{{ filterType.label }}</span>
+                  </button>
+                }
+              } @else {
+                <div class="filter-empty">
+                  <span translate>لا توجد فلاتر متاحة</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-field-wrapper">
+          <div class="search-icon">
+            <tabler-icon name="search"></tabler-icon>
+          </div>
+          <div class="search-divider"></div>
+          <input 
+            type="text" 
+            class="search-input"
+            [value]="filterForm.get('search')?.value || ''"
+            [placeholder]="(selectedView === 'accounts' ? 'ابحث بالبنك أو رقم الحساب...' : 'ابحث بطريقة الدفع...') | translate"
+            (input)="updateFilterValue('search', $any($event.target).value)"
+            (blur)="onFilterChange()">
+        </div>
+
+        <!-- Export Button -->
+        <button 
+          type="button"
+          class="export-btn"
+          (click)="exportBanks()">
+          <tabler-icon name="download"></tabler-icon>
+          <span translate>تصدير</span>
+        </button>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (activeFilters().length > 0) {
+        <div class="active-filters-display">
+          @for (filter of activeFilters(); track filter.id) {
+            <div class="active-filter-item">
+              <div class="filter-item-header">
+                <tabler-icon [name]="getFilterIcon(filter.id)"></tabler-icon>
+                <span class="filter-item-label">{{ filter.label }}</span>
+                <button 
+                  class="remove-filter-btn" 
+                  (click)="removeFilter(filter.id)" 
+                  type="button">
+                  <tabler-icon name="x"></tabler-icon>
+                </button>
+              </div>
+              <div class="filter-item-input">
+                @if (filter.type === 'text') {
+                  <input 
+                    type="text" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    [placeholder]="getFilterPlaceholder(filter.id)"
+                    (input)="updateFilterValue(filter.id, $any($event.target).value)"
+                    (blur)="onFilterChange()">
+                }
+                
+                @if (filter.type === 'date') {
+                  <input 
+                    type="date" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                }
+                
+                @if (filter.type === 'select') {
+                  <select 
+                    class="filter-select"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                    <option value="">{{ 'اختر...' | translate }}</option>
+                    @for (option of getFilterOptions(filter.id); track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                }
+              </div>
+            </div>
+          }
+          <button 
+            class="clear-all-filters-btn" 
+            (click)="clearFilters()" 
+            type="button">
+            <tabler-icon name="trash"></tabler-icon>
+            <span translate>مسح الكل</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Bank Accounts View -->
+  <div class="table-section" *ngIf="selectedView === 'accounts'">
+    <div class="accounts-list">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p translate>جاري التحميل...</p>
+        </div>
+      } @else {
+        @for (account of getFilteredAccounts(); track account.id) {
+          <div class="account-card">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="account-info">
+                <div class="account-name-row">
+                  <h3 class="account-name">{{ account.bankName }}</h3>
+                  @if (account.isDefault) {
+                    <span class="default-badge">
+                      <tabler-icon name="star"></tabler-icon>
+                      <span translate>افتراضي</span>
+                    </span>
+                  }
+                </div>
+                <p class="account-number">{{ account.accountNumber }}</p>
+                @if (account.description) {
+                  <p class="account-description">{{ account.description }}</p>
+                }
+              </div>
+              
+              <div class="account-status">
+                <span class="status-chip" [ngClass]="getStatusClass(account.isActive)">
+                  <tabler-icon 
+                    [name]="account.isActive ? 'check-circle' : 'pause-circle'"
+                    class="status-icon"
+                  ></tabler-icon>
+                  {{ getStatusText(account.isActive) | translate }}
+                </span>
+                
+                <div class="account-actions">
+                  @if (!account.isDefault) {
+                    <button 
+                      mat-icon-button 
+                      (click)="setDefaultAccount(account)"
+                      [matTooltip]="'تعيين كافتراضي' | translate"
+                      class="action-btn"
+                    >
+                      <tabler-icon name="star"></tabler-icon>
+                    </button>
+                  }
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="toggleAccountStatus(account)"
+                    [matTooltip]="(account.isActive ? 'تعطيل' : 'تفعيل') | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon [name]="account.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="editBankAccount(account)"
+                    [matTooltip]="'تعديل' | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon name="edit"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="deleteBankAccount(account)"
+                    [matTooltip]="'حذف' | translate"
+                    class="action-btn delete-btn"
+                  >
+                    <tabler-icon name="trash"></tabler-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Details -->
+            <div class="card-details">
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="user"></tabler-icon>
+                  <span translate>اسم صاحب الحساب</span>
+                </div>
+                <div class="detail-value">
+                  {{ account.accountHolderName }}
+                </div>
+              </div>
+
+              @if (account.iban) {
+                <div class="detail-item">
+                  <div class="detail-label">
+                    <tabler-icon name="hash"></tabler-icon>
+                    <span translate>رقم الآيبان</span>
+                  </div>
+                  <div class="detail-value">
+                    {{ account.iban }}
+                  </div>
+                </div>
+              }
+
+              @if (account.swiftCode) {
+                <div class="detail-item">
+                  <div class="detail-label">
+                    <tabler-icon name="code"></tabler-icon>
+                    <span translate>رمز السويفت</span>
+                  </div>
+                  <div class="detail-value">
+                    {{ account.swiftCode }}
+                  </div>
+                </div>
+              }
+
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="wallet"></tabler-icon>
+                  <span translate>نوع الحساب</span>
+                </div>
+                <div class="detail-value">
+                  {{ getAccountTypeText(account.accountType) }}
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="currency-dollar"></tabler-icon>
+                  <span translate>العملة</span>
+                </div>
+                <div class="detail-value">
+                  {{ account.currency }}
+                </div>
+              </div>
+
+              @if (account.balance !== undefined) {
+                <div class="detail-item">
+                  <div class="detail-label">
+                    <tabler-icon name="wallet"></tabler-icon>
+                    <span translate>الرصيد</span>
+                  </div>
+                  <div class="detail-value highlight">
+                    {{ formatBalance(account.balance, account.currency) }}
+                  </div>
+                </div>
+              }
+
+              @if (account.branchName) {
+                <div class="detail-item">
+                  <div class="detail-label">
+                    <tabler-icon name="map-pin"></tabler-icon>
+                    <span translate>الفرع</span>
+                  </div>
+                  <div class="detail-value">
+                    {{ account.branchName }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- No Data State -->
+        @if (getFilteredAccounts().length === 0) {
+          <div class="no-data-container">
+            <div class="no-data-content">
+              <tabler-icon name="building-bank-off" class="no-data-icon"></tabler-icon>
+              <p class="no-data-text" translate>لا توجد حسابات بنكية</p>
+              <button mat-raised-button color="primary" (click)="addNewBankAccount()">
+                <tabler-icon name="plus"></tabler-icon>
+                <span translate>إضافة أول حساب</span>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Payment Methods View -->
+  <div class="table-section" *ngIf="selectedView === 'payment-methods'">
+    <div class="payment-methods-list">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p translate>جاري التحميل...</p>
+        </div>
+      } @else {
+        @for (method of getFilteredPaymentMethods(); track method.id) {
+          <div class="payment-method-card">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="method-info">
+                <div class="method-name-row">
+                  <div class="method-icon-wrapper">
+                    <tabler-icon [name]="getPaymentMethodTypeIcon(method.type)"></tabler-icon>
+                  </div>
+                  <div>
+                    <h3 class="method-name">{{ method.name }}</h3>
+                    <p class="method-type">{{ getPaymentMethodTypeText(method.type) }}</p>
+                  </div>
+                  @if (method.isDefault) {
+                    <span class="default-badge">
+                      <tabler-icon name="star"></tabler-icon>
+                      <span translate>افتراضي</span>
+                    </span>
+                  }
+                </div>
+                @if (method.description) {
+                  <p class="method-description">{{ method.description }}</p>
+                }
+                @if (method.bankAccountId) {
+                  <p class="linked-account">
+                    <tabler-icon name="link"></tabler-icon>
+                    <span translate>مرتبط بحساب:</span> {{ getBankAccountName(method.bankAccountId) }}
+                  </p>
+                }
+              </div>
+              
+              <div class="method-status">
+                <span class="status-chip" [ngClass]="getStatusClass(method.isActive)">
+                  <tabler-icon 
+                    [name]="method.isActive ? 'check-circle' : 'pause-circle'"
+                    class="status-icon"
+                  ></tabler-icon>
+                  {{ getStatusText(method.isActive) | translate }}
+                </span>
+                
+                <div class="method-actions">
+                  @if (!method.isDefault) {
+                    <button 
+                      mat-icon-button 
+                      (click)="setDefaultPaymentMethod(method)"
+                      [matTooltip]="'تعيين كافتراضي' | translate"
+                      class="action-btn"
+                    >
+                      <tabler-icon name="star"></tabler-icon>
+                    </button>
+                  }
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="togglePaymentMethodStatus(method)"
+                    [matTooltip]="(method.isActive ? 'تعطيل' : 'تفعيل') | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon [name]="method.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="editPaymentMethod(method)"
+                    [matTooltip]="'تعديل' | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon name="edit"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="deletePaymentMethod(method)"
+                    [matTooltip]="'حذف' | translate"
+                    class="action-btn delete-btn"
+                  >
+                    <tabler-icon name="trash"></tabler-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- No Data State -->
+        @if (getFilteredPaymentMethods().length === 0) {
+          <div class="no-data-container">
+            <div class="no-data-content">
+              <tabler-icon name="credit-card-off" class="no-data-icon"></tabler-icon>
+              <p class="no-data-text" translate>لا توجد طرق دفع</p>
+              <button mat-raised-button color="primary" (click)="addNewPaymentMethod()">
+                <tabler-icon name="plus"></tabler-icon>
+                <span translate>إضافة أول طريقة دفع</span>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
+

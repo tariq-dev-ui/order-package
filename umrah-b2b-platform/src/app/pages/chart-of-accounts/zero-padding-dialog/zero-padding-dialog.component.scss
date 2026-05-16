@@ -1,0 +1,217 @@
+// ── Dialog shell ──────────────────────────────────────────────────
+.zpd {
+  display: flex;
+  flex-direction: column;
+  min-width: 420px;
+  max-width: 540px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+// ── Header ────────────────────────────────────────────────────────
+.zpd__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #edf0eb;
+}
+
+.zpd__badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+  background: #e8ede5;
+  color: #3a472a;
+
+  &[data-type="ASSET"]     { background: #e8f5e9; color: #2e7d32; }
+  &[data-type="LIABILITY"] { background: #fff3e0; color: #e65100; }
+  &[data-type="EQUITY"]    { background: #e3f2fd; color: #1565c0; }
+  &[data-type="REVENUE"]   { background: #f3e5f5; color: #7b1fa2; }
+  &[data-type="EXPENSE"]   { background: #fce4ec; color: #c2185b; }
+}
+
+.zpd__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2a3524;
+  margin: 0 0 2px;
+}
+
+.zpd__category {
+  font-size: 12px;
+  color: #7b8574;
+  margin: 0;
+}
+
+// ── Body ──────────────────────────────────────────────────────────
+.zpd__body {
+  padding: 16px 22px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.zpd__desc {
+  margin-bottom: 14px;
+  p {
+    font-size: 13px;
+    color: #2a3524;
+    margin: 0 0 5px;
+    line-height: 1.6;
+    &:last-child { margin-bottom: 0; }
+  }
+  strong { color: #3a472a; }
+}
+
+.zpd__warn {
+  font-size: 12px !important;
+  color: #8c7b3d !important;
+  background: #f9e8c4;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-inline-start: 3px solid #e3a72f;
+}
+
+// ── Preview table ─────────────────────────────────────────────────
+.zpd__preview {
+  border: 1px solid #d8decf;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.zpd__preview-head {
+  display: grid;
+  grid-template-columns: 110px 20px 110px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #f8f9f7;
+  border-bottom: 1px solid #d8decf;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #a3a89b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.zpd__preview-list {
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d8decf transparent;
+}
+
+.zpd__row {
+  display: grid;
+  grid-template-columns: 110px 20px 110px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #f0f2ee;
+  font-size: 12px;
+
+  &:last-child { border-bottom: none; }
+  &:nth-child(odd) { background: #fafaf9; }
+}
+
+.zpd__arrow {
+  text-align: center;
+  color: #c5cdb9;
+  font-size: 12px;
+}
+
+.zpd__old {
+  font-family: 'Courier New', monospace;
+  font-size: 11.5px;
+  color: #7b8574;
+  background: #f3f4f0;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.zpd__new {
+  font-family: 'Courier New', monospace;
+  font-size: 11.5px;
+  color: #2e5d34;
+  background: #e4f0e8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.zpd__name {
+  font-size: 12px;
+  color: #5c6652;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zpd__more {
+  padding: 7px 12px;
+  font-size: 11.5px;
+  color: #a3a89b;
+  background: #f8f9f7;
+  border-top: 1px solid #edf0eb;
+}
+
+// ── Footer ────────────────────────────────────────────────────────
+.zpd__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 22px 18px;
+  border-top: 1px solid #edf0eb;
+}
+
+.zpd__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  font-family: inherit;
+  transition: all 0.14s;
+
+  &--cancel {
+    color: #5c6652;
+    background: #ffffff;
+    border-color: #d8decf;
+    &:hover { background: #edf0eb; border-color: #c5cdb9; }
+  }
+
+  &--confirm {
+    color: #ffffff;
+    background: #3a472a;
+    border-color: #3a472a;
+    &:hover { background: #2d3821; border-color: #2d3821; }
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────
+@media (max-width: 520px) {
+  .zpd { min-width: unset; }
+  .zpd__preview-head,
+  .zpd__row { grid-template-columns: 90px 16px 90px 1fr; }
+}

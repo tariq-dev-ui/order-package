@@ -31,6 +31,7 @@
               }
             ],
             "styles": [
+              "src/material-theme.scss",
               "src/styles.scss"
             ]
           },
@@ -39,13 +40,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "550kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "3MB",
+                  "maximumError": "4MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kB",
-                  "maximumError": "14kB"
+                  "maximumWarning": "22kB",
+                  "maximumError": "24kB"
                 }
               ],
               "outputHashing": "all"

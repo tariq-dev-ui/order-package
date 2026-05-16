@@ -1,0 +1,130 @@
+<div class="import-entries-container">
+  <!-- Page Header -->
+  <div class="page-header" [dir]="dir()">
+    <div class="header-content">
+      <div class="header-info">
+        <button mat-icon-button (click)="goBack()" class="back-btn" type="button" aria-label="رجوع">
+          <mat-icon [class.rtl-flip]="dir() === 'rtl'">arrow_back</mat-icon>
+        </button>
+        <div class="page-icon" aria-hidden="true">
+          <i-tabler name="file-import" class="icon-24"></i-tabler>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>استيراد القيود</h1>
+          <p class="page-description" translate>رفع قيود من ملف Excel وفق نموذج النظام</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Excel Upload Section -->
+  <div class="excel-upload-section">
+    <div class="upload-header">
+      <h3>
+        <i-tabler name="upload" class="icon-20"></i-tabler>
+        <span translate>رفع البيانات من ملف Excel</span>
+      </h3>
+    </div>
+    <div class="upload-content">
+      <div class="upload-info">
+        <p class="info-text">
+          <i-tabler name="info-circle" class="icon-16"></i-tabler>
+          <span translate>يجب أن تكون البيانات المرفوعة حسب الملف المرفق</span>
+        </p>
+        <p class="info-text">
+          <i-tabler name="alert-circle" class="icon-16"></i-tabler>
+          <span translate>يجب إدخال قيمة واحدة فقط إما في خانة الدائن أو المدين وليس كلاهما معاً في نفس الصف</span>
+        </p>
+        <p class="info-text">
+          <i-tabler name="info-circle" class="icon-16"></i-tabler>
+          <span translate>سيتم استيراد القيود بحسب التسلسل الحالي للنظام وسيتم إضافة رقم القيد المدخل في ملف Excel كرقم مرجعي</span>
+        </p>
+        <p class="info-text">
+          <i-tabler name="alert-triangle" class="icon-16"></i-tabler>
+          <span translate>سيتم استيراد القيود كقيود غير معتمدة ويجب اعتمادها ثم ترحيلها لإكتمال عملية الاستيراد</span>
+        </p>
+        <div class="template-download">
+          <button 
+            mat-stroked-button 
+            (click)="downloadTemplate()"
+            class="template-btn"
+          >
+            <i-tabler name="download" class="icon-18"></i-tabler>
+            <span translate>تحميل النموذج من هنا</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="upload-row">
+        <mat-form-field appearance="outline" class="cost-center-field">
+          <mat-label translate>مركز التكلفة</mat-label>
+          <mat-select [value]="selectedCostCenter()" (selectionChange)="selectedCostCenter.set($event.value)">
+            <mat-option value="">{{ dir() === 'rtl' ? 'اختر مركز التكلفة' : 'Select Cost Center' }}</mat-option>
+            @for (center of costCenters; track center.id) {
+              <mat-option [value]="center.id">
+                {{ dir() === 'rtl' ? center.nameAr : center.nameEn }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <input 
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept=".xlsx,.xls,.csv"
+          style="display: none"
+          [disabled]="!selectedCostCenter()"
+        >
+        <button 
+          mat-raised-button 
+          color="accent"
+          (click)="fileInput.click()"
+          [disabled]="!selectedCostCenter()"
+          class="upload-btn"
+        >
+          <i-tabler name="upload" class="icon-18"></i-tabler>
+          <span translate>رفع ملف Excel</span>
+        </button>
+      </div>
+
+      @if (!selectedCostCenter()) {
+        <p class="warning-message" translate>يجب اختيار مركز التكلفة أولاً لتفعيل رفع الملف</p>
+      }
+
+      @if (uploadedFile()) {
+        <div class="uploaded-file-info">
+          <div class="file-info-content">
+            <i-tabler name="file-check" class="icon-24"></i-tabler>
+            <div class="file-details">
+              <span class="file-name">{{ uploadedFile()!.name }}</span>
+              <span class="file-meta">{{ (uploadedFile()!.size / 1024).toFixed(2) }} KB</span>
+            </div>
+          </div>
+          <button 
+            mat-icon-button 
+            (click)="removeFile()"
+            [matTooltip]="dir() === 'rtl' ? 'حذف الملف' : 'Remove file'"
+            class="remove-file-btn"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <button 
+          mat-raised-button 
+          color="primary"
+          (click)="importFile()"
+          [disabled]="isProcessing()"
+          class="import-action-btn"
+        >
+          @if (isProcessing()) {
+            <mat-spinner diameter="20" class="spinner"></mat-spinner>
+          }
+          <span translate>{{ isProcessing() ? 'جاري الاستيراد...' : 'بدء الاستيراد' }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</div>
+

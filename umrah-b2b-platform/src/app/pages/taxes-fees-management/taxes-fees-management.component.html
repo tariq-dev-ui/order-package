@@ -1,0 +1,311 @@
+<div class="taxes-fees-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="receipt"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>الضرائب والرسوم</h1>
+          <p class="page-description" translate>إدارة الضرائب والرسوم الإضافية المفروضة على الحجوزات والخدمات المالية</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="addNewTaxOrFee()"
+        class="action-btn"
+      >
+        <tabler-icon name="plus"></tabler-icon>
+        <span translate>إضافة ضريبة/رسوم</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="category-tabs">
+    <button 
+      mat-button 
+      [class.active]="selectedCategory === 'all'"
+      (click)="switchCategory('all')"
+      class="tab-button"
+    >
+      <tabler-icon name="list"></tabler-icon>
+      <span translate>الكل</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedCategory === 'taxes'"
+      (click)="switchCategory('taxes')"
+      class="tab-button"
+    >
+      <tabler-icon name="receipt-tax"></tabler-icon>
+      <span translate>الضرائب</span>
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedCategory === 'fees'"
+      (click)="switchCategory('fees')"
+      class="tab-button"
+    >
+      <tabler-icon name="currency-dollar"></tabler-icon>
+      <span translate>الرسوم</span>
+    </button>
+  </div>
+
+  <!-- Filters Section - Unified Design -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filters-header-row">
+        <!-- Filter Button -->
+        <div class="filter-button-wrapper" #filterButtonContainer>
+          <button 
+            type="button"
+            class="filter-main-btn"
+            (click)="showFilterMenu.set(!showFilterMenu())">
+            <tabler-icon name="filter"></tabler-icon>
+            <span translate>فلتر</span>
+            @if (activeFilters().length > 0) {
+              <span class="filter-badge">{{ activeFilters().length }}</span>
+            }
+          </button>
+          
+          <!-- Filter Dropdown Menu -->
+          @if (showFilterMenu()) {
+            <div class="filter-main-dropdown">
+              @if (getAvailableFilters().length > 0) {
+                @for (filterType of getAvailableFilters(); track filterType.id) {
+                  <button 
+                    class="filter-item" 
+                    (click)="addFilter(filterType)">
+                    <tabler-icon [name]="filterType.icon"></tabler-icon>
+                    <span>{{ filterType.label }}</span>
+                  </button>
+                }
+              } @else {
+                <div class="filter-empty">
+                  <span translate>لا توجد فلاتر متاحة</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-field-wrapper">
+          <div class="search-icon">
+            <tabler-icon name="search"></tabler-icon>
+          </div>
+          <div class="search-divider"></div>
+          <input 
+            type="text" 
+            class="search-input"
+            [value]="filterForm.get('search')?.value || ''"
+            [placeholder]="'بحث...' | translate"
+            (input)="updateFilterValue('search', $any($event.target).value)"
+            (blur)="onFilterChange()">
+        </div>
+
+        <!-- Export Button -->
+        <button 
+          type="button"
+          class="export-btn"
+          (click)="exportTaxesFees()">
+          <tabler-icon name="download"></tabler-icon>
+          <span translate>تصدير</span>
+        </button>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (activeFilters().length > 0) {
+        <div class="active-filters-display">
+          @for (filter of activeFilters(); track filter.id) {
+            <div class="active-filter-item">
+              <div class="filter-item-header">
+                <tabler-icon [name]="getFilterIcon(filter.id)"></tabler-icon>
+                <span class="filter-item-label">{{ filter.label }}</span>
+                <button 
+                  class="remove-filter-btn" 
+                  (click)="removeFilter(filter.id)" 
+                  type="button">
+                  <tabler-icon name="x"></tabler-icon>
+                </button>
+              </div>
+              <div class="filter-item-input">
+                @if (filter.type === 'text') {
+                  <input 
+                    type="text" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    [placeholder]="getFilterPlaceholder(filter.id)"
+                    (input)="updateFilterValue(filter.id, $any($event.target).value)"
+                    (blur)="onFilterChange()">
+                }
+                
+                @if (filter.type === 'date') {
+                  <input 
+                    type="date" 
+                    class="filter-input"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                }
+                
+                @if (filter.type === 'select') {
+                  <select 
+                    class="filter-select"
+                    [value]="filterForm.get(filter.id)?.value || ''"
+                    (change)="updateFilterValue(filter.id, $any($event.target).value); onFilterChange()">
+                    <option value="">{{ 'اختر...' | translate }}</option>
+                    @for (option of getFilterOptions(filter.id); track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                }
+              </div>
+            </div>
+          }
+          <button 
+            class="clear-all-filters-btn" 
+            (click)="clearFilters()" 
+            type="button">
+            <tabler-icon name="trash"></tabler-icon>
+            <span translate>مسح الكل</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Taxes and Fees List -->
+  <div class="table-section">
+    <div class="taxes-fees-container-list">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p translate>جاري التحميل...</p>
+        </div>
+      } @else {
+        @for (item of getFilteredItems(); track item.id) {
+          <div class="tax-fee-card">
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="item-info">
+                <div class="item-name-row">
+                  <h3 class="item-name">{{ item.name }}</h3>
+                  <span class="type-badge" [ngClass]="getTypeClass(item.type)">
+                    <tabler-icon [name]="item.type === 'tax' ? 'receipt-tax' : 'currency-dollar'"></tabler-icon>
+                    {{ getTypeText(item.type) }}
+                  </span>
+                </div>
+                @if (item.description) {
+                  <p class="item-description">{{ item.description }}</p>
+                }
+              </div>
+              
+              <div class="item-status">
+                <span class="status-chip" [ngClass]="getStatusClass(item)">
+                  <tabler-icon 
+                    [name]="item.isActive ? 'check-circle' : 'pause-circle'"
+                    class="status-icon"
+                  ></tabler-icon>
+                  {{ getStatusText(item) | translate }}
+                </span>
+                
+                <div class="item-actions">
+                  <button 
+                    mat-icon-button 
+                    (click)="toggleStatus(item)"
+                    [matTooltip]="(item.isActive ? 'تعطيل' : 'تفعيل') | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon [name]="item.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="editTaxOrFee(item)"
+                    [matTooltip]="'تعديل' | translate"
+                    class="action-btn"
+                  >
+                    <tabler-icon name="edit"></tabler-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    (click)="deleteTaxOrFee(item)"
+                    [matTooltip]="'حذف' | translate"
+                    class="action-btn delete-btn"
+                  >
+                    <tabler-icon name="trash"></tabler-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Details -->
+            <div class="card-details">
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="calculator"></tabler-icon>
+                  <span translate>نوع الحساب</span>
+                </div>
+                <div class="detail-value">
+                  {{ getCalculationTypeText(item.calculationType) }}
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="currency-dollar"></tabler-icon>
+                  <span translate>القيمة</span>
+                </div>
+                <div class="detail-value highlight">
+                  {{ formatValue(item) }}
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon name="target"></tabler-icon>
+                  <span translate>يطبق على</span>
+                </div>
+                <div class="detail-value">
+                  {{ getAppliesToText(item.appliesTo) }}
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-label">
+                  <tabler-icon [name]="item.isMandatory ? 'lock' : 'lock-open'"></tabler-icon>
+                  <span translate>إلزامي</span>
+                </div>
+                <div class="detail-value">
+                  <mat-chip [class.mandatory-chip]="item.isMandatory">
+                    {{ item.isMandatory ? 'نعم' : 'لا' | translate }}
+                  </mat-chip>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- No Data State -->
+        @if (getFilteredItems().length === 0) {
+          <div class="no-data-container">
+            <div class="no-data-content">
+              <tabler-icon name="receipt-off" class="no-data-icon"></tabler-icon>
+              <p class="no-data-text" translate>لا توجد ضرائب أو رسوم</p>
+              <button mat-raised-button color="primary" (click)="addNewTaxOrFee()">
+                <tabler-icon name="plus"></tabler-icon>
+                <span translate>إضافة أول ضريبة/رسوم</span>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
+

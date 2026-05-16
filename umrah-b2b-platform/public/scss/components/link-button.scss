@@ -1,0 +1,11 @@
+@use "../_variables.scss" as *;
+
+.link-button {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+  color: $primary !important;
+}

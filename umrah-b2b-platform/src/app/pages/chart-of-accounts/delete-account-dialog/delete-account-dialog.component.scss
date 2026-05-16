@@ -1,0 +1,145 @@
+/**
+ * Delete Account Dialog Styles
+ * تصميم نافذة تأكيد حذف الحساب
+ */
+
+.delete-account-dialog {
+  min-width: 480px;
+  max-width: 550px;
+  padding: 0;
+
+  .dialog-header {
+    padding: 24px 24px 20px;
+    background: linear-gradient(to left, rgba(211, 47, 47, 0.08), rgba(211, 47, 47, 0.02));
+    border-bottom: 1px solid var(--app-border, #e8ede5);
+
+    .dialog-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #d32f2f;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+  }
+
+  .dialog-content {
+    padding: 24px;
+    min-height: auto;
+
+    .confirmation-message {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--app-text-primary, #2a3524);
+
+      strong {
+        color: var(--app-heading, #3a472a);
+        font-weight: 600;
+        display: block;
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: var(--app-bg, #f8f9f7);
+        border-radius: 6px;
+        border: 1px solid var(--app-border, #e8ede5);
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 24px 20px;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--app-bg, #f8f9f7);
+    border-top: 1px solid var(--app-border, #e8ede5);
+
+    button {
+      min-width: 100px;
+      height: 40px;
+      font-weight: 500;
+      border-radius: 6px;
+
+      &[mat-button] {
+        color: var(--app-text-primary, #2a3524);
+      }
+
+      &[mat-raised-button][color="warn"] {
+        background: #d32f2f;
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(211, 47, 47, 0.25);
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+          background: #c62828;
+          box-shadow: 0 4px 8px rgba(211, 47, 47, 0.35);
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// Dark Theme Support
+:host-context(.dark-theme) {
+  .delete-account-dialog {
+    .dialog-header {
+      background: linear-gradient(to left, rgba(211, 47, 47, 0.15), rgba(211, 47, 47, 0.05));
+      border-bottom-color: var(--app-border-dark, #3a472a);
+
+      .dialog-title {
+        color: #ef5350;
+      }
+    }
+
+    .dialog-content {
+      .confirmation-message {
+        color: var(--app-text-primary-dark, #e6e9e0);
+
+        strong {
+          color: var(--app-heading-dark, #e6e9e0);
+          background: var(--app-bg-dark, #1e2419);
+          border-color: var(--app-border-dark, #3a472a);
+        }
+      }
+    }
+
+    .dialog-actions {
+      background: var(--app-bg-dark, #1e2419);
+      border-top-color: var(--app-border-dark, #3a472a);
+
+      button[mat-button] {
+        color: var(--app-text-primary-dark, #e6e9e0);
+      }
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .delete-account-dialog {
+    .dialog-actions {
+      justify-content: flex-start;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  .delete-account-dialog {
+    min-width: 100%;
+    max-width: 100%;
+
+    .dialog-header {
+      padding: 20px 20px 16px;
+    }
+
+    .dialog-content {
+      padding: 20px;
+    }
+
+    .dialog-actions {
+      padding: 16px 20px;
+    }
+  }
+}

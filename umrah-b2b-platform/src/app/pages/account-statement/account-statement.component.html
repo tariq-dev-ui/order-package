@@ -1,0 +1,189 @@
+<div class="account-statement-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="file-text"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>كشف الحساب</h1>
+          <p class="page-description" translate>عرض كشف الحساب للمراجعة والتحليل المالي</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="exportToPDF()"
+        class="action-btn"
+      >
+        <tabler-icon name="download"></tabler-icon>
+        <span translate>تصدير التقرير</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <h3 class="filters-title" translate>معايير البحث</h3>
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>الحساب</mat-label>
+        <mat-select [(ngModel)]="selectedAccountId" (selectionChange)="onAccountChange($event.value)">
+          <mat-option>
+            <ngx-mat-select-search
+              [formControl]="accountSearchControl"
+              [placeholderLabel]="'ابحث هنا...' | translate"
+              [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+            ></ngx-mat-select-search>
+          </mat-option>
+          @for (account of filteredAccounts(); track account.id) {
+            <mat-option [value]="account.id">
+              {{ account.code }} - {{ dir() === 'rtl' ? account.name : account.nameEn }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>من تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [ngModel]="dateFrom()"
+          (dateChange)="dateFrom.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label translate>إلى تاريخ</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [ngModel]="dateTo()"
+          (dateChange)="dateTo.set($event.value); onFilterChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="searchReports()"
+        class="search-btn"
+      >
+        <tabler-icon name="search" class="icon-18"></tabler-icon>
+        <span translate>بحث</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    <!-- Table Toolbar: Search and Export -->
+    <div class="table-toolbar">
+      <div class="search-box">
+        <div class="search-wrapper">
+          <tabler-icon name="search" class="search-icon"></tabler-icon>
+          <input
+            type="text"
+            class="search-input"
+            [ngModel]="tableSearchQuery()"
+            (ngModelChange)="tableSearchQuery.set($event); onTableSearchChange()"
+            [placeholder]="'ابحث هنا...' | translate"
+          />
+          @if (tableSearchQuery()) {
+            <button
+              type="button"
+              class="clear-search-btn"
+              (click)="clearTableSearch()"
+            >
+              <tabler-icon name="x"></tabler-icon>
+            </button>
+          }
+        </div>
+      </div>
+      
+      <div class="export-buttons">
+        <button
+          mat-stroked-button
+          (click)="exportToPDF()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-type-pdf" class="icon-18"></tabler-icon>
+          <span translate>تصدير PDF</span>
+        </button>
+        <button
+          mat-stroked-button
+          (click)="exportToExcel()"
+          class="export-btn"
+        >
+          <tabler-icon name="file-excel" class="icon-18"></tabler-icon>
+          <span translate>تصدير Excel</span>
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <div class="report-content">
+        <div class="report-table-wrapper">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th translate>الرصيد</th>
+                <th translate>مدين</th>
+                <th translate>دائن</th>
+                <th translate>رقم المستند</th>
+                <th translate>التاريخ</th>
+                <th translate>البيان</th>
+                <th translate>أُضيف بواسطة</th>
+                <th translate>تاريخ الإضافة</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of getFilteredAccountStatements(); track item.id) {
+                <tr>
+                  <td class="font-weight-bold">{{ formatCurrency(item.balance) }}</td>
+                  <td>{{ item.debit > 0 ? formatCurrency(item.debit) : '-' }}</td>
+                  <td>{{ item.credit > 0 ? formatCurrency(item.credit) : '-' }}</td>
+                  <td>
+                    @if (item.documentNumber) {
+                      <button 
+                        type="button"
+                        class="document-number-link"
+                        (click)="openEntryDetails(item)">
+                        {{ item.documentNumber }}
+                      </button>
+                    } @else {
+                      <span class="document-number-placeholder">-</span>
+                    }
+                  </td>
+                  <td>{{ formatDate(item.date) }}</td>
+                  <td>{{ item.description }}</td>
+                  <td>{{ item.addedBy || '-' }}</td>
+                  <td>{{ item.addedDate ? formatDate(item.addedDate) : '-' }}</td>
+                </tr>
+              }
+              @if (getFilteredAccountStatements().length === 0) {
+                <tr>
+                  <td colspan="8" class="text-center no-data-cell">
+                    <span translate>لا توجد بيانات</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>

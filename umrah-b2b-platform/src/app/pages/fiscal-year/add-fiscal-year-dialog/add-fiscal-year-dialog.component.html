@@ -1,0 +1,77 @@
+<h2 mat-dialog-title translate>إضافة سنة مالية</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="fiscalYearForm" class="fiscal-year-form">
+    <!-- Year Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label translate>السنة</mat-label>
+      <input 
+        matInput 
+        type="number"
+        formControlName="year"
+        placeholder="2024"
+        min="1900"
+        max="2100"
+      />
+      @if (fiscalYearForm.get('year')?.hasError('required') && fiscalYearForm.get('year')?.touched) {
+        <mat-error translate>السنة مطلوبة</mat-error>
+      }
+      @if (fiscalYearForm.get('year')?.hasError('min') && fiscalYearForm.get('year')?.touched) {
+        <mat-error translate>السنة يجب أن تكون أكبر من 1900</mat-error>
+      }
+      @if (fiscalYearForm.get('year')?.hasError('max') && fiscalYearForm.get('year')?.touched) {
+        <mat-error translate>السنة يجب أن تكون أصغر من 2100</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Start Date Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label translate>من تاريخ</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerFrom"
+        formControlName="startDate"
+        placeholder="Choose a date"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFrom></mat-datepicker>
+      @if (fiscalYearForm.get('startDate')?.hasError('required') && fiscalYearForm.get('startDate')?.touched) {
+        <mat-error translate>تاريخ البداية مطلوب</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- End Date Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label translate>تاريخ الانتهاء</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerTo"
+        formControlName="endDate"
+        placeholder="Choose a date"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+      <mat-datepicker #pickerTo></mat-datepicker>
+      @if (fiscalYearForm.get('endDate')?.hasError('required') && fiscalYearForm.get('endDate')?.touched) {
+        <mat-error translate>تاريخ الانتهاء مطلوب</mat-error>
+      }
+      @if (fiscalYearForm.hasError('dateRangeInvalid') && fiscalYearForm.get('endDate')?.touched && fiscalYearForm.get('startDate')?.touched) {
+        <mat-error translate>تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="onCancel()" type="button" translate>إلغاء</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSave()" 
+    [disabled]="fiscalYearForm.invalid"
+    type="button"
+    translate
+  >
+    حفظ
+  </button>
+</mat-dialog-actions>
+

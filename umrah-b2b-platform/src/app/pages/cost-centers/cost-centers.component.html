@@ -1,0 +1,195 @@
+<div class="cost-centers-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="building-store"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>مراكز التكلفة</h1>
+          <p class="page-description" translate>إدارة مراكز التكلفة وتصنيفها</p>
+        </div>
+      </div>
+      
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="openAddForm()"
+        class="action-btn"
+      >
+        <tabler-icon name="plus"></tabler-icon>
+        <span translate>إضافة مركز تكلفة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-wrapper">
+      <tabler-icon name="search" class="search-icon"></tabler-icon>
+      <input
+        type="text"
+        class="search-input"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event); onSearchChange()"
+        [placeholder]="'ابحث هنا...' | translate"
+      />
+      @if (searchQuery()) {
+        <button
+          type="button"
+          class="clear-search-btn"
+          (click)="searchQuery.set(''); onSearchChange()"
+        >
+          <tabler-icon name="x"></tabler-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  @if (showForm()) {
+    <div class="form-section">
+      <div class="form-card">
+        <div class="form-header">
+          <h3 class="form-title" translate>
+            {{ isEditing() ? 'تعديل مركز التكلفة' : 'إضافة مركز تكلفة جديد' }}
+          </h3>
+          <button mat-icon-button (click)="closeForm()" class="close-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <form [formGroup]="costCenterForm" (ngSubmit)="saveCostCenter()">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>كود المركز</mat-label>
+              <input matInput formControlName="code" [readonly]="isEditing()" />
+              @if (costCenterForm.get('code')?.hasError('required') && costCenterForm.get('code')?.touched) {
+                <mat-error translate>كود المركز مطلوب</mat-error>
+              }
+              @if (costCenterForm.get('code')?.hasError('minlength') && costCenterForm.get('code')?.touched) {
+                <mat-error translate>كود المركز يجب أن يكون على الأقل حرفين</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>الاسم بالعربية</mat-label>
+              <input matInput formControlName="nameAr" />
+              @if (costCenterForm.get('nameAr')?.hasError('required') && costCenterForm.get('nameAr')?.touched) {
+                <mat-error translate>الاسم بالعربية مطلوب</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>الاسم بالإنجليزية</mat-label>
+              <input matInput formControlName="nameEn" />
+              @if (costCenterForm.get('nameEn')?.hasError('required') && costCenterForm.get('nameEn')?.touched) {
+                <mat-error translate>الاسم بالإنجليزية مطلوب</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field full-width">
+              <mat-label translate>الوصف</mat-label>
+              <textarea matInput formControlName="description" rows="3"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="isActive" class="form-field">
+              <span translate>نشط</span>
+            </mat-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="closeForm()" class="cancel-btn">
+              <span translate>إلغاء</span>
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="costCenterForm.invalid">
+              <span translate>{{ isEditing() ? 'تحديث' : 'إضافة' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Table Section -->
+  <div class="table-section">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <div class="table-card">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th translate>كود المركز</th>
+                <th translate>الاسم</th>
+                <th translate>الوصف</th>
+                <th translate>الحالة</th>
+                <th translate>تاريخ الإنشاء</th>
+                <th translate>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (center of filteredCostCenters(); track center.id) {
+                <tr>
+                  <td>{{ center.code }}</td>
+                  <td>{{ dir() === 'rtl' ? center.nameAr : center.nameEn }}</td>
+                  <td>{{ center.description || '-' }}</td>
+                  <td>
+                    <mat-chip [class.active]="center.isActive" [class.inactive]="!center.isActive">
+                      {{ center.isActive ? ('نشط' | translate) : ('غير نشط' | translate) }}
+                    </mat-chip>
+                  </td>
+                  <td>{{ formatDate(center.createdAt) }}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button
+                        mat-icon-button
+                        (click)="openEditForm(center)"
+                        class="edit-btn"
+                        [matTooltip]="'تعديل' | translate"
+                      >
+                        <tabler-icon name="edit"></tabler-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        (click)="toggleActive(center)"
+                        class="toggle-btn"
+                        [matTooltip]="(center.isActive ? 'إلغاء التفعيل' : 'تفعيل') | translate"
+                      >
+                        <tabler-icon [name]="center.isActive ? 'eye-off' : 'eye'"></tabler-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        (click)="deleteCostCenter(center)"
+                        class="delete-btn"
+                        [matTooltip]="'حذف' | translate"
+                      >
+                        <tabler-icon name="trash"></tabler-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (filteredCostCenters().length === 0) {
+                <tr>
+                  <td colspan="6" class="text-center no-data-cell">
+                    <span translate>لا توجد بيانات</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>

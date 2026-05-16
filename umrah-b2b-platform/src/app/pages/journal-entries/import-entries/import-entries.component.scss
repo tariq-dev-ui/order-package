@@ -1,0 +1,217 @@
+/**
+ * Import Entries Component Styles
+ */
+
+.import-entries-container {
+  padding: 16px;
+  background: var(--app-bg, #f8f9f7);
+  min-height: 100vh;
+
+  .page-header {
+    margin-bottom: 16px;
+
+    .header-info {
+      .back-btn {
+        color: var(--app-text-secondary, #6b7280);
+        flex-shrink: 0;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: var(--app-primary, #3a472a);
+        }
+
+        .rtl-flip {
+          transform: scaleX(-1);
+        }
+      }
+    }
+  }
+
+  // Copy exact same styles from create-journal-entry excel-upload-section
+  .excel-upload-section {
+    margin-top: 0;
+    padding: 20px;
+    background: var(--app-card-bg, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--app-border, #c6ccb8);
+
+    .upload-header {
+      margin-bottom: 16px;
+
+      h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--app-heading, #3a472a);
+
+        .icon-20 {
+          width: 20px;
+          height: 20px;
+          color: var(--app-primary, #3a472a);
+        }
+      }
+    }
+
+    .upload-content {
+      .upload-info {
+        margin-bottom: 16px;
+        padding: 12px;
+        background: var(--app-bg, #f8f9f7);
+        border-radius: 6px;
+
+        .info-text {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          margin: 0 0 8px 0;
+          font-size: 14px;
+          color: var(--app-text-secondary, #6b7280);
+          line-height: 1.5;
+
+          &:last-of-type {
+            margin-bottom: 12px;
+          }
+
+          .icon-16 {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            color: var(--app-primary, #3a472a);
+          }
+        }
+
+        .template-download {
+          margin-top: 8px;
+          padding-top: 12px;
+          border-top: 1px solid var(--app-border, #c6ccb8);
+
+          .template-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+
+            .icon-18 {
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
+      }
+
+      .upload-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .cost-center-field {
+          flex: 1;
+          min-width: 250px;
+          max-width: 300px;
+        }
+
+        .upload-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          height: 56px;
+          min-width: 180px;
+          padding: 0 20px;
+
+          .icon-18 {
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+
+      .warning-message {
+        margin-top: 8px;
+        padding: 0;
+        color: var(--app-text-secondary, #9ca3af);
+        font-size: 12px;
+        font-style: italic;
+      }
+
+      .uploaded-file-info {
+        margin-top: 16px;
+        padding: 12px 16px;
+        background: rgba(58, 71, 42, 0.08);
+        border: 1px solid rgba(58, 71, 42, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .file-info-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .icon-24 {
+            width: 24px;
+            height: 24px;
+            color: var(--app-primary, #3a472a);
+            flex-shrink: 0;
+          }
+
+          .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .file-name {
+              font-size: 14px;
+              font-weight: 600;
+              color: var(--app-heading, #3a472a);
+            }
+
+            .file-meta {
+              font-size: 12px;
+              color: var(--app-text-secondary, #6b7280);
+            }
+          }
+        }
+
+        .remove-file-btn {
+          color: #dc2626;
+          flex-shrink: 0;
+
+          &:hover {
+            background: rgba(220, 38, 38, 0.1);
+          }
+        }
+      }
+
+      .import-action-btn {
+        width: 100%;
+        margin-top: 16px;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: 600;
+
+        .spinner {
+          margin-inline-end: 8px;
+        }
+      }
+    }
+  }
+}
+
+// Dark mode
+[data-theme="dark"] {
+  .import-entries-container {
+    background: var(--app-bg, #1e2419);
+
+    .instructions-section,
+    .upload-section {
+      background: var(--app-card-bg, #2a3524);
+    }
+  }
+}

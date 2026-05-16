@@ -517,7 +517,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
         { label: 'sidebar.nav.accountStatement',route: '/admin/finance/statement',       icon: 'description' },
         { label: 'sidebar.nav.trialBalance',    route: '/admin/finance/trial-balance',   icon: 'balance' },
         { label: 'sidebar.nav.openingBalance',  route: '/admin/finance/opening-balance', icon: 'account_balance_wallet' },
-        { label: 'sidebar.nav.cashBox',         route: '/admin/finance/cash',            icon: 'point_of_sale' },
+        { label: 'sidebar.nav.financeWallets',  route: '/admin/finance/cash',            icon: 'account_balance_wallet' },
+        { label: 'sidebar.nav.expensesManagement', route: '/admin/finance/expenses-management', icon: 'payments' },
+        { label: 'sidebar.nav.costCenters',     route: '/admin/finance/cost-centers',    icon: 'hub' },
+        { label: 'sidebar.nav.financialReports',route: '/admin/finance/reports',         icon: 'summarize' },
         { label: 'sidebar.nav.accountRouting',  route: '/admin/finance/account-routing', icon: 'alt_route' },
         { label: 'sidebar.nav.incomeStatement', route: '/admin/finance/income-statement',icon: 'trending_up' }
       ]

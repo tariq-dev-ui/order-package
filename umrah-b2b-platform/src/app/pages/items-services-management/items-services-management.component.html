@@ -1,0 +1,207 @@
+<div class="items-services-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="package"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>إدارة الأصناف والخدمات</h1>
+          <p class="page-description" translate>إدارة أنواع الخدمات المقدمة داخل المنشأة</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="addNewServiceType()"
+          class="action-btn"
+        >
+          <tabler-icon name="plus"></tabler-icon>
+          <span translate>إضافة نوع خدمة</span>
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="addNewService()"
+          class="action-btn"
+        >
+          <tabler-icon name="plus"></tabler-icon>
+          <span translate>إضافة خدمة</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Type Tabs -->
+  <div class="service-type-tabs">
+    <div class="tabs-container">
+      <button 
+        class="tab-button"
+        [class.active]="selectedServiceType() === 'all'"
+        (click)="switchServiceType('all')"
+      >
+        <tabler-icon name="apps"></tabler-icon>
+        <span translate>الكل</span>
+      </button>
+      @for (type of serviceTypes(); track type.value) {
+        <button 
+          class="tab-button"
+          [class.active]="selectedServiceType() === type.value"
+          (click)="switchServiceType(type.value)"
+        >
+          <tabler-icon name="package"></tabler-icon>
+          <span>{{ type.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Services Content -->
+  <div class="services-content">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p translate>جاري التحميل...</p>
+      </div>
+    } @else {
+      <!-- Display services grouped by type when "all" is selected, or filtered when specific type is selected -->
+      @if (selectedServiceType() === 'all') {
+        @for (type of serviceTypes(); track type.value) {
+          <div class="service-type-section">
+            <div class="service-type-header">
+              <h2 class="service-type-title">{{ type.label }}</h2>
+            </div>
+            
+            <div class="services-table-container">
+              @if (servicesByType()[type.value].length > 0) {
+                <table mat-table [dataSource]="servicesByType()[type.value]" class="services-table">
+                  <!-- Service Name (Arabic) Column -->
+                  <ng-container matColumnDef="nameAr">
+                    <th mat-header-cell *matHeaderCellDef translate>اسم الخدمة</th>
+                    <td mat-cell *matCellDef="let service">
+                      <div class="service-name-cell">
+                        <div class="service-name-ar">{{ service.nameAr }}</div>
+                        <div class="service-name-en">{{ service.nameEn }}</div>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Purchase Price Column -->
+                  <ng-container matColumnDef="purchasePrice">
+                    <th mat-header-cell *matHeaderCellDef translate>سعر الشراء</th>
+                    <td mat-cell *matCellDef="let service">{{ formatPrice(service.purchasePrice) }}</td>
+                  </ng-container>
+
+                  <!-- Selling Price Column -->
+                  <ng-container matColumnDef="sellingPrice">
+                    <th mat-header-cell *matHeaderCellDef translate>سعر البيع</th>
+                    <td mat-cell *matCellDef="let service" class="selling-price-cell">{{ formatPrice(service.sellingPrice) }}</td>
+                  </ng-container>
+
+                  <!-- Status Column -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef translate>الحالة</th>
+                    <td mat-cell *matCellDef="let service">
+                      <span class="status-chip" [ngClass]="service.isActive ? 'status-active' : 'status-inactive'">
+                        {{ service.isActive ? ('نشط' | translate) : ('غير نشط' | translate) }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Actions Column -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef translate>الإجراءات</th>
+                    <td mat-cell *matCellDef="let service">
+                      <div class="action-btns">
+                        <button mat-icon-button class="action-icon-btn btn-delete" (click)="deleteService(service)" matTooltip="حذف" matTooltipPosition="above"><tabler-icon name="trash"></tabler-icon></button>
+                        <button mat-icon-button class="action-icon-btn btn-edit"   (click)="editService(service)"   matTooltip="تعديل" matTooltipPosition="above"><tabler-icon name="pencil"></tabler-icon></button>
+                        <button mat-icon-button class="action-icon-btn btn-toggle" [class.active]="service.isActive" (click)="toggleStatus(service)" [matTooltip]="service.isActive ? 'تعطيل' : 'تفعيل'" matTooltipPosition="above"><tabler-icon [name]="service.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon></button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="serviceDisplayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: serviceDisplayedColumns;"></tr>
+                </table>
+              } @else {
+                <div class="empty-state">
+                  <tabler-icon name="package-off" class="empty-icon"></tabler-icon>
+                  <p class="empty-text" translate>لا توجد خدمات في هذا النوع</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      } @else {
+        <!-- Display filtered services when specific type is selected -->
+        <div class="service-type-section">
+          <div class="service-type-header">
+            <h2 class="service-type-title">{{ getServiceTypeLabel(selectedServiceType()) }}</h2>
+          </div>
+          
+          <div class="services-table-container">
+            @if (filteredServices().length > 0) {
+              <table mat-table [dataSource]="filteredServices()" class="services-table">
+                <!-- Service Name (Arabic) Column -->
+                <ng-container matColumnDef="nameAr">
+                  <th mat-header-cell *matHeaderCellDef translate>اسم الخدمة</th>
+                  <td mat-cell *matCellDef="let service">
+                    <div class="service-name-cell">
+                      <div class="service-name-ar">{{ service.nameAr }}</div>
+                      <div class="service-name-en">{{ service.nameEn }}</div>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Purchase Price Column -->
+                <ng-container matColumnDef="purchasePrice">
+                  <th mat-header-cell *matHeaderCellDef translate>سعر الشراء</th>
+                  <td mat-cell *matCellDef="let service">{{ formatPrice(service.purchasePrice) }}</td>
+                </ng-container>
+
+                <!-- Selling Price Column -->
+                <ng-container matColumnDef="sellingPrice">
+                  <th mat-header-cell *matHeaderCellDef translate>سعر البيع</th>
+                  <td mat-cell *matCellDef="let service" class="selling-price-cell">{{ formatPrice(service.sellingPrice) }}</td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef translate>الحالة</th>
+                  <td mat-cell *matCellDef="let service">
+                    <span class="status-chip" [ngClass]="service.isActive ? 'status-active' : 'status-inactive'">
+                      {{ service.isActive ? ('نشط' | translate) : ('غير نشط' | translate) }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef translate>الإجراءات</th>
+                  <td mat-cell *matCellDef="let service">
+                    <div class="action-btns">
+                      <button mat-icon-button class="action-icon-btn btn-delete" (click)="deleteService(service)" matTooltip="حذف" matTooltipPosition="above"><tabler-icon name="trash"></tabler-icon></button>
+                      <button mat-icon-button class="action-icon-btn btn-edit"   (click)="editService(service)"   matTooltip="تعديل" matTooltipPosition="above"><tabler-icon name="pencil"></tabler-icon></button>
+                      <button mat-icon-button class="action-icon-btn btn-toggle" [class.active]="service.isActive" (click)="toggleStatus(service)" [matTooltip]="service.isActive ? 'تعطيل' : 'تفعيل'" matTooltipPosition="above"><tabler-icon [name]="service.isActive ? 'toggle-left' : 'toggle-right'"></tabler-icon></button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="serviceDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: serviceDisplayedColumns;"></tr>
+              </table>
+            } @else {
+              <div class="empty-state">
+                <tabler-icon name="package-off" class="empty-icon"></tabler-icon>
+                <p class="empty-text" translate>لا توجد خدمات في هذا النوع</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

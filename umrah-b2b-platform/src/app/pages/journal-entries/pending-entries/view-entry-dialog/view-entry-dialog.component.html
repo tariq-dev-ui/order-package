@@ -1,0 +1,217 @@
+<div class="view-entry-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 translate>تفاصيل القيد</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Entry Information -->
+    <div class="info-section">
+      <h3 class="section-title" translate>معلومات القيد</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label" translate>رقم المستند:</span>
+          <span class="info-value">{{ entry.id.split('-')[entry.id.split('-').length - 1] }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>قيمة القيد:</span>
+          <span class="info-value amount">{{ formatCurrency(entry.totalDebit) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>نوع القيد:</span>
+          <span class="info-value">{{ getEntryTypeName() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>رقم القيد:</span>
+          <span class="info-value">{{ entry.entryNumber }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>عنوان القيد:</span>
+          <span class="info-value">{{ getDescription(entry.description, entry.descriptionEn) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>تاريخ القيد:</span>
+          <span class="info-value">{{ formatDate(entry.date) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>حالة القيد:</span>
+          <mat-chip [color]="entry.status === 'draft' ? 'warn' : 'primary'" class="status-chip">
+            {{ getStatusLabel() }}
+          </mat-chip>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>أُضيف بواسطة:</span>
+          <span class="info-value">{{ entry.createdBy || '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>الرقم المرجعي:</span>
+          <span class="info-value">{{ entry.lines && entry.lines[0] ? entry.lines[0].reference : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>تاريخ الإضافة:</span>
+          <span class="info-value">{{ formatDateTime(entry.createdAt) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>التعديل بواسطة:</span>
+          <span class="info-value">{{ entry.createdBy || '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label" translate>آخر تعديل:</span>
+          <span class="info-value">{{ formatDateTime(entry.createdAt) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry Lines Details -->
+    <div class="details-section">
+      <h3 class="section-title" translate>التفاصيل</h3>
+      <div class="table-container">
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th translate>مدين</th>
+              <th translate>دائن</th>
+              <th translate>الحساب</th>
+              <th translate>مركز التكلفة</th>
+              <th translate>البيان</th>
+              <th translate>أُضيف بواسطة</th>
+              <th translate>تاريخ الإضافة</th>
+              <th translate>التعديل بواسطة</th>
+              <th translate>آخر تعديل</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of entry.lines; track line.id) {
+              <tr>
+                <td class="amount-cell">{{ line.debit > 0 ? formatCurrency(line.debit) : '0.00' }}</td>
+                <td class="amount-cell">{{ line.credit > 0 ? formatCurrency(line.credit) : '0.00' }}</td>
+                <td>{{ line.accountCode }} - {{ dir() === 'rtl' ? line.accountName : line.accountNameEn }}</td>
+                <td>-</td>
+                <td>{{ getDescription(line.description || '', line.descriptionEn || '') }}</td>
+                <td>{{ entry.createdBy || '-' }}</td>
+                <td>{{ formatDateTime(entry.createdAt) }}</td>
+                <td>{{ entry.createdBy || '-' }}</td>
+                <td>{{ formatDateTime(entry.createdAt) }}</td>
+              </tr>
+            }
+            <tr class="total-row">
+              <td class="amount-cell total">{{ formatCurrency(entry.totalDebit) }}</td>
+              <td class="amount-cell total">{{ formatCurrency(entry.totalCredit) }}</td>
+              <td colspan="7" class="total-label" translate>الإجمالي</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="attachments-section">
+      <div class="attachments-header">
+        <h3 class="section-title" translate>المرفقات</h3>
+        @if (!showAttachmentForm()) {
+          <button 
+            mat-raised-button 
+            color="primary"
+            (click)="addAttachment()"
+            class="add-attachment-btn"
+          >
+            <i-tabler name="paperclip" class="icon-18"></i-tabler>
+            <span translate>إضافة مرفق</span>
+          </button>
+        }
+      </div>
+
+      @if (showAttachmentForm()) {
+        <form [formGroup]="attachmentForm" class="attachment-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label translate>عنوان المرفق</mat-label>
+              <input matInput formControlName="title" placeholder="{{ dir() === 'rtl' ? 'مثال: مرفق التحويل' : 'e.g., Transfer Attachment' }}">
+              @if (attachmentForm.get('title')?.hasError('required') && attachmentForm.get('title')?.touched) {
+                <mat-error translate>عنوان المرفق مطلوب</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="file-upload-wrapper">
+              <input 
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                multiple
+                accept="*/*"
+                style="display: none"
+              >
+              <button 
+                mat-stroked-button 
+                (click)="fileInput.click()"
+                type="button"
+                class="upload-btn"
+              >
+                <i-tabler name="upload" class="icon-18"></i-tabler>
+                <span translate>اختر الملفات</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="files-list-section">
+
+          @if (selectedFiles().length > 0) {
+            <div class="selected-files">
+              @for (file of selectedFiles(); track file.name) {
+                <div class="file-item">
+                  <i-tabler name="file" class="icon-16"></i-tabler>
+                  <span class="file-name">{{ file.name }}</span>
+                  <button 
+                    mat-icon-button 
+                    (click)="removeFile(file)"
+                    type="button"
+                    class="remove-btn"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-files" translate>لم يتم اختيار ملفات</p>
+          }
+        </div>
+
+          <div class="form-actions">
+            <button mat-button (click)="cancelAttachment()" type="button">
+              <span translate>إلغاء</span>
+            </button>
+            <button 
+              mat-raised-button 
+              color="primary"
+              (click)="saveAttachment()"
+              [disabled]="attachmentForm.invalid || selectedFiles().length === 0"
+              type="button"
+            >
+              <span translate>حفظ</span>
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="empty-attachments">
+          <i-tabler name="file-off" class="icon-32"></i-tabler>
+          <p translate>لم يتم تحميل أي مرفقات</p>
+        </div>
+      }
+    </div>
+  </mat-dialog-content>
+
+  <!-- Dialog Actions -->
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="close()">
+      <span translate>إغلاق</span>
+    </button>
+    <button mat-raised-button color="primary">
+      <i-tabler name="printer" class="icon-18"></i-tabler>
+      <span translate>طباعة</span>
+    </button>
+  </mat-dialog-actions>
+</div>

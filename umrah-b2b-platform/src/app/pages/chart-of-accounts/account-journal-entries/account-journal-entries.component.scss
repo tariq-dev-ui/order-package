@@ -1,0 +1,331 @@
+/**
+ * Account Journal Entries Component Styles
+ */
+
+.journal-entries-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .account-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--app-border, #c6ccb8);
+    background: var(--app-bg, #f8f9f7);
+
+    .account-info {
+      .account-title-section {
+        margin-bottom: 16px;
+
+        .account-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: var(--app-heading, #3a472a);
+          margin: 0 0 4px 0;
+        }
+
+        .account-code {
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--app-accent, #8c7b3d);
+        }
+      }
+
+      .account-balance-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        padding: 16px;
+        background: var(--app-card-bg, #ffffff);
+        border-radius: 6px;
+        border: 1px solid var(--app-border, #c6ccb8);
+
+        .balance-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          &.total {
+            padding-top: 12px;
+            border-top: 2px solid var(--app-accent, #8c7b3d);
+          }
+
+          .balance-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--app-text-secondary, #6b7280);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .balance-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--app-text-primary, #2a3524);
+
+            &.debit {
+              color: #1976d2;
+            }
+
+            &.credit {
+              color: #388e3c;
+            }
+
+            &.positive {
+              color: var(--color-confirmed, #3a472a);
+            }
+
+            &.negative {
+              color: #d32f2f;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .filters-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--app-border, #c6ccb8);
+    background: var(--app-card-bg, #ffffff);
+
+    .filters-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .filter-field {
+        flex: 1;
+        min-width: 150px;
+
+        &.search-field {
+          flex: 2;
+          min-width: 200px;
+        }
+      }
+
+      .clear-filters-btn,
+      .export-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .table-section {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--app-text-secondary, #6b7280);
+
+      .empty-icon {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--app-text-primary, #2a3524);
+        margin: 0 0 8px 0;
+      }
+
+      p {
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+
+    .entries-table {
+      width: 100%;
+      background: var(--app-card-bg, #ffffff);
+
+      th {
+        font-weight: 700;
+        color: var(--app-heading, #3a472a);
+        background: var(--app-bg, #f8f9f7);
+      }
+
+      td {
+        color: var(--app-text-primary, #2a3524);
+      }
+
+      .entry-row {
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: var(--sidebar-hover-bg, #edf0eb);
+        }
+      }
+
+      .description-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        .description-text {
+          font-size: 14px;
+          color: var(--app-text-primary, #2a3524);
+        }
+
+        .reference-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 12px;
+          background: var(--app-bg, #f8f9f7);
+          color: var(--app-text-secondary, #6b7280);
+          width: fit-content;
+
+          &[data-type="booking"] {
+            background: #e3f2fd;
+            color: #1565c0;
+          }
+
+          &[data-type="invoice"] {
+            background: #f3e5f5;
+            color: #7b1fa2;
+          }
+
+          &[data-type="payment"] {
+            background: #e8f5e9;
+            color: #2e7d32;
+          }
+
+          &[data-type="purchase"] {
+            background: #fff3e0;
+            color: #e65100;
+          }
+
+          &[data-type="voucher"] {
+            background: #fce4ec;
+            color: #c2185b;
+          }
+        }
+      }
+
+      .amount-cell {
+        font-family: 'Inter', 'Tajawal', sans-serif;
+        font-weight: 600;
+        text-align: left;
+        direction: ltr;
+
+        &.debit {
+          color: #1976d2;
+        }
+
+        &.credit {
+          color: #388e3c;
+        }
+
+        &.balance {
+          font-weight: 700;
+
+          &.positive {
+            color: var(--color-confirmed, #3a472a);
+          }
+
+          &.negative {
+            color: #d32f2f;
+          }
+        }
+
+        .zero-amount {
+          color: var(--app-text-secondary, #6b7280);
+          opacity: 0.5;
+        }
+      }
+
+      .entry-number {
+        font-family: 'Inter', 'Tajawal', sans-serif;
+        font-weight: 600;
+        color: var(--app-accent, #8c7b3d);
+      }
+
+      .reference-type {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        background: var(--app-bg, #f8f9f7);
+        color: var(--app-text-secondary, #6b7280);
+
+        &[data-type="booking"] {
+          background: #e3f2fd;
+          color: #1565c0;
+        }
+
+        &[data-type="invoice"] {
+          background: #f3e5f5;
+          color: #7b1fa2;
+        }
+
+        &[data-type="payment"] {
+          background: #e8f5e9;
+          color: #2e7d32;
+        }
+
+        &[data-type="purchase"] {
+          background: #fff3e0;
+          color: #e65100;
+        }
+
+        &[data-type="voucher"] {
+          background: #fce4ec;
+          color: #c2185b;
+        }
+      }
+
+      .no-reference {
+        color: var(--app-text-secondary, #6b7280);
+        opacity: 0.5;
+      }
+    }
+
+    mat-paginator {
+      margin-top: 16px;
+      background: var(--app-card-bg, #ffffff);
+    }
+  }
+}
+
+// Dark Mode Support
+:host-context(.dark-theme) {
+  .journal-entries-container {
+    .account-header {
+      background: var(--app-bg-dark, #1e2419);
+
+      .account-balance-section {
+        background: var(--app-card-bg-dark, #2b3424);
+        border-color: var(--app-border-dark, #3a472a);
+      }
+    }
+
+    .filters-section {
+      background: var(--app-card-bg-dark, #2b3424);
+    }
+
+    .entries-table {
+      background: var(--app-card-bg-dark, #2b3424);
+
+      th {
+        background: var(--app-bg-dark, #1e2419);
+      }
+    }
+  }
+}

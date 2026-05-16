@@ -1,0 +1,103 @@
+<div class="add-service-type-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title" translate>إدارة أنواع الخدمات</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <tabler-icon name="x"></tabler-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div class="dialog-content">
+    <!-- Existing Types Section -->
+    @if (existingTypesList().length > 0) {
+      <div class="existing-types-section">
+        <h3 class="section-title" translate>الأنواع الموجودة</h3>
+        <div class="types-cards">
+          @for (type of existingTypesList(); track type.value) {
+            <div class="type-card">
+              <div class="type-card-content">
+                <div class="type-info">
+                  <div class="type-name-ar">{{ type.label }}</div>
+                  <div class="type-name-en">{{ type.labelEn }}</div>
+                </div>
+                <div class="type-actions">
+                  <button 
+                    mat-icon-button 
+                    (click)="editType(type)"
+                    class="edit-btn"
+                    [matTooltip]="'تعديل' | translate">
+                    <tabler-icon name="edit"></tabler-icon>
+                  </button>
+                  <button 
+                    mat-icon-button 
+                    (click)="deleteType(type)"
+                    class="delete-btn"
+                    [matTooltip]="'حذف' | translate">
+                    <tabler-icon name="trash"></tabler-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Add/Edit Form Section -->
+    <div class="form-section">
+      <h3 class="section-title">
+        {{ editingType ? ('تعديل نوع الخدمة' | translate) : ('إضافة نوع خدمة جديد' | translate) }}
+      </h3>
+      <form [formGroup]="serviceTypeForm">
+        <!-- Service Type Name (Arabic) -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>اسم النوع (عربي)</mat-label>
+          <input matInput formControlName="nameAr" placeholder="أدخل اسم النوع بالعربية">
+          @if (serviceTypeForm.get('nameAr')?.hasError('required') && serviceTypeForm.get('nameAr')?.touched) {
+            <mat-error translate>هذا الحقل مطلوب</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Service Type Name (English) -->
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>اسم النوع (إنجليزي)</mat-label>
+          <input matInput formControlName="nameEn" placeholder="Enter service type name in English">
+          @if (serviceTypeForm.get('nameEn')?.hasError('required') && serviceTypeForm.get('nameEn')?.touched) {
+            <mat-error translate>هذا الحقل مطلوب</mat-error>
+          }
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="dialog-actions">
+    @if (editingType) {
+      <button mat-button (click)="cancelEdit()" class="cancel-btn" translate>إلغاء التعديل</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onUpdate()"
+        class="save-btn"
+        [disabled]="!serviceTypeForm.valid"
+        translate
+      >
+        تحديث
+      </button>
+    } @else {
+      <button mat-button (click)="onCancel()" class="cancel-btn" translate>إلغاء</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSave()"
+        class="save-btn"
+        [disabled]="!serviceTypeForm.valid"
+        translate
+      >
+        إضافة
+      </button>
+    }
+  </div>
+</div>
+

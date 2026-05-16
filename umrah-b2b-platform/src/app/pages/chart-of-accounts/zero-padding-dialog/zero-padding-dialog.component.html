@@ -1,0 +1,57 @@
+<div class="zpd">
+
+  <!-- Header -->
+  <div class="zpd__header">
+    <div class="zpd__badge" [attr.data-type]="data.categoryType">+0</div>
+    <div class="zpd__info">
+      <h2 class="zpd__title" translate>إضافة خانة صفرية</h2>
+      <p class="zpd__category">{{ data.categoryLabel }}</p>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="zpd__body">
+    <div class="zpd__desc">
+      <p translate>سيتم إلحاق الرقم <strong>"0"</strong> بنهاية جميع أرقام حسابات هذا التصنيف.</p>
+      <p class="zpd__warn" translate>هذا الإجراء يعدّل بيانات الأرقام — راجع المعاينة قبل التأكيد.</p>
+    </div>
+
+    <!-- Preview table -->
+    <div class="zpd__preview">
+      <div class="zpd__preview-head">
+        <span translate>الرقم الحالي</span>
+        <span class="zpd__arrow" aria-hidden="true">←</span>
+        <span translate>الرقم الجديد</span>
+        <span translate>اسم الحساب</span>
+      </div>
+      <div class="zpd__preview-list">
+        @for (row of data.preview.slice(0, 12); track row.oldCode) {
+          <div class="zpd__row" [style.padding-inline-start.px]="row.depth * 14 + 4">
+            <code class="zpd__old">{{ row.oldCode }}</code>
+            <span class="zpd__arrow" aria-hidden="true">→</span>
+            <code class="zpd__new">{{ row.newCode }}</code>
+            <span class="zpd__name">{{ row.name }}</span>
+          </div>
+        }
+        @if (data.preview.length > 12) {
+          <div class="zpd__more">
+            <span>... و {{ data.preview.length - 12 }} <span translate>حساب آخر</span></span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="zpd__footer">
+    <button class="zpd__btn zpd__btn--cancel" type="button"
+      (click)="dialogRef.close(false)" translate>
+      إلغاء
+    </button>
+    <button class="zpd__btn zpd__btn--confirm" type="button"
+      (click)="dialogRef.close(true)" translate>
+      تأكيد التطبيق
+    </button>
+  </div>
+
+</div>

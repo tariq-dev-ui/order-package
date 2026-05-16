@@ -1,0 +1,122 @@
+<div class="add-account-dialog" [dir]="dir()">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">{{ getDialogTitle() }}</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="addAccountForm" class="add-account-form">
+
+      <!-- Row 0: الحساب الأب -->
+      @if (isParentLocked) {
+        <!-- Locked: parent was pre-selected from section header — display only, no editing -->
+        <div class="parent-locked">
+          <span class="parent-locked__label" translate>الحساب الأب</span>
+          <div class="parent-locked__chip">
+            <code class="parent-opt__code">{{ lockedParent!.code }}</code>
+            <span class="parent-opt__sep">—</span>
+            <span class="parent-locked__name">{{ lockedParent!.name }}</span>
+            <mat-icon class="parent-locked__lock">lock</mat-icon>
+          </div>
+        </div>
+      } @else {
+        <!-- Free: searchable autocomplete -->
+        <mat-form-field appearance="outline" class="form-field form-field--full">
+          <mat-label translate>الحساب الأب</mat-label>
+          <input
+            matInput
+            formControlName="parentAccount"
+            [matAutocomplete]="parentAuto"
+            (input)="onParentSearch($any($event.target).value)"
+            [placeholder]="'ابحث برقم أو اسم الحساب...' | translate"
+          />
+          <mat-icon matSuffix class="parent-suffix-icon">account_tree</mat-icon>
+          <mat-autocomplete
+            #parentAuto="matAutocomplete"
+            [displayWith]="displayParentAccount"
+            (optionSelected)="onParentSelected()"
+          >
+            @if (filteredParentAccounts().length > 0) {
+              @for (account of filteredParentAccounts(); track account.id) {
+                <mat-option [value]="account" class="parent-opt">
+                  <div class="parent-opt__row">
+                    <code class="parent-opt__code">{{ account.code }}</code>
+                    <span class="parent-opt__sep">—</span>
+                    <span class="parent-opt__name">{{ account.name }}</span>
+                    <span class="parent-opt__badges">
+                      @if (account.isParent) {
+                        <span class="parent-opt__tag parent-opt__tag--branch">رئيسي</span>
+                      }
+                      <span class="parent-opt__level">م{{ account.level }}</span>
+                    </span>
+                  </div>
+                </mat-option>
+              }
+            } @else {
+              <mat-option disabled class="parent-opt parent-opt--empty">
+                <span translate>لا توجد نتائج</span>
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      }
+
+      <!-- Row 1: الإسم (عربي) والإسم بالإنجليزية -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>الإسم</mat-label>
+          <input matInput formControlName="name"
+            placeholder="{{ 'أدخل اسم الحساب بالعربية' | translate }}">
+          @if (addAccountForm.get('name')?.hasError('required') && addAccountForm.get('name')?.touched) {
+            <mat-error translate>الإسم مطلوب</mat-error>
+          }
+          @if (addAccountForm.get('name')?.hasError('maxlength') && addAccountForm.get('name')?.touched) {
+            <mat-error translate>الإسم يجب ألا يتجاوز 200 حرف</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>الإسم بالإنجليزية</mat-label>
+          <input matInput formControlName="nameEn"
+            placeholder="{{ 'Enter account name in English' | translate }}">
+          @if (addAccountForm.get('nameEn')?.hasError('required') && addAccountForm.get('nameEn')?.touched) {
+            <mat-error translate>الإسم بالإنجليزية مطلوب</mat-error>
+          }
+          @if (addAccountForm.get('nameEn')?.hasError('maxlength') && addAccountForm.get('nameEn')?.touched) {
+            <mat-error translate>الإسم بالإنجليزية يجب ألا يتجاوز 200 حرف</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Row 2: ملاحظات والرقم الضريبي -->
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>ملاحظات</mat-label>
+          <input matInput formControlName="notes"
+            placeholder="{{ 'أدخل أي ملاحظات (اختياري)' | translate }}">
+          @if (addAccountForm.get('notes')?.hasError('maxlength') && addAccountForm.get('notes')?.touched) {
+            <mat-error translate>الملاحظات يجب ألا تتجاوز 500 حرف</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label translate>الرقم الضريبي</mat-label>
+          <input matInput formControlName="taxNumber"
+            placeholder="{{ 'أدخل الرقم الضريبي (اختياري)' | translate }}">
+          @if (addAccountForm.get('taxNumber')?.hasError('maxlength') && addAccountForm.get('taxNumber')?.touched) {
+            <mat-error translate>الرقم الضريبي يجب ألا يتجاوز 100 حرف</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" translate>إلغاء</button>
+    <button mat-raised-button color="primary" (click)="onSave()"
+      [disabled]="addAccountForm.invalid" translate>حفظ</button>
+  </mat-dialog-actions>
+
+</div>

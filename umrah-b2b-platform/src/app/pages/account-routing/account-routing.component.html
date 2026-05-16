@@ -1,0 +1,169 @@
+<div class="account-routing-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="route"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title" translate>توجيه الحسابات</h1>
+          <p class="page-description" translate>ربط وتحديد الحسابات الرئيسية المستخدمة داخل النظام وتوجيه القيود المحاسبية تلقائياً</p>
+        </div>
+      </div>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="saving() || !hasChanges()"
+        (click)="save()"
+        class="action-btn"
+      >
+        @if (saving()) {
+          <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+        } @else {
+          <tabler-icon name="device-floppy"></tabler-icon>
+        }
+        <span translate>حفظ التوجيه</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="routing-section">
+    <p class="section-intro" translate>
+      اختر من شجرة الحسابات المعتمدة الحساب المناسب لكل نوع من العمليات. يتم تطبيق التوجيه تلقائياً على القيود المحاسبية.
+    </p>
+
+    <div class="routing-table-wrapper">
+      <table class="routing-table">
+        <thead>
+          <tr>
+            <th class="col-type" translate>نوع التوجيه</th>
+            <th class="col-desc" translate>الوصف</th>
+            <th class="col-account" translate>الحساب المحدد</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- حساب الموردين الآجل -->
+          <tr>
+            <td class="col-type">
+              <div class="type-cell">
+                <tabler-icon name="truck-delivery" class="type-icon"></tabler-icon>
+                <span translate>حساب الموردين الآجل</span>
+              </div>
+            </td>
+            <td class="col-desc">
+              <span translate>الحساب الذي تُرحّل إليه أرصدة فواتير الشراء أو الالتزامات تجاه الموردين.</span>
+            </td>
+            <td class="col-account">
+              <mat-form-field appearance="outline" class="account-select-field">
+                <mat-select
+                  [ngModel]="suppliersDeferredAccountId()"
+                  (ngModelChange)="suppliersDeferredAccountId.set($event)"
+                  (openedChange)="onSelectPanelClosed($event)"
+                >
+                  <mat-option [value]="''">
+                    <span translate>— لا يوجد —</span>
+                  </mat-option>
+                  <mat-option>
+                    <ngx-mat-select-search
+                      [formControl]="accountSearchControl"
+                      [placeholderLabel]="'ابحث هنا...' | translate"
+                      [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+                    ></ngx-mat-select-search>
+                  </mat-option>
+                  @for (account of filteredAccounts(); track account.id) {
+                    <mat-option [value]="account.id">
+                      {{ accountLabel(account) }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>
+
+          <!-- حساب العملاء -->
+          <tr>
+            <td class="col-type">
+              <div class="type-cell">
+                <tabler-icon name="users" class="type-icon"></tabler-icon>
+                <span translate>حساب العملاء</span>
+              </div>
+            </td>
+            <td class="col-desc">
+              <span translate>الحساب المستخدم لتسجيل الذمم المدينة الناتجة عن المبيعات الآجلة.</span>
+            </td>
+            <td class="col-account">
+              <mat-form-field appearance="outline" class="account-select-field">
+                <mat-select
+                  [ngModel]="customersAccountId()"
+                  (ngModelChange)="customersAccountId.set($event)"
+                  (openedChange)="onSelectPanelClosed($event)"
+                >
+                  <mat-option [value]="''">
+                    <span translate>— لا يوجد —</span>
+                  </mat-option>
+                  <mat-option>
+                    <ngx-mat-select-search
+                      [formControl]="accountSearchControl"
+                      [placeholderLabel]="'ابحث هنا...' | translate"
+                      [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+                    ></ngx-mat-select-search>
+                  </mat-option>
+                  @for (account of filteredAccounts(); track account.id) {
+                    <mat-option [value]="account.id">
+                      {{ accountLabel(account) }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>
+
+          <!-- حساب مبيعات الحجوزات -->
+          <tr>
+            <td class="col-type">
+              <div class="type-cell">
+                <tabler-icon name="calendar-dollar" class="type-icon"></tabler-icon>
+                <span translate>حساب مبيعات الحجوزات</span>
+              </div>
+            </td>
+            <td class="col-desc">
+              <span translate>الحساب الذي تُسجل فيه المبالغ الناتجة عن الحجوزات أو الدفعات المقدّمة المرتبطة بالبيع.</span>
+            </td>
+            <td class="col-account">
+              <mat-form-field appearance="outline" class="account-select-field">
+                <mat-select
+                  [ngModel]="reservationsSalesAccountId()"
+                  (ngModelChange)="reservationsSalesAccountId.set($event)"
+                  (openedChange)="onSelectPanelClosed($event)"
+                >
+                  <mat-option [value]="''">
+                    <span translate>— لا يوجد —</span>
+                  </mat-option>
+                  <mat-option>
+                    <ngx-mat-select-search
+                      [formControl]="accountSearchControl"
+                      [placeholderLabel]="'ابحث هنا...' | translate"
+                      [noEntriesFoundLabel]="'لا توجد نتائج' | translate"
+                    ></ngx-mat-select-search>
+                  </mat-option>
+                  @for (account of filteredAccounts(); track account.id) {
+                    <mat-option [value]="account.id">
+                      {{ accountLabel(account) }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    @if (hasChanges()) {
+      <div class="unsaved-hint">
+        <tabler-icon name="info-circle"></tabler-icon>
+        <span translate>يوجد تغييرات غير محفوظة. اضغط "حفظ التوجيه" لتطبيقها.</span>
+      </div>
+    }
+  </div>
+</div>

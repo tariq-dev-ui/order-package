@@ -1,0 +1,170 @@
+.add-service-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--app-border, #c6ccb8);
+    flex-shrink: 0;
+
+    .dialog-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--app-heading, #3a472a);
+    }
+
+    .close-btn {
+      color: var(--app-text-secondary, #6b7280);
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
+  .dialog-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .form-field {
+        width: 100%;
+      }
+
+      .currency-suffix {
+        color: var(--app-text-secondary, #6b7280);
+        font-size: 14px;
+        margin-right: 8px;
+      }
+    }
+
+    // Existing Services Section
+    .existing-services-section {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--app-bg, #f8f9f7);
+      border-radius: 8px;
+      border: 1px solid var(--app-border, #c6ccb8);
+
+      .section-title {
+        margin: 0 0 1rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--app-heading, #3a472a);
+      }
+
+      .services-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 200px;
+        overflow-y: auto;
+
+        .service-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem;
+          background: white;
+          border-radius: 6px;
+          border: 1px solid var(--app-border, #c6ccb8);
+          gap: 1rem;
+
+          .service-info {
+            flex: 1;
+            min-width: 0;
+
+            .service-name-ar {
+              font-weight: 600;
+              color: var(--app-heading, #3a472a);
+              font-size: 0.875rem;
+              margin-bottom: 0.25rem;
+            }
+
+            .service-name-en {
+              font-size: 0.75rem;
+              color: var(--app-text-secondary, #6b7280);
+            }
+          }
+
+          .service-prices {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            white-space: nowrap;
+
+            .price-label {
+              font-size: 0.75rem;
+              color: var(--app-text-secondary, #6b7280);
+            }
+
+            .price-value {
+              font-size: 0.8125rem;
+              font-weight: 600;
+
+              &.purchase {
+                color: var(--app-text-primary, #2e3623);
+              }
+
+              &.selling {
+                color: var(--app-heading, #3a472a);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--app-border, #c6ccb8);
+    background: var(--app-bg, #f8f9f7);
+    flex-shrink: 0;
+
+    .cancel-btn {
+      color: var(--app-text-secondary, #6b7280);
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    .save-btn {
+      background: var(--app-heading, #3a472a);
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background: var(--color-assigned, #627b47);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+}
+

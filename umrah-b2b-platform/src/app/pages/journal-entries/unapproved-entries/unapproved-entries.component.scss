@@ -1,0 +1,287 @@
+.unapproved-entries-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px 24px;
+}
+
+.unapproved-entries-container .page-header {
+  margin-bottom: 4px;
+
+  .header-info .back-btn {
+    color: var(--app-primary, #3a472a);
+  }
+}
+
+.search-section {
+  background: var(--app-card-bg, #ffffff);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .section-title {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--app-heading, #2a3524);
+  }
+
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: flex-end;
+
+      .form-field {
+        width: 100%;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-start;
+
+        button {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+      }
+    }
+  }
+}
+
+.table-section {
+  .table-card {
+    background: var(--app-card-bg, #ffffff);
+    border-radius: 8px;
+    padding: 12px 0 8px;
+    border: 1px solid var(--app-border, #d6dbce);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    .entries-table {
+      width: 100%;
+
+      .mat-column-select,
+      .select-header-cell,
+      .select-cell {
+        width: 48px;
+        max-width: 48px;
+        padding-inline: 8px;
+        text-align: center;
+
+        mat-checkbox {
+          transform: scale(0.9);
+        }
+      }
+
+      .data-row {
+        cursor: pointer;
+
+        &:hover {
+          background: var(--app-hover, #edf0eb);
+        }
+
+        td.mat-mdc-cell {
+          font-size: 13px;
+          color: var(--app-text, #313b2d);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        &:nth-child(even) td.mat-mdc-cell {
+          background: rgba(232, 237, 229, 0.35);
+        }
+      }
+
+      // محاذاة رقم المستند و رقم القيد إلى الوسط قليلاً
+      .mat-column-documentNumber,
+      .mat-column-entryNumber {
+        text-align: center;
+      }
+
+      // محاذاة قيمة القيد في الوسط وإبرازها
+      .mat-column-totalAmount {
+        text-align: center;
+        font-weight: 600;
+        color: var(--app-primary, #3a472a);
+      }
+
+      // محاذاة التاريخ
+      .mat-column-date {
+        white-space: nowrap;
+        color: var(--app-muted, #6c757d);
+      }
+
+      .mat-column-actions {
+        text-align: center;
+        width: 140px;
+      }
+
+      .mat-column-status {
+        text-align: center;
+      }
+    }
+
+    .table-footer {
+      padding: 8px 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .items-count {
+        font-size: 13px;
+        color: var(--app-muted, #6c757d);
+
+        strong {
+          margin-inline-start: 4px;
+          color: var(--app-heading, #2a3524);
+        }
+      }
+
+      .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .approve-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding-inline: 14px;
+
+          .icon-18 {
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        .export-buttons-group {
+          display: inline-flex;
+          align-items: center;
+          gap: 0;
+          background: var(--app-card-bg);
+          border: 1px solid var(--app-border);
+          border-radius: 0.375rem;
+          padding: 0;
+          overflow: hidden;
+
+          .action-btn--export {
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            padding: 0.5rem 0.75rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+
+            &:not(:last-child) {
+              border-inline-end: 1px solid var(--app-border);
+            }
+
+            &:first-child {
+              border-start-start-radius: 0.375rem;
+              border-end-start-radius: 0.375rem;
+            }
+
+            &:last-child {
+              border-start-end-radius: 0.375rem;
+              border-end-end-radius: 0.375rem;
+            }
+
+            tabler-icon {
+              width: 18px;
+              height: 18px;
+              color: var(--app-text-primary);
+              transition: color 0.2s ease;
+              flex-shrink: 0;
+
+              svg {
+                fill: currentColor;
+                stroke: currentColor;
+              }
+            }
+
+            span {
+              font-size: 0.875rem;
+              font-weight: 500;
+              color: var(--app-text-primary);
+            }
+
+            &:hover {
+              background: var(--app-heading);
+              span {
+                color: white;
+              }
+
+              tabler-icon {
+                color: white;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--app-muted, #6c757d);
+  }
+}
+
+/* تخصيص نص Paginator ليظهر "عدد العناصر" بدلاً من Items per page */
+.mat-mdc-paginator-page-size-label {
+  font-size: 0; /* إخفاء النص الأصلي */
+
+  &::after {
+    content: 'عدد العناصر';
+    font-size: 13px;
+    color: var(--app-muted, #6c757d);
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-unapproved {
+  background: rgba(140, 123, 61, 0.08); // gold-ish
+  color: var(--app-accent, #8c7b3d);
+  border: 1px solid rgba(140, 123, 61, 0.25);
+}
+
+.actions-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+
+  .action-btn {
+    width: 30px;
+    height: 30px;
+
+    mat-icon {
+      font-size: 17px;
+    }
+  }
+}
+
+.rtl-flip {
+  transform: scaleX(-1);
+}
+
