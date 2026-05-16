@@ -149,6 +149,13 @@
       </div>
       
       <div class="export-buttons">
+        <app-documentation-status-switcher
+          [activeStatus]="documentationFilter()"
+          [pendingCount]="docsPendingCount()"
+          [documentedCount]="docsDocumentedCount()"
+          (statusChange)="documentationFilter.set($event)"
+        ></app-documentation-status-switcher>
+        
         <button
           mat-stroked-button
           (click)="exportToPDF()"

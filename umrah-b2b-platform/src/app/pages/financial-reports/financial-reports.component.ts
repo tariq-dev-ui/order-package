@@ -7,6 +7,8 @@ import { TablerIconComponent } from 'angular-tabler-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MockDataService } from 'src/app/services/mock-data.service';
+import { OperationsMockService } from 'src/app/features/admin/operations/operations-mock.service';
+import { DocumentationStatusSwitcherComponent } from 'src/app/features/admin/operations/components/documentation-status-switcher/documentation-status-switcher.component';
 import { AppSnackBarService } from 'src/app/services/app-snack-bar.service';
 import { ChartOfAccountsService } from 'src/app/services/chart-of-accounts.service';
 import { JournalEntriesService } from 'src/app/services/journal-entries.service';
@@ -76,6 +78,7 @@ interface CostCenter {
     TablerIconComponent,
     MatTableModule,
     NgxMatSelectSearchModule,
+    DocumentationStatusSwitcherComponent,
   ],
   templateUrl: './financial-reports.component.html',
   styleUrl: './financial-reports.component.scss',
@@ -90,6 +93,9 @@ export class FinancialReportsComponent implements OnInit {
   private journalEntriesService = inject(JournalEntriesService);
   private costCentersService = inject(CostCentersService);
   private coreService = inject(CoreService);
+  private operationsMock = inject(OperationsMockService);
+  // reference to component to satisfy compiler usage checks
+  private readonly _docSwitcher = DocumentationStatusSwitcherComponent;
 
   isLoading = signal(false);
   accountStatements = signal<AccountStatement[]>([]);
@@ -121,6 +127,11 @@ export class FinancialReportsComponent implements OnInit {
   // Options
   options = signal(this.coreService.getOptions());
   dir = computed(() => this.options().dir);
+
+  // documentation switcher state for financial window summary
+  documentationFilter = signal<'pending' | 'documented'>('pending');
+  docsPendingCount = computed(() => this.operationsMock ? this.operationsMock['voucherDetails']().map(d => d.Voucher).filter(v => (v.documentationStatus ?? 'pending') === 'pending').length : 0);
+  docsDocumentedCount = computed(() => this.operationsMock ? this.operationsMock['voucherDetails']().map(d => d.Voucher).filter(v => v.documentationStatus === 'documented').length : 0);
 
   constructor() {
     this.coreService.notify.subscribe(() => {

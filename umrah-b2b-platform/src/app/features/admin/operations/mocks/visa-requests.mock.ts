@@ -22,6 +22,7 @@ export const mockVisaRequests: OperationVoucherDetails[] = [
       AgentID: 503,
       AgentName: 'Rahma Group',
       SeroPackageRequestID: 9003,
+      documentationStatus: 'documented',
     } satisfies VisaRequest,
     VisaVouchers: [
       {
@@ -56,6 +57,7 @@ export const mockVisaRequests: OperationVoucherDetails[] = [
       AgentID: 501,
       AgentName: 'Al Noor Travel',
       SeroPackageRequestID: 9004,
+      documentationStatus: 'pending',
     } satisfies VisaRequest,
     VisaVouchers: [
       {

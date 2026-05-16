@@ -22,6 +22,7 @@ export const mockCateringRequests: OperationVoucherDetails[] = [
       AgentID: 503,
       AgentName: 'Rahma Group',
       SeroPackageRequestID: 9007,
+      documentationStatus: 'pending',
     } satisfies CateringRequest,
     CateringVouchers: [
       {
@@ -59,6 +60,7 @@ export const mockCateringRequests: OperationVoucherDetails[] = [
       AgentID: 501,
       AgentName: 'Al Noor Travel',
       SeroPackageRequestID: 9008,
+      documentationStatus: 'documented',
     } satisfies CateringRequest,
     CateringVouchers: [
       {

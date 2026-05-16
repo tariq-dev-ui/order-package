@@ -20,6 +20,7 @@ export interface OperationVoucher {
   AgentName: string;
   SeroPackageRequestID: number;
   IsDeleted?: boolean;
+  documentationStatus?: 'pending' | 'documented';
 }
 
 export interface HotelVoucherLine {

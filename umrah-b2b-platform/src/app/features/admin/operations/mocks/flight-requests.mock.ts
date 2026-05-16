@@ -22,6 +22,7 @@ export const mockFlightRequests: OperationVoucherDetails[] = [
       AgentID: 504,
       AgentName: 'Mawasim Agency',
       SeroPackageRequestID: 9009,
+      documentationStatus: 'documented',
     } satisfies FlightRequest,
     TicketVouchers: [
       {
@@ -65,6 +66,7 @@ export const mockFlightRequests: OperationVoucherDetails[] = [
       AgentID: 502,
       AgentName: 'Safwa Tours',
       SeroPackageRequestID: 9010,
+      documentationStatus: 'pending',
     } satisfies FlightRequest,
     TicketVouchers: [
       {

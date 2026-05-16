@@ -2,6 +2,14 @@
   <loading-spinner [isLoading]="isLoading()" [message]="loadingMessage()" />
   <div class="table-wrapper" style="background-color: #F9F7F1; border: 1px solid #D8DECF; border-radius: 8px;">
     <div class="table-content">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px;">
+        <app-documentation-status-switcher
+          [activeStatus]="selectedDocumentationStatus()"
+          [pendingCount]="pendingCount()"
+          [documentedCount]="documentedCount()"
+          (statusChange)="selectedDocumentationStatus.set($event)"
+        ></app-documentation-status-switcher>
+      </div>
       <table class="voucher-table">
         <thead>
           <tr>
@@ -15,10 +23,8 @@
           </tr>
         </thead>
         <tbody>
-          @for (typeId of typeIds; track typeId) {
-            @for (voucher of vouchers(); track voucher.RequestVoucherID) {
-              @if (voucher?.RequestVoucherTypeID === typeId) {
-                <tr class="table-row">
+          @for (voucher of filteredVouchers(); track voucher.RequestVoucherID) {
+            <tr class="table-row">
                   <td class="table-cell type-cell">
                     <div class="type-wrapper">
                       @switch (voucher.RequestVoucherTypeID) {
@@ -90,8 +96,6 @@
                       (actionSelected)="handleActionSelection($event, voucher)" />
                   </td>
                 </tr>
-              }
-            }
           }
         </tbody>
       </table>

@@ -22,6 +22,7 @@ export const mockHotelBookings: OperationVoucherDetails[] = [
       AgentID: 501,
       AgentName: 'Al Noor Travel',
       SeroPackageRequestID: 9001,
+      documentationStatus: 'pending',
     } satisfies HotelBooking,
     HotelVouchers: [
       {
@@ -80,6 +81,7 @@ export const mockHotelBookings: OperationVoucherDetails[] = [
       AgentID: 502,
       AgentName: 'Safwa Tours',
       SeroPackageRequestID: 9002,
+      documentationStatus: 'documented',
     } satisfies HotelBooking,
     HotelVouchers: [
       {
