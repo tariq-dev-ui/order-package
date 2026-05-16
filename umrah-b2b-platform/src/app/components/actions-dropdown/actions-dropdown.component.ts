@@ -1,6 +1,7 @@
-import { Component, input, output, signal, computed, ChangeDetectionStrategy, ElementRef, ViewChild, TemplateRef } from '@angular/core';
+import { Component, input, output, signal, computed, ChangeDetectionStrategy, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OverlayModule, CdkOverlayOrigin, CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay'; // Import CDK Overlay modules
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Interface defining the structure of an action item in the dropdown.
@@ -9,12 +10,13 @@ export interface DropdownAction {
   label: string; // The text displayed for the action
   value: string; // A unique identifier or value associated with the action
   status?: number;
+  translate?: boolean;
 }
 
 @Component({
   selector: 'app-actions-dropdown',
   standalone: true,
-  imports: [CommonModule, OverlayModule], // Add OverlayModule to imports
+  imports: [CommonModule, OverlayModule, TranslateModule], // Add OverlayModule to imports
   templateUrl: './actions-dropdown.component.html',
   styleUrl: './actions-dropdown.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

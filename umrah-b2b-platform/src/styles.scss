@@ -2068,3 +2068,58 @@ app-unapproved-entries .page-header {
     transform: translateY(0) scale(1);
   }
 }
+
+// SalamApp operations pages used Font Awesome class names. Keep the same markup
+// while mapping the small icon set to the Material Icons font already loaded here.
+.fas,
+.fa-solid {
+  font-family: 'Material Icons Round';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+}
+
+.fa-hotel::before { content: 'hotel'; }
+.fa-map-marked-alt::before { content: 'map'; }
+.fa-file-alt::before { content: 'description'; }
+.fa-utensils::before { content: 'restaurant'; }
+.fa-ticket-alt::before { content: 'confirmation_number'; }
+.fa-ellipsis-v::before { content: 'more_vert'; }
+.fa-eye::before { content: 'visibility'; }
+.fa-user-tie::before { content: 'person'; }
+.fa-history::before { content: 'history'; }
+.fa-clock::before { content: 'schedule'; }
+.fa-check-circle::before { content: 'check_circle'; }
+.fa-plus-circle::before { content: 'add_circle'; }
+.fa-circle::before { content: 'circle'; }
+.fa-user::before { content: 'person'; }
+.fa-sticky-note::before { content: 'sticky_note_2'; }
+.fa-check::before { content: 'check'; }
+.fa-inbox::before { content: 'inbox'; }
+.fa-info-circle::before { content: 'info'; }
+.fa-users::before { content: 'groups'; }
+.fa-user-slash::before { content: 'person_off'; }
+.fa-times::before { content: 'close'; }
+.fa-pen::before { content: 'edit'; }
+.fa-trash-alt::before { content: 'delete'; }
+.fa-spinner::before { content: 'progress_activity'; }
+.fa-chevron-left::before { content: 'chevron_left'; }
+.fa-chevron-right::before { content: 'chevron_right'; }
+
+.custom-dialog-container {
+  .mat-mdc-dialog-surface {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+  }
+}

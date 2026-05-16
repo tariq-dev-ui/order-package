@@ -1,0 +1,202 @@
+$border-color: #d8decf;
+
+.voucher-table-container {
+  width: 100%;
+  padding: 16px;
+  background-color: #f4f6f2;
+  position: relative;
+}
+
+.table-wrapper {
+  background-color: #f9f7f1;
+  border-radius: 8px;
+  border: 1px solid $border-color;
+  overflow: hidden;
+}
+
+.table-content {
+  overflow-x: auto;
+}
+
+.voucher-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.table-header {
+  padding: 14px 12px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #242e1a;
+  background-color: #f4f6f2;
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.table-row {
+  background-color: #fff;
+  border-bottom: 1px solid $border-color;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #f4f6f2;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:nth-child(even) {
+    background-color: #f9f7f1;
+
+    &:hover {
+      background-color: #f4f6f2;
+    }
+  }
+}
+
+.table-cell {
+  padding: 18px 12px;
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid $border-color;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.type-cell {
+  .type-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .type-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .type-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+}
+
+.code-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #242e1a;
+  font-family: 'Courier New', monospace;
+}
+
+.date-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #242e1a;
+  margin-bottom: 3px;
+}
+
+.time-value {
+  font-size: 11px;
+  color: #7b8574;
+  font-weight: 400;
+}
+
+.price-cell {
+  .price-na {
+    font-size: 12px;
+    color: #7b8574;
+    font-weight: 400;
+  }
+
+  .price-amount {
+    font-size: 13px;
+    font-weight: 600;
+    color: #242e1a;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    .currency-symbol {
+      font-size: 12px;
+      color: #7b8574;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  border: 1px solid;
+  white-space: nowrap;
+
+  &.admin-status {
+    background-color: #dbeafe;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+
+  &.agent-status {
+    background-color: #e4f0e8;
+    color: #3b7d57;
+    border-color: #d1fae5;
+  }
+}
+
+.actions-cell {
+  padding: 8px 12px;
+}
+
+@media (max-width: 1200px) {
+  .voucher-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .voucher-table-container {
+    padding: 4px 8px;
+  }
+
+  .table-header {
+    padding: 12px 8px;
+    font-size: 11px;
+  }
+
+  .table-cell {
+    padding: 12px 8px;
+  }
+}

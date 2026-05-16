@@ -478,11 +478,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: 'sidebar.nav.operationsGroup',
       icon: 'tune',
       children: [
-        { label: 'sidebar.nav.hotelBookings',     route: '/admin/operations/hotels',    icon: 'hotel' },
-        { label: 'sidebar.nav.visaRequests',      route: '/admin/operations/visa',      icon: 'badge' },
-        { label: 'sidebar.nav.transportRequests', route: '/admin/operations/transport', icon: 'directions_bus' },
-        { label: 'sidebar.nav.cateringRequests',  route: '/admin/operations/catering',  icon: 'restaurant' },
-        { label: 'sidebar.nav.flightRequests',    route: '/admin/operations/flights',   icon: 'flight' }
+        { label: 'sidebar.nav.hotelBookings',     route: '/admin/operations/hotel-bookings',     icon: 'hotel' },
+        { label: 'sidebar.nav.visaRequests',      route: '/admin/operations/visa-requests',      icon: 'badge' },
+        { label: 'sidebar.nav.transportRequests', route: '/admin/operations/transport-requests', icon: 'directions_bus' },
+        { label: 'sidebar.nav.cateringRequests',  route: '/admin/operations/catering-requests',  icon: 'restaurant' },
+        { label: 'sidebar.nav.flightRequests',    route: '/admin/operations/flight-requests',    icon: 'flight' }
       ]
     },
     {
@@ -576,11 +576,29 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ];
 
   private readonly masterNavGroups: NavGroup[] = [
-    { id: 'master-dashboard', label: 'Dashboard', icon: 'dashboard', route: '/master/distributed', exact: true },
-    { id: 'master-packages', label: 'Packages', icon: 'inventory_2', route: '/master/packages', exact: true },
-    { id: 'master-orders', label: 'Orders', icon: 'assignment', route: '/master/orders', badge: '34', exact: true },
-    { id: 'master-quotations', label: 'Quotations', icon: 'request_quote', route: '/master/quotations', exact: true },
-    { id: 'master-subagents', label: 'Subagents', icon: 'supervisor_account', route: '/master/subagents', exact: true }
+    { id: 'master-dashboard',   label: 'Dashboard',   icon: 'pie_chart',           route: '/master/distributed', exact: true },
+    { id: 'master-packages',    label: 'Packages',    icon: 'inventory_2',         route: '/master/packages',    exact: true },
+    { id: 'master-my-packages', label: 'My Packages', icon: 'inventory',           route: '/master/my-packages', exact: true },
+    { id: 'master-orders',      label: 'Orders',      icon: 'luggage',             route: '/master/orders',      badge: '34', exact: true },
+    { id: 'master-quotations',  label: 'Quotations',  icon: 'confirmation_number', route: '/master/quotations',  exact: true },
+    { id: 'master-subagents',   label: 'Subagents',   icon: 'group',               route: '/master/subagents',   exact: true },
+    {
+      id: 'master-finance',
+      label: 'Finance',
+      icon: 'account_balance',
+      children: [
+        { label: 'Chart of Accounts', route: '/master/finance/chart-of-accounts', icon: 'account_tree' },
+        { label: 'Fiscal Year',       route: '/master/finance/fiscal-year',        icon: 'calendar_month' },
+        { label: 'Journal Entries',   route: '/master/finance/journal-entries',    icon: 'receipt_long' },
+        { label: 'Account Statement', route: '/master/finance/account-statement',  icon: 'description' },
+        { label: 'Trial Balance',     route: '/master/finance/trial-balance',      icon: 'balance' },
+        { label: 'Opening Balance',   route: '/master/finance/opening-balance',    icon: 'account_balance_wallet' },
+        { label: 'Account Routing',   route: '/master/finance/account-routing',    icon: 'alt_route' },
+        { label: 'Income Statement',  route: '/master/finance/income-statement',   icon: 'trending_up' },
+        { label: 'Cashier Session',   route: '/master/finance/cashier-session',    icon: 'point_of_sale' }
+      ]
+    },
+    { id: 'master-settings', label: 'Settings', icon: 'settings', route: '/master/settings', exact: true }
   ];
 
   private readonly subAgentNavGroups: NavGroup[] = [

@@ -1,0 +1,74 @@
+import { VisaRequest } from '../models/visa-request.model';
+import { OperationVoucherDetails } from '../models/operation-voucher.model';
+
+// Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
+export const mockVisaRequests: OperationVoucherDetails[] = [
+  {
+    Voucher: {
+      RequestVoucherID: 1301,
+      RequestVoucherCode: 'VSA-2026-0001',
+      RequestVoucherTypeID: 3,
+      AddedDate: '2026-05-09T12:05:00',
+      AddedBy: 'Visa Team',
+      TotalCostPrice: 5400,
+      TotalOriginalPrice: 6000,
+      TotalSellingPrice: 6600,
+      TotalTax: 990,
+      TotalPriceWithTax: 7590,
+      VoucherStatusForAdminID: 4,
+      VoucherStatusForAdminTitle: 'Manager Approved',
+      VoucherStatusForAgentID: 2,
+      VoucherStatusForAgentTitle: 'Sent to Agent',
+      AgentID: 503,
+      AgentName: 'Rahma Group',
+      SeroPackageRequestID: 9003,
+    } satisfies VisaRequest,
+    VisaVouchers: [
+      {
+        RequestVisaVoucherID: 2301,
+        RequestVoucherID: 1301,
+        Count: 12,
+        VisaTypeTitle: 'Umrah Visa',
+        CostUnitPrice: 450,
+        OriginalUnitPrice: 500,
+        SellingUnitPrice: 550,
+        Tax: 82.5,
+        TotalPriceWithTax: 7590,
+      },
+    ],
+  },
+  {
+    Voucher: {
+      RequestVoucherID: 1302,
+      RequestVoucherCode: 'VSA-2026-0002',
+      RequestVoucherTypeID: 3,
+      AddedDate: '2026-05-12T10:30:00',
+      AddedBy: 'Visa Team',
+      TotalCostPrice: 3600,
+      TotalOriginalPrice: 4000,
+      TotalSellingPrice: 4200,
+      TotalTax: 630,
+      TotalPriceWithTax: 4830,
+      VoucherStatusForAdminID: 3,
+      VoucherStatusForAdminTitle: 'Awaiting Manager',
+      VoucherStatusForAgentID: 1,
+      VoucherStatusForAgentTitle: 'Draft',
+      AgentID: 501,
+      AgentName: 'Al Noor Travel',
+      SeroPackageRequestID: 9004,
+    } satisfies VisaRequest,
+    VisaVouchers: [
+      {
+        RequestVisaVoucherID: 2302,
+        RequestVoucherID: 1302,
+        Count: 8,
+        VisaTypeTitle: 'Umrah Visa',
+        CostUnitPrice: 450,
+        OriginalUnitPrice: 500,
+        SellingUnitPrice: 525,
+        Tax: 78.75,
+        TotalPriceWithTax: 4830,
+      },
+    ],
+  },
+];

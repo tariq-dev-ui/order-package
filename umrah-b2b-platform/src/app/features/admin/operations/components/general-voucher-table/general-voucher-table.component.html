@@ -1,0 +1,100 @@
+<div class="voucher-table-container" style="background-color: #F4F6F2; padding: 16px;">
+  <loading-spinner [isLoading]="isLoading()" [message]="loadingMessage()" />
+  <div class="table-wrapper" style="background-color: #F9F7F1; border: 1px solid #D8DECF; border-radius: 8px;">
+    <div class="table-content">
+      <table class="voucher-table">
+        <thead>
+          <tr>
+            <th class="table-header">{{ 'Type' | translate }}</th>
+            <th class="table-header">{{ 'Quotation No.' | translate }}</th>
+            <th class="table-header">{{ 'Quotation Date' | translate }}</th>
+            <th class="table-header">{{ 'Price' | translate }}</th>
+            <th class="table-header">{{ 'Admin Status' | translate }}</th>
+            <th class="table-header">{{ 'Agent Status' | translate }}</th>
+            <th class="table-header">{{ 'Actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (typeId of typeIds; track typeId) {
+            @for (voucher of vouchers(); track voucher.RequestVoucherID) {
+              @if (voucher?.RequestVoucherTypeID === typeId) {
+                <tr class="table-row">
+                  <td class="table-cell type-cell">
+                    <div class="type-wrapper">
+                      @switch (voucher.RequestVoucherTypeID) {
+                        @case (1) {
+                          <div class="type-icon-wrapper" style="background-color: #E4F0E8;">
+                            <i class="fas fa-hotel" style="color: #10B981;"></i>
+                          </div>
+                          <span class="type-badge" style="background-color: #E4F0E8; color: #3B7D57; border-color: #D1FAE5;">{{ 'HOTEL' | translate }}</span>
+                        }
+                        @case (2) {
+                          <div class="type-icon-wrapper" style="background-color: #F3E8FF;">
+                            <i class="fas fa-map-marked-alt" style="color: #8B5CF6;"></i>
+                          </div>
+                          <span class="type-badge" style="background-color: #F3E8FF; color: #7C3AED; border-color: #E9D5FF;">{{ 'TRIP' | translate }}</span>
+                        }
+                        @case (3) {
+                          <div class="type-icon-wrapper" style="background-color: #DBEAFE;">
+                            <i class="fas fa-file-alt" style="color: #3B82F6;"></i>
+                          </div>
+                          <span class="type-badge" style="background-color: #DBEAFE; color: #2563EB; border-color: #BFDBFE;">{{ 'VISA' | translate }}</span>
+                        }
+                        @case (4) {
+                          <div class="type-icon-wrapper" style="background-color: #FEE2E2;">
+                            <i class="fas fa-utensils" style="color: #EF4444;"></i>
+                          </div>
+                          <span class="type-badge" style="background-color: #FEE2E2; color: #DC2626; border-color: #FECACA;">{{ 'FOOD' | translate }}</span>
+                        }
+                        @case (5) {
+                          <div class="type-icon-wrapper" style="background-color: #FEF3C7;">
+                            <i class="fas fa-ticket-alt" style="color: #D97706;"></i>
+                          </div>
+                          <span class="type-badge" style="background-color: #FEF3C7; color: #B45309; border-color: #FDE68A;">{{ 'TICKET' | translate }}</span>
+                        }
+                      }
+                    </div>
+                  </td>
+
+                  <td class="table-cell">
+                    <div class="code-value">{{ voucher.RequestVoucherCode }}</div>
+                  </td>
+
+                  <td class="table-cell">
+                    <div class="date-value">{{ voucher.AddedDate | date: 'dd MMM yyyy' }}</div>
+                    <div class="time-value">{{ voucher.AddedDate | date: 'HH:mm' }}</div>
+                  </td>
+
+                  <td class="table-cell price-cell">
+                    @if (voucher.TotalPriceWithTax === 0) {
+                      <div class="price-na">{{ 'N/A' | translate }}</div>
+                    } @else {
+                      <div class="price-amount">
+                        {{ voucher.TotalPriceWithTax | number:'1.2-2' }}
+                        <span class="currency-symbol sar-symbol">R</span>
+                      </div>
+                    }
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="status-badge admin-status">{{ voucher.VoucherStatusForAdminTitle }}</span>
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="status-badge agent-status">{{ voucher.VoucherStatusForAgentTitle }}</span>
+                  </td>
+
+                  <td class="table-cell actions-cell">
+                    <app-actions-dropdown
+                      [actions]="getActionsForVoucherType(voucher)"
+                      (actionSelected)="handleActionSelection($event, voucher)" />
+                  </td>
+                </tr>
+              }
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

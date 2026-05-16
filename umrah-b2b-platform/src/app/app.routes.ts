@@ -31,6 +31,11 @@ const financialReportsPage = () => import('./pages/financial-reports/financial-r
 const accountRoutingPage = () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent);
 const banksManagementPage = () => import('./pages/banks-management/banks-management.component').then(m => m.BanksManagementComponent);
 const expensesManagementPage = () => import('./pages/expenses-management/expenses-management.component').then(m => m.ExpensesManagementComponent);
+const operationsHotelBookingsPage = () => import('./features/admin/operations/hotel-bookings/hotel-bookings-page.component').then(m => m.HotelBookingsPageComponent);
+const operationsVisaRequestsPage = () => import('./features/admin/operations/visa-requests/visa-requests-page.component').then(m => m.VisaRequestsPageComponent);
+const operationsTransportRequestsPage = () => import('./features/admin/operations/transport-requests/transport-requests-page.component').then(m => m.TransportRequestsPageComponent);
+const operationsCateringRequestsPage = () => import('./features/admin/operations/catering-requests/catering-requests-page.component').then(m => m.CateringRequestsPageComponent);
+const operationsFlightRequestsPage = () => import('./features/admin/operations/flight-requests/flight-requests-page.component').then(m => m.FlightRequestsPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -49,12 +54,16 @@ export const routes: Routes = [
       { path: 'orders/confirmation/:orderId', loadComponent: emptyPage },
       // TODO: new order form
       { path: 'orders/new', loadComponent: emptyPage },
-      // TODO: operations
-      { path: 'operations/hotels',    loadComponent: emptyPage },
-      { path: 'operations/visa',      loadComponent: emptyPage },
-      { path: 'operations/transport', loadComponent: emptyPage },
-      { path: 'operations/catering',  loadComponent: emptyPage },
-      { path: 'operations/flights',   loadComponent: emptyPage },
+      { path: 'operations/hotel-bookings',     loadComponent: operationsHotelBookingsPage },
+      { path: 'operations/visa-requests',      loadComponent: operationsVisaRequestsPage },
+      { path: 'operations/transport-requests', loadComponent: operationsTransportRequestsPage },
+      { path: 'operations/catering-requests',  loadComponent: operationsCateringRequestsPage },
+      { path: 'operations/flight-requests',    loadComponent: operationsFlightRequestsPage },
+      { path: 'operations/hotels',             redirectTo: 'operations/hotel-bookings', pathMatch: 'full' },
+      { path: 'operations/visa',               redirectTo: 'operations/visa-requests', pathMatch: 'full' },
+      { path: 'operations/transport',          redirectTo: 'operations/transport-requests', pathMatch: 'full' },
+      { path: 'operations/catering',           redirectTo: 'operations/catering-requests', pathMatch: 'full' },
+      { path: 'operations/flights',            redirectTo: 'operations/flight-requests', pathMatch: 'full' },
       // TODO: pricing
       { path: 'pricing/transport/new', loadComponent: transportPricingFormPage },
       { path: 'pricing/transport/edit/:id', loadComponent: transportPricingFormPage },
@@ -118,12 +127,23 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'distributed', pathMatch: 'full' },
-      { path: 'distributed', loadComponent: emptyPage },
+      { path: 'distributed', loadComponent: () => import('./features/master/distributed/distributed-page.component').then(m => m.DistributedPageComponent) },
       { path: 'packages', loadComponent: emptyPage },
       { path: 'orders', loadComponent: emptyPage },
       { path: 'quotations', loadComponent: emptyPage },
-      { path: 'subagents', loadComponent: emptyPage },
-      { path: 'analytics', loadComponent: emptyPage }
+      { path: 'subagents',   loadComponent: emptyPage },
+      { path: 'analytics',   loadComponent: emptyPage },
+      { path: 'my-packages', loadComponent: emptyPage },
+      { path: 'settings',    loadComponent: emptyPage },
+      { path: 'finance/chart-of-accounts', loadComponent: () => import('./pages/chart-of-accounts/chart-of-accounts.component').then(m => m.ChartOfAccountsComponent) },
+      { path: 'finance/fiscal-year',        loadComponent: () => import('./pages/fiscal-year/fiscal-year.component').then(m => m.FiscalYearComponent) },
+      { path: 'finance/journal-entries',    loadComponent: () => import('./pages/journal-entries/journal-entries.component').then(m => m.JournalEntriesComponent) },
+      { path: 'finance/account-statement',  loadComponent: () => import('./pages/account-statement/account-statement.component').then(m => m.AccountStatementComponent) },
+      { path: 'finance/trial-balance',      loadComponent: () => import('./pages/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent) },
+      { path: 'finance/opening-balance',    loadComponent: () => import('./pages/journal-entries/create-journal-entry/create-journal-entry.component').then(m => m.CreateJournalEntryComponent) },
+      { path: 'finance/account-routing',    loadComponent: () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent) },
+      { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
+      { path: 'finance/cashier-session',    loadComponent: emptyPage }
     ]
   },
   {

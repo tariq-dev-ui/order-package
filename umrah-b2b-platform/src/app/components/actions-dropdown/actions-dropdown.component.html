@@ -1,44 +1,52 @@
-<div class="relative inline-block text-left">
-    <!-- The main button that triggers the dropdown -->
-    <button type="button"
-        class="inline-flex justify-center w-full rounded-md border  px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        [ngClass]="{
-          'bg-white text-gray-700 hover:bg-gray-50 border-gray-300': !hasStatusActions(),
-          'bg-yellow-500 text-white hover:bg-yellow-600 border-yellow-500': hasStatusActions()
-        }"
-        (click)="toggleDropdown()" [attr.aria-expanded]="isOpen()" aria-haspopup="true" #dropdownTrigger
-        cdkOverlayOrigin>
-        Actions
-        <!-- Chevron-down icon -->
-        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-            aria-hidden="true">
-            <path fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd" />
-        </svg>
-    </button>
-    <!-- The CDK Connected Overlay for the dropdown menu -->
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="dropdownTrigger" [cdkConnectedOverlayOpen]="isOpen()"
-        [cdkConnectedOverlayPositions]="overlayPositions" (backdropClick)="onBackdropClick()"
-        cdkConnectedOverlayHasBackdrop>
-        <!-- The actual dropdown menu content -->
-        <div class="w-56 rounded-md shadow-lg border-gray-100  bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none"
-            role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            <div class="py-1" role="none">
-                @for (action of actions(); track $index) {
-                <a href="#" (click)="onActionClick(action); $event.preventDefault()"
-                    class="block px-4 py-2 text-sm"
-                    [ngClass]="{
-                      'text-gray-700 hover:bg-gray-100 hover:text-gray-900': !action.status,
-                      'bg-yellow-100 text-yellow-800 hover:bg-yellow-200': !!action.status
-                    }"
-                    [class.rounded-t-md]="$index === 0" [class.rounded-b-md]="$index === actions().length - 1"
-                    role="menuitem">
-                    {{ action.label }}
-                </a>
-                }
+<div class="actions-dropdown">
+  <button
+    type="button"
+    class="actions-trigger"
+    [class.actions-trigger--approval]="hasStatusActions()"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="true"
+    #dropdownTrigger
+    cdkOverlayOrigin>
+    <i class="fas fa-ellipsis-v"></i>
+    <span>{{ 'Actions' | translate }}</span>
+  </button>
 
-            </div>
-        </div>
-    </ng-template>
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="dropdownTrigger"
+    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayPositions]="overlayPositions"
+    (backdropClick)="onBackdropClick()"
+    cdkConnectedOverlayHasBackdrop>
+    <div class="actions-menu" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      @for (action of actions(); track $index) {
+        <a
+          href="#"
+          (click)="onActionClick(action); $event.preventDefault()"
+          class="actions-menu-item"
+          [class.actions-menu-item--approval]="!!action.status"
+          role="menuitem">
+          @if (action.value === 'voucher_details' || action.value === 'view_details') {
+            <i class="fas fa-eye"></i>
+          } @else if (action.value === 'agent_details') {
+            <i class="fas fa-user-tie"></i>
+          } @else if (action.value === 'request_details') {
+            <i class="fas fa-file-alt"></i>
+          } @else if (action.value === 'voucher_admin_log' || action.value === 'admin_log') {
+            <i class="fas fa-history"></i>
+          } @else if (action.value === 'voucher_agent_log' || action.value === 'agent_log') {
+            <i class="fas fa-clock"></i>
+          } @else if (action.value === 'voucher_status_change' || action.value.includes('approval') || action.value.includes('Approval')) {
+            <i class="fas fa-check-circle"></i>
+          } @else if (action.value.includes('create') || action.value.includes('Create')) {
+            <i class="fas fa-plus-circle"></i>
+          } @else {
+            <i class="fas fa-circle"></i>
+          }
+          <span>{{ action.label }}</span>
+        </a>
+      }
+    </div>
+  </ng-template>
 </div>

@@ -1,0 +1,35 @@
+<nav class="pagination-nav">
+  <button
+    class="page-button page-button--edge"
+    type="button"
+    [disabled]="currentNormalized() === 1"
+    (click)="changePage(currentNormalized() - 1)"
+    [attr.aria-label]="'Previous page' | translate">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+
+  @for (item of pageItems(); track $index) {
+    @if (item === '...') {
+      <span class="page-ellipsis" aria-hidden="true">...</span>
+    } @else {
+      <button
+        type="button"
+        class="page-button"
+        [class.active]="item === currentNormalized()"
+        [attr.aria-current]="item === currentNormalized() ? 'page' : null"
+        [attr.aria-label]="('Page' | translate) + ' ' + item"
+        (click)="changePage(item)">
+        {{ item }}
+      </button>
+    }
+  }
+
+  <button
+    class="page-button page-button--edge"
+    type="button"
+    [disabled]="currentNormalized() === totalNormalized()"
+    (click)="changePage(currentNormalized() + 1)"
+    [attr.aria-label]="'Next page' | translate">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+</nav>
