@@ -196,6 +196,10 @@ export class OperationsMockService {
     });
   }
 
+  getAllVouchers(): OperationVoucher[] {
+    return this.filteredVouchers({});
+  }
+
   private filteredVouchers(props: Pick<VoucherQueryProps, 'typeid' | 'agentId'>): OperationVoucher[] {
     return this.voucherDetails()
       .map((detail) => detail.Voucher)

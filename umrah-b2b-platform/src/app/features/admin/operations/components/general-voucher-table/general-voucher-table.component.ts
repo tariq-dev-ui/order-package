@@ -12,6 +12,8 @@ import { VoucherDetailsDialogComponent } from '../voucher-details-dialog/voucher
 import { VoucherLogsDialogComponent } from '../voucher-logs-dialog/voucher-logs-dialog.component';
 import { VoucherStatusChangeDialogComponent } from '../voucher-status-change-dialog/voucher-status-change-dialog.component';
 import { DocumentationStatusSwitcherComponent } from '../documentation-status-switcher/documentation-status-switcher.component';
+import { DocumentationStatus } from '../../models/documentation-status.model';
+import { DocumentationStatusFilterService } from '../../services/documentation-status-filter.service';
 
 @Component({
   selector: 'general-voucher-table',
@@ -30,25 +32,28 @@ export class GeneralVoucherTableComponent {
   protected readonly voucherService = inject(OperationsMockService);
   private readonly translate = inject(TranslateService);
   private readonly dialog = inject(MatDialog);
+  private readonly documentationStatusFilter = inject(DocumentationStatusFilterService);
 
   readonly isLoading = signal(false);
   readonly loadingMessage = signal(this.translate.instant('Loading...'));
   private readonly selectedVoucher = signal<OperationVoucher | null>(null);
   readonly selectedVoucherComputed = computed(() => this.selectedVoucher());
-  readonly selectedDocumentationStatus = signal<'pending' | 'documented'>('pending');
+  readonly selectedDocumentationStatus = signal<DocumentationStatus>('pending');
+
+  private readonly visibleVoucherPool = computed(() =>
+    (this.vouchers?.() ?? []).filter((voucher) => !this.typeIds.length || this.typeIds.includes(voucher.RequestVoucherTypeID))
+  );
 
   readonly pendingCount = computed(() =>
-    this.vouchers ? this.vouchers().filter((v) => !this.typeIds.length || this.typeIds.includes(v.RequestVoucherTypeID)).filter(v => (v.documentationStatus ?? 'pending') === 'pending').length : 0
+    this.documentationStatusFilter.countByStatus(this.visibleVoucherPool(), 'pending')
   );
 
   readonly documentedCount = computed(() =>
-    this.vouchers ? this.vouchers().filter((v) => !this.typeIds.length || this.typeIds.includes(v.RequestVoucherTypeID)).filter(v => v.documentationStatus === 'documented').length : 0
+    this.documentationStatusFilter.countByStatus(this.visibleVoucherPool(), 'documented')
   );
 
   readonly filteredVouchers = computed(() =>
-    (this.vouchers ? this.vouchers() : [])
-      .filter((v) => !this.typeIds.length || this.typeIds.includes(v.RequestVoucherTypeID))
-      .filter((v) => (v.documentationStatus ?? 'pending') === this.selectedDocumentationStatus())
+    this.documentationStatusFilter.filterByStatus(this.visibleVoucherPool(), this.selectedDocumentationStatus())
   );
 
   statusSubmitted(): void {

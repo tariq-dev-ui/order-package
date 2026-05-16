@@ -1,3 +1,5 @@
+import { DocumentationStatus } from './documentation-status.model';
+
 export type OperationVoucherTypeId = 1 | 2 | 3 | 4 | 5;
 export type OperationVoucherKind = 'hotel' | 'transport' | 'visa' | 'catering' | 'ticket';
 
@@ -20,7 +22,7 @@ export interface OperationVoucher {
   AgentName: string;
   SeroPackageRequestID: number;
   IsDeleted?: boolean;
-  documentationStatus?: 'pending' | 'documented';
+  documentationStatus?: DocumentationStatus;
 }
 
 export interface HotelVoucherLine {

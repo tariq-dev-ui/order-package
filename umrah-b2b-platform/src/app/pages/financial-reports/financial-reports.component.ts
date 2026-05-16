@@ -9,6 +9,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MockDataService } from 'src/app/services/mock-data.service';
 import { OperationsMockService } from 'src/app/features/admin/operations/operations-mock.service';
 import { DocumentationStatusSwitcherComponent } from 'src/app/features/admin/operations/components/documentation-status-switcher/documentation-status-switcher.component';
+import { DocumentationStatus } from 'src/app/features/admin/operations/models/documentation-status.model';
+import { OperationVoucherTypeId } from 'src/app/features/admin/operations/models/operation-voucher.model';
+import { DocumentationStatusFilterService } from 'src/app/features/admin/operations/services/documentation-status-filter.service';
 import { AppSnackBarService } from 'src/app/services/app-snack-bar.service';
 import { ChartOfAccountsService } from 'src/app/services/chart-of-accounts.service';
 import { JournalEntriesService } from 'src/app/services/journal-entries.service';
@@ -32,6 +35,7 @@ interface AccountStatement {
   costCenter?: string;
   addedBy?: string;
   addedDate?: Date;
+  documentationStatus?: DocumentationStatus;
 }
 
 interface IncomeStatement {
@@ -94,8 +98,7 @@ export class FinancialReportsComponent implements OnInit {
   private costCentersService = inject(CostCentersService);
   private coreService = inject(CoreService);
   private operationsMock = inject(OperationsMockService);
-  // reference to component to satisfy compiler usage checks
-  private readonly _docSwitcher = DocumentationStatusSwitcherComponent;
+  private documentationStatusFilterService = inject(DocumentationStatusFilterService);
 
   isLoading = signal(false);
   accountStatements = signal<AccountStatement[]>([]);
@@ -129,9 +132,13 @@ export class FinancialReportsComponent implements OnInit {
   dir = computed(() => this.options().dir);
 
   // documentation switcher state for financial window summary
-  documentationFilter = signal<'pending' | 'documented'>('pending');
-  docsPendingCount = computed(() => this.operationsMock ? this.operationsMock['voucherDetails']().map(d => d.Voucher).filter(v => (v.documentationStatus ?? 'pending') === 'pending').length : 0);
-  docsDocumentedCount = computed(() => this.operationsMock ? this.operationsMock['voucherDetails']().map(d => d.Voucher).filter(v => v.documentationStatus === 'documented').length : 0);
+  documentationFilter = signal<DocumentationStatus>('pending');
+  docsPendingCount = computed(() =>
+    this.documentationStatusFilterService.countByStatus(this.accountStatements(), 'pending')
+  );
+  docsDocumentedCount = computed(() =>
+    this.documentationStatusFilterService.countByStatus(this.accountStatements(), 'documented')
+  );
 
   constructor() {
     this.coreService.notify.subscribe(() => {
@@ -222,6 +229,7 @@ export class FinancialReportsComponent implements OnInit {
             costCenter: '',
             addedBy: '',
             addedDate: undefined,
+            documentationStatus: 'pending',
           });
 
           // Convert journal entries to account statements
@@ -239,6 +247,7 @@ export class FinancialReportsComponent implements OnInit {
               costCenter: '', // Will be populated when cost centers are integrated
               addedBy: '', // Can be added to journal entry model
               addedDate: entry.date,
+              documentationStatus: index % 2 === 0 ? 'pending' : 'documented',
             });
           });
         } catch (error) {
@@ -257,8 +266,11 @@ export class FinancialReportsComponent implements OnInit {
             costCenter: '',
             addedBy: '',
             addedDate: undefined,
+            documentationStatus: 'pending',
           }];
         }
+      } else {
+        realAccountStatements = this.buildOperationRequestStatementRows();
       }
       
       // Income Statement - Calculate from real journal entries
@@ -450,6 +462,7 @@ export class FinancialReportsComponent implements OnInit {
         costCenter: '',
         addedBy: '',
         addedDate: undefined,
+        documentationStatus: 'pending',
       },
     ];
 
@@ -476,6 +489,7 @@ export class FinancialReportsComponent implements OnInit {
         costCenter: trans.center,
         addedBy: 'Admin@INT',
         addedDate: new Date(trans.date),
+        documentationStatus: index % 2 === 0 ? 'pending' : 'documented',
       });
     });
 
@@ -669,6 +683,10 @@ export class FinancialReportsComponent implements OnInit {
       if (selectedAccount) {
         if (item.accountCode !== selectedAccount.code) return false;
       }
+
+      if (this.documentationStatusFilterService.getStatus(item) !== this.documentationFilter()) {
+        return false;
+      }
       
       // Date filters
       if (fromDate) {
@@ -757,6 +775,43 @@ export class FinancialReportsComponent implements OnInit {
       month: '2-digit',
       day: '2-digit',
     }).format(date);
+  }
+
+  private buildOperationRequestStatementRows(): AccountStatement[] {
+    let runningBalance = 0;
+
+    return this.operationsMock.getAllVouchers().map((voucher) => {
+      const amount = voucher.TotalPriceWithTax || voucher.TotalSellingPrice || voucher.TotalOriginalPrice || voucher.TotalCostPrice;
+      runningBalance += amount;
+
+      return {
+        id: 900000 + voucher.RequestVoucherID,
+        accountName: 'طلبات إدارة العمليات',
+        accountCode: 'OPS-DOC',
+        date: new Date(voucher.AddedDate),
+        description: `${this.voucherTypeLabel(voucher.RequestVoucherTypeID)} - ${voucher.AgentName}`,
+        debit: amount,
+        credit: 0,
+        balance: runningBalance,
+        documentNumber: voucher.RequestVoucherCode,
+        costCenter: 'إدارة العمليات',
+        addedBy: voucher.AddedBy || 'Operations',
+        addedDate: new Date(voucher.AddedDate),
+        documentationStatus: voucher.documentationStatus ?? 'pending',
+      };
+    });
+  }
+
+  private voucherTypeLabel(typeId: OperationVoucherTypeId): string {
+    const labels: Record<OperationVoucherTypeId, string> = {
+      1: 'حجوزات الفنادق',
+      2: 'طلبات المواصلات',
+      3: 'طلبات الفيزا',
+      4: 'طلبات الاعاشة',
+      5: 'طلبات الطيران',
+    };
+
+    return labels[typeId];
   }
 
   getTotalRevenue(): number {
