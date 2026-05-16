@@ -1,0 +1,232 @@
+<main class="salam-analytics flex-1 overflow-y-auto p-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-5 rounded-md border border-gray-200">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-gray-500">{{ 'Current Requests' | translate }}</p>
+          @if (currentRequestsCount() !== null) {
+            <h3 class="text-2xl font-bold mt-1">{{ currentRequestsCount() }}</h3>
+          } @else {
+            <h3 class="text-2xl font-bold mt-1"><i class="fas fa-spinner fa-spin text-primary-500"></i></h3>
+          }
+        </div>
+        <div class="p-3 rounded-lg bg-primary-50 text-primary-500">
+          <i class="fas fa-suitcase"></i>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-3">
+        @if (totalRequestsCount() !== null) {
+          <span>{{ totalRequestsCount() }} {{ 'Total Requests' | translate }}</span>
+        } @else {
+          <span><i class="fas fa-spinner fa-spin text-primary-500"></i> {{ 'Total Requests' | translate }}</span>
+        }
+      </p>
+    </div>
+
+    <div class="bg-white p-5 rounded-md border border-gray-200">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-gray-500">{{ 'Total Agents' | translate }}</p>
+          @if (currentAgentsCount() !== null) {
+            <h3 class="text-2xl font-bold mt-1">{{ currentAgentsCount() }}</h3>
+          } @else {
+            <h3 class="text-2xl font-bold mt-1"><i class="fas fa-spinner fa-spin text-primary-500"></i></h3>
+          }
+        </div>
+        <div class="p-3 rounded-lg bg-blue-50 text-blue-500">
+          <i class="fas fa-users"></i>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-3">
+        @if (totalAgentCountryCount() !== null) {
+          <span>{{ totalAgentCountryCount() }} {{ 'Countries' | translate }}</span>
+        } @else {
+          <span><i class="fas fa-spinner fa-spin text-primary-500"></i> {{ 'Countries' | translate }}</span>
+        }
+      </p>
+    </div>
+
+    <div class="bg-white p-5 rounded-md border border-gray-200">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-gray-500">{{ 'Current Quotations' | translate }}</p>
+          @if (currentVouchersCount() !== null) {
+            <h3 class="text-2xl font-bold mt-1">{{ currentVouchersCount() }}</h3>
+          } @else {
+            <h3 class="text-2xl font-bold mt-1"><i class="fas fa-spinner fa-spin text-primary-500"></i></h3>
+          }
+        </div>
+        <div class="p-3 rounded-lg bg-purple-50 text-purple-500">
+          <i class="fas fa-wallet"></i>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-3">
+        @if (closedVouchersCount() !== null) {
+          <span>{{ closedVouchersCount() }} {{ 'Closed Quotations' | translate }}</span>
+        } @else {
+          <span><i class="fas fa-spinner fa-spin text-primary-500"></i> {{ 'Closed Quotations' | translate }}</span>
+        }
+      </p>
+    </div>
+
+    <div class="bg-white p-5 rounded-md border border-gray-200">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-gray-500">{{ 'Active Packages' | translate }}</p>
+          @if (activePackagesCount() !== null) {
+            <h3 class="text-2xl font-bold mt-1">{{ activePackagesCount() ?? 0 }}</h3>
+          } @else {
+            <h3 class="text-2xl font-bold mt-1"><i class="fas fa-spinner fa-spin text-primary-500"></i></h3>
+          }
+        </div>
+        <div class="p-3 rounded-lg bg-yellow-50 text-yellow-500">
+          <i class="fas fa-cube"></i>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-3">
+        @if (totalPackagesCount() !== null) {
+          <span>{{ totalPackagesCount() }} {{ 'Total Packages' | translate }}</span>
+        } @else {
+          <span><i class="fas fa-spinner fa-spin text-primary-500"></i> {{ 'Total Packages' | translate }}</span>
+        }
+      </p>
+    </div>
+  </div>
+
+  <div class="p-5 rounded-md border border-gray-100 bg-gray-50 mb-8">
+    <h2 class="text-lg font-bold mb-6">{{ 'Quick Actions' | translate }}</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <a [routerLink]="['/admin/packages/builder']"
+        class="bg-white p-5 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors text-center">
+        <div class="w-12 h-12 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-plus"></i>
+        </div>
+        <p class="font-medium">{{ 'Create Package' | translate }}</p>
+      </a>
+      <a [routerLink]="['/admin/agents/list']"
+        class="p-5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-center bg-white">
+        <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <p class="font-medium">{{ 'Add Agent' | translate }}</p>
+      </a>
+      <a [routerLink]="['/admin/services/hotels']"
+        class="bg-white p-5 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors text-center">
+        <div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-hotel"></i>
+        </div>
+        <p class="font-medium">{{ 'Add Hotel' | translate }}</p>
+      </a>
+      <a [routerLink]="['/admin/services/transport-companies']"
+        class="bg-white p-5 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors text-center">
+        <div class="w-12 h-12 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-bus"></i>
+        </div>
+        <p class="font-medium">{{ 'Add Transport' | translate }}</p>
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-2 bg-white p-5 rounded-md border border-gray-200" style="position: relative;">
+      <dashboard-vouchers
+        [typeIds]="typeIds"
+        [vouchers]="vouchers"
+        [voucherActionsList]="voucherActionsList"
+        (refreshVouchers)="refreshVouchersList()"
+        [isLoadingVoucher]="isLoadingVouchers" />
+      <br>
+    </div>
+
+    <div class="bg-white p-5 rounded-md border border-gray-200" style="position: relative;">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-lg font-bold">{{ 'Recent Requests' | translate }}</h2>
+          <p class="text-sm text-gray-500 mt-1">{{ 'Your last 5 package requests' | translate }}</p>
+        </div>
+        <a [routerLink]="['/admin/service-center/rfq/current']"
+          class="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center">
+          {{ 'View All' | translate }}
+          <i class="fas fa-arrow-right ml-1 text-xs"></i>
+        </a>
+      </div>
+
+      <loading-spinner [isLoading]="isLoading()" [message]="'Loading recent orders...' | translate"></loading-spinner>
+      <div class="space-y-7">
+        @for (pkg of packageRequests(); track pkg.Id) {
+          <div class="flex gap-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer order-card"
+            [class]="getStatusClass(pkg.StatusName)">
+            <div class="flex-shrink-0 mt-1">
+              <div class="flex flex-col py-2 px-4 rounded-sm flex items-center justify-center bg-primary-50 text-primary-500">
+                <span>{{ pkg.Id }}</span>
+                <i class="fas fa-suitcase"></i>
+              </div>
+            </div>
+
+            <div class="w-full">
+              <div class="w-full flex justify-between items-start">
+                <p class="font-medium text-gray-900">
+                  {{ pkg.Title | titlecase }}
+                </p>
+                <span class="text-xs font-semibold text-primary-500 whitespace-nowrap">
+                  @if (pkg.Price !== 0) {
+                    {{ pkg.Price }}
+                    <span class="sar-symbol">R</span>
+                  } @else {
+                    <span class="text-gray-400 italic">{{ 'Estimating' | translate }}</span>
+                  }
+                </span>
+              </div>
+
+              <div class="flex flex-wrap gap-3 mt-2 text-xs text-gray-500">
+                <span class="flex items-center">
+                  @if (getNumberOfDaysAndHours(pkg.AddedDate).days === 0) {
+                    @if (getNumberOfDaysAndHours(pkg.AddedDate).hours === 0) {
+                      {{ '1 Hour Ago' | translate }}
+                    } @else {
+                      @if (getNumberOfDaysAndHours(pkg.AddedDate).hours === 1) {
+                        {{ '1 Hour Ago' | translate }}
+                      } @else {
+                        {{ getNumberOfDaysAndHours(pkg.AddedDate).hours }} {{ 'Hours Ago' | translate }}
+                      }
+                    }
+                  } @else {
+                    @if (getNumberOfDaysAndHours(pkg.AddedDate).days === 1) {
+                      {{ '1 Day Ago' | translate }}
+                    } @else {
+                      {{ getNumberOfDaysAndHours(pkg.AddedDate).days }} {{ 'Days Ago' | translate }}
+                    }
+                  }
+                </span>
+                <span>{{ pkg.PassengerCount }} {{ 'Passengers' | translate }}</span>
+                <span>{{ pkg.StatusName }}</span>
+              </div>
+
+              @if (pkg.StatusName === 'In Progress') {
+                <div class="mt-2">
+                  <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="bg-blue-500 h-1.5 rounded-full" [style.width]="getProgressPercentage(pkg)"></div>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1 text-right">{{ getProgressPercentage(pkg) }} {{ 'Complete' | translate }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (packageRequests().length === 0) {
+          <div class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-suitcase text-gray-400"></i>
+            </div>
+            <p class="text-gray-500">{{ 'No recent orders found' | translate }}</p>
+            <a [routerLink]="['/admin/packages']"
+              class="inline-block mt-3 text-primary-500 hover:text-primary-600 text-sm font-medium">
+              {{ 'Browse packages' | translate }} <i class="fas fa-arrow-right ml-1 text-xs"></i>
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>

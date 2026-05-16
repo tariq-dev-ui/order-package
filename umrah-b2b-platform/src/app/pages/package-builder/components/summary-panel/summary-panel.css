@@ -1,0 +1,25 @@
+.summary-panel-shell {
+	width: 100%;
+	min-width: 0;
+}
+
+.summary-panel-card {
+	position: static;
+}
+
+@media (max-width: 767px) {
+	.summary-panel-card :is(details summary, .space-y-2 > div[class*='rounded-full']) {
+		min-width: 0;
+	}
+
+	.summary-panel-card .space-y-2 > div[class*='rounded-full'] {
+		width: 100%;
+	}
+}
+
+@media (min-width: 1280px) {
+	.summary-panel-card {
+		position: sticky;
+		top: 1.5rem;
+	}
+}

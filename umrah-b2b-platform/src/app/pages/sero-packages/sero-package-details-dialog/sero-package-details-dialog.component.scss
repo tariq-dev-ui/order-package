@@ -1,0 +1,73 @@
+.package-details-dialog {
+  .dialog-header {
+    background: linear-gradient(135deg, var(--bs-primary, #3a472a), #2d3821);
+    color: white;
+    padding: 0px 12px;
+    box-shadow: 0 2px 8px rgba(90, 106, 207, 0.2);
+
+    &.mat-mdc-dialog-title {
+      margin-top: -16px !important;
+      padding: 12px 12px !important;
+    }
+  }
+
+  .dialog-content {
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e9ecef;
+      .label {
+        color: #6c757d;
+        font-weight: 500;
+      }
+      .value {
+        color: #495057;
+        &.title-text {
+          color: var(--bs-primary);
+          font-weight: 600;
+        }
+        &.price-text {
+          color: #28a745;
+          font-weight: 600;
+        }
+      }
+    }
+
+    // Hotels Section
+    .city-group {
+      .city-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 8px;
+        .city-name { margin-bottom: 0; }
+      }
+      .hotels-in-city { .hotel-item:last-child { margin-bottom: 0 !important; } }
+    }
+    
+    .hotel-card {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      &:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+      .hotel-name { color: var(--bs-primary); font-size: 1.1rem; }
+      .star-icon, .small-icon { font-size: 16px; height: 16px; width: 16px; }
+    }
+    
+    .hotel-criteria {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-left: 4px solid var(--bs-secondary);
+      .criteria-label { font-size: 0.875rem; color: #6c757d; font-weight: 500; }
+      .criteria-value { font-size: 0.9rem; color: #495057; font-weight: 600; }
+    }
+
+    // Catering Section
+    .catering-card {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      &:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+      .catering-type { font-size: 1.1rem; }
+      .food-type { font-size: 0.875rem; }
+      .small-icon { font-size: 16px; height: 16px; width: 16px; }
+    }
+  }
+}

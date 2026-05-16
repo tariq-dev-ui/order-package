@@ -387,6 +387,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   // Ordered most-specific first so first match wins
   private readonly routeTitleMap: { prefix: string; key: string }[] = [
+    { prefix: '/admin/agent-packages/new',         key: 'sidebar.nav.defineNewPackage' },
+    { prefix: '/admin/agent-packages',             key: 'sidebar.nav.agentPackages' },
     { prefix: '/admin/packages/builder',             key: 'sidebar.nav.defineNewPackage' },
     { prefix: '/admin/packages',                     key: 'sidebar.nav.agentPackages' },
     { prefix: '/admin/orders/new',                   key: 'sidebar.nav.newOrder' },

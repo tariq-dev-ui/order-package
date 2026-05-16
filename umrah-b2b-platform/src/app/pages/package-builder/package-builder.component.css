@@ -1,0 +1,79 @@
+/* Card hover effects */
+.hotel-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.hotel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px #00000014;
+    border-color: var(--color-primary-500);
+}
+
+.hotel-card.selected {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-50);
+    box-shadow: 0 5px 15px  color-mix(in srgb, var(--color-primary-500) 26%, transparent);
+   
+}
+
+
+/* Star ratings */
+.rating-stars {
+    color: var(--color-warning-500);
+}
+
+/* Floating animation */
+.float-animate {
+    animation: float 3s ease-in-out infinite;
+}
+
+.package-builder-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.package-builder-main,
+.package-builder-summary {
+    min-width: 0;
+}
+
+@media (min-width: 992px) {
+    .package-builder-layout {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .package-builder-main {
+        flex: 1 1 auto;
+    }
+
+    .package-builder-summary {
+        flex: 0 0 22rem;
+        width: 22rem;
+    }
+}
+
+.package-builder-card {
+    width: 100%;
+}
+
+@media (max-width: 991px) {
+    .package-builder-summary {
+        order: 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .package-builder-layout {
+        gap: 1rem;
+    }
+
+    .package-builder-card {
+        border-radius: 1rem;
+    }
+}

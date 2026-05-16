@@ -1,0 +1,25 @@
+<div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+    <h3 class="text-sm font-semibold text-gray-700 flex items-center gap-3 mb-3">
+        <i class="fas fa-car text-primary-500"></i>
+        <span>{{ 'Transportation' | translate }}</span>
+    </h3>
+    <div class="flex flex-wrap gap-2">
+        @if( (Trips?.length ?? 0) > 0) {
+
+        @for (transport of Trips ; track $index) {
+        <span
+            class="text-xs bg-white text-gray-700 px-3 py-1.5 rounded-full border border-gray-200 flex items-center">
+            <i class="fas fa-bus text-primary-500 me-1.5 text-xs"></i>
+            <span>{{transport.TripPath}} ({{ transport.VehiclesCount }} {{transport.CarType }})</span>
+        </span>
+        }
+        }@else {
+        <span class="text-gray-600 flex items-center gap-1">
+            <i class="fas fa-info-circle text-xs"></i>
+            <span class="text-xs">
+                {{ 'No transportation included.' | translate }}
+            </span>
+        </span>
+        }
+    </div>
+</div>

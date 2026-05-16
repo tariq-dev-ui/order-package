@@ -1,0 +1,162 @@
+<div class="relative">
+  <loading-spinner [isLoading]="isLoading()" [message]="'Loading data...' | translate"/>
+<div class="font-sans  text-gray-800 antialiased">
+
+  <div class="min-h-screen flex flex-col">
+    <main class="flex-1 container mx-auto px-2 sm:px-4 lg:px-5 py-3 sm:py-5">
+      <stepper-header
+        [currentStep]="currentStep()"
+        [totalSteps]="totalSteps"
+        [maxEnabledStep]="maxEnabledStep()"
+        (stepSelected)="goToStep($event)"
+      />
+
+      <div class="package-builder-layout">
+        <div class="package-builder-main w-full">
+          <div id="stepper-contianer-id" class="package-builder-card bg-white border border-gray-200 rounded-xl shadow-soft-lg shadow-sm">
+
+            @switch (this.currentStep()){
+              @case (1) {
+                <hotel-selector-step
+                  [currentStep]="currentStep()"
+                  (nextStep)="goToStep(2)"
+                  [icon]="'fas fa-kaaba '"
+                  [title]="'Makkah Criteria' | translate"
+                  [city]="'Makkah' | translate"
+                  [cityId]="1"
+                  [state]="state.makkahHotelState"
+                  [listState]="state.makkahHotelListState"
+                  [HotelCountState]="state.makkahHotelCountState"
+                  [resetState]="state.resetMakkahHotelStateAndLists.bind(state)"
+                  [updateHotelCount]="state.updateMakkahHotelCount.bind(state)"
+                  [updateFn]="state.updateMakkahHotel.bind(state)"
+                  [removeFn]="state.removeMakkahHotel.bind(state)"
+                  [addFn]="state.addMakkahHotel.bind(state)"
+                  [districts]="packageDataService.distinctsMakkah"
+                  [isLoadingDistincts]="packageDataService.isLoadingDistinctsMakkah"
+                  [roomTypes]="packageDataService.roomTypes"
+                  [isLoadingRoomTypes]="packageDataService.isLoadingRoomTypes"
+                  [categories]="packageDataService.hotelCategories"
+                  [isLoadingCategories]="packageDataService.isLoadingHotelCategories"
+                />
+              } @case (2) {
+                <hotel-selector-step
+                  [currentStep]="currentStep()"
+                  (nextStep)="goToStep(3)"
+                  (prevStep)="goToStep(1)"
+                  [icon]="'fas fa-mosque '"
+                  [title]="'Madina Criteria' | translate"
+                  [city]="'Madina' | translate"
+                  [cityId]="2"
+                  [state]="state.madinaHotelState"
+                  [listState]="state.madinaHotelListState"
+                  [HotelCountState]="state.madinaHotelCountState"
+                  [resetState]="state.resetMadinaHotelStateAndLists.bind(state)"
+                  [updateHotelCount]="state.updateMadinaHotelCount.bind(state)"
+                  [addFn]="state.addMadinaHotel.bind(state)"
+                  [removeFn]="state.removeMadinaHotel.bind(state)"
+                  [updateFn]="state.updateMadinaHotel.bind(state)"
+                  [districts]="packageDataService.distinctsMadinah"
+                  [isLoadingDistincts]="packageDataService.isLoadingDistinctsMadinah"
+                  [roomTypes]="packageDataService.roomTypes"
+                  [isLoadingRoomTypes]="packageDataService.isLoadingRoomTypes"
+                  [categories]="packageDataService.hotelCategories"
+                  [isLoadingCategories]="packageDataService.isLoadingHotelCategories"
+                />
+              } @case (3) {
+                <transport-step
+                  (nextStep)="goToStep(4)"
+                  (prevStep)="goToStep(2)"
+                  [state]="state.transportState"
+                  [listState]="state.transportListState"
+                  [tripPaths]="packageDataService.tripPaths"
+                  [carTypes]="packageDataService.carTypes"
+                  [isLoadingTripPahts]="packageDataService.isLoadingTripPahts"
+                  [isLoadingCarTypes]="packageDataService.isLoadingCarTypes"
+                  [addFn]="state.addTransport.bind(state)"
+                  [removeFn]="state.removeTransport.bind(state)"
+                  [updateFn]="state.updateTransport.bind(state)"
+                />
+              } @case (4) {
+                <tickets-step
+                  (nextStep)="goToStep(5)"
+                  (prevStep)="goToStep(3)"
+                  [state]="state.ticketState"
+                  [listState]="state.ticketListState"
+                  [addFn]="state.addTicket.bind(state)"
+                  [removeFn]="state.removeTicket.bind(state)"
+                  [updateFn]="state.updateTicket.bind(state)"
+                />
+              } @case (5) {
+                <food-step
+                  (nextStep)="goToStep(6)"
+                  (prevStep)="goToStep(4)"
+                  [foodTypes]="packageDataService.foodTypes"
+                  [cateringTypes]="packageDataService.cateringTypes"
+                  [state]="state.foodState"
+                  [listState]="state.foodListState"
+                  [addFn]="state.addFood.bind(state)"
+                  [removeFn]="state.removeFood.bind(state)"
+                  [updateFn]="state.updateFood.bind(state)"
+                  [isLoadingFoodTypes]="packageDataService.isLoadingFoodTypes"
+                  [isLoadingCateringTypes]="packageDataService.isLoadingCateringTypes"
+                />
+              }
+              @case (6) {
+                <final-details-step
+                  [editMode]="editMode()"
+                  (prevStep)="goToStep(5)"
+                  (nextStep)="goToStep(7)"
+                  [state]="state.finalDetailsState"
+                  [updateFn]="state.updateFinalDetails.bind(state)"
+                />
+              }
+              @case (7) {
+                <pricing-step
+                  (prevStep)="goToStep(6)"
+                  (handleSubmitData)="submitData()"
+                  [makkahHotelListState]="state.makkahHotelListState"
+                  [makkahHotelCountState]="state.makkahHotelCountState"
+                  [madinahHotelListState]="state.madinaHotelListState"
+                  [madinahHotelCountState]="state.madinaHotelCountState"
+                  [transportListState]="state.transportListState"
+                  [foodListState]="state.foodListState"
+                  [ticketListState]="state.ticketListState"
+                  [pricingState]="state.pricingState"
+                  [updateMakkahHotelPricingAtIndex]="state.updateMakkahHotelPricingAtIndex.bind(state)"
+                  [updateMadinahHotelPricingAtIndex]="state.updateMadinahHotelPricingAtIndex.bind(state)"
+                  [updateTransportPricingAtIndex]="state.updateTransportPricingAtIndex.bind(state)"
+                  [updateFoodPricingAtIndex]="state.updateFoodPricingAtIndex.bind(state)"
+                  [updateTicketPricingAtIndex]="state.updateTicketPricingAtIndex.bind(state)"
+                  [finalDetailsState]="state.finalDetailsState"
+                  [updatePricingStateFn]="state.updatePricingState.bind(state)"
+                  [updateFinalDetailsFn]="state.updateFinalDetails.bind(state)"
+                />
+              }
+              @case (8) {
+                <confirmation-step
+                  [editMode]="editMode()"
+                  [packageId]="packageId()"
+                  (onSummaryClose)="onCloseSummary()"
+                />
+              }
+            }
+          </div>
+        </div>
+        <stepper-summary-panel 
+          class="package-builder-summary block w-full"
+          [makkahHotelListState]="state.makkahHotelListState"
+          [makkahHotelCountState]="state.makkahHotelCountState"
+          [madinahHotelListState]="state.madinaHotelListState"
+          [madinahHotelCountState]="state.madinaHotelCountState"
+          [foodListState]="state.foodListState"
+          [transportListState]="state.transportListState"
+          [ticketListState]="state.ticketListState"
+          [finalDetailsState]="state.finalDetailsState"
+        />
+      </div>
+    </main>
+  </div>
+
+</div>
+</div>

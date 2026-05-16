@@ -1,0 +1,36 @@
+.pricing-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+.pricing-radio:checked {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+}
+
+.pricing-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.pricing-radio:hover:not(:checked) {
+  border-color: var(--color-primary-400);
+}

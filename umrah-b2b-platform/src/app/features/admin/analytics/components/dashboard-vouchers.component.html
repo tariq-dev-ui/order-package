@@ -1,0 +1,102 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h2 class="text-lg font-bold">{{ 'Recent Quotations' | translate }}</h2>
+    <p class="text-sm text-gray-500 mt-1">{{ 'Your last 5 Quotations' | translate }}</p>
+  </div>
+</div>
+
+<div class="overflow-x-auto">
+  <loading-spinner
+    [isLoading]="isLoadingVoucher() || isLoading()"
+    [message]="isLoading() ? loadingMessage() : ('Loading recent quotations...' | translate)">
+  </loading-spinner>
+
+  @if (vouchers().length > 0) {
+    <table class="w-full">
+      <thead>
+        <tr class="text-left border-b border-gray-200 text-gray-500 text-xs">
+          <th class="pb-3 pl-4">{{ 'Types' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Req ID' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Quotation Code' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Date' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Price' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Admin Status' | translate }}</th>
+          <th class="pb-3 pl-4 text-center">{{ 'Agent Status' | translate }}</th>
+          <th class="pb-3">{{ 'Actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        @for (voucher of vouchers(); track voucher.RequestVoucherID) {
+          <tr>
+            <td class="py-4 pl-4">
+              <div class="flex items-center justify-start">
+                @switch (voucher.RequestVoucherTypeID) {
+                  @case (1) {
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 bg-green-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-hotel text-green-600 text-xs sm:text-xs"></i>
+                    </div>
+                    <span class="ml-2 px-1 sm:px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded border border-green-200">{{ 'Voucher Type Hotel' | translate }}</span>
+                  }
+                  @case (2) {
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 bg-purple-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-map-marked-alt text-purple-600 text-xs sm:text-xs"></i>
+                    </div>
+                    <span class="ml-2 px-1 sm:px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded border border-purple-200">{{ 'Voucher Type Trip' | translate }}</span>
+                  }
+                  @case (3) {
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-file-alt text-blue-600 text-xs sm:text-xs"></i>
+                    </div>
+                    <span class="ml-2 px-1 sm:px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded border border-blue-200">{{ 'Voucher Type Visa' | translate }}</span>
+                  }
+                  @case (4) {
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 bg-red-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-utensils text-red-600 text-xs sm:text-xs"></i>
+                    </div>
+                    <span class="ml-2 px-1 sm:px-2 py-0.5 bg-red-50 text-red-700 text-xs font-medium rounded border border-red-200">{{ 'Voucher Type Food' | translate }}</span>
+                  }
+                  @case (5) {
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 bg-amber-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-ticket-alt text-amber-600 text-xs sm:text-xs"></i>
+                    </div>
+                    <span class="ml-2 px-1 sm:px-2 py-0.5 bg-amber-50 text-amber-700 text-xs font-medium rounded border border-amber-200">{{ 'Voucher Type Ticket' | translate }}</span>
+                  }
+                }
+              </div>
+            </td>
+            <td class="py-4 pl-4 text-center text-xs">{{ voucher.SeroPackageRequestID }}</td>
+            <td class="py-4 pl-4 text-center text-xs">{{ voucher.RequestVoucherCode }}</td>
+            <td class="py-4 pl-4 text-center text-xs">{{ voucher.AddedDate | date:'dd MMM yyyy' }}</td>
+            <td class="py-4 pl-4 text-center text-xs">
+              @if (voucher.TotalPriceWithTax === 0) {
+                <div class="text-xs sm:text-xs font-bold text-gray-900">{{ 'N/A' | translate }}</div>
+              } @else {
+                <div class="text-xs sm:text-xs font-bold text-gray-900">{{ voucher.TotalPriceWithTax }}</div>
+                <div class="text-xs text-gray-500 sar-symbol">{{ voucher.TotalPriceWithTax ? ' R' : '' }}</div>
+              }
+            </td>
+            <td class="py-4 pl-4 text-center">
+              <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs">{{ voucher.VoucherStatusForAdminTitle }}</span>
+            </td>
+            <td class="py-4 pl-4 text-center">
+              <span class="px-2 py-1 bg-green-50 text-green-600 rounded-full text-xs">{{ voucher.VoucherStatusForAgentTitle }}</span>
+            </td>
+            <td class="py-4 pl-4 text-center">
+              <app-actions-dropdown
+                [actions]="getActionsForVoucherType(voucher)"
+                (actionSelected)="handleActionSelection($event, voucher)">
+              </app-actions-dropdown>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else if (!isLoadingVoucher() && !isLoading()) {
+    <div class="text-center py-8">
+      <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-file-invoice text-primary-400"></i>
+      </div>
+      <p class="text-primary-500">{{ 'No recent quotations found' | translate }}</p>
+    </div>
+  }
+</div>

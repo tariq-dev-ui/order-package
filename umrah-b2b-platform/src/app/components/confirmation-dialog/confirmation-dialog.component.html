@@ -1,0 +1,8 @@
+<div [dir]="options.dir">
+  <h5 mat-dialog-title class="mat-subtitle-1">{{ data.title }}</h5>
+  <div mat-dialog-content class="mat-subtitle-2 lh-16">{{ data.message }}</div>
+  <mat-action-row>
+    <button mat-stroked-button color="warn" mat-dialog-close (click)="onConfirm()">{{ "Yes" | translate }}</button>
+    <button mat-flat-button color="primary" mat-dialog-close cdkFocusInitial>{{ "No" | translate }}</button>
+  </mat-action-row>
+</div>

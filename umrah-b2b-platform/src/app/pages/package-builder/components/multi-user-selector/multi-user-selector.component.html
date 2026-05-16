@@ -1,0 +1,104 @@
+<div class="w-full">
+  <div class="space-y-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-3">
+      <i class="fas fa-users text-primary-500"></i>
+      <span>{{ 'Select Agents' | translate }}</span>
+    </label>
+
+    <!-- Selected Users -->
+    <div class="mb-1">
+        <div class="flex flex-wrap gap-2 mb-3 p-2 bg-gray-50 rounded-lg min-h-14 border border-gray-200"
+          [class.items-center]="selectedUsers().length === 0">
+          @if (selectedUsers().length === 0) {
+          <div class="text-gray-400 text-sm flex items-center h-full px-3">{{ 'No Agents selected' | translate }}</div>
+          }
+          @for (user of selectedUsers(); track user.id) {
+          <div
+            class="user-chip flex items-center bg-blue-50 text-blue-800 rounded-full px-3 py-1 text-sm border border-blue-100">
+            @if (user.avatar) {
+              <img [src]="user.avatar" [alt]="user.name" width="28" height="28" class="rounded-full mr-2" (error)="onAvatarError($event)">
+            } @else {
+              <img src="/IMG/logo.png" [alt]="'Default package image' | translate" class="w-7 h-7 object-contain opacity-80 mr-2">
+            }
+            {{ user.name }}
+            <button type="button" (click)="removeUser(user.id)"
+              class="ml-1 text-blue-400 hover:text-blue-600 transition-colors">
+              <i class="fas fa-times text-xs"></i>
+            </button>
+          </div>
+          }
+        </div>
+      </div>
+
+
+    <!-- Search Input -->
+    <div class="relative">
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">        
+      <div
+        class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 bg-white disabled:bg-gray-100 disabled:border-gray-300">
+        @if (isLoadingUsers()) {
+          <i class="fas fa-spinner fa-spin text-primary-500 ml-3"></i>
+        } @else {
+          <i class="fas fa-search text-gray-400 ml-3"></i>
+        }
+        <input type="text" [(ngModel)]="searchQuery" (focus)="showDropdown.set(true)" (input)="filterUsers()"
+          [placeholder]="isLoadingUsers() ? ('Loading Agents...' | translate) : ('Search Agents...' | translate)" 
+          class="w-full p-3 pl-2 focus:outline-none placeholder-gray-400 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+          #searchOrigin cdkOverlayOrigin [disabled]="isLoadingUsers()">
+      </div>
+      <div class="custom-select">
+          
+          <select (change)="onCountryChange($event)"
+            class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+            [disabled]="isLoadingCountries()">
+            @if (isLoadingCountries()) {
+              <option [value]="undefined">{{ 'Loading Countries...' | translate }}</option>
+            } @else {
+              <option [value]="undefined">{{ 'All Countries' | translate }}</option>
+              @for (country of countries(); track country.id) {
+              <option [value]="country.id">{{ country.name }}</option>
+              }
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Dropdown -->
+      <ng-template class="w-full" cdkConnectedOverlay [cdkConnectedOverlayOrigin]="searchOrigin"
+        [cdkConnectedOverlayOpen]="showDropdown()" [cdkConnectedOverlayPositions]="overlayPositions"
+        (backdropClick)="onBackdropClick()" cdkConnectedOverlayHasBackdrop
+        [cdkConnectedOverlayWidth]="dropdownWidth() ?? 200">
+
+        <div  style="margin-left: -30px;" class="w-full bg-white shadow-lg rounded-lg border border-gray-200 max-h-72 overflow-auto py-1">
+          @if (filteredUsers().length === 0) {
+          <div class="p-3 text-center text-gray-500">{{ 'No matching users found' | translate }}</div>
+          }
+          @for (user of filteredUsers(); track user.id) {
+          <div class="dropdown-option p-3 cursor-pointer flex items-center" [class.selected]="isSelected(user.id)"
+            (click)="toggleUser(user)">
+            <div class="flex items-center w-full">
+              @if (user.avatar) {
+                <img [src]="user.avatar" [alt]="user.name" width="28" height="28" class="rounded-full mr-3" (error)="onAvatarError($event)">
+              } @else {
+                <img src="/IMG/logo.png" [alt]="'Default package image' | translate" class="w-7 h-7 object-contain opacity-80 mr-3">
+              }
+              <div class="flex-1">
+                <div class="text-sm font-medium text-gray-800">{{ user.name }}</div>
+                <div class="text-xs text-gray-500">{{ user.email }}</div>
+                @if (user.country) {
+                <div class="text-xs text-gray-400 mt-1">
+                  {{ user.city ? user.city + ', ' : '' }}{{ user.country || '' }}
+                </div>
+                }
+              </div>
+              @if (isSelected(user.id)) {
+              <i class="fas fa-check text-blue-500 ml-2"></i>
+              }
+            </div>
+          </div>
+          }
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

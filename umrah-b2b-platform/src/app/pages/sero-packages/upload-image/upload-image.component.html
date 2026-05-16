@@ -1,0 +1,86 @@
+<div class="relative flex flex-col h-full">
+  <!-- Modal Header -->
+  <div class="border-b border-gray-200 p-3 sm:p-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg sm:text-2xl font-semibold text-gray-900">
+        <i class="fas fa-image text-primary-500 me-2"></i>
+        {{ 'Package Image' | translate }}
+      </h2>
+      <button (click)="close()" class="text-gray-400 hover:text-gray-500 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <p class="mt-1 text-sm text-gray-500">{{ pkg()?.Title ?? '' }}</p>
+  </div>
+
+  <!-- Modal Body -->
+  <div class="flex-1 min-h-0 flex flex-col p-2 sm:p-5">
+    <div class="flex-1 min-h-0 flex flex-col">
+      <!-- Image Card -->
+      <div class="flex-1 min-h-0 flex flex-col bg-white rounded-lg border border-gray-200 p-3">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-md font-medium text-primary-500 flex items-center">
+            <i class="fas fa-image text-primary-400 mr-2 text-sm"></i>
+            {{ 'Package Image' | translate }}
+          </h3>
+          @if(isUploading()){
+          <span class="text-xs bg-primary-100 text-primary-800 px-3 py-1 rounded flex items-center">
+            {{ 'Uploading...' | translate }}
+          </span>
+          } @else if (isPreviewLoading()) {
+          <span class="text-xs bg-primary-100 text-primary-800 px-3 py-1 rounded flex items-center">
+            {{ 'Loading image...' | translate }}
+          </span>
+          } @else {
+            @if (preview()) {
+            <span class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full">{{ 'Uploaded' | translate }}</span>
+            } @else {
+            <span class="text-xs bg-primary-100 text-primary-600 px-3 py-1 rounded-full">{{ 'Not set' | translate }}</span>
+            }
+          }
+        </div>
+        <div class="upload-area image-container flex-1 min-h-0 rounded-lg flex items-center justify-center cursor-pointer relative"
+          (click)="imageUploadInput.click()">
+          <div id="imagePreview" class="text-center p-2 w-full h-full flex flex-col items-center justify-center">
+            @if (!preview()) {
+            <i class="fas fa-image text-primary-400 text-2xl mb-2"></i>
+            <p class="text-gray-500 text-xs">{{ 'Click to upload image' | translate }}</p>
+            <p class="text-gray-400 text-xs mt-1">{{ '1200x400px JPG' | translate }}</p>
+            } @else {
+            <img [src]="preview()!" [alt]="'Package Image' | translate" class="h-full w-full object-contain rounded" (load)="onImageLoaded()" (error)="onImageError()">
+            }
+            @if (isUploading() || isRemoving() || isPreviewLoading()) {
+            <div class="absolute inset-0 bg-white text-primary-500 bg-opacity-75 flex items-center justify-center">
+              <i class="fas fa-spinner fa-spin text-primary-500 text-xl"></i> {{ overlayMessage() }}
+            </div>
+            }
+          </div>
+          @if (preview() && !isUploading() && !isRemoving() && !isPreviewLoading()) {
+          <button (click)="removeImage(); $event.stopPropagation()"
+            class="cursor-pointer delete-icon absolute top-2 right-2 bg-primary-100 text-primary-500 hover:text-primary-400 rounded-full w-7 h-7 flex items-center justify-center shadow-sm border border-primary-500">
+            <i class="fas fa-trash text-xs"></i>
+          </button>
+          }
+        </div>
+        <input #imageUploadInput type="file" (change)="handleImageUpload($event)" class="hidden" accept="image/*">
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Footer -->
+  <div class="flex flex-wrap justify-end items-center gap-3 p-3 sm:p-5 border-t border-gray-200">
+    <button type="button" (click)="openGenerateDialog()"
+      class="inline-flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-medium rounded-lg border border-primary-500 text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-sm">
+      <i class="fas fa-wand-magic-sparkles text-xs"></i>
+      <span class="hidden xs:inline">{{ 'Generate with AI' | translate }}</span>
+      <span class="xs:hidden">{{ 'Generate' | translate }}</span>
+    </button>
+    <button type="button" (click)="close()"
+      class="px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-medium rounded-lg bg-primary-500 text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-sm hover:shadow-md">
+      <i class="fas fa-times me-1 sm:me-2"></i>
+      {{ 'Close' | translate }}
+    </button>
+  </div>
+</div>

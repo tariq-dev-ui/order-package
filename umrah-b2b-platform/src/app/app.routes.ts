@@ -3,6 +3,7 @@ import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.compone
 
 const emptyPage = () => import('./features/shared/placeholder/placeholder.component').then(m => m.PlaceholderComponent);
 const statisticsPage = () => import('./features/admin/statistics/statistics-page.component').then(m => m.StatisticsPageComponent);
+const analyticsDashboardPage = () => import('./features/admin/analytics/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent);
 const transportPricingPage = () => import('./features/admin/transport-pricing/transport-pricing-page.component').then(m => m.TransportPricingPageComponent);
 const transportPricingFormPage = () => import('./features/admin/transport-pricing/transport-pricing-form-page.component').then(m => m.TransportPricingFormPageComponent);
 const foodPricingPage = () => import('./features/admin/food-pricing/food-pricing-page.component').then(m => m.FoodPricingPageComponent);
@@ -36,6 +37,10 @@ const operationsVisaRequestsPage = () => import('./features/admin/operations/vis
 const operationsTransportRequestsPage = () => import('./features/admin/operations/transport-requests/transport-requests-page.component').then(m => m.TransportRequestsPageComponent);
 const operationsCateringRequestsPage = () => import('./features/admin/operations/catering-requests/catering-requests-page.component').then(m => m.CateringRequestsPageComponent);
 const operationsFlightRequestsPage = () => import('./features/admin/operations/flight-requests/flight-requests-page.component').then(m => m.FlightRequestsPageComponent);
+const salamAgentPackagesPage = () => import('./pages/sero-packages/sero-packages.component').then(m => m.SeroPackagesComponent);
+const salamPackageBuilderPage = () => import('./pages/package-builder/package-builder.component').then(m => m.PackageBuilderComponent);
+const agentRequestsPage = () => import('./features/admin/agent-requests/agent-requests-page.component').then(m => m.AgentRequestsPageComponent);
+const newAgentRequestPage = () => import('./features/admin/agent-requests/new-agent-request-page.component').then(m => m.NewAgentRequestPageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -43,14 +48,18 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-      { path: '', loadComponent: statisticsPage },
-      { path: 'analytics', loadComponent: statisticsPage },
+      { path: '', loadComponent: analyticsDashboardPage },
+      { path: 'analytics', loadComponent: analyticsDashboardPage },
       { path: 'distribution', loadComponent: emptyPage },
-      { path: 'packages/new',       loadComponent: agentPackageFormPage },
-      { path: 'packages/edit/:id',  loadComponent: agentPackageFormPage },
+      { path: 'agent-packages',           loadComponent: salamAgentPackagesPage },
+      { path: 'agent-packages/new',       loadComponent: salamPackageBuilderPage },
+      { path: 'agent-packages/:packageId/edit', loadComponent: salamPackageBuilderPage },
+      { path: 'packages/new',       redirectTo: 'agent-packages/new', pathMatch: 'full' },
+      { path: 'packages/:packageId/edit',  loadComponent: salamPackageBuilderPage },
+      { path: 'packages/edit/:id',  redirectTo: 'agent-packages', pathMatch: 'full' },
       { path: 'packages/view/:id',  loadComponent: agentPackageFormPage },
-      { path: 'packages',           loadComponent: agentPackagesPage },
-      { path: 'packages/builder',   loadComponent: () => import('./features/package-definition/package-definition-page.component').then(m => m.PackageDefinitionPageComponent) },
+      { path: 'packages',           loadComponent: salamAgentPackagesPage },
+      { path: 'packages/builder',   redirectTo: 'agent-packages/new', pathMatch: 'full' },
       { path: 'orders/confirmation/:orderId', loadComponent: emptyPage },
       // TODO: new order form
       { path: 'orders/new', loadComponent: emptyPage },
@@ -72,6 +81,8 @@ export const routes: Routes = [
       { path: 'pricing/food',         loadComponent: foodPricingPage },
       { path: 'pricing/hotel',         loadComponent: hotelPricingPage },
       // TODO: service center
+      { path: 'agent-requests',              loadComponent: agentRequestsPage },
+      { path: 'agent-requests/new',          loadComponent: newAgentRequestPage },
       { path: 'rfq/new',                     loadComponent: newRfqPage },
       { path: 'service-center/rfq/new',      loadComponent: newRfqPage },
       { path: 'service-center/rfq/current',  loadComponent: currentRfqPage },
@@ -128,12 +139,12 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'distributed', pathMatch: 'full' },
       { path: 'distributed', loadComponent: () => import('./features/master/distributed/distributed-page.component').then(m => m.DistributedPageComponent) },
-      { path: 'packages', loadComponent: emptyPage },
-      { path: 'orders', loadComponent: emptyPage },
-      { path: 'quotations', loadComponent: emptyPage },
-      { path: 'subagents',   loadComponent: emptyPage },
+      { path: 'packages',    loadComponent: () => import('./features/master/packages/package-list-page.component').then(m => m.PackageListPageComponent) },
+      { path: 'my-packages', loadComponent: () => import('./features/master/packages/my-packages-page.component').then(m => m.MyPackagesPageComponent) },
+      { path: 'orders', loadComponent: () => import('./features/master/orders/orders-page.component').then(m => m.OrdersPageComponent) },
+      { path: 'quotations', loadComponent: () => import('./features/master/quotations/quotations-page.component').then(m => m.QuotationsPageComponent) },
+      { path: 'subagents',   loadComponent: () => import('./features/master/subagents/subagents-page.component').then(m => m.SubagentsPageComponent) },
       { path: 'analytics',   loadComponent: emptyPage },
-      { path: 'my-packages', loadComponent: emptyPage },
       { path: 'settings',    loadComponent: emptyPage },
       { path: 'finance/chart-of-accounts', loadComponent: () => import('./pages/chart-of-accounts/chart-of-accounts.component').then(m => m.ChartOfAccountsComponent) },
       { path: 'finance/fiscal-year',        loadComponent: () => import('./pages/fiscal-year/fiscal-year.component').then(m => m.FiscalYearComponent) },

@@ -1,0 +1,43 @@
+<div class="stepper-shell mb-8">
+    <div class="stepper mt-5" role="list" aria-label="Package builder steps">
+        @for (step of steps(); track step.index) {
+            <button
+                type="button"
+                class="stepper-item bg-transparent border-0 p-0"
+                role="listitem"
+                (click)="onStepClick(step.index)"
+                [disabled]="step.index > maxEnabledStep()"
+                [class.active]="currentStep() == step.index"
+                [class.completed]="currentStep() > step.index"
+                [attr.aria-current]="currentStep() == step.index ? 'step' : null"
+                [attr.aria-disabled]="step.index > maxEnabledStep() ? 'true' : null"
+                [attr.aria-label]="('Go to step' | translate) + ' ' + step.index + ': ' + (step.label | translate) + (step.subLabel ? ' ' + (step.subLabel | translate) : '')"
+            >
+                <div
+                    class="step-indicator"
+                    [class.bg-primary-500]="currentStep() >= step.index"
+                    [class.text-white]="currentStep() >= step.index"
+                    [class.bg-gray-200]="currentStep() < step.index"
+                    [class.text-gray-500]="currentStep() < step.index"
+                >
+                    <i
+                        [class]="step.iconClass"
+                        [class.text-lg]="step.iconExtraClass === 'text-lg'"
+                    ></i>
+                </div>
+
+                <div
+                    class="step-label text-xs font-medium text-center"
+                    [class.text-gray-500]="currentStep() < step.index"
+                    [class.opacity-50]="step.index > maxEnabledStep()"
+                >
+                    {{ step.label | translate }}
+                    @if (step.subLabel) {
+                        <br />
+                        {{ step.subLabel | translate }}
+                    }
+                </div>
+            </button>
+        }
+    </div>
+</div>

@@ -1,0 +1,128 @@
+.stepper-shell {
+	--step-indicator-size: 2.5rem;
+	--step-line-top: calc(var(--step-indicator-size) / 2);
+	padding-inline: 0.25rem;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
+.stepper {
+	display: flex;
+	align-items: flex-start;
+	min-width: max(42rem, 100%);
+}
+
+.stepper-item {
+	position: relative;
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	min-width: 0;
+	cursor: pointer;
+}
+
+.stepper-item::before,
+.stepper-item::after {
+	position: absolute;
+	top: var(--step-line-top);
+	height: 2px;
+	transform: translateY(-50%);
+	content: '';
+}
+
+.stepper-item::before {
+	left: -50%;
+	width: 100%;
+	background: #e5e7eb;
+	z-index: 0;
+}
+
+.stepper-item::after {
+	left: 50%;
+	width: 0;
+	background: var(--color-primary-500);
+	transition: width 0.3s ease;
+	z-index: 1;
+}
+
+.stepper-item:first-child::before {
+	content: none;
+}
+
+.stepper-item.completed::after {
+	width: 100%;
+}
+
+.stepper-item:last-child::after {
+	content: none;
+}
+
+:host-context([dir='rtl']) .stepper-item::before {
+	left: auto;
+	right: -50%;
+}
+
+:host-context([dir='rtl']) .stepper-item::after {
+	left: auto;
+	right: 50%;
+}
+
+.stepper-item:disabled {
+	cursor: default;
+}
+
+.step-indicator {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--step-indicator-size);
+	height: var(--step-indicator-size);
+	border-radius: 9999px;
+	flex-shrink: 0;
+	font-weight: 600;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stepper-item.active .step-indicator {
+	transform: scale(1.08);
+	box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+}
+
+.step-label {
+	min-height: 2.5rem;
+	line-height: 1.25rem;
+	text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+	.stepper-shell {
+		padding-bottom: 0.5rem;
+		margin-inline: -0.25rem;
+	}
+
+	.stepper {
+		min-width: 34rem;
+	}
+
+	.step-label {
+		min-height: 2.25rem;
+		font-size: 0.6875rem;
+		line-height: 1rem;
+	}
+
+	.step-indicator {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
+}
+
+@media (max-width: 420px) {
+	.stepper {
+		min-width: 30rem;
+	}
+}

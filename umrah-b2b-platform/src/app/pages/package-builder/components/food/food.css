@@ -1,0 +1,22 @@
+.label-with-icon i {
+	margin-inline-end: 0.25rem;
+}
+
+.nav-action-btn i {
+	flex-shrink: 0;
+}
+
+:host-context([dir='rtl']) .label-with-icon i {
+	margin-inline-end: 0;
+	margin-inline-start: 0.25rem;
+}
+
+:host-context([dir='rtl']) .nav-action-btn i:first-child {
+	margin-inline-end: 0;
+	margin-inline-start: 0.35rem;
+}
+
+:host-context([dir='rtl']) .nav-action-btn i:last-child {
+	margin-inline-start: 0;
+	margin-inline-end: 0.35rem;
+}

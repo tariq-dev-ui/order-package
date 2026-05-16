@@ -1,0 +1,8 @@
+<div class="flex flex-wrap gap-1 mb-4">
+    @for (tag of Tags; track $index){
+    <span [style.backgroundColor]="tag.Color? tag.Color+'17' : '#DBEAFE17'"
+        [style.color]="tag.Color ? tag.Color : '#DBEAFE'" class="text-xs px-3 py-2 rounded-full">
+        {{ tag.Name }}
+    </span>
+    }
+</div>

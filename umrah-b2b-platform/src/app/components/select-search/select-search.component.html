@@ -1,0 +1,33 @@
+<mat-form-field appearance="outline" class="w-100">
+  <!-- <mat-label>{{ placeHolder() }}</mat-label> -->
+  <mat-select class="p-6"
+    [formControl]="formControl()"
+    [placeholder]="placeHolder()"
+    [multiple]="multiple()"
+    (valueChange)="onChanged($event)"
+  >
+    <mat-option>
+      <ngx-mat-select-search
+        [formControl]="filterCtrl()"
+        [searching]="searching()"
+        [placeholderLabel]="'Search' | translate"
+        [noEntriesFoundLabel]="'No Data Found' | translate"
+      ></ngx-mat-select-search>
+    </mat-option>
+    @for(e of data | async; track $index){
+      <mat-option [value]="e.value">{{ e.label }}</mat-option>
+    }
+  </mat-select>
+
+  @if (formControl() && formControl().value && !searching()) {
+  <button matSuffix color="primary" mat-icon-button [attr.aria-label]="'Clear' | translate" (click)="$event.stopPropagation(); filterCtrl().setValue(' '); formControl().reset()">
+    <i class="fas fa-times fa-xs text-gray-400" aria-hidden="true"></i>
+  </button>
+  }
+
+  @if (searching()) {
+  <div matSuffix class="flex items-center pr-2">
+    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+  </div>
+  }
+</mat-form-field>

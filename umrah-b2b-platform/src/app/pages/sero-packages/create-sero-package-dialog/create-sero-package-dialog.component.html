@@ -1,0 +1,19 @@
+<div class="create-package-dialog">
+  <h2 mat-dialog-title>{{ "CREATE_SERO_PACKAGE" | translate }}</h2>
+
+  <mat-dialog-content>
+    
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isSaving()">
+      {{ "CANCEL" | translate }}
+    </button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!isAllFormsValid() || isSaving()">
+      @if (isSaving()) {
+      <mat-icon>hourglass_empty</mat-icon>
+      }
+      {{ "SAVE" | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,27 @@
+<div class="step-content p-5 ">
+    <loading-spinner [isLoading]="isLoading()" [message]="'Downloading PDF...' | translate" />
+    <div id="confirmation-screen" class="confirmation-screen">
+        <div class="confirmation-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="confirmation-message">
+            <!-- if editMode else -->
+            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ (editMode ? 'Package Updated Successfully!' : 'Package Created Successfully!') | translate }}</h3>
+            <p class="text-gray-600 mb-6 max-w-md mx-auto">{{ 'You can now manage your packages from the packages list.' | translate }}</p>
+        </div>
+        <div class="confirmation-actions grid grid-cols-1 md:grid-cols-2 gap-3">
+            @if (packageId) {
+            <button (click)="downloadPackageDetails(packageId)"
+                class=" cursor-pointer px-5 py-2.5 border border-primary-500 text-primary-500 rounded-lg hover:bg-primary-50 transition-colors">
+                <i class="fas fa-download"></i>
+                <span>{{ 'Download Details' | translate }}</span>
+            </button>
+        }
+
+            <button (click)="onSummaryClose.emit()"
+                class=" cursor-pointer px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors">
+                {{ 'Back To Packages List' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

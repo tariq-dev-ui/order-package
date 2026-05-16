@@ -1,0 +1,296 @@
+<div class="flex flex-col gap-5">
+
+    <!-- ── Hero Image (large) ────────────────────────────────── -->
+    @if(showImage && pkg?.ImageUrl && imageSize === 'large'){
+    <div class="relative rounded-xl overflow-hidden shadow-md cursor-pointer group" (click)="openImagePreview()"
+        [title]="'View full image' | translate">
+        <img class="pkg-image w-full object-cover" [src]="pkg?.ImageUrl"
+            [alt]="pkg?.Title || ('Package image' | translate)" loading="lazy" referrerpolicy="no-referrer" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                    flex items-end justify-end p-3">
+            <span class="text-white text-xs bg-black/40 rounded-full px-2 py-1">
+                <i class="fas fa-expand me-1"></i>{{ 'View full image' | translate }}
+            </span>
+        </div>
+    </div>
+    }
+
+    <!-- ── Tags row — thumbnail floats right for small/medium ── -->
+    <div class="flex items-start gap-3">
+
+        @if(showTags && pkg?.Tags){
+        <div class="flex-1">
+            <package-tags-details [Tags]="pkg?.Tags" />
+        </div>
+        }
+
+        @if(showImage && pkg?.ImageUrl && imageSize !== 'large'){
+        <div class="relative rounded-xl overflow-hidden shadow-md cursor-pointer group flex-shrink-0"
+            [class]="imageSize === 'small' ? 'w-16 h-16' : 'w-32 h-32'" (click)="openImagePreview()"
+            [title]="'View full image' | translate">
+            <img class="w-full h-full object-cover" [src]="pkg?.ImageUrl"
+                [alt]="pkg?.Title || ('Package image' | translate)" loading="lazy" referrerpolicy="no-referrer" />
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200
+                        flex items-center justify-center">
+                <i
+                    class="fas fa-expand text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm"></i>
+            </div>
+        </div>
+        }
+
+    </div>
+
+    <div class="flex gap-5 justify-between items-center">
+        <!-- ── Key Stats Strip ─────────────────────────────────────── -->
+        <div class="flex flex-wrap gap-3">
+
+            @if(pkg?.Price){
+            <div
+                class="flex items-center gap-3 bg-primary-50 border border-primary-100 rounded-xl px-3 py-2 min-w-[120px]">
+                <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-coins text-primary-600 text-[11px]"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold text-primary-400 uppercase tracking-wide">{{ 'Price' | translate
+                        }}</p>
+                    <p class="text-sm font-bold text-primary-700 leading-tight">
+                        {{ pkg?.Price | number:'1.2-2' }}
+                        <span class="text-[10px] font-medium text-primary-400">SAR</span>
+                    </p>
+                </div>
+            </div>
+            }
+
+            @if(pkg?.VerifiedPrice !== undefined){
+            <div class="flex items-center gap-3 rounded-xl px-3 py-2 border" [class]="pkg?.VerifiedPrice
+                ? 'bg-emerald-50 border-emerald-200'
+                : 'bg-amber-50 border-amber-200'">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    [class]="pkg?.VerifiedPrice ? 'bg-emerald-100' : 'bg-amber-100'">
+                    <i class="fas text-[11px]"
+                        [class]="pkg?.VerifiedPrice ? 'fa-lock text-emerald-600' : 'fa-clock text-amber-500'"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold uppercase tracking-wide"
+                        [class]="pkg?.VerifiedPrice ? 'text-emerald-400' : 'text-amber-400'">{{ 'Price Type' | translate
+                        }}</p>
+                    <p class="text-xs font-bold" [class]="pkg?.VerifiedPrice ? 'text-emerald-700' : 'text-amber-700'">
+                        {{ pkg?.VerifiedPrice ? ('Verified' | translate) : ('Approximate' | translate) }}
+                    </p>
+                </div>
+            </div>
+            }
+
+            @if(pkg?.BlendedPrice !== undefined){
+            <div class="flex items-center gap-3 rounded-xl px-3 py-2 border" [class]="pkg?.BlendedPrice
+                ? 'bg-blue-50 border-blue-200'
+                : 'bg-gray-50 border-gray-200'">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    [class]="pkg?.BlendedPrice ? 'bg-blue-100' : 'bg-gray-200'">
+                    <i class="fas text-[11px]"
+                        [class]="pkg?.BlendedPrice ? 'fa-layer-group text-blue-600' : 'fa-list text-gray-500'"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold uppercase tracking-wide"
+                        [class]="pkg?.BlendedPrice ? 'text-blue-400' : 'text-gray-400'">{{ 'Pricing' | translate }}</p>
+                    <p class="text-xs font-bold" [class]="pkg?.BlendedPrice ? 'text-blue-700' : 'text-gray-600'">
+                        {{ pkg?.BlendedPrice ? ('Blended' | translate) : ('Itemized' | translate) }}
+                    </p>
+                </div>
+            </div>
+            }
+
+            @if(pkg?.PackageCode){
+            <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-hashtag text-gray-500 text-[11px]"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold text-gray-500 uppercase tracking-wide">{{ 'Code' | translate }}
+                    </p>
+                    <p class="text-xs font-bold text-gray-700">{{ pkg?.PackageCode }}</p>
+                </div>
+            </div>
+            }
+
+            @if(showVisaDetails){
+            <div class="flex items-center gap-3 rounded-xl px-3 py-2 border" [class]="pkg?.IsVisaIncluded
+                ? 'bg-green-50 border-green-200'
+                : 'bg-red-50 border-red-200'">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    [class]="pkg?.IsVisaIncluded ? 'bg-green-100' : 'bg-red-100'">
+                    <i class="fas text-[11px]" [class]="pkg?.IsVisaIncluded
+                        ? 'fa-passport text-green-600'
+                        : 'fa-ban text-red-500'"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold uppercase tracking-wide"
+                        [class]="pkg?.IsVisaIncluded ? 'text-green-400' : 'text-red-400'">{{ 'Visa' | translate }}</p>
+                    <p class="text-xs font-bold" [class]="pkg?.IsVisaIncluded ? 'text-green-700' : 'text-red-600'">
+                        {{ pkg?.IsVisaIncluded ? ('Included' | translate) : ('Not included' | translate) }}
+                    </p>
+                </div>
+            </div>
+            }
+
+
+            @if(pkg?.IsActive !== undefined){
+            <div class="flex items-center gap-3 rounded-xl px-3 py-2 border" [class]="pkg?.IsActive
+                ? 'bg-blue-50 border-blue-200'
+                : 'bg-gray-50 border-gray-200'">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    [class]="pkg?.IsActive ? 'bg-blue-100' : 'bg-gray-200'">
+                    <i class="fas text-[11px]"
+                        [class]="pkg?.IsActive ? 'fa-circle-check text-blue-600' : 'fa-circle-xmark text-gray-400'"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold uppercase tracking-wide"
+                        [class]="pkg?.IsActive ? 'text-blue-400' : 'text-gray-400'">{{ 'Status' | translate }}</p>
+                    <p class="text-xs font-bold" [class]="pkg?.IsActive ? 'text-blue-700' : 'text-gray-500'">
+                        {{ pkg?.IsActive ? ('Active' | translate) : ('Inactive' | translate) }}
+                    </p>
+                </div>
+            </div>
+            }
+
+            @if(pkg?.GuestCount){
+            <div class="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-2 min-w-[120px]">
+                <div class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-users text-indigo-600 text-[11px]"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold text-indigo-400 uppercase tracking-wide">{{ 'Guests' | translate }}</p>
+                    <p class="text-sm font-bold text-indigo-700 leading-tight">{{ pkg?.GuestCount }}</p>
+                </div>
+            </div>
+            }
+
+            @if(pkg?.Quantity){
+            <div class="flex items-center gap-3 bg-teal-50 border border-teal-100 rounded-xl px-3 py-2 min-w-[120px]">
+                <div class="w-7 h-7 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-cubes text-teal-600 text-[11px]"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-semibold text-teal-400 uppercase tracking-wide">{{ 'Available Packages' | translate }}</p>
+                    <p class="text-sm font-bold text-teal-700 leading-tight">{{ pkg?.Quantity }}</p>
+                </div>
+            </div>
+            }
+
+        </div>
+
+        <!-- ── Package Period ─────────────────────────────────────── -->
+        @if(pkg?.StartDate || pkg?.EndDate){
+        <div class="flex items-center gap-3 bg-primary-50 border-2 border-primary-200 rounded-xl px-4 py-3">
+            <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-calendar-range text-primary-600 text-sm"></i>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 min-w-0">
+                <div>
+                    <p class="text-[9px] font-semibold text-primary-400 uppercase tracking-wide leading-none mb-0.5">{{
+                        'From' | translate }}</p>
+                    <p class="text-xs font-bold text-primary-700 leading-tight">{{ pkg?.StartDate | date:'EEEE, MMM d,
+                        y' }}</p>
+                </div>
+                <i class="fas fa-arrow-right text-primary-300 text-[10px]"></i>
+                <div>
+                    <p class="text-[9px] font-semibold text-primary-400 uppercase tracking-wide leading-none mb-0.5">{{
+                        'To' | translate }}</p>
+                    <p class="text-xs font-bold text-primary-700 leading-tight">{{ pkg?.EndDate | date:'EEEE, MMM d, y'
+                        }}</p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- ── Masonry two-column grid ──────────────────────────────── -->
+    <div class="columns-1 sm:columns-2 gap-5">
+
+        @if(showHotels){
+        <div class="break-inside-avoid mb-3">
+            <package-hotels-details [Hotels]="pkg?.Hotels" [HotelCounts]="pkg?.HotelCounts" />
+        </div>
+        }
+
+        @if(showTrips){
+        <div class="break-inside-avoid mb-3">
+            <package-trips-details [Trips]="pkg?.Trips" />
+        </div>
+        }
+
+        <div class="break-inside-avoid mb-3">
+            <package-tickets-details [Tickets]="pkg?.Tickets" />
+        </div>
+
+        @if(showCatering){
+        <div class="break-inside-avoid mb-3">
+            <package-caterings-details [Caterings]="pkg?.Caterings" />
+        </div>
+        }
+
+        @if(showPKGDetails){
+        <div class="break-inside-avoid mb-3 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div class="px-4 py-2.5 border-b border-gray-200 bg-gray-50 flex items-center gap-3">
+                <i class="fas fa-box-open text-primary-500 text-sm"></i>
+                <span class="text-sm font-semibold text-gray-700">{{ 'Package Details' | translate }}</span>
+            </div>
+            <div class="p-5 space-y-2 text-xs">
+                <div class="flex justify-between items-center py-1 border-b border-gray-50">
+                    <span class="text-gray-500">{{ 'Package Code' | translate }}</span>
+                    <span class="font-semibold text-gray-800 font-mono">{{ pkg?.PackageCode }}</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-gray-50">
+                    <span class="text-gray-500">{{ 'Title' | translate }}</span>
+                    <span class="font-semibold text-gray-800 text-right max-w-[60%] truncate">{{ pkg?.Title }}</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-gray-50">
+                    <span class="text-gray-500">{{ 'Pricing Mode' | translate }}</span>
+                    @if(pkg?.BlendedPrice) {
+                    <span
+                        class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                        <i class="fas fa-layer-group text-[9px]"></i>{{ 'Blended' | translate }}
+                    </span>
+                    } @else {
+                    <span
+                        class="inline-flex items-center gap-1 bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">
+                        <i class="fas fa-list text-[9px]"></i>{{ 'Itemized' | translate }}
+                    </span>
+                    }
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-gray-50">
+                    <span class="text-gray-500">{{ 'By Agent' | translate }}</span>
+                    @if(pkg?.IsByAgent) {
+                    <span
+                        class="inline-flex items-center gap-1 bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-medium">
+                        <i class="fas fa-user-tie text-[9px]"></i>{{ 'Yes' | translate }}
+                    </span>
+                    } @else {
+                    <span
+                        class="inline-flex items-center gap-1 bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full font-medium">
+                        {{ 'No' | translate }}
+                    </span>
+                    }
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-gray-50">
+                    <span class="text-gray-500">{{ 'Added By' | translate }}</span>
+                    <span class="font-semibold text-gray-800">{{ pkg?.AddedBy }}</span>
+                </div>
+                <div class="flex justify-between items-center py-1">
+                    <span class="text-gray-500">{{ 'Added Date' | translate }}</span>
+                    <span class="font-semibold text-gray-800">{{ pkg?.AddedDate | date:'medium' }}</span>
+                </div>
+            </div>
+        </div>
+        }
+
+        @if(showAgents && pkg?.Agents){
+        <div class="break-inside-avoid mb-3">
+            <package-agent-details [Agents]="pkg?.Agents" />
+        </div>
+        }
+
+    </div>
+
+</div>

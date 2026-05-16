@@ -1,0 +1,43 @@
+<div class="relative flex flex-col h-full overflow-hidden">
+  <!-- Modal Header -->
+  <div class="border-b border-gray-200 p-5 bg-white">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
+        <i class="fas fa-box text-primary-500 me-2"></i>
+        {{ 'Package Details' | translate }}
+      </h2>
+      <button (click)="onClose()" class="text-gray-400 hover:text-gray-500 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <p class="mt-1 text-sm text-gray-500">{{ pkg().Title ?? '' }}</p>
+  </div>
+
+  <!-- Modal Body -->
+  <div class="flex-1 min-h-0 overflow-y-auto p-5 custom-scroll">
+    <div class="space-y-3">
+      <package-details [pkg]="pkg()" />
+    </div>
+  </div>
+
+  <!-- Modal Footer -->
+  <div class="flex justify-end items-center space-x-3 p-5 border-t border-gray-200">
+    <button type="button" (click)="openGenerateDialog()"
+      class="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium rounded-lg border border-primary-500 text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-sm">
+      <i class="fas fa-wand-magic-sparkles text-xs"></i>
+      {{ 'Generate Image with AI' | translate }}
+    </button>
+    <button type="button" (click)="onEdit()"
+      class="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium rounded-lg border border-primary-500 text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-sm">
+      <i class="fas fa-edit"></i>
+      {{ 'Edit Package' | translate }}
+    </button>
+    <button type="button" (click)="onClose()"
+      class="px-5 py-3 text-sm font-medium rounded-lg bg-primary-500 text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-sm hover:shadow-md">
+      <i class="fas fa-times me-2"></i>
+      {{ 'Close' | translate }}
+    </button>
+  </div>
+</div>

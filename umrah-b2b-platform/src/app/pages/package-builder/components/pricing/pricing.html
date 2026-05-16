@@ -1,0 +1,510 @@
+<div class="step-content p-5">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white flex items-center justify-center">
+      <i class="fas fa-tag text-lg"></i>
+    </div>
+    <div>
+      <h2 class="text-xl font-bold">{{ 'Pricing' | translate }}</h2>
+      <p class="text-sm text-gray-500">{{ 'Set the selling price for each service' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div class="space-y-3 mb-6">
+
+    <!-- Makkah Hotels -->
+    @if (makkahHotelListState().length > 0) {
+    <details class="group" open>
+      <summary class="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-xl cursor-pointer list-none border border-gray-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-kaaba text-xs"></i>
+          </div>
+          <span class="font-semibold text-sm text-gray-700">{{ 'Makkah Hotels' | translate }}</span>
+          <span class="text-xs text-gray-400 font-normal">({{ makkahHotelListState().length }})</span>
+        </div>
+        <i class="fas fa-chevron-down text-gray-400 text-xs group-open:rotate-180 transition-transform"></i>
+      </summary>
+      <div class="mt-2 space-y-2">
+        @for (hotel of makkahHotelListState(); track $index) {
+        @let mHotelCost = getHotelCostTotal('makkah', $index);
+        <div class="bg-white border border-gray-100 rounded-xl">
+          <div class="flex items-start justify-between gap-3 px-3.5 pt-3 pb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-primary-50 text-primary-400 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-hotel text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">
+                  {{ hotel.activeTab === 'specific' ? (hotel.specific.hotelName || ('Hotel' | translate)) : (hotel.criteria.districtName || ('Makkah Hotel' | translate)) }}
+                </p>
+                <p class="text-xs text-gray-400">{{ hotelLabel(hotel, makkahHotelCountState()) }}</p>
+              </div>
+            </div>
+            @if (mHotelCost != null) {
+              <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
+                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+              </div>
+            }
+          </div>
+          <div class="flex items-end gap-2 px-3.5 pb-3">
+            <div class="flex-1 min-w-0">
+              <dropdown-search-list
+                [options]="getHotelOptionsSignal('makkah', $index)"
+                [isOptionsLoading]="loadingHotelDetails"
+                [placeholder]="'Select policy...' | translate"
+                [selectedId]="itemMakkahPolicyIds()[$index]"
+                (selectionChanged)="onItemHotelPolicyChange('makkah', $index, $event)">
+              </dropdown-search-list>
+            </div>
+            <div class="flex-shrink-0 w-32 flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="number" min="0"
+                class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+                [value]="hotel.sellingPrice ?? null" placeholder="0.00"
+                (input)="onMakkahHotelPrice($index, parsePrice($any($event.target).value))">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+              </div>
+              <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </details>
+    }
+
+    <!-- Madinah Hotels -->
+    @if (madinahHotelListState().length > 0) {
+    <details class="group" open>
+      <summary class="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-xl cursor-pointer list-none border border-gray-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-mosque text-xs"></i>
+          </div>
+          <span class="font-semibold text-sm text-gray-700">{{ 'Madinah Hotels' | translate }}</span>
+          <span class="text-xs text-gray-400 font-normal">({{ madinahHotelListState().length }})</span>
+        </div>
+        <i class="fas fa-chevron-down text-gray-400 text-xs group-open:rotate-180 transition-transform"></i>
+      </summary>
+      <div class="mt-2 space-y-2">
+        @for (hotel of madinahHotelListState(); track $index) {
+        @let mHotelCost = getHotelCostTotal('madinah', $index);
+        <div class="bg-white border border-gray-100 rounded-xl">
+          <div class="flex items-start justify-between gap-3 px-3.5 pt-3 pb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-primary-50 text-primary-400 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-hotel text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">
+                  {{ hotel.activeTab === 'specific' ? (hotel.specific.hotelName || ('Hotel' | translate)) : (hotel.criteria.districtName || ('Madinah Hotel' | translate)) }}
+                </p>
+                <p class="text-xs text-gray-400">{{ hotelLabel(hotel, madinahHotelCountState()) }}</p>
+              </div>
+            </div>
+            @if (mHotelCost != null) {
+              <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
+                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+              </div>
+            }
+          </div>
+          <div class="flex items-end gap-2 px-3.5 pb-3">
+            <div class="flex-1 min-w-0">
+              <dropdown-search-list
+                [options]="getHotelOptionsSignal('madinah', $index)"
+                [isOptionsLoading]="loadingHotelDetails"
+                [placeholder]="'Select policy...' | translate"
+                [selectedId]="itemMadinahPolicyIds()[$index]"
+                (selectionChanged)="onItemHotelPolicyChange('madinah', $index, $event)">
+              </dropdown-search-list>
+            </div>
+            <div class="flex-shrink-0 w-32 flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="number" min="0"
+                class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+                [value]="hotel.sellingPrice ?? null" placeholder="0.00"
+                (input)="onMadinahHotelPrice($index, parsePrice($any($event.target).value))">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+              </div>
+              <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </details>
+    }
+
+    <!-- Transportation -->
+    @if (transportListState().length > 0) {
+    <details class="group" open>
+      <summary class="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-xl cursor-pointer list-none border border-gray-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-bus text-xs"></i>
+          </div>
+          <span class="font-semibold text-sm text-gray-700">{{ 'Transportation' | translate }}</span>
+          <span class="text-xs text-gray-400 font-normal">({{ transportListState().length }})</span>
+        </div>
+        <i class="fas fa-chevron-down text-gray-400 text-xs group-open:rotate-180 transition-transform"></i>
+      </summary>
+      <div class="mt-2 space-y-2">
+        @for (transport of transportListState(); track $index) {
+        @let tIdx = $index;
+        <div class="bg-white border border-gray-100 rounded-xl">
+          <div class="flex items-start justify-between gap-3 px-3.5 pt-3 pb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-primary-50 text-primary-400 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-bus text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">{{ transport.tripRoute || ('Transport' | translate) }}</p>
+                <p class="text-xs text-gray-400">{{ transport.numberOfVehicles }}× {{ transport.transportType }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end gap-2 px-3.5 pb-3">
+            <div class="flex-1 min-w-0">
+              <dropdown-search-list
+                [options]="getTransOptionsSignal(tIdx)"
+                [isOptionsLoading]="loadingPolicies"
+                [placeholder]="'Select Price Package...' | translate"
+                [selectedId]="itemTransportPolicyIds()[tIdx]"
+                (selectionChanged)="onItemTransportPolicyChange(tIdx, $event)">
+              </dropdown-search-list>
+            </div>
+            <div class="flex-shrink-0 w-32 flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="number" min="0"
+                class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+                [value]="transport.sellingPrice ?? null" placeholder="0.00"
+                (input)="onTransportPrice(tIdx, parsePrice($any($event.target).value))">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+              </div>
+              <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </details>
+    }
+
+    <!-- Tickets -->
+    @if (ticketListState().length > 0) {
+    <details class="group" open>
+      <summary class="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-xl cursor-pointer list-none border border-gray-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-plane text-xs"></i>
+          </div>
+          <span class="font-semibold text-sm text-gray-700">{{ 'Tickets' | translate }}</span>
+          <span class="text-xs text-gray-400 font-normal">({{ ticketListState().length }})</span>
+        </div>
+        <i class="fas fa-chevron-down text-gray-400 text-xs group-open:rotate-180 transition-transform"></i>
+      </summary>
+      <div class="mt-2 space-y-2">
+        @for (ticket of ticketListState(); track $index) {
+        <div class="bg-white border border-gray-100 rounded-xl">
+          <div class="flex items-start justify-between gap-3 px-3.5 pt-3 pb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-primary-50 text-primary-400 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-plane text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">
+                  {{ (ticket.sourceCityName || ('Origin' | translate)) + ' → ' + (ticket.destinationCityName || ('Destination' | translate)) }}
+                </p>
+                <p class="text-xs text-gray-400">{{ ticket.airlineCompanyNameEn || ticket.airlineCompanyName }} · {{ ticket.seatCount }} {{ 'Seats' | translate }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end gap-2 px-3.5 pb-3">
+            <div class="flex-1 min-w-0">
+              <dropdown-search-list
+                [options]="emptyOptions"
+                [isOptionsLoading]="falseLoading"
+                [placeholder]="'No policy yet' | translate"
+                [selectedId]="null"
+                [disabled]="true">
+              </dropdown-search-list>
+            </div>
+            <div class="flex-shrink-0 w-32 flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="number" min="0"
+                class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+                [value]="ticket.sellingPrice ?? null" placeholder="0.00"
+                (input)="onTicketPrice($index, parsePrice($any($event.target).value))">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+              </div>
+              <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </details>
+    }
+
+    <!-- Catering -->
+    @if (foodListState().length > 0) {
+    <details class="group" open>
+      <summary class="flex justify-between items-center px-4 py-3 bg-gray-50 rounded-xl cursor-pointer list-none border border-gray-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-utensils text-xs"></i>
+          </div>
+          <span class="font-semibold text-sm text-gray-700">{{ 'Catering' | translate }}</span>
+          <span class="text-xs text-gray-400 font-normal">({{ foodListState().length }})</span>
+        </div>
+        <i class="fas fa-chevron-down text-gray-400 text-xs group-open:rotate-180 transition-transform"></i>
+      </summary>
+      <div class="mt-2 space-y-2">
+        @for (food of foodListState(); track $index) {
+        @let fIdx = $index;
+        @let foodCostTotal = getFoodCostTotal(food, fIdx);
+        <div class="bg-white border border-gray-100 rounded-xl">
+          <div class="flex items-start justify-between gap-3 px-3.5 pt-3 pb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-primary-50 text-primary-400 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-utensils text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">{{ food.foodType || ('Meal' | translate) }}</p>
+                <p class="text-xs text-gray-400">{{ food.mealType }} · {{ food.mealCount }} {{ 'servings' | translate }}</p>
+              </div>
+            </div>
+            @if (foodCostTotal != null) {
+              <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
+                <span class="text-xs font-bold text-amber-700">{{ foodCostTotal | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+              </div>
+            }
+          </div>
+          <div class="flex items-end gap-2 px-3.5 pb-3">
+            <div class="flex-1 min-w-0">
+              <dropdown-search-list
+                [options]="getFoodOptionsSignal(fIdx)"
+                [isOptionsLoading]="loadingPolicies"
+                [placeholder]="'Select Price Package...' | translate"
+                [selectedId]="itemFoodPolicyIds()[fIdx]"
+                (selectionChanged)="onItemFoodPolicyChange(fIdx, $event)">
+              </dropdown-search-list>
+            </div>
+            <div class="flex-shrink-0 w-32 flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="number" min="0"
+                class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+                [value]="food.sellingPrice ?? null" placeholder="0.00"
+                (input)="onFoodPrice(fIdx, parsePrice($any($event.target).value))">
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+              </div>
+              <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </details>
+    }
+
+  </div>
+
+  <!-- Summary -->
+  <div class="bg-gray-50 rounded-xl p-5 space-y-4 border border-gray-200">
+
+    <div class="flex justify-between items-center text-sm">
+      <span class="text-gray-600">{{ 'Sum of services' | translate }}</span>
+      <span class="font-semibold">{{ sumOfServices() | number:'1.2-2' }} <span class="sar-symbol text-gray-500">R</span></span>
+    </div>
+
+    <!-- Adjust Price -->
+    <div class="rounded-xl border border-dashed border-primary-200 bg-primary-50/40 p-3 space-y-2">
+
+      <!-- Label -->
+      <div class="flex items-center gap-2 mb-1">
+        <i class="fas fa-sliders-h text-primary-400 text-xs"></i>
+        <span class="text-xs font-bold uppercase tracking-wide text-primary-600">{{ 'Adjust Price' | translate }}</span>
+      </div>
+
+      <!-- Controls row -->
+      <div class="flex flex-wrap items-center gap-2">
+
+        <!-- Type toggle -->
+        <div class="flex rounded-lg border border-primary-200 overflow-hidden text-xs font-medium flex-shrink-0">
+          <button type="button"
+            class="px-3 h-8 transition-colors"
+            [class.bg-primary-500]="adjustmentMode() === 'markup_percent'"
+            [class.text-white]="adjustmentMode() === 'markup_percent'"
+            [class.bg-white]="adjustmentMode() !== 'markup_percent'"
+            [class.text-gray-500]="adjustmentMode() !== 'markup_percent'"
+            (click)="onAdjustmentModeChange('markup_percent')">
+            <i class="fas fa-arrow-up text-[10px] me-1"></i>{{ 'Markup' | translate }}
+          </button>
+          <button type="button"
+            class="px-3 h-8 border-s border-primary-200 transition-colors"
+            [class.bg-primary-500]="adjustmentMode() === 'discount'"
+            [class.text-white]="adjustmentMode() === 'discount'"
+            [class.bg-white]="adjustmentMode() !== 'discount'"
+            [class.text-gray-500]="adjustmentMode() !== 'discount'"
+            (click)="onAdjustmentModeChange('discount')">
+            <i class="fas fa-arrow-down text-[10px] me-1"></i>{{ 'Discount' | translate }}
+          </button>
+        </div>
+
+        <!-- Value input -->
+        <div class="relative flex-1 min-w-[100px] max-w-[140px]">
+          <input type="number" min="0" max="100" step="0.5"
+            class="w-full h-8 pl-3 pr-7 border border-primary-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+            [value]="pendingAdjustmentValue()" placeholder="0"
+            (input)="onAdjustmentInputChange($any($event.target).value)">
+          <span class="absolute right-2 top-1/2 -translate-y-1/2 text-primary-400 text-xs font-bold">%</span>
+        </div>
+
+        <!-- Apply button -->
+        <button type="button"
+          class="h-8 px-4 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 flex-shrink-0"
+          [class.bg-primary-500]="previewTotal() != null"
+          [class.hover:bg-primary-600]="previewTotal() != null"
+          [class.text-white]="previewTotal() != null"
+          [class.shadow-sm]="previewTotal() != null"
+          [class.bg-primary-100]="previewTotal() == null"
+          [class.text-gray-400]="previewTotal() == null"
+          [class.cursor-not-allowed]="previewTotal() == null"
+          [disabled]="previewTotal() == null"
+          (click)="onApplyAdjustment()">
+          <i class="fas fa-check text-[10px]"></i>
+          {{ 'Apply' | translate }}
+        </button>
+
+      </div>
+
+      <!-- Preview row -->
+      @if (previewTotal() != null) {
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs pt-2 border-t border-dashed border-primary-200">
+        <span class="text-gray-500">{{ 'Amount' | translate }}:
+          <span class="font-semibold"
+            [class.text-red-500]="adjustmentMode() === 'discount'"
+            [class.text-primary-600]="adjustmentMode() === 'markup_percent'">
+            {{ adjustmentMode() === 'discount' ? '' : '+' }}{{ previewAmount() | number:'1.2-2' }}
+            <span class="sar-symbol">R</span>
+          </span>
+        </span>
+        <span class="text-gray-300">|</span>
+        <span class="text-gray-500">{{ 'New Total' | translate }}:
+          <span class="font-bold text-primary-700">
+            {{ previewTotal() | number:'1.2-2' }} <span class="sar-symbol font-normal text-gray-400">R</span>
+          </span>
+        </span>
+      </div>
+      }
+
+    </div>
+
+    <hr class="border-dashed border-gray-300">
+
+    <!-- Blended Price -->
+    <div class="flex justify-between items-center gap-3">
+      <div>
+        <p class="text-sm font-semibold">{{ 'Final Package Price (blended)' | translate }}</p>
+        <p class="text-xs text-gray-400">{{ 'Shown to the agent as a single bundle price' | translate }}</p>
+      </div>
+      <div class="relative w-44">
+        <input type="number" min="0"
+          class="w-full h-12 pl-3 pr-10 border-2 border-gray-800 rounded-xl text-base font-bold text-gray-900 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
+          [value]="computedBlendedPrice() || null" placeholder="0.00"
+          (input)="onBlendedPriceInput($any($event.target).value)">
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm sar-symbol">R</span>
+      </div>
+    </div>
+
+    <!-- Hide breakdown -->
+    <label class="flex items-center gap-3 cursor-pointer text-sm">
+      <input type="checkbox" class="custom-checkbox"
+        [checked]="pricingState().hideBreakdown"
+        (change)="updatePricingStateFn({ hideBreakdown: $any($event.target).checked })">
+      <span class="flex items-center gap-2 text-gray-700">
+        <i class="fas fa-eye-slash text-gray-400"></i>
+        {{ 'Hide service breakdown from agent (show blended price only)' | translate }}
+      </span>
+    </label>
+
+    <!-- Pricing Verification -->
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <i class="fas fa-shield-alt text-primary-500 text-sm"></i>
+        <span class="text-sm font-semibold text-gray-700">{{ 'Pricing Verification' | translate }}</span>
+      </div>
+      <div class="space-y-2">
+        <label class="flex items-start gap-3 cursor-pointer p-3 rounded-xl border transition-colors"
+          [class.border-primary-500]="pricingState().pricingVerification === 'verified'"
+          [class.bg-primary-50]="pricingState().pricingVerification === 'verified'"
+          [class.border-gray-200]="pricingState().pricingVerification !== 'verified'">
+          <input type="radio" name="pricingVerification" value="verified" class="pricing-radio mt-0.5"
+            [checked]="pricingState().pricingVerification === 'verified'"
+            (change)="updatePricingStateFn({ pricingVerification: 'verified' })">
+          <div>
+            <p class="text-sm font-semibold flex items-center gap-2"
+              [class.text-primary-700]="pricingState().pricingVerification === 'verified'"
+              [class.text-gray-700]="pricingState().pricingVerification !== 'verified'">
+              <i class="fas fa-lock text-xs"
+                [class.text-primary-500]="pricingState().pricingVerification === 'verified'"
+                [class.text-gray-400]="pricingState().pricingVerification !== 'verified'"></i>
+              {{ 'Verified — locked' | translate }}
+            </p>
+            <p class="text-xs mt-0.5"
+              [class.text-primary-500]="pricingState().pricingVerification === 'verified'"
+              [class.text-gray-400]="pricingState().pricingVerification !== 'verified'">
+              {{ 'Prices are final and cannot change. Agent books at this exact price.' | translate }}
+            </p>
+          </div>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer p-3 rounded-xl border transition-colors"
+          [class.border-primary-500]="pricingState().pricingVerification === 'approximate'"
+          [class.bg-primary-50]="pricingState().pricingVerification === 'approximate'"
+          [class.border-gray-200]="pricingState().pricingVerification !== 'approximate'">
+          <input type="radio" name="pricingVerification" value="approximate" class="pricing-radio mt-0.5"
+            [checked]="pricingState().pricingVerification === 'approximate'"
+            (change)="updatePricingStateFn({ pricingVerification: 'approximate' })">
+          <div>
+            <p class="text-sm font-semibold flex items-center gap-2"
+              [class.text-primary-700]="pricingState().pricingVerification === 'approximate'"
+              [class.text-gray-700]="pricingState().pricingVerification !== 'approximate'">
+              <i class="fas fa-clock text-xs"
+                [class.text-primary-500]="pricingState().pricingVerification === 'approximate'"
+                [class.text-gray-400]="pricingState().pricingVerification !== 'approximate'"></i>
+              {{ 'Approximate — confirmed on request' | translate }}
+            </p>
+            <p class="text-xs mt-0.5"
+              [class.text-primary-500]="pricingState().pricingVerification === 'approximate'"
+              [class.text-gray-400]="pricingState().pricingVerification !== 'approximate'">
+              {{ 'Prices are indicative. Final amount is confirmed when the agent requests the package.' | translate }}
+            </p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation -->
+  <hr class="border-gray-100 my-5">
+  <div class="flex justify-between">
+    <button type="button" (click)="prevStep.emit()"
+      class="nav-action-btn cursor-pointer prev-step px-5 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500 transition-colors flex items-center gap-3 group">
+      <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+      <span>{{ 'Previous' | translate }}</span>
+    </button>
+    <button type="button" (click)="submit()"
+      class="nav-action-btn cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-3 group shadow-lg hover:shadow-xl">
+      <span>{{ 'Create Package' | translate }}</span>
+      <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
+    </button>
+  </div>
+
+</div>

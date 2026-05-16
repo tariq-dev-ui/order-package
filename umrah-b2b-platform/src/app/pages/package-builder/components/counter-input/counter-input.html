@@ -1,0 +1,22 @@
+<div class="nights-counter px-3 ">
+
+    <button type="button" class="cursor-pointer nights-decrement active:bg-gray-50 hover:bg-primary-50" (click)="decrement()">
+        <i class="fas fa-minus"></i>
+    </button>
+
+
+    <div class="px-1 flex items-center justify-between w-full">
+        <input type="number" value="{{ count() }}" min="1" class="nights-input" (input)="onManualInput($event)">
+        <div class="mx-2 ml-auto flex items-center text-primary-500 gap-3">
+            <i [class]="icon()" class="text-primary-500"></i>
+            <span class="text-sm ">
+                <span>{{ count() }} {{ displayLabel() | translate }}</span>
+            </span>
+        </div>
+    </div>
+
+
+    <button type="button" class="cursor-pointer nights-increment active:bg-gray-50 hover:bg-primary-50" (click)="increment()">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>

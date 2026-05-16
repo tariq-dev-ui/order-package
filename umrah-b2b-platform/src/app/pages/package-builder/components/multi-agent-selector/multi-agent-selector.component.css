@@ -1,0 +1,52 @@
+.multi-agent-selector-container {
+  max-width: 100%;
+}
+
+/* Compact Table Styles */
+.compact-table .mat-mdc-row {
+  height: 48px; /* Reduced height */
+}
+
+.compact-table .mat-mdc-header-row {
+  height: 40px;
+  background-color: #f9fafb;
+}
+
+.compact-table .mat-mdc-cell, 
+.compact-table .mat-mdc-header-cell {
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 13px;
+}
+
+.small-icon-button {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  padding: 0 !important;
+}
+
+.small-icon-button .mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+}
+
+/* Custom Scrollbar for Available Agents */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}

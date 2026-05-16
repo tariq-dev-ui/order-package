@@ -1,0 +1,545 @@
+<!-- Step 1: Hotels in Makkah -->
+<div id="step-1" class="step-content active p-5">
+
+    <div class="flex items-center gap-3 mb-6">
+        <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white flex items-center justify-center">
+            <i [class]="icon" class=" text-lg"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold">{{ 'Choose Your Hotel in' | translate }} <span>{{city}}</span></h2>
+            <p class="text-sm text-gray-500">{{ 'Select the hotel that suits your needs' | translate }}</p>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="flex items-center   gap-4">
+            <label class="flex items-center gap-2 cursor-pointer mb-3 select-none">
+                <input type="checkbox" class="accent-primary-500 w-5 h-5 transition-all duration-200"
+                    (change)="onAllowNightsForAllChange($event)" [checked]="allowNightsForAll()" />
+
+                <span class="block text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-moon text-primary-500"></i>
+                    <span>{{ 'Enable Number of Nights for All' | translate }}</span>
+                </span>
+            </label>
+        </div>
+        @if(allowNightsForAll()){
+        <div class="transition-all duration-200 mb-3">
+            <counter-input [value]="state().criteria.nightCount ?? 0" [icon]="'fas fa-moon'" [singularLabel]="'Night' | translate"
+                [pluralLabel]="'Nights' | translate" (valueChange)="onNightsCountForAllChange($event)" />
+        </div>
+        }
+    </div>
+
+    <!-- <br> -->
+
+    <div class="mb-5 flex flex-wrap gap-3">
+        @for (hotels of listState(); track $index) {
+        @if(hotels.activeTab === "criteria") {
+        <div class="bg-white border border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center gap-2">
+            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                <i class="fas fa-hotel text-sm"></i>
+            </div>
+            <span class="text-sm">{{hotels.criteria.districtName}}</span>
+            <span class="text-sm">- ({{hotels.criteria.roomCount}}) {{hotels.criteria.roomTypeName}}</span>
+            <span class="text-xs text-gray-500">( {{ HotelCountState().nightsCountEnabled? HotelCountState().nightsCount
+                : hotels.criteria.nightCount }} {{ 'Nights' | translate }} )</span>
+            <button (click)="removeRow($index)"
+                class="cursor-pointer w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        }
+        @if(hotels.activeTab === "specific") {
+        <div
+            class="bg-white border border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center justify-center gap-2">
+            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                <i class="fas fa-hotel text-sm"></i>
+            </div>
+            <span class="text-sm">{{hotels.specific.hotelName}}</span>
+            <span class="text-sm">- ({{hotels.criteria.roomCount}}) {{hotels.specific.roomTypeName}}</span>
+            <span class="text-xs text-gray-500">( {{ HotelCountState().nightsCountEnabled? HotelCountState().nightsCount
+                : hotels.specific.nightCount }} {{ 'Nights' | translate }} )</span>
+            <button (click)="removeRow($index)"
+                class="cursor-pointer w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        }
+        }
+    </div>
+
+
+    <div class="flex border-b border-gray-200 mb-6">
+        <button (click)="changeTabTo('criteria')" [class]="getTabClass('criteria')"
+            class="cursor-pointer tab-btn py-3 px-4 font-medium flex items-center gap-2">
+            <i class="fas fa-sliders-h text-sm"></i>
+            <span>{{ 'Hotel by Criteria' | translate }}</span>
+        </button>
+        <button (click)="changeTabTo('specific')" [class]="getTabClass('specific')"
+            class="cursor-pointer tab-btn py-3 px-4 font-medium flex items-center gap-2">
+            <i class="fas fa-search-location text-sm"></i>
+            <span>{{ 'Select Specific Hotel' | translate }}</span>
+        </button>
+    </div>
+
+    <!-- Hotel by Criteria Tab -->
+
+    <div [class.active]="state().activeTab == 'criteria'" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="custom-select">
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-primary-500"></i>
+                    <span>{{ 'District' | translate }}</span> @if (isLoadingDistincts()) {<i
+                        class="fas fa-spinner fa-spin text-primary-500"></i>}
+                </label>
+                <select class="w-full p-3 cursor-pointer" (change)="onDistrictChange($event)"
+                    [disabled]="isLoadingDistincts()">
+                    @if (isLoadingDistincts()) {
+                    <option [value]="undefined">{{ 'Loading Districts...' | translate }}</option>
+                    }
+                    @else {
+                    <option [value]="undefined">{{ 'Select District' | translate }}</option>
+
+                    @for (district of districts(); track district.CityDistID) {
+                    <option [value]="district.CityDistID"
+                        [selected]="district.CityDistID == state().criteria.districtId">
+                        {{ district.DistTitle }}
+                    </option>
+                    }
+                    }
+                </select>
+            </div>
+
+            
+<div class="custom-select">
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-map-marker-alt text-primary-500"></i>
+                    <span>{{ 'Category' | translate }}</span> @if (isLoadingCategories()) {<i
+                        class="fas fa-spinner fa-spin text-primary-500"></i>}
+                </label>
+                <select class="w-full p-3 cursor-pointer" (change)="onCategoryChange($event)"
+                    [disabled]="isLoadingCategories()">
+                    @if (isLoadingCategories()) {
+                    <option [value]="undefined">{{ 'Loading Categories...' | translate }}</option>
+                    }
+                    @else {
+                    <option [value]="undefined">{{ 'Select Category' | translate }}</option>
+
+                    @for (category of categories(); track category.CategoryID) {
+                    <option [value]="category.CategoryID"
+                        [selected]="category.CategoryID == state().criteria.HotelCategoryID">
+                        {{ category.Title }}
+                    </option>
+                    }
+                    }
+                </select>
+            </div>
+            
+            <!-- <div class="custom-select">
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-star text-amber-400"></i>
+                    <span>Hotel Rating</span>
+                </label>
+                <select class="w-full p-3 cursor-pointer"
+                    (change)="onChange('criteria','starRank', $any($event.target).value)">
+                    <option [value]="undefined">Any Rating</option>
+                    @for (star of stars; track $index) {
+                    <option [value]="star" [selected]="state().criteria.starRank == star">
+                        {{star}} Stars
+                    </option>
+                    }
+                </select>
+            </div> -->
+
+            <div class="custom-select">
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-door-open text-primary-500"></i>
+                    <span>{{ 'Room Type' | translate }}</span> @if (roomTypes().length === 0) {<i
+                        class="fas fa-spinner fa-spin text-primary-500"></i>}
+                </label>
+                <select class="w-full p-3 cursor-pointer" (change)="onRoomTypesChange($event)"
+                    [disabled]="roomTypes().length === 0">
+                    @if (roomTypes().length === 0) {
+                    <option [value]="undefined">{{ 'Loading Room Type...' | translate }}</option>
+                    }
+                    @else {
+                    <option [value]="undefined">{{ 'Select Room Type' | translate }}</option>
+                    @for (roomType of roomTypes(); track $index) {
+                    <option [value]="roomType.RoomTypeID"
+                        [selected]="state().criteria.roomTypeId == roomType.RoomTypeID">
+                        {{ getRoomTypeTitle(roomType) }}
+                    </option>
+                    }
+                    }
+                </select>
+            </div>
+
+
+             <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-door-open text-primary-500"></i>
+                    <span>{{ 'Room Count' | translate }}</span>
+                </label>
+                <counter-input [value]="state().criteria.roomCount ?? 0" [icon]="'fas fa-door-open'"
+                    [singularLabel]="'Room' | translate" [pluralLabel]="'Rooms' | translate" (valueChange)="onRoomCountChange($event)" />
+            </div>
+
+
+            @if(!allowNightsForAll()){
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-moon text-primary-500"></i>
+                    <span>{{ 'Number of Nights' | translate }}</span>
+                </label>
+                <counter-input [value]="state().criteria.nightCount ?? 0" [icon]="'fas fa-moon'"
+                    [singularLabel]="'Night' | translate" [pluralLabel]="'Nights' | translate" (valueChange)="onNightsChange($event)" />
+            </div>
+            }
+
+           
+
+
+          
+        </div>
+        <div class="flex">
+            <div class="relative group">
+                <div *ngIf="!isCriteriaTabValid()"
+                    class="absolute  left-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                    style="min-width: 260px;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-200"></i>
+                        <span>
+                            {{ 'Kindly fill in all required fields above' | translate }}<br>
+                            {{ 'to add a new hotel item.' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <button (click)="addRow()" [disabled]="!isCriteriaTabValid()"
+                    class="cursor-pointer mb-2 next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                    <span>{{ 'Add New' | translate }}</span>
+                </button>
+
+            </div>
+        </div>
+        <!-- <button (click)="addRow()" [disabled]="isCriteriaTabValid()"
+            class="cursor-pointer mb-3 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-500 hover:from-primary-600 hover:to-primary-600 text-white rounded-lg transition-all flex items-center group shadow-lg hover:shadow-xl">
+            <span>Add New</span>
+        </button> -->
+    </div>
+
+
+    <!-- Specific Hotel Tab Content -->
+    <div [class.active]="state().activeTab == 'specific'" class="tab-content">
+
+
+        <div class="mb-6">
+            <div class="mb-6 space-y-4">
+                <form [formGroup]="searchForm" class="search-form ">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="custom-select">
+                            <select class="w-full p-3 cursor-pointer" formControlName="filterDistrict">
+                                <option value="null">{{ 'Any District' | translate }}</option>
+                                @for (district of this.districts(); track $index) {
+                                <option value="{{district.CityDistID}}">{{district.DistTitle}}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- <div class="custom-select">
+                            <select class="w-full p-3 cursor-pointer" formControlName="filterMaxDistanceFromHaram">
+                                <option value="null">Any Distance From Haram</option>
+                                <option value="1">1 km</option>
+                                <option value="2">2 km</option>
+                                <option value="3">3 km</option>
+                                <option value="4">4 km</option>
+                                <option value="5">5 km</option>
+                            </select>
+                        </div> -->
+                        <div class="flex-1 relative">
+                            <input type="text" formControlName="filterText"
+                                class="w-full h-14 p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                                [placeholder]="'Hotel name, location...' | translate">
+                            <i
+                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <!-- <div class="flex gap-2">
+                        <div class="flex-1 relative">
+                            <input type="text" formControlName="filterText"
+                                class="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                                placeholder="Hotel name, location...">
+                            <i
+                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div> -->
+                </form>
+            </div>
+        </div>
+
+
+        <div class="overflow-hidden border border-gray-100 ">
+            <div class="max-h-[500px]  scroll-smooth overflow-y-auto p-3
+                        [&::-webkit-scrollbar]:w-3
+                        [&::-webkit-scrollbar-track]:rounded-full
+                        [&::-webkit-scrollbar-track]:bg-gray-200
+                        [&::-webkit-scrollbar-thumb]:rounded-full
+                        [&::-webkit-scrollbar-thumb]:bg-primary-500">
+
+                @if (!isLoadingSearchHotels()) {
+                @if (hotels().length > 0) {
+                @for(hotel of hotels(); track hotel.HotelID){
+                <div class="border-b border-gray-200 last:border-b-0">
+
+                    <div class="hotel-card bg-white p-3 rounded-lg cursor-pointer shadow-xs overflow-hidden border border-gray-100 transition-all duration-200 mt-2"
+                        [class.selected]="state().specific.hotelId == hotel.HotelID"
+                        [class.ring-2]="state().specific.hotelId == hotel.HotelID"
+                        [class.ring-primary-500]="state().specific.hotelId == hotel.HotelID"
+                        [class.bg-primary-50]="state().specific.hotelId == hotel.HotelID">
+
+                        <!-- Top Section (always visible) -->
+                        <div class="p-4 flex items-start gap-4 cursor-pointer"
+                            (click)="onHotelSelected(hotel.HotelID ?? 0)">
+                            <!-- Hotel Image -->
+                            <div class="relative">
+                                <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                                    <img src="/IMG/logo.png"
+                                        alt="Ram Tye Hotel" class="w-full h-full object-cover">
+                                </div>
+                                <!-- @if (state().specific.hotelId == hotel.HotelID) {
+                                <div
+                                    class="absolute -top-2 -right-2 bg-primary-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-sm">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                } -->
+                            </div>
+
+                            <!-- Hotel Info -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between gap-2">
+                                    <button
+                                        type="button"
+                                        class=" cursor-pointer min-w-0 text-left font-bold text-gray-900 line-clamp-2 hover:underline text-primary-700 hover:text-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-200 rounded"
+                                        (click)="$event.stopPropagation(); openHotelProfileDialog(hotel.HotelID)"
+                                        [attr.aria-label]="('Open hotel profile' | translate) + ': ' + (hotel.Name ?? ('Hotel' | translate))">
+                                        {{ hotel.Name }}
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt text-primary-500 text-xs"></i>
+                                    <span>{{ getDistrictsName(hotel.DistID ?? 0) }}</span>
+                                </div>
+
+                                <div class="flex items-center gap-1 mt-2">
+                                    @for (star of [].constructor(hotel.OfficialRating); track $index) {
+                                    <i class="fas fa-star text-amber-400 text-xs"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!-- Expanded Section (visible when selected) -->
+                        @if (state().specific.hotelId == hotel.HotelID) {
+                        <div class="px-4 pb-4 animate-expand">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="custom-select">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-door-open text-primary-500"></i>
+                                        <span>{{ 'Room Type' | translate }}</span>
+                                        @if (roomTypes().length === 0) {<i
+                                            class="fas fa-spinner fa-spin text-primary-500"></i>}
+                                    </label>
+                                    <select class="w-full p-3" (change)="onRoomTypesChange($event)"
+                                        [disabled]="roomTypes().length === 0">
+                                        @if (roomTypes().length === 0) {
+                                        <option [value]="undefined">{{ 'Loading Room Type...' | translate }}</option>
+                                        }
+                                        @else {
+                                        <option value="">{{ 'Select Room Type' | translate }}</option>
+                                        @for (roomType of roomTypes(); track $index) {
+                                        <option [value]="roomType.RoomTypeID"
+                                            [selected]="state().specific.roomTypeId == roomType.RoomTypeID">
+                                            {{ getRoomTypeTitle(roomType) }}
+                                        </option>
+                                        }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-door-open text-primary-500"></i>
+                                        <span>{{ 'Number of Rooms' | translate }}</span>
+                                    </label>
+                                    <counter-input [value]="state().specific.roomCount ?? 0" [icon]="'fas fa-door-open'"
+                                        [singularLabel]="'Room' | translate" [pluralLabel]="'Rooms' | translate"
+                                        (valueChange)="onRoomCountChange($event)" />
+                                </div>
+
+                                @if(!allowNightsForAll()){
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-moon text-primary-500"></i>
+                                        <span>{{ 'Number of Nights' | translate }}</span>
+                                    </label>
+                                    <counter-input [value]="state().specific.nightCount ?? 0" [icon]="'fas fa-moon'"
+                                        [singularLabel]="'Night' | translate" [pluralLabel]="'Nights' | translate"
+                                        (valueChange)="onNightsChange($event)" />
+                                </div>
+                                }
+                            </div>
+                            <br>
+                            <div class="flex">
+                                <div class="relative group">
+                                    <div *ngIf="!isSpecificTabValid()"
+                                        class="absolute  left-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                                        style="min-width: 260px;">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-info-circle text-primary-200"></i>
+                                            <span>
+                                                {{ 'Kindly fill in all required fields above' | translate }}<br>
+                                                {{ 'to add a new hotel item.' | translate }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button (click)="addRow()" [disabled]="!isSpecificTabValid()"
+                                        class="cursor-pointer mb-2 next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                                        <span>{{ 'Add New' | translate }}</span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+                }
+
+                @if(hotels().length === 0) {
+                <div class="p-6 text-center text-gray-500">
+                    <i class="fas fa-hotel text-4xl mb-3 text-gray-300"></i>
+                    <p>{{ 'No hotels found matching your criteria' | translate }}</p>
+                    <button (click)="resetFilters()"
+                        class="cursor-pointer text-primary-500 mt-2 text-sm hover:underline">
+                        {{ 'Reset filters' | translate }}
+                    </button>
+                </div>
+                }
+                }
+
+                @if (isLoadingSearchHotels()) {
+                <div class="p-6 text-center">
+                    <i class="fas fa-spinner fa-spin text-primary-500 text-2xl"></i>
+                    <p class="mt-2 text-gray-600">{{ 'Loading hotels...' | translate }}</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <hr class="mb-4 text-gray-200">
+    @if(currentStep === 1){
+    <div class="flex justify-end gap-3">
+        <div class="relative group">
+            <div *ngIf="canGoNext()"
+                class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                style="min-width: 260px;">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-info-circle text-primary-200"></i>
+                    <span>
+                        {{ 'Please delete all added items' | translate }}<br>
+                        {{ 'to skip this step.' | translate }}
+                    </span>
+                </div>
+            </div>
+            <button (click)="onSkip()" [disabled]="canGoNext()"
+                class="skip-step px-5 py-2.5 border border-gray-200 rounded-lg flex items-center gap-2 group transition-colors"
+                [ngClass]="{
+              'cursor-pointer text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500': !canGoNext(),
+              'bg-gray-200 text-gray-400 cursor-not-allowed': canGoNext()
+            }">
+                <span>{{ 'Skip' | translate }}</span>
+                <i class="fas fa-angle-double-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
+        <div class="relative group">
+            <div *ngIf="!canGoNext()"
+                class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                style="min-width: 260px;">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-info-circle text-primary-200"></i>
+                    <span>
+                            {{ 'Please complete the required information' | translate }}<br>
+                            {{ 'or skip this step to continue.' | translate }}
+                    </span>
+                </div>
+            </div>
+            <button (click)="onNext()" [disabled]="!canGoNext()"
+                class="cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                data-next="3">
+                <span>{{ 'Next' | translate }}</span>
+                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+
+        </div>
+    </div>
+    } @else if(prevStep && nextStep) {
+    <div class="flex justify-between">
+        <button (click)="prevStep.emit()"
+            class="cursor-pointer prev-step px-5 py-2.5 border border-gray-200 rounded-sm text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500 transition-colors flex items-center gap-2 group"
+            data-prev="1">
+            <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+            <span>{{ 'Previous' | translate }}</span>
+        </button>
+        <div class="flex gap-3">
+            <div class="relative group">
+                <div *ngIf="canGoNext()"
+                    class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                    style="min-width: 260px;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-200"></i>
+                        <span>
+                            {{ 'Please delete all added items' | translate }}<br>
+                            {{ 'to skip this step.' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <button (click)="onSkip()" [disabled]="canGoNext()"
+                    class="skip-step px-5 py-2.5 border border-gray-200 rounded-lg flex items-center gap-2 group transition-colors"
+                    [ngClass]="{
+              'cursor-pointer text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500': !canGoNext(),
+              'bg-gray-200 text-gray-400 cursor-not-allowed': canGoNext() }">
+                    <span>{{ 'Skip' | translate }}</span>
+                    <i class="fas fa-angle-double-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+            <div class="relative group">
+                <div *ngIf="!canGoNext()"
+                    class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                    style="min-width: 260px;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-200"></i>
+                        <span>
+                            {{ 'Please complete the required information' | translate }}<br>
+                            {{ 'or skip this step to continue.' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <button (click)="onNext()" [disabled]="!canGoNext()"
+                    class="cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    data-next="3">
+                    <span>{{ 'Next' | translate }}</span>
+                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+    }
+</div>

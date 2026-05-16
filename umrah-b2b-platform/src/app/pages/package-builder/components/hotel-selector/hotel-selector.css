@@ -1,0 +1,86 @@
+.hotel-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+.hotel-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.hotel-list-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.hotel-list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+/* Card hover effects */
+.hotel-card {
+    transition: all 0.4s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.hotel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary-500);
+}
+
+.hotel-card.selected {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-50);
+    box-shadow: 0 5px 15px rgba(20, 184, 166, 0.15);
+}
+
+
+/* Star ratings */
+.rating-stars {
+    color: var(--color-warning-500);
+}
+
+/* Floating animation */
+.float-animate {
+    animation: float 3s ease-in-out infinite;
+}
+
+
+.animate-expand {
+  animation: expand 0.4s ease-out forwards;
+}
+
+@keyframes expand {
+  from { 
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to { 
+    opacity: 1;
+    max-height: 300px;
+    transform: translateY(0);
+  }
+}
+
+.hotel-card.selected {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+
+/* .spinner {
+  color: var(--primary-color);
+  animation: pulse 1.5s infinite;
+}
+
+.loading-text {
+  color: var(--primary-color);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+} */
+
+
+.option-icon::before {
+  content: "\f099";
+}

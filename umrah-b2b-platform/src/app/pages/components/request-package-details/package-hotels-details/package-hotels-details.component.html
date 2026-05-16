@@ -1,0 +1,126 @@
+<div class="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-3">
+  @if(withTitle){
+  <h3 class="text-sm font-semibold text-gray-700 flex items-center gap-3">
+    <i class="fas fa-hotel text-primary-500"></i>
+    <span>{{ 'Hotels & Stays' | translate }}</span>
+  </h3>
+  }
+
+  @if( (Hotels ?? [] ) == [] || (Hotels ?? []).length == 0 ) {
+  <!-- No Hotels Information -->
+  <div class=" p-3 text-center">
+    <div class="flex flex-col items-center justify-center space-y-2 text-gray-600">
+      <i class="fas fa-info-circle text-xl"></i>
+      <p class="text-sm font-medium">
+        {{ 'No hotels included in this package' | translate }}
+      </p>
+    </div>
+  </div>
+  }@else{
+  @for(city of [1,2]; track $index) {
+  @if((getAllHotelsWithCityId(city, (Hotels ?? []))?.length ?? 0) > 0) {
+
+  <!-- City Header -->
+  @for (hotelCounts of HotelCounts ?? []; track $index) {
+  @if(hotelCounts?.CityId == city){
+  <div class="flex justify-between items-center mb-2 mt-4 first:mt-0">
+    <h4 class="font-medium text-xs text-black bg-white rounded-full px-3 py-1 border border-gray-200 shadow-sm">
+      {{ hotelCounts.CityName ?? ('City' | translate) }}
+    </h4>
+    @if((hotelCounts.NightCount ?? 0) > 0){
+    <span class="text-xs text-black bg-white rounded-full px-3 py-1 border border-gray-200 shadow-sm">
+      {{hotelCounts.NightCount ?? '1' }} {{ 'Nights' | translate }}
+    </span>
+    }@else{ <span></span> }
+  </div>
+  }
+  }
+
+  <!-- Hotels List -->
+  <div class="grid grid-cols-1 gap-1">
+    @for (hotel of getAllHotelsWithCityId(city, (Hotels ?? [])); track $index) {
+    <div
+      class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+
+      <!-- Header: Name/Type & Stars -->
+      <div class="flex justify-between items-start gap-1 mb-2">
+        <div class="flex items-center gap-1 flex-1 min-w-0">
+          <div
+            class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center text-primary-500">
+            <i class="fas" [class.fa-hotel]="hotel?.HotelName" [class.fa-map-marker-alt]="!hotel?.HotelName"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-semibold flex gap-3 text-sm text-gray-900 truncate"
+              [title]="hotel?.HotelName || ('Neighborhood' | translate)">
+              @if(hotel?.HotelName) {
+              <button type="button"
+                class=" cursor-pointer min-w-0 truncate text-left text-primary-700 hover:text-primary-800 hover:underline focus:outline-none focus:ring-2 focus:ring-primary-200 rounded"
+                (click)="openHotelProfileDialog(hotel)" [attr.aria-label]="'Open hotel profile: ' + hotel.HotelName">
+                {{ hotel.HotelName }}
+              </button>
+              } @else {
+              <span class="text-gray-600">{{ 'Neighborhood' | translate }}</span>
+              }
+              @if(withManageBtns){
+
+              <button type="button"
+                class="text-emerald-600 hover:text-white border border-emerald-200 hover:bg-emerald-500 focus:ring-2 focus:outline-none focus:ring-emerald-200 text-xs rounded-md px-1.5 py-1.5 text-center cursor-pointer transition-all duration-200 flex items-center justify-center gap-1 bg-emerald-50"
+                (click)="openHotelDialog(hotel)">
+                <i class="fas fa-plus"></i>
+              </button>
+              <button type="button"
+                class="text-orange-600 hover:text-white border border-orange-200 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-orange-200 rounded-md text-xs px-1.5 py-1.5 text-center cursor-pointer transition-all duration-200 flex items-center justify-center gap-1 bg-orange-50 hover:bg-orange-500"
+                (click)="openROVsDialog(hotel)">
+                RoQ
+              </button>
+              }
+            </h4>
+            <div class="flex items-center gap-1 font-semibold text-sm text-gray-800">
+              @if(hotel?.DistrictName) {
+              <span class="truncate"> {{ hotel.DistrictName }}</span>
+              }
+              @if(hotel?.DistanceFromHaram) {
+              <span class="whitespace-nowrap"><i class="fas fa-walking me-1"></i>{{ hotel.DistanceFromHaram }} km</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="flex text-amber-400 text-xs flex-shrink-0">
+          @for (_ of [].constructor(hotel?.HotelStar ?? 0); track $index) {
+          <i class="fas fa-star"></i>
+          }
+        </div>
+      </div>
+
+      <!-- Details: Room Type, Count, Nights -->
+      <div class="flex flex-wrap gap-1 mb-3 text-xs">
+        @if(hotel?.HotelCategoryName) {
+        <span class="bg-primary-50 text-primary-700 px-2 py-1 rounded-md border border-primary-100">
+          <i class="fas fa-tag me-1"></i>{{ hotel.HotelCategoryName }}
+        </span>
+        }
+        @if(hotel?.RoomTypeName) {
+        <span class="bg-primary-50 text-primary-700 px-2 py-1 rounded-md border border-primary-100">
+          <i class="fas fa-bed me-1"></i>{{ hotel.RoomTypeName }}
+        </span>
+        }
+        @if((hotel?.RoomCount ?? 0) > 0) {
+        <span class="bg-primary-50 text-primary-700 px-2 py-1 rounded-md border border-primary-100">
+          <i class="fas fa-door-open me-1"></i>{{ hotel.RoomCount }} {{ 'Rooms' | translate }}
+        </span>
+        }
+        @if((hotel?.NightsCount ?? 0) > 0) {
+        <span class="bg-primary-50 text-primary-700 px-2 py-1 rounded-md border border-primary-100">
+          <i class="fas fa-moon me-1"></i>{{ hotel.NightsCount }} {{ 'Nights' | translate }}
+        </span>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+  }
+  }
+
+</div>

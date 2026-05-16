@@ -1,0 +1,193 @@
+<!-- Step 4: Food -->
+<div id="step-4" class="step-content p-5 ">
+    <div class="flex items-center gap-3 mb-6">
+        <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white flex items-center justify-center">
+            <i class="fas fa-utensils text-lg"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold">{{ 'Food Services' | translate }}</h2>
+            <p class="text-sm text-gray-500">{{ 'Specify your accommodation preferences' | translate }}</p>
+        </div>
+    </div>
+
+    <!-- Meal Plan Chips -->
+    <div class="mb-6 flex flex-wrap gap-3">
+
+        @for (food of listState(); track $index) {
+        @if(food.mealTypeId === 4) {
+        <div class="bg-white border border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center gap-2">
+            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                <i class="fas fa-coffee text-sm"></i>
+            </div>
+            <span class="text-sm">{{food.foodType}}</span>
+            <span class="text-xs text-gray-500">({{food.mealCount}} {{food.mealType}})</span>
+            <button (click)="removeRow($index)"
+                class="w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        }@else {
+        <div class="bg-white border border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center gap-2">
+            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                <i class="fas fa-utensils text-sm"></i>
+            </div>
+            <span class="text-sm">{{food.foodType}}</span>
+            <span class="text-xs text-gray-500">({{food.mealCount}} {{food.mealType}})</span>
+            <button (click)="removeRow($index)"
+                class="w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        }
+        }
+    </div>
+
+    <div class="space-y-4">
+        <div class="custom-select">
+            <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <i class="fas fa-concierge-bell text-primary-500"></i>
+                <span>{{ 'Food Type' | translate }}</span>
+            </label>
+            <select (change)="onFoodTypeChange($event)"
+                class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select">
+                <option [value]="undefined">{{ 'Select Food Type' | translate }}</option>
+                @for (foodType of foodTypes(); track $index) {
+                <option [value]="foodType.Id" [selected]="state().foodTypeId === foodType.Id">
+                    {{foodType.TypeName }}
+                </option>
+                }
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+            <div class="custom-select">
+                <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-concierge-bell text-primary-500"></i>
+                    <span>{{ 'Meal Plan' | translate }}</span>
+                </label>
+                <select (change)="onCateringTypeChange($event)"
+                    class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select">
+                    <option [value]="undefined">{{ 'Select Meal plan' | translate }}</option>
+                    @for (cateringType of cateringTypes(); track $index) {
+                    <option [value]="cateringType.CateringTypeID"
+                        [selected]="state().mealTypeId === cateringType.CateringTypeID">
+                        {{cateringType.Title}}
+                    </option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-users text-primary-500"></i>
+                    <span>{{ 'Guests Count' | translate }}</span>
+                </label>
+                <counter-input [value]="state().mealCount ?? 1" [icon]="'fas fa-users'"
+                    [singularLabel]="'Guest' | translate" [pluralLabel]="'Guests' | translate" (valueChange)="onMealsChange($event)" />
+            </div>
+        </div>
+        <!-- <div class="mt-4">
+            <input type="text"
+                class="w-full p-3 h-14 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                placeholder="Add any notes...">
+        </div> -->
+        
+        <div class="flex">
+            <div class="relative group ">
+            <div *ngIf="!isFoodValid()"
+                class="absolute  left-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                style="min-width: 260px;">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-info-circle text-primary-200"></i>
+                    <span>
+                        {{ 'Kindly fill in all required fields above' | translate }}<br>
+                        {{ 'to add a new item.' | translate }}
+                    </span>
+                </div>
+            </div>
+            <button (click)="addRow()" [disabled]="!isFoodValid()"
+                class="cursor-pointer mb-2 next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                <span>{{ 'Add New' | translate }}</span>
+            </button>
+
+        </div>
+        </div>
+        
+
+        <!-- <button (click)="addRow()"
+            class="mb-3 px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-500 hover:from-primary-600 hover:to-primary-600 text-white rounded-lg transition-all flex items-center group shadow-lg hover:shadow-xl">
+            <span>Add New</span>
+
+        </button> -->
+    </div>
+
+
+    <hr class="mb-4 text-gray-200">
+    @if(prevStep && nextStep) {
+    <div class="flex justify-between">
+        <button (click)="prevStep.emit()"
+            class="nav-action-btn cursor-pointer prev-step px-5 py-2.5 border border-gray-200 rounded-sm text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500 transition-colors flex items-center gap-3 group"
+            data-prev="1">
+            <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+            <span>{{ 'Previous' | translate }}</span>
+        </button>
+        <div class="flex gap-3">
+            <!-- <button (click)="onSkip()" [disabled]="canGoNext()"
+                class="skip-step px-5 py-2.5 border border-gray-200 rounded-lg flex items-center gap-2 group transition-colors"
+                [ngClass]="{
+              'cursor-pointer text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500': !canGoNext(),
+              'bg-gray-200 text-gray-400 cursor-not-allowed': canGoNext()
+            }">
+                <span>Skip</span>
+                <i class="fas fa-angle-double-right group-hover:translate-x-1 transition-transform"></i>
+            </button> -->
+
+            <div class="relative group">
+                <div *ngIf="canGoNext()"
+                    class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                    style="min-width: 260px;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-200"></i>
+                        <span>
+                            {{ 'Please delete all added items' | translate }}<br>
+                            {{ 'to skip this step.' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <button (click)="onSkip()" [disabled]="canGoNext()"
+                    class="nav-action-btn skip-step px-5 py-2.5 border border-gray-200 rounded-lg flex items-center gap-3 group transition-colors"
+                    [ngClass]="{
+              'cursor-pointer text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500': !canGoNext(),
+              'bg-gray-200 text-gray-400 cursor-not-allowed': canGoNext() }">
+                    <span>{{ 'Skip' | translate }}</span>
+                    <i class="fas fa-angle-double-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+
+            <div class="relative group">
+                <div *ngIf="!canGoNext()"
+                    class="absolute  right-2 -top-15 z-20 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-primary-400"
+                    style="min-width: 260px;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-200"></i>
+                        <span>
+                            {{ 'Please complete the required information' | translate }}<br>
+                            {{ 'or skip this step to continue.' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <button (click)="onNext()" [disabled]="!canGoNext()"
+                    class="nav-action-btn cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-3 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    data-next="3">
+                    <span>{{ 'Next' | translate }}</span>
+                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+    }
+</div>

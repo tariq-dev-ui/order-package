@@ -1,0 +1,50 @@
+<div class="w-full  bg-white rounded-lg">
+  <!-- Filters Section -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+    <dropdown-search-list
+      [label]="'Country' | translate"
+      [placeholder]="'All Countries' | translate"
+      [options]="countryOptions"
+      [isOptionsLoading]="isLoadingCountries"
+      [selectedId]="selectedCountryId()"
+      [disabled]="false"
+      (selectionChanged)="onCountryChange($event?.id)"
+    ></dropdown-search-list>
+
+    <dropdown-search-list
+      [label]="'Region' | translate"
+      [placeholder]="'All Regions' | translate"
+      [options]="regionOptions"
+      [isOptionsLoading]="isLoadingRegions"
+      [selectedId]="selectedRegionId()"
+      [disabled]="!selectedCountryId()"
+      (selectionChanged)="onRegionChange($event?.id)"
+    ></dropdown-search-list>
+
+    <dropdown-search-list
+      [label]="'City' | translate"
+      [placeholder]="'All Cities' | translate"
+      [options]="cityOptions"
+      [isOptionsLoading]="isLoadingCities"
+      [selectedId]="selectedCityId()"
+      [disabled]="!selectedCountryId()"
+      (selectionChanged)="onCityChange($event?.id)"
+    ></dropdown-search-list>
+  </div>
+
+  <single-item-selector
+    [label]="label()"
+    [placeholder]="placeholder()"
+    [icon]="icon()"
+    [items]="availableItems()"
+    [selected]="selectedItem()"
+    [isLoading]="isLoadingAgents()"
+    [enablePagination]="enablePagination()"
+    [pageSize]="pageSize()"
+    [totalCount]="totalAgentsCount()"
+    [serverSide]="true"
+    (selectionChange)="onSelectionChange($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearchChange($event)"
+  ></single-item-selector>
+</div>

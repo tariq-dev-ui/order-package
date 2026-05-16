@@ -1,0 +1,236 @@
+<!-- Step 5: Others -->
+<div class="step-content p-5 ">
+    <div class="flex items-center gap-3 ">
+        <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white flex items-center justify-center">
+            <i class="fas fa-calendar-check text-lg"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold">{{ 'Final Details' | translate }}</h2>
+            <p class="text-sm text-gray-500">{{ 'Complete your package information' | translate }}</p>
+        </div>
+    </div>
+    <form [formGroup]="finalDetailsForm" (ngSubmit)="validation()">
+        <div class="space-y-6 mb-2">
+
+            <div class="mt-4">
+                <input type="text" formControlName="title" maxlength="500" [value]="state().title ?? ''"
+                    (blur)="onTextAreaChange('title', $any($event.target).value)"
+                    class="w-full placeholder-gray-400 p-3 h-14 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                    [placeholder]="'Package Title' | translate">
+                @if (f.title.touched && f.title.errors) {
+                <div class="text-red-500 text-xs mt-1">
+                    @if (f.title.errors['required']) {
+                    <span>{{ 'Title is required' | translate }}</span>
+                    }
+                    @if (f.title.errors['minLength']) {
+                    <span>{{ 'Title must be at least 3 characters' | translate }}</span>
+                    }
+                    @if (f.title.errors['maxLength']) {
+                    <span>{{ 'Title cannot exceed 1000 characters' | translate }}</span>
+                    }   
+                </div>
+                }
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'Guest Count' | translate }}</label>
+                    <input type="number" formControlName="guestCount" min="1"
+                        (blur)="onChange('guestCount', $any($event.target).value)"
+                        class="w-full placeholder-gray-400 p-3 h-14 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                        [placeholder]="'Enter guest count' | translate">
+                    @if (f.guestCount.touched && f.guestCount.errors) {
+                    <div class="text-red-500 text-xs mt-1">
+                        @if (f.guestCount.errors['min']) {
+                        <span>{{ 'Must be at least 1' | translate }}</span>
+                        }
+                    </div>
+                    }
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'Quantity' | translate }}</label>
+                    <input type="number" formControlName="quantity" min="1"
+                        (blur)="onChange('quantity', $any($event.target).value)"
+                        class="w-full placeholder-gray-400 p-3 h-14 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                        [placeholder]="'Enter quantity' | translate">
+                    @if (f.quantity.touched && f.quantity.errors) {
+                    <div class="text-red-500 text-xs mt-1">
+                        @if (f.quantity.errors['min']) {
+                        <span>{{ 'Must be at least 1' | translate }}</span>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+
+
+
+                <div>
+                    <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-file-alt text-primary-500"></i>
+                        <span>{{ 'Activate Package' | translate }}</span>
+                    </label>
+                    <div class="space-y-2">
+                        <label class="checkbox-option flex items-center gap-3 cursor-pointer">
+                            <input [disabled]="!editMode" type="checkbox" class="custom-checkbox"
+                                (change)="onCheckboxChange('isActive', !state().isActive)" [checked]="state().isActive">
+                            <span>{{ 'Package Activation' | translate }}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'Package Code' | translate }}</label>
+                    <div class="">
+                        <div class="relative w-full">
+                            <input type="text" formControlName="packageCode"
+                                (blur)="onTextAreaChange('packageCode', $any($event.target).value)"
+                                class="w-full placeholder-gray-400 p-3 h-14 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                                [placeholder]="'Enter Package Code' | translate" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-primary-500"></i>
+                    <span>{{ 'Valid Date Range' | translate }}</span>
+                </label>
+
+
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'Start Date' | translate }}</mat-label>
+                        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startPicker></mat-datepicker>
+                        @if ((f.startDate.touched || f.startDate.dirty) && f.startDate.errors) {
+                        <mat-error>
+                            @if (f.startDate.errors['required']) {
+                            {{ 'Start date is required' | translate }}
+                            }
+                            @if (f.startDate.errors['startBeforeTomorrow']) {
+                            {{ 'Start date must be today or in the future' | translate }}
+                            }
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>{{ 'End Date' | translate }}</mat-label>
+                        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endPicker></mat-datepicker>
+                        @if ((f.endDate.touched || f.endDate.dirty) && f.endDate.errors) {
+                        <mat-error>
+                            @if (f.endDate.errors['required']) {
+                            {{ 'End date is required' | translate }}
+                            }
+                            @if (f.endDate.errors['endBeforeStart']) {
+                            {{ 'End date must be after start date' | translate }}
+                            }
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+
+
+                <div>
+                    <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-file-alt text-primary-500"></i>
+                        <span>{{ 'Visa Inclusion' | translate }}</span>
+                    </label>
+                    <div class="space-y-2">
+                        <label class="checkbox-option flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="custom-checkbox"
+                                (change)="onCheckboxChange('includedVisa', !state().includedVisa)"
+                                [checked]="state().includedVisa">
+                            <span>{{ 'Include Visa' | translate }}</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-comment-alt text-primary-500"></i>
+                    <span>Additional Notes</span>
+                </label>
+                <textarea formControlName="notes" maxlength="500" [value]="state().note ?? ''"
+                    (blur)="onTextAreaChange('note', $any($event.target).value)"
+                    class="w-full p-3 placeholder-gray-400 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all duration-200 hover:border-gray-300"
+                    rows="3" placeholder="Any special requests?">{{state().note ?? ''}}</textarea>
+                @if (f.notes.touched && f.notes.errors) {
+                <div class="text-red-500 text-xs mt-1">
+                    @if (f.notes.errors['maxLength']) {
+                    <span>Notes cannot exceed 1000 characters</span>
+                    }
+                    @if (f.notes.errors['xss']) {
+                    <span>Notes contain potentially unsafe content. Please remove any scripts or suspicious HTML.</span>
+                    }
+                </div>
+                }
+            </div> -->
+            <!-- Tag Input -->
+
+            <div>
+                <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-tag text-primary-500"></i>
+                    <span>{{ 'Add Tags' | translate }}</span>
+                </label>
+                <app-tag-input [initialTags]="initialTags" [availableTags]="allTags" [isTabsLoading]="isTagsLoading"
+                    (tagsChanged)="onTagsChanged($event)" (tagAdded)="onTagAdded($event)"
+                    (tagRemoved)="onTagRemoved($event)"></app-tag-input>
+            </div>
+
+            <app-multi-user-selector [users]="iAgents()" [countries]="iCountries()" [isLoadingUsers]="isLoadingAgents"
+                [isLoadingCountries]="isLoadingCountries" [selectedUsers]="initialAgentSelection()"
+                (selectionChanged)="handleSelectionAgentsChange($event)" />
+
+                
+        </div>
+        <!-- 
+          // Inputs
+  users = input.required<User[]>();
+  countries = input.required<Country[]>();
+  initialSelection = input<number[]>([], { alias: 'selectedUsers' });
+  
+  // Outputs
+  selectionChanged = output<number[]>(); -->
+
+
+        <!-- <app-tag-input [title]="'Project Tags'" [description]="'Manage tags for your project'"
+            [initialTags]="initialTags" (tagsChanged)="handleTagsChange($event)" (tagAdded)="logTagAdded($event)"
+            (tagRemoved)="logTagRemoved($event)"></app-tag-input>
+        <br> -->
+
+        <hr class="border-gray-100 mb-5">
+        <div class="flex justify-between">
+
+            @if(prevStep ) {
+            <button (click)="prevStep.emit()" type="button"
+                class="nav-action-btn cursor-pointer prev-step px-5 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500 transition-colors flex items-center gap-3 group">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                <span>{{ 'Previous' | translate }}</span>
+            </button>
+
+            <button type="submit"
+                class="nav-action-btn cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700  text-white rounded-lg transition-all flex items-center gap-3 group shadow-lg hover:shadow-xl">
+                <span>{{ 'Next' | translate }}</span>
+                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+
+            }
+        </div>
+    </form>
+</div>

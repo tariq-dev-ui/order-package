@@ -467,8 +467,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: 'sidebar.nav.ordersGroup',
       icon: 'assignment',
       children: [
-        { label: 'sidebar.nav.defineNewPackage', route: '/admin/packages/builder', icon: 'add_circle_outline' },
-        { label: 'sidebar.nav.agentPackages',    route: '/admin/packages',         icon: 'inventory',         exact: true },
+        { label: 'sidebar.nav.defineNewPackage', route: '/admin/agent-packages/new', icon: 'add_circle_outline' },
+        { label: 'sidebar.nav.agentPackages',    route: '/admin/agent-packages',     icon: 'inventory',         exact: true },
         { label: 'sidebar.nav.newOrder',         route: '/admin/orders/new',       icon: 'add_shopping_cart', exact: true },
         { label: 'sidebar.nav.agentOrders',      route: '/agent/orders',           icon: 'list_alt' }
       ]

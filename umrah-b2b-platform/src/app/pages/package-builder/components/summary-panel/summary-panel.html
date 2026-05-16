@@ -1,0 +1,280 @@
+<!-- Summary Panel -->
+<div class="summary-panel-shell w-full">
+    <div class="summary-panel-card bg-white rounded-xl p-4 sm:p-5 xl:p-6 shadow-sm border border-gray-200">
+        <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <i class="fas fa-list-ul text-primary-500"></i>
+            <span>{{ 'Request Details' | translate }}</span>
+        </h3>
+
+        <!-- Accordion Items -->
+        <div class="space-y-3">
+            <!-- Makkah Accordion -->
+            <details class="group" open>
+                <summary class="flex justify-between items-center p-3 bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-kaaba text-primary-500"></i>
+                        <span class="font-medium">{{ 'Makkah Stay' | translate }}</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 text-sm group-open:rotate-180 transition-transform"></i>
+                </summary>
+                  <div class="px-4 py-3 space-y-3 text-sm">
+                    <div>
+                    @if(makkahHotelListState().length > 0) {
+                    <div class="space-y-2">
+                        @for (hotel of makkahHotelListState(); track $index) {
+                        @if(hotel.activeTab === 'criteria') {
+                        <div
+                            class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center flex-wrap gap-2">
+                            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                <i class="fas fa-hotel text-sm"></i>
+                            </div>
+                            <span class="text-sm">{{hotel.criteria.districtName}}</span>
+                            <span class="text-sm">- {{hotel.criteria.roomTypeName}}</span>
+                            <span class="text-sm">- {{hotel.criteria.roomCount}} {{ 'Rooms' | translate }}</span>
+                            @if(makkahHotelCountState().nightsCountEnabled) {
+                               <span class="text-xs text-gray-500">( {{makkahHotelCountState().nightsCount}} {{ 'Nights' | translate }} )</span>
+                            }@else {
+                                <span class="text-xs text-gray-500">( {{hotel.criteria.nightCount}} {{ 'Nights' | translate }} )</span>
+                            }
+                        </div>
+                        }
+                        }
+
+                        @for (hotel of makkahHotelListState(); track $index) {
+                         @if(hotel.activeTab === 'specific') {
+                        <div
+                            class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center flex-wrap gap-2">
+                            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                <i class="fas fa-hotel text-sm"></i>
+                            </div>
+                            <span class="text-sm">{{hotel.specific.hotelName}}</span>
+                            <span class="text-sm">- {{hotel.specific.roomTypeName}}</span>
+                                     <span class="text-sm">- {{hotel.specific.roomCount}} {{ 'Rooms' | translate }}</span>
+                            @if(makkahHotelCountState().nightsCountEnabled) {
+                                         <span class="text-xs text-gray-500">( {{makkahHotelCountState().nightsCount}} {{ 'Nights' | translate }} )</span>
+                            }@else {
+                                     <span class="text-xs text-gray-500">( {{hotel.specific.nightCount}} {{ 'Nights' | translate }} )</span>
+                            }
+                        </div>
+                        }
+                        }
+                    </div>
+                    }@else {
+                    <div class="space-y-2">
+                        <p class="text-gray-400">{{ 'No hotel is added' | translate }}</p>
+                    </div>
+                    }
+                </div>
+                </div>
+            </details>
+
+            <!-- Madinah Accordion -->
+            <details class="group" open>
+                <summary class="flex justify-between items-center p-3 bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-mosque text-primary-500"></i>
+                        <span class="font-medium">{{ 'Madinah Stay' | translate }}</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 text-sm group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <div class="px-4 py-3 space-y-3 text-sm">
+                    <div>
+                    @if(madinahHotelListState().length > 0) {
+                    <div class="space-y-2">
+                        @for (hotel of madinahHotelListState(); track $index) {
+                        @if(hotel.activeTab === 'criteria') {
+                        <div
+                            class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center flex-wrap gap-2">
+                            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                <i class="fas fa-hotel text-sm"></i>
+                            </div>
+                            <span class="text-sm">{{hotel.criteria.districtName}}</span>
+                            <span class="text-sm">- {{hotel.criteria.roomTypeName}}</span>
+                            <span class="text-sm">- {{hotel.criteria.roomCount}} {{ 'Rooms' | translate }}</span>
+                            <span class="text-xs text-gray-500">( {{hotel.criteria.nightCount}} {{ 'Nights' | translate }} )</span>
+                        </div>
+                        }
+                        }
+
+                        @for (hotel of madinahHotelListState(); track $index) {
+                         @if(hotel.activeTab === 'specific') {
+                        <div
+                            class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center flex-wrap gap-2">
+                            <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                <i class="fas fa-hotel text-sm"></i>
+                            </div>
+                            <span class="text-sm">{{hotel.specific.hotelName}}</span>
+                            <span class="text-sm">- {{hotel.specific.roomTypeName}}</span>
+                            <span class="text-sm">- {{hotel.specific.roomCount}} {{ 'Rooms' | translate }}</span>
+                            <span class="text-xs text-gray-500">( {{hotel.specific.nightCount}} {{ 'Nights' | translate }} )</span>
+                        </div>
+                        }
+                        }
+                    </div>
+                    }@else {
+                    <div class="space-y-2">
+                        <p class="text-gray-400">{{ 'No hotel is added' | translate }}</p>
+                    </div>
+                    }
+                </div>
+                </div>
+            </details>
+
+            <!-- Services Accordion -->
+            <details class="group" open>
+                <summary class="flex justify-between items-center p-3 bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-concierge-bell text-primary-500"></i>
+                        <span class="font-medium">{{ 'Services' | translate }}</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 text-sm group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <div class="px-4 py-3 space-y-3 text-sm">
+                    <!-- Transport Items -->
+                    <div>
+                        <p class="text-gray-600 mb-1">{{ 'Transport' | translate }}:</p>
+                        @if(transportListState().length > 0) {
+                        <div class="space-y-2">
+                            @for (transport of transportListState(); track $index) {
+                            <div
+                                class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center gap-2">
+                                <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                    <i class="fas fa-car text-sm"></i>
+                                </div>
+                                <span class="text-sm">{{transport.tripRoute}}</span>
+                                <span class="text-xs text-gray-500">( {{transport.numberOfVehicles }}
+                                    {{transport.transportType}} )</span>
+                                <button
+                                    class="cursor-pointer w-fit w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        }@else {
+                        <div class="space-y-2">
+                            <p class="text-gray-400">{{ 'No transport added' | translate }}</p>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Food Items -->
+                    <div>
+                        <p class="text-gray-600 mb-1">{{ 'Meals' | translate }}:</p>
+
+                        @if(foodListState().length > 0) {
+                        <div class="space-y-2">
+                            @for (food of foodListState(); track $index) {
+                            @if(food.mealTypeId === 4) {
+                            <div
+                                class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center gap-2">
+                                <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                    <i class="fas fa-coffee text-sm"></i>
+                                </div>
+                                <span class="text-sm">{{food.foodType}}</span>
+                                <span class="text-xs text-gray-500">({{food.mealCount}} {{food.mealType}})</span>
+                                <button
+                                    class="w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                            }@else {
+                            <div class="bg-white w-fit border border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center gap-2">
+                                <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                    <i class="fas fa-utensils text-sm"></i>
+                                </div>
+                                <span class="text-sm">{{food.foodType}}</span>
+                                <span class="text-xs text-gray-500">({{food.mealCount}} {{food.mealType}})</span>
+                                <button
+                                    class="w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+
+                            }
+                            }
+                        </div>
+                        }@else {
+                        <div class="space-y-2">
+                            <p class="text-gray-400">{{ 'No meal plans added' | translate }}</p>
+                        </div>
+                        }
+                    </div>
+
+                    <div>
+                        <p class="text-gray-600 mb-1">{{ 'Tickets' | translate }}:</p>
+                        @if(ticketListState().length > 0) {
+                        <div class="space-y-2">
+                            @for (ticket of ticketListState(); track $index) {
+                            <div class="bg-white border w-fit border-gray-200 rounded-full pl-4 pr-2 py-1 flex flex-wrap items-center gap-2">
+                                <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+                                    <i class="fas fa-plane text-sm"></i>
+                                </div>
+                                <span class="text-sm">{{formatTicketRoute(ticket.sourceCityName || ('Source' | translate), ticket.destinationCityName || ('Destination' | translate), ticket.tripType)}}</span>
+                                <span class="text-xs text-gray-500">({{getTicketAirlineName(ticket) || ('Airline not set' | translate)}}, {{ticket.seatCount}} {{ (ticket.seatCount === 1 ? 'Seat' : 'Seats') | translate }}, {{ (ticket.tripType || 'Not set') | translate }}, {{ (ticket.travelClass || 'Not set') | translate }})</span>
+                            </div>
+                            }
+                        </div>
+                        }@else {
+                        <div class="space-y-2">
+                            <p class="text-gray-400">{{ 'No tickets added' | translate }}</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </details>
+
+            <!-- Trip Details -->
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-gray-600">{{ 'Valid Dates' | translate }}</p>
+                        @if(finalDetailsState().startDate ) {
+                        <p class="font-medium">
+                            {{finalDetailsState().startDate | date: 'dd/MM/yyyy'}} -
+                            {{finalDetailsState().endDate | date: 'dd/MM/yyyy'}}
+                        </p>
+                        }@else {
+                        <p class="font-medium">{{ 'Not set' | translate }}</p>
+                        }
+                    </div>
+
+                   
+
+                    <div>
+                        <p class="text-gray-600">{{ 'Visa Service' | translate }}</p>
+                        @if(finalDetailsState().includedVisa) {
+                        <p class="font-medium">{{ 'Included Visa' | translate }}</p>
+                        }@else {
+                        <p class="font-medium">{{ 'Not included' | translate }}</p>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Note -->
+        <div class="mt-4 p-3 ">
+
+        </div>
+
+        <!-- Help Card -->
+        <div class="bg-gray-50 rounded-lg p-4 flex items-start gap-3 border border-gray-200">
+            <div
+                class="w-8 h-8 rounded-full bg-primary-100 text-primary-500 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-headset text-sm"></i>
+            </div>
+            <div>
+                <h4 class="font-medium text-sm mb-1">{{ 'Need help?' | translate }}</h4>
+                <p class="text-xs text-gray-600">{{ 'Contact our 24/7 support team for assistance.' | translate }}</p>
+            </div>
+        </div>
+        <br>
+        <button
+            class="w-full py-2 rounded-lg border border-primary-500 text-primary-500 hover:bg-primary-50 transition-colors flex items-center justify-center gap-2">
+            <i class="fas fa-question-circle"></i>
+            <span>{{ 'Need help?' | translate }}</span>
+        </button>
+    </div>
+</div>

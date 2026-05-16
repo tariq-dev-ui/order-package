@@ -1,0 +1,28 @@
+<div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+    <h3 class="text-sm font-semibold text-gray-700 flex items-center gap-3 mb-3">
+        <i class="fas fa-ticket-alt text-primary-500"></i>
+        <span>{{ 'Tickets' | translate }}</span>
+    </h3>
+    <div class="flex flex-wrap gap-2">
+        @if( (Tickets?.length ?? 0) > 0) {
+
+        @for (ticket of Tickets ; track $index) {
+        <span
+            class="text-xs bg-white text-gray-700 px-3 py-1.5 rounded-full border border-gray-200 flex items-center">
+            <i class="fas fa-plane text-primary-500 me-1.5 text-xs"></i>
+            <span>
+                {{getTicketRouteLabel(ticket)}}
+                ({{getTicketAirlineName(ticket) || ('Airline not set' | translate)}}, {{ticket.SeatCount}} {{ 'Seats' | translate }}, {{getTicketMetaLabel(ticket.TripType)}}, {{getTicketMetaLabel(ticket.TravelClass)}})
+            </span>
+        </span>
+        }
+        }@else {
+        <span class="text-gray-600 flex items-center gap-1">
+            <i class="fas fa-info-circle text-xs"></i>
+            <span class="text-xs">
+                {{ 'No tickets included.' | translate }}
+            </span>
+        </span>
+        }
+    </div>
+</div>

@@ -1,0 +1,193 @@
+<div class="step-content p-5">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white flex items-center justify-center">
+      <i class="fas fa-ticket-alt"></i>
+    </div>
+    <div>
+      <h2 class="text-xl font-bold">{{ 'Tickets' | translate }}</h2>
+      <p class="text-sm text-gray-500">{{ 'Add flight ticket details' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="mb-6 flex flex-wrap gap-3">
+    @for (ticket of listState(); track $index) {
+      <div class="bg-white border border-gray-200 rounded-full pl-4 pr-2 py-1 flex items-center gap-2">
+        <div class="bg-primary-50 p-1 rounded-full text-primary-500">
+          <i class="fas fa-plane text-sm"></i>
+        </div>
+        <span class="text-sm">{{ formatTicketRoute(ticket.sourceCityName || ('Source' | translate), ticket.destinationCityName || ('Destination' | translate), ticket.tripType) }}</span>
+        <span class="text-xs text-gray-500">({{ getTicketAirlineName(ticket) || ('Airline not set' | translate) }}, {{ ticket.seatCount }} {{ (ticket.seatCount === 1 ? 'Seat' : 'Seats') | translate }}, {{ (ticket.tripType || 'Not set') | translate }}, {{ (ticket.travelClass || 'Not set') | translate }})</span>
+        <button (click)="removeRow($index)" class="cursor-pointer w-6 h-6 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600" [attr.aria-label]="'Remove ticket' | translate">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-flag text-primary-500"></i>
+          <span>{{ 'Source Country' | translate }}</span>
+          @if (isLoadingCountries()) {
+            <i class="fas fa-spinner fa-spin text-primary-500"></i>
+          }
+        </label>
+        <select (change)="onSourceCountryChange($event)" [disabled]="isLoadingCountries()" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+          @if (isLoadingCountries()) {
+            <option [value]="undefined">{{ 'Loading Source Countries...' | translate }}</option>
+          } @else {
+            <option [value]="undefined">{{ 'Select Source Country' | translate }}</option>
+            @for (country of countries(); track $index) {
+              <option [value]="country.CountryID" [selected]="state().sourceCountryID === country.CountryID">{{ country.Title || country.TitleEnglish }}</option>
+            }
+          }
+        </select>
+      </div>
+
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-city text-primary-500"></i>
+          <span>{{ 'Source City' | translate }}</span>
+          @if (isLoadingSourceCities()) {
+            <i class="fas fa-spinner fa-spin text-primary-500"></i>
+          }
+        </label>
+        <select (change)="onSourceCityChange($event)" [disabled]="!state().sourceCountryID || isLoadingSourceCities()" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+          @if (isLoadingSourceCities()) {
+            <option [value]="undefined">{{ 'Loading Source Cities...' | translate }}</option>
+          } @else {
+            <option [value]="undefined">{{ (state().sourceCountryID ? 'Select Source City' : 'Select Source Country First') | translate }}</option>
+            @for (city of sourceCities(); track $index) {
+              <option [value]="city.CityID" [selected]="state().sourceCityID === city.CityID">{{ city.Name || city.NameEn }}</option>
+            }
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-flag text-primary-500"></i>
+          <span>{{ 'Destination Country' | translate }}</span>
+          @if (isLoadingCountries()) {
+            <i class="fas fa-spinner fa-spin text-primary-500"></i>
+          }
+        </label>
+        <select disabled class="w-full p-3 border border-gray-200 rounded-lg bg-gray-200 text-gray-600 cursor-not-allowed custom-select" [attr.aria-label]="'Destination Country locked to Saudi Arabia' | translate">
+          @if (isLoadingCountries()) {
+            <option selected>{{ 'Loading Destination Country...' | translate }}</option>
+          } @else if (saudiCountry()) {
+            <option [value]="saudiCountry()!.CountryID" selected>{{ saudiCountry()!.Title || saudiCountry()!.TitleEnglish }}</option>
+          } @else {
+            <option selected>{{ 'Saudi Arabia' | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-city text-primary-500"></i>
+          <span>{{ 'Destination City' | translate }}</span>
+          @if (isLoadingDestinationCities()) {
+            <i class="fas fa-spinner fa-spin text-primary-500"></i>
+          }
+        </label>
+        <select (change)="onDestinationCityChange($event)" [disabled]="!state().destinationCountryID || isLoadingDestinationCities()" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+          @if (isLoadingDestinationCities()) {
+            <option [value]="undefined">{{ 'Loading Destination Cities...' | translate }}</option>
+          } @else {
+            <option [value]="undefined">{{ (state().destinationCountryID ? 'Select Destination City' : 'Destination Country Required') | translate }}</option>
+            @for (city of destinationCities(); track $index) {
+              <option [value]="city.CityID" [selected]="state().destinationCityID === city.CityID">{{ city.Name || city.NameEn }}</option>
+            }
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-exchange-alt text-primary-500"></i>
+          <span>{{ 'Trip Type' | translate }}</span>
+        </label>
+        <select (change)="onTripTypeChange($event)" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select">
+          <option [value]="undefined">{{ 'Select Trip Type' | translate }}</option>
+          @for (tripType of tripTypes(); track $index) {
+            <option [value]="tripType" [selected]="state().tripType === tripType">{{ tripType | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="custom-select">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-chair text-primary-500"></i>
+          <span>{{ 'Travel Class' | translate }}</span>
+        </label>
+        <select (change)="onTravelClassChange($event)" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select">
+          <option [value]="undefined">{{ 'Select Travel Class' | translate }}</option>
+          @for (travelClass of travelClasses(); track $index) {
+            <option [value]="travelClass" [selected]="state().travelClass === travelClass">{{ travelClass | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="custom-select md:col-span-2">
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-plane-departure text-primary-500"></i>
+          <span>{{ 'Airline' | translate }}</span>
+          @if (isLoadingAirlineCompanies()) {
+            <i class="fas fa-spinner fa-spin text-primary-500"></i>
+          }
+        </label>
+        <select (change)="onAirlineChange($event)" [disabled]="isLoadingAirlineCompanies()" class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 custom-select disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed">
+          @if (isLoadingAirlineCompanies()) {
+            <option [value]="undefined">{{ 'Loading Airlines...' | translate }}</option>
+          } @else {
+            <option [value]="undefined">{{ 'Select Airline' | translate }}</option>
+            @for (airline of airlineCompanies(); track airline.AirlineCompanyID) {
+              <option [value]="airline.AirlineCompanyID" [selected]="state().airlineCompanyID === airline.AirlineCompanyID">{{ getAirlineDisplayName(airline) }}</option>
+            }
+          }
+        </select>
+      </div>
+
+      
+    </div>
+    <div>
+        <label class="label-with-icon block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <i class="fas fa-users text-primary-500"></i>
+          <span>{{ 'Seats' | translate }}</span>
+        </label>
+        <counter-input [value]="state().seatCount ?? 1" [icon]="'fas fa-chair'" [singularLabel]="'Seat' | translate" [pluralLabel]="'Seats' | translate" (valueChange)="onSeatsChange($event)" />
+      </div>
+
+    <div class="flex">
+      <button (click)="addRow()" [disabled]="!isTicketValid()" class="cursor-pointer mb-2 next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-2 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <span>{{ 'Add New' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <hr class="mb-4 text-gray-200">
+  <div class="flex justify-between">
+    <button (click)="prevStep.emit()" class="nav-action-btn cursor-pointer prev-step px-5 py-2.5 border border-gray-200 rounded-sm text-gray-600 hover:bg-gray-50 active:bg-primary-50 hover:text-primary-500 transition-colors flex items-center gap-3 group">
+      <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+      <span>{{ 'Previous' | translate }}</span>
+    </button>
+    <div class="flex gap-3">
+      <button (click)="onSkip()" [disabled]="canGoNext()" class="nav-action-btn skip-step px-5 py-2.5 border border-gray-200 rounded-lg flex items-center gap-3 group transition-colors" [class.cursor-pointer]="!canGoNext()" [class.text-gray-600]="!canGoNext()" [class.hover:bg-gray-50]="!canGoNext()" [class.active:bg-primary-50]="!canGoNext()" [class.hover:text-primary-500]="!canGoNext()" [class.bg-gray-200]="canGoNext()" [class.text-gray-400]="canGoNext()" [class.cursor-not-allowed]="canGoNext()">
+        <span>{{ 'Skip' | translate }}</span>
+        <i class="fas fa-angle-double-right group-hover:translate-x-1 transition-transform"></i>
+      </button>
+
+      <button (click)="onNext()" [disabled]="!canGoNext()" class="nav-action-btn cursor-pointer next-step px-5 py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center gap-3 group shadow-xs hover:shadow-sm disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <span>{{ 'Next' | translate }}</span>
+        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+  </div>
+</div>
