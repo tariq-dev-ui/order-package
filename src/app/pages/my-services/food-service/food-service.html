@@ -1,0 +1,43 @@
+<service-page-shell
+  title="Food Service"
+  subtitle="Configure meal plans and meal counts"
+  iconClass="fas fa-utensils text-lg"
+  accent="primary"
+  [highlights]="['Meal Matrix', 'Plan Variety', 'Guest Volume']"
+>
+  <div service-stage class="p-6 space-y-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <label class="block">
+        <span class="text-sm font-medium text-gray-700">Food Type</span>
+        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+          <option>Buffet</option>
+          <option>Set Menu</option>
+          <option>Snacks</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium text-gray-700">Meal Plan</span>
+        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+          <option>Breakfast</option>
+          <option>Half Board</option>
+          <option>Full Board</option>
+        </select>
+      </label>
+      <label class="block md:col-span-2">
+        <span class="text-sm font-medium text-gray-700">Number of Meals</span>
+        <input type="number" min="1" value="20"
+          class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50" />
+      </label>
+    </div>
+
+    <div class="rounded-lg border border-primary-100 bg-primary-50/60 p-4">
+      <p class="text-sm text-gray-500 mb-2">Added service preview</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full bg-white border text-sm">Buffet</span>
+        <span class="px-3 py-1 rounded-full bg-white border text-sm">Full Board</span>
+        <span class="px-3 py-1 rounded-full bg-white border text-sm">20 Meals</span>
+      </div>
+    </div>
+  </div>
+</service-page-shell>
+
