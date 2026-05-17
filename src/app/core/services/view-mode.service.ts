@@ -63,13 +63,18 @@ export class ViewModeService {
   }
 
   private getModeFromUrl(url: string): ViewMode | null {
-    if (url.startsWith('/admin')) {
-      return 'admin';
-    }
-    if (url.startsWith('/master')) {
+    const path = url.split('?')[0].split('#')[0];
+
+    if (path === '/my-services') {
       return 'master';
     }
-    if (url.startsWith('/agent')) {
+    if (path.startsWith('/admin')) {
+      return 'admin';
+    }
+    if (path.startsWith('/master')) {
+      return 'master';
+    }
+    if (path.startsWith('/agent')) {
       return 'subAgent';
     }
 

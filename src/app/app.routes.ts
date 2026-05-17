@@ -61,18 +61,6 @@ const myServicesManagementPage = () => import('./features/admin/my-services/my-s
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
   {
-    path: 'my-services',
-    component: AdminLayoutComponent,
-    children: [
-      { path: '', redirectTo: 'makkah', pathMatch: 'full' },
-      { path: 'makkah', loadComponent: myServicesMakkahPage },
-      { path: 'madina', loadComponent: myServicesMadinaPage },
-      { path: 'transport', loadComponent: myServicesTransportPage },
-      { path: 'tickets', loadComponent: myServicesTicketsPage },
-      { path: 'food', loadComponent: myServicesFoodPage },
-    ],
-  },
-  {
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
@@ -108,8 +96,6 @@ export const routes: Routes = [
       { path: 'pricing/transport',    loadComponent: transportPricingPage },
       { path: 'pricing/food',         loadComponent: foodPricingPage },
       { path: 'pricing/hotel',         loadComponent: hotelPricingPage },
-      // My Services Management
-      { path: 'my-services',           loadComponent: myServicesManagementPage },
       // TODO: service center
       { path: 'agent-requests',              loadComponent: agentRequestsPage },
       { path: 'agent-requests/new',          loadComponent: newAgentRequestPage },
@@ -184,7 +170,13 @@ export const routes: Routes = [
       { path: 'finance/opening-balance',    loadComponent: () => import('./pages/journal-entries/create-journal-entry/create-journal-entry.component').then(m => m.CreateJournalEntryComponent) },
       { path: 'finance/account-routing',    loadComponent: () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent) },
       { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
-      { path: 'finance/cashier-session',    loadComponent: emptyPage }
+      { path: 'finance/cashier-session',    loadComponent: emptyPage },
+      { path: 'my-services',           loadComponent: myServicesManagementPage },
+      { path: 'my-services/makkah',    loadComponent: myServicesMakkahPage },
+      { path: 'my-services/madina',    loadComponent: myServicesMadinaPage },
+      { path: 'my-services/transport', loadComponent: myServicesTransportPage },
+      { path: 'my-services/tickets',   loadComponent: myServicesTicketsPage },
+      { path: 'my-services/food',      loadComponent: myServicesFoodPage }
     ]
   },
   {

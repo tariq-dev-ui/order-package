@@ -392,7 +392,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     { prefix: '/my-services/transport',             key: 'Transport' },
     { prefix: '/my-services/tickets',               key: 'Tickets' },
     { prefix: '/my-services/food',                  key: 'Food' },
-    { prefix: '/my-services',                       key: 'My Services' },
+    { prefix: '/my-services',                       key: 'sidebar.nav.myServices' },
     { prefix: '/admin/agent-packages/new',         key: 'sidebar.nav.defineNewPackage' },
     { prefix: '/admin/agent-packages',             key: 'sidebar.nav.agentPackages' },
     { prefix: '/admin/packages/builder',             key: 'sidebar.nav.defineNewPackage' },

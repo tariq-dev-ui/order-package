@@ -597,6 +597,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { id: 'master-dashboard',   label: 'Dashboard',   icon: 'pie_chart',           route: '/master/distributed', exact: true },
     { id: 'master-packages',    label: 'Packages',    icon: 'inventory_2',         route: '/master/packages',    exact: true },
     { id: 'master-my-packages', label: 'My Packages', icon: 'inventory',           route: '/master/my-packages', exact: true },
+    { id: 'master-my-services', label: 'sidebar.nav.myServices', icon: 'design_services', route: '/my-services', exact: true },
     { id: 'master-orders',      label: 'Orders',      icon: 'luggage',             route: '/master/orders',      badge: '34', exact: true },
     { id: 'master-quotations',  label: 'Quotations',  icon: 'confirmation_number', route: '/master/quotations',  exact: true },
     { id: 'master-subagents',   label: 'Subagents',   icon: 'group',               route: '/master/subagents',   exact: true },
