@@ -474,24 +474,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      id: 'myServicesMgmt',
-      label: 'sidebar.nav.myServicesManagement',
-      icon: 'miscellaneous_services',
-      route: '/admin/my-services'
-    },
-    {
-      id: 'myServices',
-      label: 'My Services',
-      icon: 'layers',
-      children: [
-        { label: 'Makkah',    route: '/my-services/makkah',    icon: 'mosque' },
-        { label: 'Madina',    route: '/my-services/madina',    icon: 'mosque' },
-        { label: 'Transport', route: '/my-services/transport', icon: 'directions_bus' },
-        { label: 'Tickets',   route: '/my-services/tickets',   icon: 'confirmation_number' },
-        { label: 'Food',      route: '/my-services/food',      icon: 'restaurant' }
-      ]
-    },
-    {
       id: 'operations',
       label: 'sidebar.nav.operationsGroup',
       icon: 'tune',
@@ -597,7 +579,25 @@ export class SidebarComponent implements OnInit, OnDestroy {
     { id: 'master-dashboard',   label: 'Dashboard',   icon: 'pie_chart',           route: '/master/distributed', exact: true },
     { id: 'master-packages',    label: 'Packages',    icon: 'inventory_2',         route: '/master/packages',    exact: true },
     { id: 'master-my-packages', label: 'My Packages', icon: 'inventory',           route: '/master/my-packages', exact: true },
-    { id: 'master-my-services', label: 'sidebar.nav.myServices', icon: 'design_services', route: '/my-services', exact: true },
+    {
+      id: 'master-my-services-mgmt',
+      label: 'sidebar.nav.myServicesManagement',
+      icon: 'miscellaneous_services',
+      route: '/master/my-services',
+      exact: true
+    },
+    {
+      id: 'master-my-services-group',
+      label: 'My Services',
+      icon: 'layers',
+      children: [
+        { label: 'Makkah',    route: '/master/my-services/makkah',    icon: 'mosque' },
+        { label: 'Madina',    route: '/master/my-services/madina',    icon: 'mosque' },
+        { label: 'Transport', route: '/master/my-services/transport', icon: 'directions_bus' },
+        { label: 'Tickets',   route: '/master/my-services/tickets',   icon: 'confirmation_number' },
+        { label: 'Food',      route: '/master/my-services/food',      icon: 'restaurant' }
+      ]
+    },
     { id: 'master-orders',      label: 'Orders',      icon: 'luggage',             route: '/master/orders',      badge: '34', exact: true },
     { id: 'master-quotations',  label: 'Quotations',  icon: 'confirmation_number', route: '/master/quotations',  exact: true },
     { id: 'master-subagents',   label: 'Subagents',   icon: 'group',               route: '/master/subagents',   exact: true },

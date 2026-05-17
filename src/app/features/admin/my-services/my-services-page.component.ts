@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,10 +45,68 @@ import { MyServicesFormComponent } from './my-services-form/my-services-form.com
             <h1>خدماتي</h1>
             <p class="page-subtitle">إدارة جميع خدماتك</p>
           </div>
-          <button type="button" class="btn btn--primary btn--lg add-btn" (click)="openAddServiceDialog()">
-            <span class="material-icons-round">add</span>
-            <span>إضافة خدمة جديدة</span>
-          </button>
+          <div class="add-menu-wrap">
+            <button
+              type="button"
+              class="btn btn--primary btn--lg add-btn"
+              aria-haspopup="menu"
+              [attr.aria-expanded]="isAddMenuOpen()"
+              (click)="toggleAddMenu($event)"
+              (keydown)="onAddButtonKeydown($event)">
+              <span class="material-icons-round">add</span>
+              <span>إضافة خدمة جديدة</span>
+              <span class="material-icons-round add-chevron" [class.is-open]="isAddMenuOpen()">expand_more</span>
+            </button>
+
+            @if (isAddMenuOpen()) {
+              <div class="service-add-menu" role="menu" (click)="$event.stopPropagation()">
+                <div
+                  class="service-menu-group"
+                  [class.is-open]="isHotelsSubmenuOpen()"
+                  (mouseenter)="openHotelsSubmenu()"
+                  (mouseleave)="closeHotelsSubmenu()">
+                  <button
+                    type="button"
+                    class="service-menu-item has-submenu"
+                    role="menuitem"
+                    aria-haspopup="menu"
+                    [attr.aria-expanded]="isHotelsSubmenuOpen()"
+                    (click)="toggleHotelsSubmenu($event)"
+                    (keydown)="onHotelsItemKeydown($event)">
+                    <span class="material-icons-round menu-item-icon">hotel</span>
+                    <span>فنادق</span>
+                    <span class="material-icons-round submenu-chevron">chevron_left</span>
+                  </button>
+
+                  @if (isHotelsSubmenuOpen()) {
+                    <div class="hotels-submenu" role="menu">
+                      <button type="button" class="service-menu-item" role="menuitem" (click)="navigateToAddService('/master/my-services/makkah/new')">
+                        <span class="material-icons-round menu-item-icon">hotel</span>
+                        <span>فنادق مكة</span>
+                      </button>
+                      <button type="button" class="service-menu-item" role="menuitem" (click)="navigateToAddService('/master/my-services/madina/new')">
+                        <span class="material-icons-round menu-item-icon">hotel</span>
+                        <span>فنادق المدينة</span>
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <button type="button" class="service-menu-item" role="menuitem" (click)="navigateToAddService('/master/my-services/transport/new')">
+                  <span class="material-icons-round menu-item-icon">directions_bus</span>
+                  <span>مواصلات</span>
+                </button>
+                <button type="button" class="service-menu-item" role="menuitem" (click)="navigateToAddService('/master/my-services/tickets/new')">
+                  <span class="material-icons-round menu-item-icon">confirmation_number</span>
+                  <span>تذاكر</span>
+                </button>
+                <button type="button" class="service-menu-item" role="menuitem" (click)="navigateToAddService('/master/my-services/food/new')">
+                  <span class="material-icons-round menu-item-icon">restaurant</span>
+                  <span>تغذية</span>
+                </button>
+              </div>
+            }
+          </div>
         </div>
       </header>
 
@@ -128,7 +186,7 @@ import { MyServicesFormComponent } from './my-services-form/my-services-form.com
             <div class="empty-state">
               <span class="material-icons-round">inbox</span>
               <p>لا توجد خدمات</p>
-              <button type="button" class="btn btn--primary" (click)="openAddServiceDialog()">
+              <button type="button" class="btn btn--primary" (click)="toggleAddMenu($event)">
                 <span class="material-icons-round">add</span>
                 إضافة خدمة جديدة
               </button>
@@ -253,6 +311,99 @@ import { MyServicesFormComponent } from './my-services-form/my-services-form.com
         align-items: center;
         gap: 8px;
         white-space: nowrap;
+      }
+
+      .add-menu-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        overflow: visible;
+        z-index: 40;
+      }
+
+      .add-chevron {
+        font-size: 18px;
+        transition: transform var(--t-fast, 150ms ease);
+      }
+
+      .add-chevron.is-open {
+        transform: rotate(180deg);
+      }
+
+      .service-add-menu,
+      .hotels-submenu {
+        min-width: 220px;
+        padding: 8px;
+        border: 1px solid var(--sero-border);
+        border-radius: 10px;
+        background: var(--sero-card-bg);
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+      }
+
+      .service-add-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        inset-inline-end: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .service-menu-group {
+        position: relative;
+      }
+
+      .hotels-submenu {
+        position: absolute;
+        top: 0;
+        inset-inline-end: calc(100% + 8px);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .service-menu-item {
+        width: 100%;
+        min-height: 40px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--sero-text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        font-family: var(--sero-font);
+        font-size: 0.86rem;
+        font-weight: 600;
+        text-align: start;
+        transition: background var(--t-fast, 150ms ease), border-color var(--t-fast, 150ms ease), color var(--t-fast, 150ms ease);
+      }
+
+      .service-menu-item:hover,
+      .service-menu-item:focus-visible,
+      .service-menu-group.is-open > .service-menu-item {
+        outline: none;
+        background: var(--sero-bg-selected);
+        border-color: var(--sero-border-light);
+        color: var(--sero-primary-dark);
+      }
+
+      .menu-item-icon {
+        width: 20px;
+        color: var(--sero-primary);
+        font-size: 18px;
+        flex-shrink: 0;
+        text-align: center;
+      }
+
+      .submenu-chevron {
+        margin-inline-start: auto;
+        color: var(--sero-text-muted);
+        font-size: 18px;
+        flex-shrink: 0;
       }
 
       /* ── Success Message ── */
@@ -586,6 +737,31 @@ import { MyServicesFormComponent } from './my-services-form/my-services-form.com
           flex-direction: column;
         }
 
+        .add-menu-wrap,
+        .add-btn {
+          width: 100%;
+        }
+
+        .add-btn {
+          justify-content: center;
+        }
+
+        .service-add-menu {
+          inset-inline-start: 0;
+          inset-inline-end: auto;
+          width: min(320px, calc(100vw - 32px));
+        }
+
+        .hotels-submenu {
+          position: static;
+          min-width: 0;
+          margin-top: 4px;
+          margin-inline-start: 26px;
+          box-shadow: none;
+          border-color: var(--sero-border-light);
+          background: var(--sero-surface-2);
+        }
+
         .filters-grid {
           grid-template-columns: 1fr;
         }
@@ -623,6 +799,8 @@ export class MyServicesPageComponent implements OnInit, OnDestroy {
   // Signals
   isLoading = signal(false);
   successMessage = signal('');
+  isAddMenuOpen = signal(false);
+  isHotelsSubmenuOpen = signal(false);
   filtersExpanded = false;
   filters = signal<MyServiceFilterState>({ ...MY_SERVICE_DEFAULT_FILTERS });
   allServices = signal<MyService[]>([]);
@@ -649,6 +827,16 @@ export class MyServicesPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.closeAddMenu();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.closeAddMenu();
   }
 
   loadServices(): void {
@@ -687,6 +875,52 @@ export class MyServicesPageComponent implements OnInit, OnDestroy {
     this.filters.set({ ...MY_SERVICE_DEFAULT_FILTERS });
     this.currentPage.set(1);
     this.loadServices();
+  }
+
+  toggleAddMenu(event: Event): void {
+    event.stopPropagation();
+    const nextState = !this.isAddMenuOpen();
+    this.isAddMenuOpen.set(nextState);
+    if (!nextState) {
+      this.isHotelsSubmenuOpen.set(false);
+    }
+  }
+
+  closeAddMenu(): void {
+    this.isAddMenuOpen.set(false);
+    this.isHotelsSubmenuOpen.set(false);
+  }
+
+  openHotelsSubmenu(): void {
+    this.isHotelsSubmenuOpen.set(true);
+  }
+
+  closeHotelsSubmenu(): void {
+    this.isHotelsSubmenuOpen.set(false);
+  }
+
+  toggleHotelsSubmenu(event: Event): void {
+    event.stopPropagation();
+    this.isHotelsSubmenuOpen.set(!this.isHotelsSubmenuOpen());
+  }
+
+  onAddButtonKeydown(event: KeyboardEvent): void {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.isAddMenuOpen.set(true);
+    }
+  }
+
+  onHotelsItemKeydown(event: KeyboardEvent): void {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.isHotelsSubmenuOpen.set(true);
+    }
+  }
+
+  navigateToAddService(route: string): void {
+    this.closeAddMenu();
+    this.router.navigateByUrl(route);
   }
 
   openAddServiceDialog(): void {

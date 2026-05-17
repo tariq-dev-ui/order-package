@@ -387,6 +387,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   // Ordered most-specific first so first match wins
   private readonly routeTitleMap: { prefix: string; key: string }[] = [
+    { prefix: '/master/my-services/makkah',         key: 'Makkah' },
+    { prefix: '/master/my-services/madina',         key: 'Madina' },
+    { prefix: '/master/my-services/transport',      key: 'Transport' },
+    { prefix: '/master/my-services/tickets',        key: 'Tickets' },
+    { prefix: '/master/my-services/food',           key: 'Food' },
+    { prefix: '/master/my-services',                key: 'sidebar.nav.myServices' },
     { prefix: '/my-services/makkah',                key: 'Makkah' },
     { prefix: '/my-services/madina',                key: 'Madina' },
     { prefix: '/my-services/transport',             key: 'Transport' },
