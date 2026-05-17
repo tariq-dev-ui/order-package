@@ -1,6 +1,18 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
+import { of } from 'rxjs';
 import { Observable } from 'rxjs';
-import {CateringFoodTypeModel, CityDistData, TripPathModel, CateringTypeModel, CarTypeModel, HotelRoomTypeModel, AdminAPIClient, HotelCategoryModel } from 'src/app/services/admin.api.client';
+import { CateringFoodTypeModel, CityDistData, TripPathModel, CateringTypeModel, CarTypeModel, HotelRoomTypeModel, HotelCategoryModel } from 'src/app/services/admin.api.client';
+import {
+  MOCK_DISTRICTS_MAKKAH,
+  MOCK_DISTRICTS_MADINAH,
+  MOCK_TRIP_PATHS,
+  MOCK_CAR_TYPES,
+  MOCK_FOOD_TYPES,
+  MOCK_CATERING_TYPES,
+  MOCK_ROOM_TYPES,
+  MOCK_HOTEL_CATEGORIES,
+} from './package-builder.mock';
+import { WritableSignal } from '@angular/core';
 
 export interface PackageLookupData {
   tripPaths: TripPathModel[];
@@ -24,7 +36,6 @@ export interface PackageLookupLoadingState {
   providedIn: 'root'
 })
 export class PackageDataService {
-  private adminAPIClient = inject(AdminAPIClient);
 
   readonly tripPaths = signal<TripPathModel[]>([]);
   readonly carTypes = signal<CarTypeModel[]>([]);
@@ -34,8 +45,6 @@ export class PackageDataService {
   readonly roomTypes = signal<HotelRoomTypeModel[]>([]);
   readonly cateringTypes = signal<CateringTypeModel[]>([]);
   readonly hotelCategories = signal<HotelCategoryModel[]>([]);
-  
-
 
   readonly isLoadingDistinctsMakkah = signal(false);
   readonly isLoadingDistinctsMadinah = signal(false);
@@ -51,35 +60,29 @@ export class PackageDataService {
   }
 
   private loadAllLookupData(): void {
-    // We can use a pattern for loading that reduces repetition
-    this.loadLookup(this.adminAPIClient.getTripPathsLookup(), this.tripPaths, this.isLoadingTripPahts);
-    this.loadLookup(this.adminAPIClient.getCarTypesLookup(), this.carTypes, this.isLoadingCarTypes);
-    this.loadLookup(this.adminAPIClient.getFoodTypesLookup(), this.foodTypes, this.isLoadingFoodTypes);
-    this.loadLookup(this.adminAPIClient.getCateringTypesLookup(), this.cateringTypes, this.isLoadingCateringTypes);
-    this.loadLookup(this.adminAPIClient.getRoomTypes(), this.roomTypes, this.isLoadingRoomTypes);
-    this.loadLookup(this.adminAPIClient.getDistrictsLookup({ cityId: 1 }), this.distinctsMakkah, this.isLoadingDistinctsMakkah);
-    this.loadLookup(this.adminAPIClient.getDistrictsLookup({ cityId: 2 }), this.distinctsMadinah, this.isLoadingDistinctsMadinah);
-    this.loadLookup(this.adminAPIClient.getHotelCategories({pageIndex:0,pageSize:100}), this.hotelCategories, this.isLoadingHotelCategories);
+    this.loadLookup(of(MOCK_TRIP_PATHS),          this.tripPaths,         this.isLoadingTripPahts);
+    this.loadLookup(of(MOCK_CAR_TYPES),            this.carTypes,          this.isLoadingCarTypes);
+    this.loadLookup(of(MOCK_FOOD_TYPES),           this.foodTypes,         this.isLoadingFoodTypes);
+    this.loadLookup(of(MOCK_CATERING_TYPES),       this.cateringTypes,     this.isLoadingCateringTypes);
+    this.loadLookup(of(MOCK_ROOM_TYPES),           this.roomTypes,         this.isLoadingRoomTypes);
+    this.loadLookup(of(MOCK_DISTRICTS_MAKKAH),     this.distinctsMakkah,   this.isLoadingDistinctsMakkah);
+    this.loadLookup(of(MOCK_DISTRICTS_MADINAH),    this.distinctsMadinah,  this.isLoadingDistinctsMadinah);
+    this.loadLookup(of(MOCK_HOTEL_CATEGORIES),     this.hotelCategories,   this.isLoadingHotelCategories);
   }
 
   private loadLookup<T>(
     observable: Observable<T[]>,
     signalToUpdate: WritableSignal<T[]>,
     loadingSignal: WritableSignal<boolean>
-): void {
+  ): void {
     loadingSignal.set(true);
     observable.subscribe({
-        next: (data) => {
-            signalToUpdate.set(data ?? []);
-        },
-        error: () => {
-            signalToUpdate.set([]);
-            loadingSignal.set(false);
-        },
-        complete: () => {
-            loadingSignal.set(false);
-        }
+      next: (data) => signalToUpdate.set(data ?? []),
+      error: () => {
+        signalToUpdate.set([]);
+        loadingSignal.set(false);
+      },
+      complete: () => loadingSignal.set(false),
     });
-}
-
+  }
 }

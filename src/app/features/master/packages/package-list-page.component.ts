@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { SeroPackageModel } from './packages.model';
 import { PackagesService } from './packages.service';
 import { PkgCardComponent } from './components/package-card.component';
@@ -40,7 +41,7 @@ import { PackageBookingModalComponent } from './components/package-booking-modal
           }
 
           <!-- Create Your Own Package Card -->
-          <div class="create-card">
+          <div class="create-card" (click)="router.navigate(['/admin/agent-packages/new'])">
             <div class="create-icon-wrap">
               <span class="material-icons-round create-icon">add</span>
             </div>
@@ -114,6 +115,7 @@ import { PackageBookingModalComponent } from './components/package-booking-modal
 export class PackageListPageComponent implements OnInit {
   private readonly packagesService = inject(PackagesService);
   private readonly matDialog = inject(MatDialog);
+  readonly router = inject(Router);
 
   packages = signal<SeroPackageModel[]>([]);
   isLoading = signal(false);

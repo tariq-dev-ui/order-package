@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, computed, inject, output, Signal, signal } from '@angular/core';
 import { CounterInput } from '../counter-input/counter-input';
-import { AirlineCompanyLookupModel, CityData, CountryData, AdminAPIClient } from 'src/app/services/admin.api.client';
+import { AirlineCompanyLookupModel, CityData, CountryData } from 'src/app/services/admin.api.client';
 import { TicketState } from '../../services/package-builder-state-management-service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MOCK_COUNTRIES, MOCK_CITIES_BY_COUNTRY, MOCK_AIRLINES } from '../../services/package-builder.mock';
 
 @Component({
   selector: 'tickets-step',
@@ -12,7 +13,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Tickets implements OnInit {
-  private adminApiClient = inject(AdminAPIClient);
   private readonly translate = inject(TranslateService);
   private readonly SAUDI_ARABIA_FALLBACK_ID = 1;
   private lastSourceCitiesRequestCountryId?: number;
@@ -65,29 +65,15 @@ export class Tickets implements OnInit {
 
   private loadCountries() {
     this.isLoadingCountries.set(true);
-    this.adminApiClient.getCountriesLookup({ culture: this.currentCulture }).subscribe({
-      next: (data) => {
-        this.countries.set(data ?? []);
-        this.enforceSaudiDestination(data ?? []);
-      },
-      error: () => {
-        this.countries.set([]);
-        this.isLoadingCountries.set(false);
-      },
-      complete: () => this.isLoadingCountries.set(false),
-    });
+    this.countries.set(MOCK_COUNTRIES);
+    this.enforceSaudiDestination(MOCK_COUNTRIES);
+    this.isLoadingCountries.set(false);
   }
 
   private loadAirlineCompanies() {
     this.isLoadingAirlineCompanies.set(true);
-    this.adminApiClient.getAirlineCompanies({ includeInactive: false, filter: '' }).subscribe({
-      next: (data) => this.airlineCompanies.set(data ?? []),
-      error: () => {
-        this.airlineCompanies.set([]);
-        this.isLoadingAirlineCompanies.set(false);
-      },
-      complete: () => this.isLoadingAirlineCompanies.set(false),
-    });
+    this.airlineCompanies.set(MOCK_AIRLINES);
+    this.isLoadingAirlineCompanies.set(false);
   }
 
   private resolveSaudiCountry(countries: CountryData[]): CountryData | undefined {
@@ -127,23 +113,14 @@ export class Tickets implements OnInit {
       this.sourceCities.set([]);
       return;
     }
-
     this.lastSourceCitiesRequestCountryId = countryId;
     this.isLoadingSourceCities.set(true);
-    this.adminApiClient.getCitiesLookup({ countryID: countryId, culture: this.currentCulture, filter: '' }).subscribe({
-      next: (data) => {
-        const selectedSourceCountryId = this.state().sourceCountryID;
-        if (this.lastSourceCitiesRequestCountryId !== countryId || selectedSourceCountryId !== countryId) {
-          return;
-        }
-        this.sourceCities.set(data ?? []);
-      },
-      error: () => {
-        this.sourceCities.set([]);
-        this.isLoadingSourceCities.set(false);
-      },
-      complete: () => this.isLoadingSourceCities.set(false),
-    });
+    const cities = MOCK_CITIES_BY_COUNTRY[countryId] ?? [];
+    const selectedSourceCountryId = this.state().sourceCountryID;
+    if (this.lastSourceCitiesRequestCountryId === countryId && selectedSourceCountryId === countryId) {
+      this.sourceCities.set(cities);
+    }
+    this.isLoadingSourceCities.set(false);
   }
 
   private loadDestinationCities(countryId?: number) {
@@ -151,16 +128,9 @@ export class Tickets implements OnInit {
       this.destinationCities.set([]);
       return;
     }
-
     this.isLoadingDestinationCities.set(true);
-    this.adminApiClient.getCitiesLookup({ countryID: countryId, culture: this.currentCulture, filter: '' }).subscribe({
-      next: (data) => this.destinationCities.set(data ?? []),
-      error: () => {
-        this.destinationCities.set([]);
-        this.isLoadingDestinationCities.set(false);
-      },
-      complete: () => this.isLoadingDestinationCities.set(false),
-    });
+    this.destinationCities.set(MOCK_CITIES_BY_COUNTRY[countryId] ?? []);
+    this.isLoadingDestinationCities.set(false);
   }
 
   onSourceCountryChange(event: Event) {

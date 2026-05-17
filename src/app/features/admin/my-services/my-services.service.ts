@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { MY_SERVICES_MOCK_DATA, MyService, MyServiceFormValue } from './my-service.mock';
+import { buildOperationalMeta, MY_SERVICES_MOCK_DATA, MyService, MyServiceFilterState, MyServiceFormValue } from './my-service.mock';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +9,7 @@ import { MY_SERVICES_MOCK_DATA, MyService, MyServiceFormValue } from './my-servi
 export class MyServicesService {
   private mockData = [...MY_SERVICES_MOCK_DATA];
 
-  getServices(filters?: any): Observable<MyService[]> {
+  getServices(filters?: MyServiceFilterState): Observable<MyService[]> {
     // Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
     let result = [...this.mockData];
 
@@ -20,7 +20,10 @@ export class MyServicesService {
           (s) =>
             s.from.toLowerCase().includes(searchLower) ||
             s.to.toLowerCase().includes(searchLower) ||
-            s.description.toLowerCase().includes(searchLower)
+            s.description.toLowerCase().includes(searchLower) ||
+            s.operational.title.toLowerCase().includes(searchLower) ||
+            s.operational.coverage.toLowerCase().includes(searchLower) ||
+            s.operational.summaryLines.some((line) => line.toLowerCase().includes(searchLower))
         );
       }
 
@@ -35,6 +38,31 @@ export class MyServicesService {
       if (filters.status) {
         result = result.filter((s) => s.status === filters.status);
       }
+
+      if (filters.pricingRange) {
+        result = result.filter((s) => {
+          const amount = s.pricing.amount;
+          if (filters.pricingRange === 'under_250') return amount < 250;
+          if (filters.pricingRange === '250_750') return amount >= 250 && amount <= 750;
+          if (filters.pricingRange === '750_2000') return amount > 750 && amount <= 2000;
+          if (filters.pricingRange === 'over_2000') return amount > 2000;
+          return true;
+        });
+      }
+
+      if (filters.lifecycle) {
+        result = result.filter((s) => s.status === filters.lifecycle);
+      }
+
+      if (filters.lastUpdated) {
+        result = result.filter((s) => {
+          const relative = s.lastUpdate.relative.toLowerCase();
+          if (filters.lastUpdated === 'today') return relative.includes('h ago') || relative.includes('now');
+          if (filters.lastUpdated === 'week') return !relative.includes('2w');
+          if (filters.lastUpdated === 'month') return true;
+          return true;
+        });
+      }
     }
 
     return of(result).pipe(delay(200));
@@ -46,6 +74,7 @@ export class MyServicesService {
   }
 
   createService(formValue: MyServiceFormValue): Observable<MyService> {
+    const operationalFields = buildOperationalMeta(formValue);
     const newService: MyService = {
       id: `SVC-${Date.now()}`,
       from: formValue.from,
@@ -57,6 +86,7 @@ export class MyServicesService {
       createdDate: new Date().toISOString().split('T')[0],
       description: formValue.description,
       images: formValue.images,
+      ...operationalFields,
     };
 
     this.mockData.push(newService);
@@ -77,6 +107,7 @@ export class MyServicesService {
         status: formValue.status,
         description: formValue.description,
         images: formValue.images,
+        ...buildOperationalMeta(formValue),
       };
 
       this.mockData[index] = updatedService;

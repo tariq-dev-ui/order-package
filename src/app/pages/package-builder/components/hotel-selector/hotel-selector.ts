@@ -1,5 +1,6 @@
 import { Component, inject, Input, output, Signal, signal } from '@angular/core';
-import { AdminAPIClient, CityDistData, HotelCategoryModel, HotelModel, HotelRoomTypeModel, HotelSearchModel } from 'src/app/services/admin.api.client';
+import { CityDistData, HotelCategoryModel, HotelModel, HotelRoomTypeModel } from 'src/app/services/admin.api.client';
+import { MOCK_HOTELS } from '../../services/package-builder.mock';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged, } from 'rxjs/operators';
@@ -54,7 +55,6 @@ export class HotelSelector {
 
   hotels = signal<HotelModel[]>([]);
 
-  agentClient = inject(AdminAPIClient);
   private dialog = inject(MatDialog);
 
   isLoading = signal(false);
@@ -238,48 +238,35 @@ export class HotelSelector {
   }
 
   searchHotels() {
-    // if (this.updateFn) {
-    //   this.updateFn('isSkipped', 'isSkipped', false);
-    // }
     this.searchForm.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(formValue => {
         this.isLoadingSearchHotels.set(true);
-        const searchModel: HotelSearchModel = {
-          FilterText: formValue.filterText?.trim() || null,
-          DistrictId: formValue.filterDistrict ? +formValue.filterDistrict : null,
-          MaxDistanceFromHaram: formValue.filterMaxDistanceFromHaram ? +formValue.filterMaxDistanceFromHaram : null,
+        const filterText = (formValue.filterText ?? '').trim().toLowerCase();
+        const districtId = formValue.filterDistrict ? +formValue.filterDistrict : null;
 
-        };
-        this.agentClient.getHotelsLookup({ body: searchModel }).subscribe({
-          next: (hotels) => {
-            this.hotels.set(hotels);
-          },
-          error: () => {
-            this.hotels.set([]);
-            this.isLoadingSearchHotels.set(false);
-          },
-          complete: () => {
-            this.isLoadingSearchHotels.set(false);
-          }
-        });
+        let results = MOCK_HOTELS.filter(h => h.CityId === this.cityId || h.CityID === this.cityId);
+
+        if (filterText) {
+          results = results.filter(h =>
+            (h.Name ?? '').toLowerCase().includes(filterText) ||
+            (h.NameEn ?? '').toLowerCase().includes(filterText)
+          );
+        }
+        if (districtId) {
+          results = results.filter(h => h.DistID === districtId);
+        }
+
+        this.hotels.set(results);
+        this.isLoadingSearchHotels.set(false);
       });
   }
 
   loadHotels(id: number) {
     this.isLoadingSearchHotels.set(true);
-    this.agentClient.getHotelsLookup({ body: { CityId: id } }).subscribe({
-      next: (data) => {
-        this.hotels.set(data ?? []);
-      },
-      error: () => {
-        this.hotels.set([]);
-        this.isLoadingSearchHotels.set(false);
-      },
-      complete: () => {
-        this.isLoadingSearchHotels.set(false);
-      },
-    });
+    const cityHotels = MOCK_HOTELS.filter(h => h.CityId === id || h.CityID === id);
+    this.hotels.set(cityHotels);
+    this.isLoadingSearchHotels.set(false);
   }
 
   getTabClass(tab: string) {

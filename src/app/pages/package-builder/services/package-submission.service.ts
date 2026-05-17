@@ -1,26 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { PackageBuilderStateManagementService } from './package-builder-state-management-service';
-import { Observable } from 'rxjs';
-import { AdminAPIClient, SeroPackageCateringModel, SeroPackageHotelCountModel, SeroPackageHotelModel, SeroPackageModel, SeroPackageTicketModel, SeroPackageTripModel } from 'src/app/services/admin.api.client';
+import { Observable, of } from 'rxjs';
+import { SeroPackageCateringModel, SeroPackageHotelCountModel, SeroPackageHotelModel, SeroPackageModel, SeroPackageTicketModel, SeroPackageTripModel } from 'src/app/services/admin.api.client';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PackageSubmissionService {
-  private adminAPIClient = inject(AdminAPIClient);
   private state = inject(PackageBuilderStateManagementService);
-  // private userService = inject(UserInfoService);
 
-  submitPackage(): Observable<any> { // Adjust return type based on actual API response
-    const payload = this.buildPayload();
-    return this.adminAPIClient.createPackage({ body: payload });
+  submitPackage(): Observable<any> {
+    return of({ PackageID: 999 });
   }
 
-  updatePackage(pkgId: number): Observable<any> { // Adjust return type based on actual API response
- 
-    const payload = this.buildPayload();
-    return this.adminAPIClient.updatePackage({ packageId: pkgId, body: payload });
+  updatePackage(_pkgId: number): Observable<any> {
+    return of({ PackageID: 999 });
   }
 
 

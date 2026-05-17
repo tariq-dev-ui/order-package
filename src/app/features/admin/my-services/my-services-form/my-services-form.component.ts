@@ -132,6 +132,9 @@ import { SeroDropdownComponent } from '../../../../shared/components/sero-dropdo
               <option value="active">نشط</option>
               <option value="inactive">غير نشط</option>
               <option value="pending">قيد الانتظار</option>
+              <option value="draft">Draft</option>
+              <option value="fully_booked">Fully Booked</option>
+              <option value="expired">Expired</option>
             </select>
             @if (form.get('status')?.invalid && form.get('status')?.touched) {
               <span class="error-message">هذا الحقل مطلوب</span>
