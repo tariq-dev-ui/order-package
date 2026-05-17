@@ -57,6 +57,8 @@ const myServicesTransportPage = () => import('./pages/my-services/transport-serv
 const myServicesTicketsPage = () => import('./pages/my-services/tickets-service/tickets-service').then(m => m.TicketsServicePage);
 const myServicesFoodPage = () => import('./pages/my-services/food-service/food-service').then(m => m.FoodServicePage);
 const myServicesManagementPage = () => import('./features/admin/my-services/my-services-page.component').then(m => m.MyServicesPageComponent);
+const myServicesHotelCreatePage = () => import('./features/admin/my-services/hotel-service-create-page.component').then(m => m.HotelServiceCreatePageComponent);
+const myServicesTransportCreatePage = () => import('./features/admin/my-services/transport-service-create-page.component').then(m => m.TransportServiceCreatePageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -172,9 +174,9 @@ export const routes: Routes = [
       { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
       { path: 'finance/cashier-session',    loadComponent: emptyPage },
       { path: 'my-services',           loadComponent: myServicesManagementPage },
-      { path: 'my-services/makkah/new',    loadComponent: emptyPage },
-      { path: 'my-services/madina/new',    loadComponent: emptyPage },
-      { path: 'my-services/transport/new', loadComponent: emptyPage },
+      { path: 'my-services/makkah/new',    loadComponent: myServicesHotelCreatePage, data: { cityId: 1 } },
+      { path: 'my-services/madina/new',    loadComponent: myServicesHotelCreatePage, data: { cityId: 2 } },
+      { path: 'my-services/transport/new', loadComponent: myServicesTransportCreatePage },
       { path: 'my-services/tickets/new',   loadComponent: emptyPage },
       { path: 'my-services/food/new',      loadComponent: emptyPage },
       { path: 'my-services/makkah',    loadComponent: myServicesMakkahPage },
