@@ -4,99 +4,208 @@
   iconClass="fas fa-mosque text-lg"
   [highlights]="['Central Zones', 'Family Rooms', 'Balanced Budget']"
 >
-  <div service-stage class="p-5 space-y-4">
-    <div class="flex border-b border-gray-200">
-      <button type="button" (click)="switchTab('criteria')"
-        class="px-3.5 py-2 text-sm font-medium border-b-2 transition-colors"
-        [class.border-primary-500]="activeTab() === 'criteria'"
-        [class.text-primary-600]="activeTab() === 'criteria'"
-        [class.border-transparent]="activeTab() !== 'criteria'"
-        [class.text-gray-500]="activeTab() !== 'criteria'">
-        Hotel by Criteria / حسب المعايير
-      </button>
-      <button type="button" (click)="switchTab('specific')"
-        class="px-3.5 py-2 text-sm font-medium border-b-2 transition-colors"
-        [class.border-primary-500]="activeTab() === 'specific'"
-        [class.text-primary-600]="activeTab() === 'specific'"
-        [class.border-transparent]="activeTab() !== 'specific'"
-        [class.text-gray-500]="activeTab() !== 'specific'">
-        Select Specific Hotel / اختيار فندق محدد
-      </button>
+  <div service-stage>
+
+    <!-- ── Segmented Tabs ── -->
+    <div class="ws-segmented-row">
+      <div class="ws-segmented">
+        <button type="button" class="ws-segment"
+          [class.ws-segment--active]="activeTab() === 'criteria'"
+          (click)="switchTab('criteria')">
+          <i class="fas fa-sliders-h"></i>
+          Hotel by Criteria / حسب المعايير
+        </button>
+        <button type="button" class="ws-segment"
+          [class.ws-segment--active]="activeTab() === 'specific'"
+          (click)="switchTab('specific')">
+          <i class="fas fa-search-location"></i>
+          Select Specific Hotel / فندق محدد
+        </button>
+      </div>
     </div>
 
-    @if (activeTab() === 'criteria') {
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700">District / الحي</span>
-        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
-          <option>Select District</option>
-          <option>Central Area</option>
-          <option>Quba</option>
-          <option>King Fahd Road</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700">Category / التصنيف</span>
-        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
-          <option>Select Category</option>
-          <option>5 Stars</option>
-          <option>4 Stars</option>
-          <option>3 Stars</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700">Room Type / نوع الغرفة</span>
-        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
-          <option>Select Room Type</option>
-          <option>Single Room</option>
-          <option>Double Room</option>
-          <option>Triple Room</option>
-          <option>Family Room</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700">Rooms Count / عدد الغرف</span>
-        <input type="number" min="1" value="1" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
-      </label>
-      <label class="block md:col-span-2">
-        <span class="text-sm font-medium text-gray-700">Nights Count / عدد الليالي</span>
-        <input type="number" min="1" value="1" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
-      </label>
-    </div>
-    } @else {
-    <div class="space-y-3.5">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <input type="text" placeholder="Hotel name, location..."
-          class="w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
-        <select class="w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
-          <option>Any District</option>
-          <option>Central Area</option>
-          <option>Quba</option>
-          <option>King Fahd Road</option>
-        </select>
-      </div>
-      <div class="rounded-lg border border-gray-200 bg-white p-3.5">
-        <div class="flex items-center justify-between">
-          <div>
-            <h4 class="font-semibold text-sm">Madinah Grand Hotel</h4>
-            <p class="text-xs text-gray-500">Central Area · 4 Stars</p>
+    <!-- ── CRITERIA TAB ── -->
+    <div class="ws-tab" [class.ws-tab--active]="activeTab() === 'criteria'">
+      <div class="ws-main">
+        <div class="ws-form-grid">
+
+          <div class="ws-field">
+            <label class="ws-label">
+              <i class="fas fa-map-marker-alt"></i>
+              District / الحي
+            </label>
+            <select class="ws-select">
+              <option value="">Select District</option>
+              <option>Central Area</option>
+              <option>Quba</option>
+              <option>King Fahd Road</option>
+            </select>
           </div>
-          <button type="button" class="px-2.5 py-1.5 rounded-md bg-primary-500 text-white text-xs hover:bg-primary-600">Select</button>
+
+          <div class="ws-field">
+            <label class="ws-label">
+              <i class="fas fa-layer-group"></i>
+              Category / التصنيف
+            </label>
+            <select class="ws-select">
+              <option value="">Select Category</option>
+              <option>5 Stars</option>
+              <option>4 Stars</option>
+              <option>3 Stars</option>
+            </select>
+          </div>
+
+          <div class="ws-field">
+            <label class="ws-label">
+              <i class="fas fa-door-open"></i>
+              Room Type / نوع الغرفة
+            </label>
+            <select class="ws-select">
+              <option value="">Select Room Type</option>
+              <option>Single Room</option>
+              <option>Double Room</option>
+              <option>Triple Room</option>
+              <option>Family Room</option>
+            </select>
+          </div>
+
+          <div class="ws-field">
+            <label class="ws-label">
+              <i class="fas fa-door-open"></i>
+              Rooms Count / عدد الغرف
+            </label>
+            <input type="number" min="1" value="1" class="ws-number-input" />
+          </div>
+
+          <div class="ws-field ws-field--full">
+            <label class="ws-label">
+              <i class="fas fa-moon"></i>
+              Nights Count / عدد الليالي
+            </label>
+            <input type="number" min="1" value="1" class="ws-number-input" />
+          </div>
+
+        </div>
+
+        <div class="ws-add-row">
+          <button type="button" class="ws-btn-add">
+            <i class="fas fa-plus"></i>
+            Add New / إضافة
+          </button>
         </div>
       </div>
     </div>
-    }
 
-    <button type="button"
-      class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm hover:bg-primary-600 transition-colors">
-      Add New / إضافة
-    </button>
+    <!-- ── SPECIFIC TAB ── -->
+    <div class="ws-tab" [class.ws-tab--active]="activeTab() === 'specific'">
+      <div class="ws-main">
 
-    <div class="rounded-lg border border-primary-100 bg-primary-50/40 p-4">
-      <p class="text-sm text-gray-500 mb-2">Added Hotel Items / الفنادق المضافة</p>
-      <div class="flex flex-wrap gap-2">
-        <span class="px-2.5 py-1 rounded-full bg-white border text-xs">No hotel items added yet</span>
+        <div class="ws-search-bar">
+          <div class="ws-search-input-wrap">
+            <i class="fas fa-search ws-search-icon"></i>
+            <input type="text" class="ws-search-input" placeholder="Hotel name, location..." />
+          </div>
+          <select class="ws-select">
+            <option value="">Any District</option>
+            <option>Central Area</option>
+            <option>Quba</option>
+            <option>King Fahd Road</option>
+          </select>
+        </div>
+
+        <div class="ws-hotel-list">
+          <div class="ws-hotel-scroll">
+
+            <div class="ws-hotel-card ws-hotel-card--selected">
+              <div class="ws-hotel-top">
+                <div class="ws-hotel-thumb">
+                  <img src="/IMG/logo.png" alt="Madinah Grand Hotel" />
+                </div>
+                <div class="ws-hotel-info">
+                  <div class="ws-hotel-name">Madinah Grand Hotel</div>
+                  <div class="ws-hotel-loc">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Central Area
+                  </div>
+                  <div class="ws-hotel-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                </div>
+                <span class="ws-hotel-check"><i class="fas fa-check"></i></span>
+              </div>
+              <div class="ws-hotel-expand">
+                <div class="ws-hotel-expand-grid">
+                  <div class="ws-field">
+                    <label class="ws-label">
+                      <i class="fas fa-door-open"></i>
+                      Room Type / نوع الغرفة
+                    </label>
+                    <select class="ws-select">
+                      <option value="">Select Room Type</option>
+                      <option>Single Room</option>
+                      <option>Double Room</option>
+                      <option>Triple Room</option>
+                      <option>Family Room</option>
+                    </select>
+                  </div>
+                  <div class="ws-field">
+                    <label class="ws-label">
+                      <i class="fas fa-door-open"></i>
+                      Rooms Count / عدد الغرف
+                    </label>
+                    <input type="number" min="1" value="1" class="ws-number-input" />
+                  </div>
+                  <div class="ws-field ws-field--full">
+                    <label class="ws-label">
+                      <i class="fas fa-moon"></i>
+                      Nights Count / عدد الليالي
+                    </label>
+                    <input type="number" min="1" value="1" class="ws-number-input" />
+                  </div>
+                </div>
+                <div class="ws-add-row">
+                  <button type="button" class="ws-btn-add">
+                    <i class="fas fa-plus"></i>
+                    Add New / إضافة
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ws-hotel-card">
+              <div class="ws-hotel-top">
+                <div class="ws-hotel-thumb">
+                  <img src="/IMG/logo.png" alt="Quba Plaza Hotel" />
+                </div>
+                <div class="ws-hotel-info">
+                  <div class="ws-hotel-name">Quba Plaza Hotel</div>
+                  <div class="ws-hotel-loc">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Quba District
+                  </div>
+                  <div class="ws-hotel-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
+
+    <!-- ── Added Items ── -->
+    <div class="ws-chips">
+      <div class="ws-chips-label">Added Hotel Items / الفنادق المضافة</div>
+      <span class="ws-chip-empty">No hotel items added yet</span>
+    </div>
+
   </div>
 </service-page-shell>

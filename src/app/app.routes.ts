@@ -53,6 +53,7 @@ const providerUsersPage = () => import('./features/admin/provider-users/provider
 const agentUsersPage = () => import('./features/admin/agent-users/agent-users-page.component').then(m => m.AgentUsersPageComponent);
 const packageCreatePage = () => import('./features/master/packages/package-create-page.component').then(m => m.PackageCreatePageComponent);
 const myServicesPage = () => import('./pages/my-services/my-services').then(m => m.MyServicesPage);
+const myServicesHotelPage = () => import('./pages/my-services/hotel-service/hotel-service').then(m => m.HotelServicePage);
 const myServicesMakkahPage = () => import('./pages/my-services/makkah-service/makkah-service').then(m => m.MakkahServicePage);
 const myServicesMadinaPage = () => import('./pages/my-services/madina-service/madina-service').then(m => m.MadinaServicePage);
 const myServicesTransportPage = () => import('./pages/my-services/transport-service/transport-service').then(m => m.TransportServicePage);
@@ -175,13 +176,15 @@ export const routes: Routes = [
       { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
       { path: 'finance/cashier-session',    loadComponent: emptyPage },
       { path: 'my-services',                loadComponent: myServicesPage },
-      { path: 'my-services/makkah',         redirectTo: 'my-services/makkah/new', pathMatch: 'full' },
-      { path: 'my-services/madina',         redirectTo: 'my-services/madina/new', pathMatch: 'full' },
+      { path: 'my-services/hotel',          redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
+      { path: 'my-services/makkah',         redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
+      { path: 'my-services/madina',         redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
       { path: 'my-services/transport',      redirectTo: 'my-services/transport/new', pathMatch: 'full' },
       { path: 'my-services/tickets',        redirectTo: 'my-services/tickets/new', pathMatch: 'full' },
       { path: 'my-services/food',           redirectTo: 'my-services/food/new', pathMatch: 'full' },
-      { path: 'my-services/makkah/new',     loadComponent: myServicesMakkahPage },
-      { path: 'my-services/madina/new',     loadComponent: myServicesMadinaPage },
+      { path: 'my-services/hotel/new',      loadComponent: myServicesHotelPage },
+      { path: 'my-services/makkah/new',     redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
+      { path: 'my-services/madina/new',     redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
       { path: 'my-services/transport/new',  loadComponent: myServicesTransportPage },
       { path: 'my-services/tickets/new',    loadComponent: myServicesTicketsPage },
       { path: 'my-services/food/new',       loadComponent: myServicesFoodPage }

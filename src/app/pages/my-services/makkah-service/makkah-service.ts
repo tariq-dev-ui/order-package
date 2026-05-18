@@ -6,6 +6,7 @@ import { ServicePageShell } from '../components/service-page-shell/service-page-
   standalone: true,
   imports: [ServicePageShell],
   templateUrl: './makkah-service.html',
+  styleUrl: '../shared/ws-hotel-service.css',
 })
 export class MakkahServicePage {
   activeTab = signal<'criteria' | 'specific'>('criteria');

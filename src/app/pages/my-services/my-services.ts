@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 
 // Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
 
-type ServiceKey = 'makkah' | 'madina' | 'transport' | 'tickets' | 'food';
+type ServiceKey = 'hotel' | 'transport' | 'tickets' | 'food';
 
 type ServiceCard = {
   key: ServiceKey;
@@ -59,24 +59,14 @@ export class MyServicesPage {
 
   readonly serviceCards: ServiceCard[] = [
     {
-      key: 'makkah',
-      title: 'Makkah Service',
-      subtitle: 'Hotels and room setup near key zones',
-      iconClass: 'fas fa-kaaba',
+      key: 'hotel',
+      title: 'Hotel Service',
+      subtitle: 'Hotel setup for Makkah and Madina stays',
+      iconClass: 'fas fa-hotel',
       accentClass: 'bg-emerald-100 text-emerald-700',
       badge: 'Ready',
-      location: 'Makkah',
-      summary: 'District, category, room type, and room count.',
-    },
-    {
-      key: 'madina',
-      title: 'Madina Service',
-      subtitle: 'Accommodation planning for Madina stay',
-      iconClass: 'fas fa-mosque',
-      accentClass: 'bg-violet-100 text-violet-700',
-      badge: 'Ready',
-      location: 'Madina',
-      summary: 'Hotel criteria with flexible stay details.',
+      location: 'Makkah & Madina',
+      summary: 'City toggle, district, category, room type, and count.',
     },
     {
       key: 'transport',
@@ -112,7 +102,7 @@ export class MyServicesPage {
 
   readonly servicePreviewRows: ServicePreviewRow[] = [
     {
-      key: 'makkah',
+      key: 'hotel',
       title: 'Makkah Hotel Service',
       typeLabel: 'Accommodation',
       location: 'Al Haram — Makkah',
@@ -168,7 +158,7 @@ export class MyServicesPage {
       accentClass: 'bg-amber-100 text-amber-700',
     },
     {
-      key: 'madina',
+      key: 'hotel',
       title: 'Madina Hotel Service',
       typeLabel: 'Accommodation',
       location: 'Central Area — Madina',
