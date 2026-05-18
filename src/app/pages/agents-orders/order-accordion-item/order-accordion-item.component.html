@@ -1,0 +1,104 @@
+﻿<div
+  class="accordion-item bg-white mt-3 rounded-lg shadow-soft border border-gray-200 overflow-hidden transition-all duration-300">
+  <button (click)="open = !open"
+    class="w-full grid grid-cols-3 gap-4 items-center px-6 py-5 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-200"
+    [attr.aria-expanded]="open">
+
+    <!-- First column - Package info -->
+    <div class="col-span-2 sm:col-span-1 flex items-center gap-4">
+      <div class="rounded-lg bg-primary-100 text-primary-500 flex flex-col p-3">
+        <span class="font-semibold text-primary-500"> {{ requestId }} </span>
+        <i class="fas fa-suitcase text-lg"></i>
+      </div>
+      <div>
+        <div class="flex gap-2 flex-wrap">
+          <!-- <span class="font-semibold text-primary-500"> {{ requestId }} </span> -->
+          <span class="font-semibold "> {{ packageTitle | titlecase }} </span>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <span class="text-xs text-gray-400 mt-1">
+            <i class="far fa-calendar me-1"></i> {{addDates}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second column - Agent info (hidden on small screens) -->
+    <div class="hidden sm:flex justify-center items-center min-w-[150px]">
+      <div class="flex flex-col items-center gap-1.5 px-2">
+        @if(agentName || agentCountry) {
+          <div class="flex flex-col items-center text-center">
+            @if(agentName) {
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <i class="fas fa-user text-primary-500 text-xs"></i>
+                <span class="text-sm font-semibold">{{agentName}}</span>
+              </div>
+            }
+            @if(agentCountry) {
+              <div class="text-xs text-gray-500 flex items-center gap-1">
+                <i class="fas fa-map-marker-alt text-xs"></i>
+                <span>{{agentCountry}}</span>
+              </div>
+            }
+          </div>
+        }@else {
+          <!-- <i class="fas fa-spinner fa-spin text-primary-500"></i> -->
+           <!-- add no agent information -->
+            <span class="text-xs flex flex-col text-gray-500 text-center">
+              <div>
+                <i class="fas fa-user-slash me-1"></i>
+                <div class="font-medium">{{ 'No Agent Assigned' | translate }}</div>
+              </div>
+            </span>
+        }
+      </div>
+    </div>
+
+    <!-- Third column - Status and chevron (reordered for mobile) -->
+    <div class="flex items-center justify-end gap-4 order-first sm:order-none">
+      <div class="relative sm:static">
+         <span class="inline-flex items-center rounded-full border" [class]="getStatusClasses(status)"
+          [attr.title]="status | titlecase">
+          <i [class]="getStatusIcon(status)" class="w-4 h-4 me-2 flex-shrink-0"></i>
+          <span class="whitespace-nowrap">{{ status | titlecase }}</span>
+        </span>
+
+        <!-- Chat button -->
+        <button class="action-button p-2 text-gray-400 hover:text-primary-500 relative sm:mr-0" title="View Messages"
+          (click)="openChat($event, requestId)">
+          <i class="fas fa-comments text-lg"></i>
+          @if(unreadMessages > 0){
+          <span class="badge absolute -top-1 -right-1 bg-danger-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+            {{ unreadMessages }}
+          </span>
+          }
+        </button>
+        <div class="sm:hidden ">
+        <!-- <span class="inline-flex items-center rounded-full border " [class]="getStatusClasses(status)"
+          [attr.title]="status | titlecase">
+          <i [class]="getStatusIcon(status)" class="w-4 h-4 me-2 flex-shrink-0"></i>
+        </span> -->
+        <!-- @if(agentName || agentCountry) {
+        <div class="text-xs text-gray-500 mt-1 text-center">
+          <i class="fas fa-user me-1"></i>
+          <div class="font-medium">{{agentName}}</div>
+          @if(agentCountry) {
+          <div class="text-gray-400">{{agentCountry}}</div>
+          }
+        </div>
+        } -->
+        </div>
+      </div>
+      
+      <i class="fas fa-chevron-down text-xl text-primary-400 transition-transform duration-300"
+        [class.rotate-180]="open"></i>
+    </div>
+</button>
+
+  @if(open){
+  <div class="accordion-content border-t border-gray-100 px-6 bg-white/80">
+    <ng-content></ng-content>
+  </div>
+  }
+
+</div>

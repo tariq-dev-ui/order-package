@@ -9,7 +9,7 @@
 
 .compact-table .mat-mdc-header-row {
   height: 40px;
-  background-color: #f9fafb;
+  background-color: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg));
 }
 
 .compact-table .mat-mdc-cell, 
@@ -39,14 +39,14 @@
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--app-bg);
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--app-border);
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
+  background: var(--app-heading);
 }

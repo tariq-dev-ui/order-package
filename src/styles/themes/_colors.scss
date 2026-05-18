@@ -1,0 +1,291 @@
+// ============================
+// SERO Unified Color System
+// نظام الألوان الموحد لـ SERO
+// ============================
+// Single source of truth for all colors
+// All colors must be defined here only
+// ============================
+
+// ============================
+// 1. PRIMARY BRAND COLORS
+// الألوان الأساسية للعلامة التجارية
+// ============================
+
+// Primary - Olive Green (الأخضر الزيتوني الأساسي)
+$primary-base: #3a472a;
+$primary-light: #9da395;
+$primary-dark: #2d3821;
+$primary-darker: #1f2717;
+$primary-hover: #455332;
+$primary-pressed: #2d3821;
+
+// Accent - Golden Olive (الذهبي الزيتوني)
+$accent-base: #8c7b3d;
+$accent-light: #b7ac83;
+$accent-dark: #756935;
+$accent-darker: #5e542a;
+$accent-hover: #9d8a4a;
+$accent-pressed: #756935;
+
+// ============================
+// 2. SEMANTIC COLORS
+// الألوان الدلالية
+// ============================
+
+// Success - Natural Green (الأخضر الطبيعي)
+$success-base: #3b7d57;
+$success-light: #e4f0e8;
+$success-dark: #2e5d34;
+$success-hover: #4a9368;
+$success-pressed: #2e5d34;
+
+// Warning - Golden (الذهبي)
+$warning-base: #e3a72f;
+$warning-light: #f9e8c4;
+$warning-dark: #b0892e;
+$warning-hover: #f0b743;
+$warning-pressed: #b0892e;
+
+// Error - Muted Red (الأحمر المخفف)
+$error-base: #d96565;
+$error-light: #f3d0ca;
+$error-dark: #a55d5d;
+$error-hover: #e07878;
+$error-pressed: #a55d5d;
+
+// Info - Teal Green (الأخضر المزرق)
+$info-base: #03a88f;
+$info-light: #b2e8dc;
+$info-dark: #02826e;
+$info-hover: #04bfa2;
+$info-pressed: #02826e;
+
+// ============================
+// 3. NEUTRAL COLORS
+// الألوان المحايدة
+// ============================
+
+$neutral-white: #ffffff;
+$neutral-black: #000000;
+
+// Gray Scale
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #eeeeee;
+$gray-300: #e0e0e0;
+$gray-400: #bdbdbd;
+$gray-500: #9e9e9e;
+$gray-600: #757575;
+$gray-700: #616161;
+$gray-800: #424242;
+$gray-900: #212121;
+
+// Olive Gray (for SERO brand)
+$gray-olive-light: #9da395;
+$gray-olive: #7b8574;
+$gray-olive-dark: #5c6652;
+
+// ============================
+// 4. LIGHT MODE COLORS
+// ألوان الوضع الفاتح
+// ============================
+
+// Backgrounds
+$light-bg-primary: #fefefc;    // Main background
+$light-bg-secondary: #f8f9f7;  // Sidebar, secondary areas
+$light-bg-tertiary: #ffffff;   // Cards, surfaces
+$light-bg-card: #ffffff;
+$light-bg-hover: #edf0eb;
+$light-bg-selected: #e8ede5;
+$light-bg-disabled: #f2f6f0;
+$light-bg-overlay: rgba(42, 53, 36, 0.5);
+
+// Text
+$light-text-primary: #2a3524;
+$light-text-secondary: #5c6652;
+$light-text-tertiary: #7b8574;
+$light-text-disabled: #a3a89b;
+$light-text-inverse: #ffffff;
+$light-text-link: #3a472a;
+$light-text-link-hover: #2d3821;
+
+// Borders
+$light-border-primary: #d8decf;
+$light-border-secondary: #d0d7c4;
+$light-border-hover: #c5cdb9;
+$light-border-focus: #3a472a;
+$light-border-error: #d96565;
+$light-border-success: #3b7d57;
+$light-border-disabled: #e8ede5;
+
+// Shadows
+$light-shadow-sm: rgba(58, 71, 42, 0.05) 0px 1px 2px;
+$light-shadow-md: rgba(58, 71, 42, 0.08) 0px 2px 4px, rgba(58, 71, 42, 0.06) 0px 12px 24px -4px;
+$light-shadow-lg: rgba(58, 71, 42, 0.12) 0px 4px 8px, rgba(58, 71, 42, 0.08) 0px 16px 32px -8px;
+$light-shadow-xl: rgba(58, 71, 42, 0.16) 0px 8px 16px, rgba(58, 71, 42, 0.12) 0px 32px 64px -16px;
+
+// ============================
+// 5. DARK MODE COLORS
+// ألوان الوضع الداكن
+// ============================
+
+// Backgrounds
+$dark-bg-primary: #252d1f;     // Main background
+$dark-bg-secondary: #1e2419;   // Sidebar, secondary areas
+$dark-bg-tertiary: #2b3424;    // Cards, surfaces
+$dark-bg-card: #2b3424;
+$dark-bg-hover: #3d4a32;
+$dark-bg-selected: #475538;
+$dark-bg-disabled: #1e2419;
+$dark-bg-overlay: rgba(0, 0, 0, 0.7);
+
+// Text
+$dark-text-primary: #e6e9e0;
+$dark-text-secondary: #c5c9bf;
+$dark-text-tertiary: #a3a89b;
+$dark-text-disabled: #7b8574;
+$dark-text-inverse: #2a3524;
+$dark-text-link: #9da395;
+$dark-text-link-hover: #b4b8ae;
+
+// Borders
+$dark-border-primary: #3a472a;
+$dark-border-secondary: #556347;
+$dark-border-hover: #627b47;
+$dark-border-focus: #9da395;
+$dark-border-error: #a55d5d;
+$dark-border-success: #4e7a5d;
+$dark-border-disabled: #2b3424;
+
+// Shadows
+$dark-shadow-sm: rgba(0, 0, 0, 0.15) 0px 1px 2px;
+$dark-shadow-md: rgba(0, 0, 0, 0.25) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 12px 24px -4px;
+$dark-shadow-lg: rgba(0, 0, 0, 0.35) 0px 4px 8px, rgba(0, 0, 0, 0.25) 0px 16px 32px -8px;
+$dark-shadow-xl: rgba(0, 0, 0, 0.45) 0px 8px 16px, rgba(0, 0, 0, 0.35) 0px 32px 64px -16px;
+
+// Dark Mode Adjustments for Semantic Colors
+$dark-success-muted: #4e7a5d;
+$dark-warning-muted: #b0892e;
+$dark-error-muted: #a55d5d;
+$dark-info-muted: #02826e;
+
+// ============================
+// 6. STATUS COLORS
+// ألوان الحالات
+// ============================
+
+$status-pending: #8c7b3d;       // Accent
+$status-confirmed: #3a472a;     // Primary
+$status-assigned: #627b47;      // Primary Variant
+$status-checkin: #2e5d34;       // Success Dark
+$status-checkout: #03a88f;      // Info
+$status-closed: #5a5a5a;        // Neutral Gray
+$status-cancelled: #d96565;     // Error
+
+// ============================
+// 7. GRADIENTS
+// التدرجات
+// ============================
+
+$gradient-primary: linear-gradient(135deg, #3a472a, #627b47);
+$gradient-primary-hover: linear-gradient(135deg, #2d3821, #556842);
+$gradient-accent: linear-gradient(135deg, #8c7b3d, #b7ac83);
+$gradient-success: linear-gradient(135deg, #3b7d57, #4e7a5d);
+$gradient-warning: linear-gradient(135deg, #e3a72f, #b0892e);
+$gradient-error: linear-gradient(135deg, #d96565, #a55d5d);
+$gradient-light: linear-gradient(135deg, #f2f6f0, #e4f0e8);
+
+// ============================
+// 8. SPECIAL COLORS
+// ألوان خاصة
+// ============================
+
+// Badge/Tag Colors
+$badge-default: #f2f6f0;
+$badge-primary: #e8ede5;
+$badge-success: #e4f0e8;
+$badge-warning: #f9e8c4;
+$badge-error: #f3d0ca;
+$badge-info: #b2e8dc;
+
+// Chart Colors
+$chart-1: #3a472a;
+$chart-2: #8c7b3d;
+$chart-3: #3b7d57;
+$chart-4: #e3a72f;
+$chart-5: #627b47;
+$chart-6: #b7ac83;
+$chart-7: #4e7a5d;
+$chart-8: #d96565;
+
+// ============================
+// 9. LAYOUT & SIZING
+// التخطيط والأحجام
+// ============================
+
+$sidenav-desktop-width: 270px;
+$sidenav-mini-width: 80px;
+$header-height: 70px;
+$boxed-max-width: 1200px;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+$border-radius-full: 9999px;
+
+// ============================
+// 10. Z-INDEX SCALE
+// مقياس الطبقات
+// ============================
+
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// ============================
+// 11. FONT WEIGHTS
+// أوزان الخطوط
+// ============================
+
+$font-weight-light: 200;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ============================
+// 12. SPACING SCALE
+// مقياس التباعد
+// ============================
+
+$spacing-0: 0;
+$spacing-1: 0.25rem;  // 4px
+$spacing-2: 0.5rem;   // 8px
+$spacing-3: 0.75rem;  // 12px
+$spacing-4: 1rem;     // 16px
+$spacing-5: 1.25rem;  // 20px
+$spacing-6: 1.5rem;   // 24px
+$spacing-8: 2rem;     // 32px
+$spacing-10: 2.5rem;  // 40px
+$spacing-12: 3rem;    // 48px
+$spacing-16: 4rem;    // 64px
+$spacing-20: 5rem;    // 80px
+$spacing-24: 6rem;    // 96px
+
+// ============================
+// 13. TRANSITIONS
+// الانتقالات
+// ============================
+
+$transition-fast: 150ms ease;
+$transition-base: 250ms ease;
+$transition-slow: 350ms ease;
+$transition-slower: 500ms ease;
+
+// ============================
+// END OF COLOR SYSTEM
+// ============================

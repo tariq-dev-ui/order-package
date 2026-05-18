@@ -17,7 +17,7 @@
 .dialog-actions {
   padding: 16px 24px;
   margin: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top: 1px solid var(--app-border);
 
   button {
     margin-left: 8px;

@@ -1,10 +1,10 @@
 .upload-area {
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--app-border);
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #3b82f6;
-    background-color: #f8fafc;
+    border-color: var(--app-heading);
+    background-color: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg));
   }
 }
 

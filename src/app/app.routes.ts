@@ -39,8 +39,8 @@ const operationsCateringRequestsPage = () => import('./features/admin/operations
 const operationsFlightRequestsPage = () => import('./features/admin/operations/flight-requests/flight-requests-page.component').then(m => m.FlightRequestsPageComponent);
 const salamAgentPackagesPage = () => import('./pages/sero-packages/sero-packages.component').then(m => m.SeroPackagesComponent);
 const salamPackageBuilderPage = () => import('./pages/package-builder/package-builder.component').then(m => m.PackageBuilderComponent);
-const agentRequestsPage = () => import('./features/admin/agent-requests/agent-requests-page.component').then(m => m.AgentRequestsPageComponent);
-const newAgentRequestPage = () => import('./features/admin/agent-requests/new-agent-request-page.component').then(m => m.NewAgentRequestPageComponent);
+const agentRequestsPage = () => import('./pages/agents-orders/agents-orders.component').then(m => m.AgentsOrdersComponent);
+const newAgentRequestPage = () => import('./pages/sero-package-new-request/sero-package-new-request.component').then(m => m.SeroPackageNewRequestComponent);
 const ownersPage = () => import('./features/admin/owners/owners-page.component').then(m => m.OwnersPageComponent);
 const approvalsPage = () => import('./features/admin/approvals/approvals-page.component').then(m => m.ApprovalsPageComponent);
 const agentsListPage = () => import('./features/admin/agents-list/agents-list-page.component').then(m => m.AgentsListPageComponent);
@@ -52,14 +52,12 @@ const systemAdminsPage = () => import('./features/admin/system-admins/system-adm
 const providerUsersPage = () => import('./features/admin/provider-users/provider-users-page.component').then(m => m.ProviderUsersPageComponent);
 const agentUsersPage = () => import('./features/admin/agent-users/agent-users-page.component').then(m => m.AgentUsersPageComponent);
 const packageCreatePage = () => import('./features/master/packages/package-create-page.component').then(m => m.PackageCreatePageComponent);
+const myServicesPage = () => import('./pages/my-services/my-services').then(m => m.MyServicesPage);
 const myServicesMakkahPage = () => import('./pages/my-services/makkah-service/makkah-service').then(m => m.MakkahServicePage);
 const myServicesMadinaPage = () => import('./pages/my-services/madina-service/madina-service').then(m => m.MadinaServicePage);
 const myServicesTransportPage = () => import('./pages/my-services/transport-service/transport-service').then(m => m.TransportServicePage);
 const myServicesTicketsPage = () => import('./pages/my-services/tickets-service/tickets-service').then(m => m.TicketsServicePage);
 const myServicesFoodPage = () => import('./pages/my-services/food-service/food-service').then(m => m.FoodServicePage);
-const myServicesManagementPage = () => import('./features/admin/my-services/my-services-page.component').then(m => m.MyServicesPageComponent);
-const myServicesHotelCreatePage = () => import('./features/admin/my-services/hotel-service-create-page.component').then(m => m.HotelServiceCreatePageComponent);
-const myServicesTransportCreatePage = () => import('./features/admin/my-services/transport-service-create-page.component').then(m => m.TransportServiceCreatePageComponent);
 
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
@@ -102,6 +100,7 @@ export const routes: Routes = [
       // TODO: service center
       { path: 'agent-requests',              loadComponent: agentRequestsPage },
       { path: 'agent-requests/new',          loadComponent: newAgentRequestPage },
+      { path: 'agent-requests/:id',          loadComponent: agentRequestsPage },
       { path: 'rfq/new',                     loadComponent: newRfqPage },
       { path: 'service-center/rfq/new',      loadComponent: newRfqPage },
       { path: 'service-center/rfq/current',  loadComponent: currentRfqPage },
@@ -175,17 +174,17 @@ export const routes: Routes = [
       { path: 'finance/account-routing',    loadComponent: () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent) },
       { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
       { path: 'finance/cashier-session',    loadComponent: emptyPage },
-      { path: 'my-services',           loadComponent: myServicesManagementPage },
-      { path: 'my-services/makkah/new',    loadComponent: myServicesHotelCreatePage, data: { cityId: 1 } },
-      { path: 'my-services/madina/new',    loadComponent: myServicesHotelCreatePage, data: { cityId: 2 } },
-      { path: 'my-services/transport/new', loadComponent: myServicesTransportCreatePage },
-      { path: 'my-services/tickets/new',   loadComponent: emptyPage },
-      { path: 'my-services/food/new',      loadComponent: emptyPage },
-      { path: 'my-services/makkah',    loadComponent: myServicesMakkahPage },
-      { path: 'my-services/madina',    loadComponent: myServicesMadinaPage },
-      { path: 'my-services/transport', loadComponent: myServicesTransportPage },
-      { path: 'my-services/tickets',   loadComponent: myServicesTicketsPage },
-      { path: 'my-services/food',      loadComponent: myServicesFoodPage }
+      { path: 'my-services',                loadComponent: myServicesPage },
+      { path: 'my-services/makkah',         redirectTo: 'my-services/makkah/new', pathMatch: 'full' },
+      { path: 'my-services/madina',         redirectTo: 'my-services/madina/new', pathMatch: 'full' },
+      { path: 'my-services/transport',      redirectTo: 'my-services/transport/new', pathMatch: 'full' },
+      { path: 'my-services/tickets',        redirectTo: 'my-services/tickets/new', pathMatch: 'full' },
+      { path: 'my-services/food',           redirectTo: 'my-services/food/new', pathMatch: 'full' },
+      { path: 'my-services/makkah/new',     loadComponent: myServicesMakkahPage },
+      { path: 'my-services/madina/new',     loadComponent: myServicesMadinaPage },
+      { path: 'my-services/transport/new',  loadComponent: myServicesTransportPage },
+      { path: 'my-services/tickets/new',    loadComponent: myServicesTicketsPage },
+      { path: 'my-services/food/new',       loadComponent: myServicesFoodPage }
     ]
   },
   {

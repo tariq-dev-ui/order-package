@@ -5,16 +5,20 @@
 	align-items: center;
 	overflow: hidden;
 	border-radius: 0.75rem;
-	border: 1px solid rgba(148, 163, 184, 0.35);
-	background: linear-gradient(135deg, #0f3f1714, #085e1b14);
-	box-shadow: 0 10px 25px -20px #0f2a1099;
+	border: 1px solid color-mix(in srgb, var(--app-border) 80%, transparent);
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--app-heading) 8%, transparent),
+		color-mix(in srgb, var(--app-heading) 12%, transparent)
+	);
+	box-shadow: 0 10px 25px -20px color-mix(in srgb, var(--app-text-primary) 60%, transparent);
 
 	&::after {
 		content: '';
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		background: radial-gradient(circle at top right, #ffffff2e, transparent 55%);
+		background: radial-gradient(circle at top right, color-mix(in srgb, var(--app-card-bg) 18%, transparent), transparent 55%);
 		mix-blend-mode: screen;
 	}
 

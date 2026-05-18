@@ -1,42 +1,48 @@
 <service-page-shell
-  title="Transport Service"
-  subtitle="Select routes, vehicles, and transport counts"
+  title="Transport Service / خدمة النقل"
+  subtitle="Select routes, vehicles, and transport counts / اختر المسارات والمركبات"
   iconClass="fas fa-bus text-lg"
-  accent="sky"
   [highlights]="['Route-Based', 'Fleet Mix', 'Quick Allocation']"
 >
-  <div service-stage class="p-6 space-y-5">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div service-stage class="p-5 space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <label class="block md:col-span-2">
-        <span class="text-sm font-medium text-gray-700">Trip Route</span>
-        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+        <span class="text-sm font-medium text-gray-700">Trip Route / مسار الرحلة</span>
+        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
           <option>Airport → Makkah</option>
           <option>Makkah → Madina</option>
           <option>Madina → Airport</option>
         </select>
       </label>
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">Transport Type</span>
-        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+        <span class="text-sm font-medium text-gray-700">Transport Type / نوع النقل</span>
+        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
           <option>Private Car</option>
           <option>Coaster</option>
           <option>Bus</option>
         </select>
       </label>
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">Number of Vehicles</span>
-        <input type="number" min="1" value="1" class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50" />
+        <span class="text-sm font-medium text-gray-700">Vehicles Count / عدد المركبات</span>
+        <input type="number" min="1" value="1" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium text-gray-700">Pickup Time / وقت الانطلاق</span>
+        <input type="time" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium text-gray-700">Service Date / تاريخ الخدمة</span>
+        <input type="date" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
       </label>
     </div>
 
-    <div class="rounded-lg border border-sky-100 bg-sky-50/60 p-4">
-      <p class="text-sm text-gray-500 mb-2">Added service preview</p>
+    <div class="rounded-lg border border-primary-100 bg-primary-50/40 p-3.5">
+      <p class="text-xs text-gray-500 mb-2">Added service preview / معاينة الخدمة</p>
       <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">Airport → Makkah</span>
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">Private Car</span>
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">1 Vehicle</span>
+        <span class="px-2.5 py-1 rounded-full bg-white border text-xs">Airport → Makkah</span>
+        <span class="px-2.5 py-1 rounded-full bg-white border text-xs">Private Car</span>
+        <span class="px-2.5 py-1 rounded-full bg-white border text-xs">1 Vehicle</span>
       </div>
     </div>
   </div>
 </service-page-shell>
-

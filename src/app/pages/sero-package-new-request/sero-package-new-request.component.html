@@ -1,0 +1,259 @@
+
+<!-- Packages Section -->
+
+  <!-- Filters (collapsible) -->
+  <div class="bg-white mb-8 rounded-lg border border-gray-200">
+    <div class="flex items-center justify-between gap-3 px-5 py-4">
+      <div class="flex items-center gap-2 text-gray-800 font-semibold">
+        <i class="fas fa-filter text-primary-500" aria-hidden="true"></i>
+        <span>{{ 'Filters' | translate }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-200"
+        (click)="toggleFilterPanel()"
+        [attr.aria-expanded]="isFilterPanelOpen()"
+        [attr.aria-controls]="'packages-filters-panel'"
+      >
+        <span class="text-sm font-medium">{{ isFilterPanelOpen() ? ('Hide' | translate) : ('Show' | translate) }}</span>
+        <i
+          class="fas"
+          [class.fa-chevron-up]="isFilterPanelOpen()"
+          [class.fa-chevron-down]="!isFilterPanelOpen()"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </div>
+
+    <div id="packages-filters-panel" class="px-5 pb-5" [class.hidden]="!isFilterPanelOpen()">
+      <form [formGroup]="filterForm" class="grid grid-cols-1 md:grid-cols-1 gap-3 items-end">
+        <div class="w-full md:col-span-2">
+          <app-single-agent-selector
+            [placeholder]="'All Agents' | translate"
+            [selectedAgentId]="selectedAgentId() ?? null"
+            (agentIdChange)="onAgentFilterChange($event)"
+          ></app-single-agent-selector>
+        </div>
+
+        <div class="w-full custom-select">
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'Include Inactive' | translate }}</label>
+          <select
+            name="includeInactive"
+            id="includeInactive"
+            formControlName="includeInactive"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+            <option [ngValue]="false">{{ 'No' | translate }}</option>
+            <option [ngValue]="true">{{ 'Yes' | translate }}</option>
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+  <main class="  px-4 py-5">
+<!-- Loading State -->
+@if (isLoading()) {
+<div class="text-center py-12">
+  <i class="fas fa-spinner fa-spin text-primary-500 text-4xl mb-4"></i>
+  <p class="text-gray-600">{{ 'LOADING PACKAGES' | translate }}</p>
+</div>
+}@else {
+  <!-- Packages Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+    @for (package of packages(); track package.PackageID) {
+    <div
+       class="package-card bg-white rounded-xl overflow-hidden border border-gray-100 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg flex flex-col h-full"
+  [class.hover-lift]="true">
+  <div class="relative">
+        <img [ngSrc]="package.ImageUrl || defaultImageUrl()" [alt]="package.Title || ('Umrah Package' | translate)" width="800"
+          height="400" [class.cursor-pointer]="!!package.ImageUrl" [class.hover:opacity-90]="!!package.ImageUrl" class="w-full h-[250px] transition-opacity" priority
+          (click)="package.ImageUrl && openImageModal(package)">
+        <!-- Package Code Badge - Top Left -->
+
+        @if (package.PackageCode) {
+        <div
+          class="absolute top-3 left-3 bg-black bg-opacity-75 text-white px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm  shadow-lg">
+          <i class="fas fa-tag mr-1 text-primary-300"></i>
+          {{ package.PackageCode }}
+        </div>
+        }
+        <!-- Status Badges - Top Right -->
+        <div class="absolute top-3 right-3 flex flex-col gap-2 items-end">
+
+
+          @if (package.IsVisaIncluded) {
+          <div
+            class="bg-green-600/60 backdrop-blur-sm text-white badge font-semibold shadow-lg rounded-full px-3 py-1.5 transform hover:scale-105 transition-all duration-200 border border-white/20">
+            <span class="bg-green-600 text-white rounded-full p-1 flex items-center justify-center ">
+              <i class="fas fa-check  text-sm"></i>
+            </span>
+            <span class="ml-1">{{ 'VISA INCLUDED' | translate }}</span>
+          </div>
+          } @else {
+          <div
+            class="bg-red-600/60 backdrop-blur-sm text-white badge font-semibold shadow-lg rounded-full px-3 py-1.5 transform hover:scale-105 transition-all duration-200 border border-white/20">
+            <span class="bg-red-600 text-white rounded-full p-1 flex items-center justify-center ">
+              <i class="fas fa-times text-xs"></i>
+            </span>
+            <span class="ml-1">{{ 'NO VISA' | translate }}</span>
+          </div>
+          }
+         
+        </div>
+      </div>
+
+      <div class="p-5 flex-grow">
+        <div class="flex justify-between items-start mb-3">
+          <h2 class="text-xl font-bold text-gray-800">{{ package.Title }}</h2>
+
+          <div class="flex flex-col items-end gap-1.5">
+            <span class="text-lg font-bold text-primary-600">
+              <span class="text-gray-500 text-sm sar-symbol">{{ ' R' }}</span>
+              @if((package.Price ?? 0)> 0) {
+              {{ package.Price }}
+              }@else {
+              {{ 'N/A' | translate }}
+              }
+            </span>
+            <!-- Price flags -->
+            <div class="flex flex-wrap justify-end gap-1.5">
+              <div class="flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold border"
+                [class]="package.VerifiedPrice ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-amber-50 border-amber-200 text-amber-700'">
+                <i class="fas text-[9px]" [class]="package.VerifiedPrice ? 'fa-lock' : 'fa-clock'"></i>
+                {{ (package.VerifiedPrice ? 'Verified' : 'Approximate') | translate }}
+              </div>
+              <div class="flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold border"
+                [class]="package.BlendedPrice ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-gray-50 border-gray-200 text-gray-600'">
+                <i class="fas text-[9px]" [class]="package.BlendedPrice ? 'fa-layer-group' : 'fa-list'"></i>
+                {{ (package.BlendedPrice ? 'Blended' : 'Itemized') | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center text-sm text-gray-500 mb-3">
+          <i class="far fa-calendar mr-1"></i>
+          <span class="mr-4">
+            {{ package.StartDate | date:'MMM d, y' }} - {{ package.EndDate | date:'MMM d, y' }}
+          </span>
+        </div>
+
+        @if(package.Tags?.length){
+        <package-tags-details [Tags]="package.Tags" />
+        }
+
+        <div class="flex flex-wrap gap-2 mb-3">
+          @if(package.GuestCount){
+          <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2.5 py-1.5">
+            <i class="fas fa-users text-indigo-500 text-xs"></i>
+            <span class="text-xs font-semibold text-indigo-700">{{ package.GuestCount }} {{ 'Guests' | translate }}</span>
+          </div>
+          }
+          @if(package.Quantity){
+          <div class="flex items-center gap-1.5 bg-teal-50 border border-teal-100 rounded-lg px-2.5 py-1.5">
+            <i class="fas fa-cubes text-teal-500 text-xs"></i>
+            <span class="text-xs font-semibold text-teal-700">{{ package.Quantity }} {{ 'Available Packages' | translate }}</span>
+          </div>
+          }
+        </div>
+
+        <!-- Hotel Information -->
+        <div class="mb-3">
+          <button (click)="toggleSection(package.PackageID!, 'hotel')"
+            class="collapse-toggle w-full flex justify-between items-center text-left text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors py-2">
+            <span>
+              <i class="fas fa-hotel mr-2 text-primary-500"></i>
+              {{ 'Hotels' | translate }} ({{ package.Hotels?.length || 0 }})
+            </span>
+            <i class="fas fa-chevron-down collapse-icon text-xs transition-transform duration-300"
+              [class.open]="isSectionOpen(package.PackageID!, 'hotel')"></i>
+          </button>
+          <div class="collapse-content mt-1 custom-scroll" [class.open]="isSectionOpen(package.PackageID!, 'hotel')">
+            <div class="">
+              <!-- @if (package.Hotels?.length) { -->
+              <package-hotels-details [Hotels]="package?.Hotels" [HotelCounts]="package?.HotelCounts" [withTitle]="false" />
+              <!-- }@else {
+              <p class="text-gray-500 text-sm">{{ 'NO HOTELS AVAILABLE' | translate }}</p>
+
+              } -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Transportation -->
+        <div class="mb-3">
+          <button (click)="toggleSection(package.PackageID!, 'transport')"
+            class="collapse-toggle w-full flex justify-between items-center text-left text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors py-2">
+            <span>
+              <i class="fas fa-bus mr-2 text-primary-500"></i>
+              {{ 'Transportation' | translate }} ({{ package.Trips?.length || 0 }})
+            </span>
+            <i class="fas fa-chevron-down collapse-icon text-xs transition-transform duration-300"
+              [class.open]="isSectionOpen(package.PackageID!, 'transport')"></i>
+          </button>
+          <div class="collapse-content mt-1 custom-scroll" [class.open]="isSectionOpen(package.PackageID!, 'transport')">
+            <package-trips-details [Trips]="package?.Trips" />
+          </div>
+        </div>
+
+        <!-- Tickets -->
+        <div class="mb-3">
+          <button (click)="toggleSection(package.PackageID!, 'tickets')"
+            class="collapse-toggle w-full flex justify-between items-center text-left text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors py-2">
+            <span>
+              <i class="fas fa-ticket-alt mr-2 text-primary-500"></i>
+              {{ 'Tickets' | translate }} ({{ package.Tickets?.length || 0 }})
+            </span>
+            <i class="fas fa-chevron-down collapse-icon text-xs transition-transform duration-300"
+              [class.open]="isSectionOpen(package.PackageID!, 'tickets')"></i>
+          </button>
+          <div class="collapse-content mt-1 custom-scroll" [class.open]="isSectionOpen(package.PackageID!, 'tickets')">
+            <package-tickets-details [Tickets]="package?.Tickets" />
+          </div>
+        </div>
+
+        <!-- Food Services -->
+        <div class="mb-3">
+          <button (click)="toggleSection(package.PackageID!, 'food')"
+            class="collapse-toggle w-full flex justify-between items-center text-left text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors py-2">
+            <span>
+              <i class="fas fa-utensils mr-2 text-primary-500"></i>
+              {{ 'Catering' | translate }} ({{ package.Caterings?.length || 0 }})
+            </span>
+            <i class="fas fa-chevron-down collapse-icon text-xs transition-transform duration-300"
+              [class.open]="isSectionOpen(package.PackageID!, 'food')"></i>
+          </button>
+          <div class="collapse-content mt-1 custom-scroll" [class.open]="isSectionOpen(package.PackageID!, 'food')">
+            <package-caterings-details [Caterings]="package?.Caterings" />
+          </div>
+        </div>
+
+      
+
+        <div class="flex">
+          <button (click)="selectPackage(package)"
+            class="cursor-pointer flex-1 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-lg transition-all flex items-center justify-center gap-2 group shadow-lg hover:shadow-xl py-2.5 px-4">
+            <span class="mr-2">{{ 'BOOK PACKAGE' | translate }}</span>
+            <i class="fas fa-shopping-cart group-hover:translate-x-1 transition-transform"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Pagination -->
+  <pagination [currentPage]="page()" [totalPages]="totalPages()" (pageChange)="setPage($event)"
+    class="mt-8 flex justify-center" />
+
+  <!-- Empty State -->
+  @if (packages().length === 0 && !isLoading()) {
+  <div class="text-center py-12">
+    <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">{{ 'NO PACKAGES FOUND' | translate }}</h3>
+    <p class="text-gray-500">{{ 'TRY CHANGING FILTERS' | translate }}</p>
+  </div>
+  }
+}
+</main>

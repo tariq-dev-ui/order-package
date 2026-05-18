@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ServicePageShell } from '../components/service-page-shell/service-page-shell';
 
 @Component({
@@ -7,5 +7,10 @@ import { ServicePageShell } from '../components/service-page-shell/service-page-
   imports: [ServicePageShell],
   templateUrl: './makkah-service.html',
 })
-export class MakkahServicePage {}
+export class MakkahServicePage {
+  activeTab = signal<'criteria' | 'specific'>('criteria');
 
+  switchTab(tab: 'criteria' | 'specific'): void {
+    this.activeTab.set(tab);
+  }
+}

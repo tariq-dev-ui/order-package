@@ -1,0 +1,20 @@
+/* Tailwind CSS v4 — for My Services pages (agent-portal design) */
+@import "tailwindcss";
+
+@source "./app/**/*.{ts,html}";
+
+/* Force-generate dynamic classes used via Angular [class] bindings */
+@source inline("bg-primary-50 bg-primary-100 bg-primary-200 text-primary-600 text-primary-700 border-primary-200 hover:bg-primary-50 bg-emerald-100 text-emerald-700 bg-violet-100 text-violet-700 bg-amber-100 text-amber-700 bg-rose-100 text-rose-700 bg-rose-50 text-rose-600 border-rose-200 bg-yellow-100 text-yellow-700 bg-gray-100 text-gray-600 grid grid-cols-1 grid-cols-2 grid-cols-4 sm:grid-cols-2 xl:grid-cols-4 xl:grid-cols-12 xl:col-span-2 xl:col-span-4 xl:col-span-8 gap-2 gap-3 gap-4");
+
+@theme {
+  --color-primary-50: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg));
+  --color-primary-100: color-mix(in srgb, var(--app-heading) 14%, var(--app-card-bg));
+  --color-primary-200: color-mix(in srgb, var(--app-heading) 24%, var(--app-card-bg));
+  --color-primary-300: color-mix(in srgb, var(--app-heading) 38%, var(--app-card-bg));
+  --color-primary-400: color-mix(in srgb, var(--app-heading) 72%, var(--app-card-bg));
+  --color-primary-500: var(--app-heading);
+  --color-primary-600: color-mix(in srgb, var(--app-heading) 88%, var(--app-text-primary));
+  --color-primary-700: color-mix(in srgb, var(--app-heading) 72%, var(--app-text-primary));
+  --color-primary-800: color-mix(in srgb, var(--app-heading) 58%, var(--app-text-primary));
+  --color-primary-900: color-mix(in srgb, var(--app-heading) 42%, var(--app-text-primary));
+}

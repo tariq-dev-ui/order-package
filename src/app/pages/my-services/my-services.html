@@ -1,0 +1,143 @@
+<div class="font-sans text-gray-800 antialiased">
+  <div class="min-h-screen">
+    <main class="container mx-auto px-3 sm:px-5 lg:px-5 py-5">
+      <div class="space-y-5">
+        <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-primary-50 to-white">
+            <div class="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <h2 class="text-2xl font-bold">My Services</h2>
+                <p class="text-sm text-gray-500 mt-1">
+                  Create one service at a time and manage service-level requests.
+                </p>
+              </div>
+              <div class="relative">
+                <button type="button" (click)="togglePicker()"
+                  class="px-4 py-2 rounded-lg border border-primary-200 bg-white text-primary-700 hover:bg-primary-50 transition-colors">
+                  Add a New Service
+                  <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                </button>
+
+                @if (isPickerOpen) {
+                <div class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <div class="p-2">
+                    @for (service of serviceCards; track service.key) {
+                    <a [routerLink]="['/master/my-services', service.key, 'new']"
+                      class="w-full text-left p-2 rounded-md hover:bg-gray-50 flex items-center gap-2">
+                      <i [class]="service.iconClass + ' text-gray-600'"></i>
+                      <span class="text-sm">{{ service.title }}</span>
+                    </a>
+                    }
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 border-b border-gray-100">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              @for (card of summaryCards; track card.label) {
+              <article class="rounded-lg border border-gray-200 p-4 bg-white">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-500">{{ card.label }}</span>
+                  <span class="w-8 h-8 rounded-full flex items-center justify-center" [class]="card.accentClass">
+                    <i [class]="card.iconClass + ' text-sm'"></i>
+                  </span>
+                </div>
+                <p class="text-xl font-bold mt-2">{{ card.value }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ card.subLabel }}</p>
+              </article>
+              }
+            </div>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-3">
+              <div class="xl:col-span-4 relative">
+                <input type="text" class="w-full h-11 pl-10 pr-3 border border-gray-200 rounded-lg bg-white text-sm"
+                  placeholder="Search services..." />
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              </div>
+              <div class="xl:col-span-8 flex flex-wrap gap-2">
+                @for (filter of filterPills; track filter) {
+                <button type="button"
+                  class="h-11 px-3 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:bg-gray-50">
+                  {{ filter }}
+                  <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                </button>
+                }
+                <button type="button"
+                  class="h-11 px-3 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:bg-gray-50">
+                  <i class="fas fa-undo-alt mr-2 text-xs"></i>
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-lg border border-gray-200 overflow-hidden">
+              <div class="hidden xl:grid xl:grid-cols-12 gap-2 bg-gray-50 px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <div class="xl:col-span-4">Service Preview</div>
+                <div class="xl:col-span-2">Capacity</div>
+                <div class="xl:col-span-2">Availability</div>
+                <div class="xl:col-span-2">Pricing</div>
+                <div class="xl:col-span-2">Actions</div>
+              </div>
+
+              @for (row of servicePreviewRows; track row.title) {
+              <div class="xl:grid xl:grid-cols-12 gap-2 px-4 py-4 border-t border-gray-100 first:border-t-0 bg-white hover:bg-gray-50/60 transition-colors">
+                <div class="xl:col-span-4">
+                  <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center mt-0.5" [class]="row.accentClass">
+                      <i [class]="row.iconClass + ' text-sm'"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold">{{ row.title }}</h3>
+                      <p class="text-xs text-gray-500 mt-1">{{ row.typeLabel }} · {{ row.location }}</p>
+                      <p class="text-xs text-gray-500 mt-2">{{ row.notes }}</p>
+                      <div class="mt-2">
+                        <span class="text-xs px-2 py-1 rounded-full font-medium" [class]="statusClass(row.status)">
+                          {{ row.status }}
+                        </span>
+                        <a [routerLink]="['/master/my-services', row.key, 'new']"
+                          class="ml-2 inline-flex items-center text-xs text-primary-600 hover:text-primary-700 font-medium">
+                          Open
+                          <i class="fas fa-arrow-right ml-1 text-[10px]"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="xl:col-span-2 mt-3 xl:mt-0">
+                  <p class="text-xs text-gray-500 xl:hidden">Capacity</p>
+                  <p class="text-sm font-medium">{{ row.capacity }}</p>
+                </div>
+
+                <div class="xl:col-span-2 mt-3 xl:mt-0">
+                  <p class="text-xs text-gray-500 xl:hidden">Availability</p>
+                  <p class="text-sm font-medium">{{ row.availability }}</p>
+                  <p class="text-xs text-gray-500 mt-1">{{ row.updated }}</p>
+                </div>
+
+                <div class="xl:col-span-2 mt-3 xl:mt-0">
+                  <p class="text-xs text-gray-500 xl:hidden">Pricing</p>
+                  <p class="text-sm font-medium">{{ row.pricing }}</p>
+                </div>
+
+                <div class="xl:col-span-2 mt-3 xl:mt-0 flex items-start xl:justify-end">
+                  <button type="button"
+                    class="w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-white transition-colors"
+                    aria-label="More actions">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,55 +1,102 @@
 <service-page-shell
-  title="Makkah Service"
-  subtitle="Hotel criteria and room setup for Makkah service"
+  title="Makkah Service / خدمة مكة"
+  subtitle="Hotel criteria and room setup / إعدادات الفندق والغرف"
   iconClass="fas fa-kaaba text-lg"
-  accent="emerald"
   [highlights]="['Near Haram', 'Flexible Stays', 'Room Bundles']"
 >
-  <div service-stage class="p-6 space-y-5">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div service-stage class="p-5 space-y-4">
+    <div class="flex border-b border-gray-200">
+      <button type="button" (click)="switchTab('criteria')"
+        class="px-3.5 py-2 text-sm font-medium border-b-2 transition-colors"
+        [class.border-primary-500]="activeTab() === 'criteria'"
+        [class.text-primary-600]="activeTab() === 'criteria'"
+        [class.border-transparent]="activeTab() !== 'criteria'"
+        [class.text-gray-500]="activeTab() !== 'criteria'">
+        Hotel by Criteria / حسب المعايير
+      </button>
+      <button type="button" (click)="switchTab('specific')"
+        class="px-3.5 py-2 text-sm font-medium border-b-2 transition-colors"
+        [class.border-primary-500]="activeTab() === 'specific'"
+        [class.text-primary-600]="activeTab() === 'specific'"
+        [class.border-transparent]="activeTab() !== 'specific'"
+        [class.text-gray-500]="activeTab() !== 'specific'">
+        Select Specific Hotel / اختيار فندق محدد
+      </button>
+    </div>
+
+    @if (activeTab() === 'criteria') {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">District</span>
-        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+        <span class="text-sm font-medium text-gray-700">District / الحي</span>
+        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
+          <option>Select District</option>
           <option>Al Haram</option>
           <option>Ajyad</option>
           <option>Al Aziziyah</option>
         </select>
       </label>
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">Category</span>
-        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+        <span class="text-sm font-medium text-gray-700">Category / التصنيف</span>
+        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
+          <option>Select Category</option>
           <option>5 Stars</option>
           <option>4 Stars</option>
           <option>3 Stars</option>
         </select>
       </label>
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">Room Type</span>
-        <select class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50">
+        <span class="text-sm font-medium text-gray-700">Room Type / نوع الغرفة</span>
+        <select class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
+          <option>Select Room Type</option>
+          <option>Single Room</option>
           <option>Double Room</option>
           <option>Triple Room</option>
-          <option>Quad Room</option>
+          <option>Family Room</option>
         </select>
       </label>
       <label class="block">
-        <span class="text-sm font-medium text-gray-700">Room Count</span>
-        <input type="number" min="1" value="1" class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-50" />
+        <span class="text-sm font-medium text-gray-700">Rooms Count / عدد الغرف</span>
+        <input type="number" min="1" value="1" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
+      </label>
+      <label class="block md:col-span-2">
+        <span class="text-sm font-medium text-gray-700">Nights Count / عدد الليالي</span>
+        <input type="number" min="1" value="1" class="mt-1.5 w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
       </label>
     </div>
+    } @else {
+    <div class="space-y-3.5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <input type="text" placeholder="Hotel name, location..."
+          class="w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50" />
+        <select class="w-full p-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50">
+          <option>Any District</option>
+          <option>Al Haram</option>
+          <option>Ajyad</option>
+          <option>Al Aziziyah</option>
+        </select>
+      </div>
+      <div class="rounded-lg border border-gray-200 bg-white p-3.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-semibold text-sm">Al Noor Makkah Hotel</h4>
+            <p class="text-xs text-gray-500">Al Haram District · 5 Stars</p>
+          </div>
+          <button type="button" class="px-2.5 py-1.5 rounded-md bg-primary-500 text-white text-xs hover:bg-primary-600">Select</button>
+        </div>
+      </div>
+    </div>
+    }
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-      <input type="checkbox" class="accent-primary-500 w-4 h-4" checked />
-      Enable number of nights for all rooms
-    </label>
+    <button type="button"
+      class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm hover:bg-primary-600 transition-colors">
+      Add New / إضافة
+    </button>
 
-    <div class="rounded-lg border border-emerald-100 bg-emerald-50/60 p-4">
-      <p class="text-sm text-gray-500 mb-2">Added service preview</p>
+    <div class="rounded-lg border border-primary-100 bg-primary-50/40 p-4">
+      <p class="text-sm text-gray-500 mb-2">Added Hotel Items / الفنادق المضافة</p>
       <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">Al Haram - 5 Stars</span>
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">4 Rooms</span>
-        <span class="px-3 py-1 rounded-full bg-white border text-sm">6 Nights</span>
+        <span class="px-2.5 py-1 rounded-full bg-white border text-xs">No hotel items added yet</span>
       </div>
     </div>
   </div>
 </service-page-shell>
-

@@ -238,7 +238,7 @@
             <div class="mb-6 space-y-4">
                 <form [formGroup]="searchForm" class="search-form ">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="custom-select">
+                        <div class="custom-select" style="min-width:160px;">
                             <select class="w-full p-3 cursor-pointer" formControlName="filterDistrict">
                                 <option value="null">{{ 'Any District' | translate }}</option>
                                 @for (district of this.districts(); track $index) {
@@ -259,10 +259,11 @@
                         </div> -->
                         <div class="flex-1 relative">
                             <input type="text" formControlName="filterText"
-                                class="w-full h-14 p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400"
+                                class="w-full p-3 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                                style="height:46px;"
                                 [placeholder]="'Hotel name, location...' | translate">
                             <i
-                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                         </div>
                     </div>
                     <!-- <div class="flex gap-2">
@@ -279,13 +280,8 @@
         </div>
 
 
-        <div class="overflow-hidden border border-gray-100 ">
-            <div class="max-h-[500px]  scroll-smooth overflow-y-auto p-3
-                        [&::-webkit-scrollbar]:w-3
-                        [&::-webkit-scrollbar-track]:rounded-full
-                        [&::-webkit-scrollbar-track]:bg-gray-200
-                        [&::-webkit-scrollbar-thumb]:rounded-full
-                        [&::-webkit-scrollbar-thumb]:bg-primary-500">
+        <div class="overflow-hidden border border-gray-200 rounded-xl">
+            <div class="hotel-list-container max-h-[480px] scroll-smooth overflow-y-auto p-3">
 
                 @if (!isLoadingSearchHotels()) {
                 @if (hotels().length > 0) {

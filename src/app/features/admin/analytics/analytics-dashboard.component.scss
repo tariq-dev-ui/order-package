@@ -1,10 +1,10 @@
 .salam-analytics {
-  --primary-50: var(--sero-primary-50, #f2f4ee);
-  --primary-100: var(--sero-primary-100, #d9e0cf);
-  --primary-400: #7b8d6a;
-  --primary-500: var(--sero-primary, #3a472a);
-  --primary-600: var(--sero-primary-dark, #2d3821);
-  color: #111827;
+  --primary-50: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg));
+  --primary-100: color-mix(in srgb, var(--app-heading) 14%, var(--app-card-bg));
+  --primary-400: color-mix(in srgb, var(--app-heading) 70%, var(--app-card-bg));
+  --primary-500: var(--app-heading);
+  --primary-600: color-mix(in srgb, var(--app-heading) 88%, var(--app-text-primary));
+  color: var(--app-text-primary);
   min-height: calc(100vh - var(--sero-topbar-height, 70px));
 }
 
@@ -98,48 +98,48 @@
 
 .salam-analytics .border { border-width: 1px; border-style: solid; }
 .salam-analytics .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
-.salam-analytics .border-gray-100 { border-color: #f3f4f6; }
-.salam-analytics .border-gray-200 { border-color: #e5e7eb; }
-.salam-analytics .border-green-200 { border-color: #bbf7d0; }
-.salam-analytics .border-blue-200 { border-color: #bfdbfe; }
-.salam-analytics .border-purple-200 { border-color: #e9d5ff; }
-.salam-analytics .border-red-200 { border-color: #fecaca; }
-.salam-analytics .border-amber-200 { border-color: #fde68a; }
+.salam-analytics .border-gray-100,
+.salam-analytics .border-gray-200,
+.salam-analytics .border-green-200,
+.salam-analytics .border-blue-200,
+.salam-analytics .border-purple-200,
+.salam-analytics .border-red-200,
+.salam-analytics .border-amber-200 { border-color: var(--app-border); }
 .salam-analytics .hover\:border-primary-500:hover { border-color: var(--primary-500); }
-.salam-analytics .hover\:border-blue-500:hover { border-color: #3b82f6; }
-.salam-analytics .hover\:border-purple-500:hover { border-color: #a855f7; }
-.salam-analytics .hover\:border-green-500:hover { border-color: #22c55e; }
+.salam-analytics .hover\:border-blue-500:hover,
+.salam-analytics .hover\:border-purple-500:hover,
+.salam-analytics .hover\:border-green-500:hover { border-color: var(--app-heading); }
 
 .salam-analytics .divide-y.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--app-border);
 }
 
-.salam-analytics .bg-white { background-color: #ffffff; }
-.salam-analytics .bg-gray-50 { background-color: #f9fafb; }
-.salam-analytics .bg-gray-100 { background-color: #f3f4f6; }
-.salam-analytics .bg-gray-200 { background-color: #e5e7eb; }
+.salam-analytics .bg-white { background-color: var(--app-card-bg); }
+.salam-analytics .bg-gray-50,
+.salam-analytics .bg-gray-100 { background-color: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg)); }
+.salam-analytics .bg-gray-200 { background-color: color-mix(in srgb, var(--app-border) 72%, var(--app-card-bg)); }
 .salam-analytics .bg-primary-50 { background-color: var(--primary-50); }
 .salam-analytics .bg-primary-100 { background-color: var(--primary-100); }
-.salam-analytics .bg-blue-50 { background-color: #eff6ff; }
-.salam-analytics .bg-blue-100 { background-color: #dbeafe; }
-.salam-analytics .bg-blue-500 { background-color: #3b82f6; }
-.salam-analytics .bg-purple-50 { background-color: #faf5ff; }
-.salam-analytics .bg-purple-100 { background-color: #f3e8ff; }
-.salam-analytics .bg-green-50 { background-color: #f0fdf4; }
-.salam-analytics .bg-green-100 { background-color: #dcfce7; }
-.salam-analytics .bg-red-50 { background-color: #fef2f2; }
-.salam-analytics .bg-red-100 { background-color: #fee2e2; }
-.salam-analytics .bg-yellow-50 { background-color: #fefce8; }
-.salam-analytics .bg-amber-50 { background-color: #fffbeb; }
-.salam-analytics .bg-amber-100 { background-color: #fef3c7; }
+.salam-analytics .bg-blue-50,
+.salam-analytics .bg-blue-100,
+.salam-analytics .bg-purple-50,
+.salam-analytics .bg-purple-100,
+.salam-analytics .bg-green-50,
+.salam-analytics .bg-green-100,
+.salam-analytics .bg-red-50,
+.salam-analytics .bg-red-100,
+.salam-analytics .bg-yellow-50,
+.salam-analytics .bg-amber-50,
+.salam-analytics .bg-amber-100 { background-color: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg)); }
+.salam-analytics .bg-blue-500 { background-color: var(--app-heading); }
 
-.salam-analytics .hover\:bg-gray-50:hover { background-color: #f9fafb; }
+.salam-analytics .hover\:bg-gray-50:hover { background-color: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg)); }
 .salam-analytics .hover\:bg-primary-50:hover { background-color: var(--primary-50); }
-.salam-analytics .hover\:bg-blue-50:hover { background-color: #eff6ff; }
-.salam-analytics .hover\:bg-purple-50:hover { background-color: #faf5ff; }
-.salam-analytics .hover\:bg-green-50:hover { background-color: #f0fdf4; }
-.salam-analytics .hover\:bg-yellow-50:hover { background-color: #fefce8; }
-.salam-analytics .hover\:bg-red-50:hover { background-color: #fef2f2; }
+.salam-analytics .hover\:bg-blue-50:hover,
+.salam-analytics .hover\:bg-purple-50:hover,
+.salam-analytics .hover\:bg-green-50:hover,
+.salam-analytics .hover\:bg-yellow-50:hover,
+.salam-analytics .hover\:bg-red-50:hover { background-color: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg)); }
 
 .salam-analytics .text-left { text-align: left; }
 .salam-analytics .text-center { text-align: center; }
@@ -152,32 +152,32 @@
 .salam-analytics .font-semibold { font-weight: 600; }
 .salam-analytics .font-bold { font-weight: 700; }
 
-.salam-analytics .text-gray-400 { color: #9ca3af; }
-.salam-analytics .text-gray-500 { color: #6b7280; }
-.salam-analytics .text-gray-800 { color: #1f2937; }
-.salam-analytics .text-gray-900 { color: #111827; }
+.salam-analytics .text-gray-400,
+.salam-analytics .text-gray-500 { color: var(--app-text-secondary); }
+.salam-analytics .text-gray-800,
+.salam-analytics .text-gray-900 { color: var(--app-text-primary); }
 .salam-analytics .text-primary-400 { color: var(--primary-400); }
 .salam-analytics .text-primary-500 { color: var(--primary-500); }
 .salam-analytics .text-primary-600 { color: var(--primary-600); }
-.salam-analytics .text-primary-800 { color: #26301e; }
-.salam-analytics .text-blue-500 { color: #3b82f6; }
-.salam-analytics .text-blue-600 { color: #2563eb; }
-.salam-analytics .text-blue-700 { color: #1d4ed8; }
-.salam-analytics .text-blue-800 { color: #1e40af; }
-.salam-analytics .text-purple-500 { color: #a855f7; }
-.salam-analytics .text-purple-600 { color: #9333ea; }
-.salam-analytics .text-purple-700 { color: #7e22ce; }
-.salam-analytics .text-green-500 { color: #22c55e; }
-.salam-analytics .text-green-600 { color: #16a34a; }
-.salam-analytics .text-green-700 { color: #15803d; }
-.salam-analytics .text-green-800 { color: #166534; }
-.salam-analytics .text-red-600 { color: #dc2626; }
-.salam-analytics .text-red-700 { color: #b91c1c; }
-.salam-analytics .text-red-800 { color: #991b1b; }
-.salam-analytics .text-yellow-500 { color: #eab308; }
-.salam-analytics .text-yellow-800 { color: #854d0e; }
-.salam-analytics .text-amber-600 { color: #d97706; }
-.salam-analytics .text-amber-700 { color: #b45309; }
+.salam-analytics .text-primary-800,
+.salam-analytics .text-blue-500,
+.salam-analytics .text-blue-600,
+.salam-analytics .text-blue-700,
+.salam-analytics .text-blue-800,
+.salam-analytics .text-purple-500,
+.salam-analytics .text-purple-600,
+.salam-analytics .text-purple-700,
+.salam-analytics .text-green-500,
+.salam-analytics .text-green-600,
+.salam-analytics .text-green-700,
+.salam-analytics .text-green-800,
+.salam-analytics .text-red-600,
+.salam-analytics .text-red-700,
+.salam-analytics .text-red-800,
+.salam-analytics .text-yellow-500,
+.salam-analytics .text-yellow-800,
+.salam-analytics .text-amber-600,
+.salam-analytics .text-amber-700 { color: var(--app-heading); }
 .salam-analytics .hover\:text-primary-600:hover { color: var(--primary-600); }
 
 .salam-analytics .order-card {

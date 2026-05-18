@@ -4,19 +4,19 @@
   width: 20px;
   height: 20px;
   min-width: 20px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--app-border);
   border-radius: 50%;
   cursor: pointer;
   transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
   position: relative;
-  background-color: white;
+  background-color: var(--app-card-bg);
   flex-shrink: 0;
 }
 
 .pricing-radio:checked {
-  border-color: var(--color-primary-500);
-  background-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+  border-color: var(--app-heading);
+  background-color: var(--app-heading);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-heading) 20%, transparent);
 }
 
 .pricing-radio:checked::after {
@@ -28,9 +28,9 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: white;
+  background-color: var(--app-card-bg);
 }
 
 .pricing-radio:hover:not(:checked) {
-  border-color: var(--color-primary-400);
+  border-color: var(--app-heading);
 }

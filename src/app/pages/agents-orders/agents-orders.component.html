@@ -1,0 +1,162 @@
+﻿<!-- order-details.component.html -->
+<div style="min-height: 100vh;" class="relative">
+  <!-- Filters (collapsible) -->
+  <div class="bg-white mb-6 rounded-lg border border-gray-200">
+    <div class="flex items-center justify-between gap-3 px-5 py-4">
+      <div class="flex items-center gap-2 text-gray-800 font-semibold">
+        <i class="fas fa-filter text-primary-500" aria-hidden="true"></i>
+        <span>{{ 'Filters' | translate }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-200"
+        (click)="toggleFilterPanel()"
+        [attr.aria-expanded]="isFilterPanelOpen()"
+        [attr.aria-controls]="'orders-filters-panel'"
+      >
+        <span class="text-sm font-medium">{{ isFilterPanelOpen() ? ('Hide' | translate) : ('Show' | translate) }}</span>
+        <i
+          class="fas"
+          [class.fa-chevron-up]="isFilterPanelOpen()"
+          [class.fa-chevron-down]="!isFilterPanelOpen()"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </div>
+
+    <div id="orders-filters-panel" class="px-5 pb-5" [class.hidden]="!isFilterPanelOpen()">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <button
+          type="button"
+          class="px-4 py-2 rounded-md border text-sm font-medium transition-colors"
+          [class.bg-primary-50]="activeFilterTab() === 'agent'"
+          [class.border-primary-200]="activeFilterTab() === 'agent'"
+          [class.text-primary-700]="activeFilterTab() === 'agent'"
+          [class.bg-white]="activeFilterTab() !== 'agent'"
+          [class.border-gray-200]="activeFilterTab() !== 'agent'"
+          [class.text-gray-700]="activeFilterTab() !== 'agent'"
+          (click)="setFilterTab('agent')"
+        >
+          {{ 'By Agent' | translate }}
+        </button>
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded-md border text-sm font-medium transition-colors"
+          [class.bg-primary-50]="activeFilterTab() === 'request'"
+          [class.border-primary-200]="activeFilterTab() === 'request'"
+          [class.text-primary-700]="activeFilterTab() === 'request'"
+          [class.bg-white]="activeFilterTab() !== 'request'"
+          [class.border-gray-200]="activeFilterTab() !== 'request'"
+          [class.text-gray-700]="activeFilterTab() !== 'request'"
+          (click)="setFilterTab('request')"
+        >
+          {{ 'By Request ID' | translate }}
+        </button>
+      </div>
+
+      <div [class.hidden]="activeFilterTab() !== 'agent'">
+        <div class="min-w-[320px]">
+          <app-single-agent-selector
+            [label]="'Select Agent' | translate"
+            [placeholder]="'Choose an agent' | translate"
+            [selectedAgentId]="selectedAgentId() ?? null"
+            (agentIdChange)="onAgentFilterChange($event)"
+          ></app-single-agent-selector>
+        </div>
+      </div>
+
+      <div [class.hidden]="activeFilterTab() !== 'request'">
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="min-w-[260px]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'Request ID' | translate }}</label>
+            <input
+              type="number"
+              min="1"
+              class="w-full h-11 px-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-200 placeholder-gray-400" 
+              [value]="requestIdText()"
+              (input)="onRequestIdInput($event)"
+              (keydown.enter)="applyRequestIdFilter()"
+              placeholder="{{ 'e.g. 12345' | translate }}"
+              [attr.aria-label]="'Request ID' | translate"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="h-11 px-4 rounded-md bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-300"
+            (click)="applyRequestIdFilter()"
+            [disabled]="!requestIdText().trim().length"
+          >
+            {{ 'Apply' | translate }}
+          </button>
+
+          <button
+            type="button"
+            class="h-11 px-4 rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50"
+            (click)="clearRequestIdFilter()"
+            [disabled]="!requestIdText().trim().length && requestIdFilter() == null"
+          >
+            {{ 'Clear' | translate }}
+          </button>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-2">
+          {{ 'Tip: when a Request ID is set, the page shows that single order.' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="relative">
+    @if (isLoading()) {
+      <div class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-primary-500 text-4xl mb-4" aria-hidden="true"></i>
+        <p class="text-gray-600">{{ 'LOADING ORDERS' | translate }}</p>
+      </div>
+    } @else {
+      <order-accordion>
+        @for(req of packageRequests(); track req) {
+        <order-accordion-item [requestId]="req.Id ?? 0" [packageTitle]="req.Title ?? ('Request Title' | translate)"
+          addDates="{{req?.AddedDate | date: 'dd MMM yyyy, h:mm a' }}"
+          startEndDates="{{req?.StartDate | date: 'dd MMM' }} - {{req?.EndDate| date: 'dd MMM yyyy' }}"
+          [passengers]="req.PassengerCount ?? 0" status="{{req.StatusName ?? ''}}" [unreadMessages]="getUnreadCount(req.Id)"
+          [agentName]="req.AgentName ?? ''" [agentCountry]="req.AgentCountry ?? ''"
+          (expansionChange)="onAccordionExpansionChange($event, req.Id ?? 0)"
+          (chatRequested)="onChatRequested($event, req)">
+
+          <request-package-details [rqst]="req" [showReqDetails]="false" [showPkgDetails]="false" [showAgents]="false" imageSize="small" />
+
+
+
+          <br>
+          <voucher-section #voucherSection [requestId]="req.Id ?? 0" [agentId]="(req.AgentId && req.AgentId > 0) ? req.AgentId : 0"
+            [request]="req"
+            [isExpanded]="getAccordionExpandedState(req.Id ?? 0)"></voucher-section>
+
+          <div class="flex justify-end mt-4 px-4 pb-4">
+            <button (click)="deleteRequest(req.Id ?? 0)"
+              class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200 font-medium text-sm border border-red-100">
+              <i class="fas fa-trash-alt"></i>
+              <span>{{ 'Delete Request' | translate }}</span>
+            </button>
+          </div>
+
+          <br>
+          <!-- <button
+                class="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 font-medium"
+                (click)="openChatModal(req.Id)">Chat</button>
+              @if(orderId()===req.Id && isModalOpen()){
+              <chat [orderId]="req.Id ?? 0" (closed)="onChatClosed()"></chat>
+              } -->
+        </order-accordion-item>
+        }
+      </order-accordion>
+      <pagination [currentPage]="page()" [totalPages]="totalPages()" (pageChange)="setPage($event)"
+        class="mt-8 flex justify-center" />
+    }
+  </div>
+</div>

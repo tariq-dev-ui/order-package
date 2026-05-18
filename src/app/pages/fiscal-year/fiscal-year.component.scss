@@ -23,7 +23,7 @@
       }
 
       p {
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--app-text-secondary);
         font-size: 16px;
       }
     }
@@ -39,20 +39,20 @@
       .empty-icon {
         width: 80px;
         height: 80px;
-        color: rgba(0, 0, 0, 0.3);
+        color: var(--app-text-secondary);
         margin-bottom: 24px;
       }
 
       h3 {
         margin: 0 0 8px 0;
-        color: rgba(0, 0, 0, 0.87);
+        color: var(--app-text-primary);
         font-size: 20px;
         font-weight: 500;
       }
 
       p {
         margin: 0 0 24px 0;
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--app-text-secondary);
         font-size: 14px;
       }
 
@@ -64,9 +64,9 @@
     }
 
     .table-card {
-      background: white;
+      background: var(--app-card-bg);
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px color-mix(in srgb, var(--app-text-primary) 10%, transparent);
       overflow: hidden;
 
       .fiscal-years-table {
@@ -87,7 +87,7 @@
       }
 
       mat-paginator {
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--app-border);
       }
     }
   }

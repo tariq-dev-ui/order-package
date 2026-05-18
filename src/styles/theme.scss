@@ -1,0 +1,181 @@
+// ============================
+// SERO Unified Theme System
+// نظام السمة الموحد
+// ============================
+// Single source of truth for all theme variables
+// Supports Light and Dark themes via data-theme attribute
+// ============================
+
+@use './themes/colors' as *;
+
+// ============================
+// LIGHT THEME (Default)
+// ============================
+:root,
+[data-theme="light"] {
+  // Primary Colors
+  --theme-primary: #{$primary-base};
+  --theme-primary-light: #{$primary-light};
+  --theme-primary-dark: #{$primary-dark};
+  --theme-accent: #{$accent-base};
+  --theme-accent-light: #{$accent-light};
+  --theme-accent-dark: #{$accent-dark};
+
+  // Semantic Colors
+  --theme-success: #{$success-base};
+  --theme-success-light: #{$success-light};
+  --theme-warning: #{$warning-base};
+  --theme-warning-light: #{$warning-light};
+  --theme-danger: #{$error-base};
+  --theme-danger-light: #{$error-light};
+  --theme-info: #{$info-base};
+  --theme-info-light: #{$info-light};
+
+  // Backgrounds
+  --theme-bg: #{$light-bg-primary};
+  --theme-bg-secondary: #{$light-bg-secondary};
+  --theme-bg-card: #{$light-bg-card};
+  --theme-bg-hover: #{$light-bg-hover};
+  --theme-bg-selected: #{$light-bg-selected};
+  --theme-bg-disabled: #{$light-bg-disabled};
+
+  // Text Colors
+  --theme-text-primary: #{$light-text-primary};
+  --theme-text-secondary: #{$light-text-secondary};
+  --theme-text-tertiary: #{$light-text-tertiary};
+  --theme-text-disabled: #{$light-text-disabled};
+  --theme-text-inverse: #{$light-text-inverse};
+
+  // Borders
+  --theme-border: #{$light-border-primary};
+  --theme-border-secondary: #{$light-border-secondary};
+  --theme-border-hover: #{$light-border-hover};
+  --theme-border-focus: #{$light-border-focus};
+  --theme-border-error: #{$light-border-error};
+  --theme-border-success: #{$light-border-success};
+
+  // Shadows
+  --theme-shadow-sm: #{$light-shadow-sm};
+  --theme-shadow-md: #{$light-shadow-md};
+  --theme-shadow-lg: #{$light-shadow-lg};
+  --theme-shadow-xl: #{$light-shadow-xl};
+
+  // Status Colors
+  --theme-status-pending: #{$status-pending};
+  --theme-status-confirmed: #{$status-confirmed};
+  --theme-status-assigned: #{$status-assigned};
+  --theme-status-checkin: #{$status-checkin};
+  --theme-status-closed: #{$status-closed};
+
+  // Legacy Compatibility (will be deprecated)
+  --app-bg: var(--theme-bg);
+  --app-card-bg: var(--theme-bg-card);
+  --app-border: var(--theme-border);
+  --app-heading: var(--theme-primary);
+  --app-text-primary: var(--theme-text-primary);
+  --app-text-secondary: var(--theme-text-secondary);
+  --app-accent: var(--theme-accent);
+  --color-pending: var(--theme-status-pending);
+  --color-confirmed: var(--theme-status-confirmed);
+  --color-assigned: var(--theme-status-assigned);
+  --color-checkin: var(--theme-status-checkin);
+  --color-closed: var(--theme-status-closed);
+}
+
+// ============================
+// DARK THEME
+// ============================
+[data-theme="dark"],
+.dark-theme {
+  // Primary Colors (same as light)
+  --theme-primary: #{$primary-base};
+  --theme-primary-light: #{$primary-light};
+  --theme-primary-dark: #{$primary-dark};
+  --theme-accent: #{$accent-base};
+  --theme-accent-light: #{$accent-light};
+  --theme-accent-dark: #{$accent-dark};
+
+  // Semantic Colors (muted for dark)
+  --theme-success: #{$success-base};
+  --theme-success-light: #{$dark-success-muted};
+  --theme-warning: #{$warning-base};
+  --theme-warning-light: #{$dark-warning-muted};
+  --theme-danger: #{$error-base};
+  --theme-danger-light: #{$dark-error-muted};
+  --theme-info: #{$info-base};
+  --theme-info-light: #{$dark-info-muted};
+
+  // Backgrounds
+  --theme-bg: #{$dark-bg-primary};
+  --theme-bg-secondary: #{$dark-bg-secondary};
+  --theme-bg-card: #{$dark-bg-card};
+  --theme-bg-hover: #{$dark-bg-hover};
+  --theme-bg-selected: #{$dark-bg-selected};
+  --theme-bg-disabled: #{$dark-bg-disabled};
+
+  // Text Colors
+  --theme-text-primary: #{$dark-text-primary};
+  --theme-text-secondary: #{$dark-text-secondary};
+  --theme-text-tertiary: #{$dark-text-tertiary};
+  --theme-text-disabled: #{$dark-text-disabled};
+  --theme-text-inverse: #{$dark-text-inverse};
+
+  // Borders
+  --theme-border: #{$dark-border-primary};
+  --theme-border-secondary: #{$dark-border-secondary};
+  --theme-border-hover: #{$dark-border-hover};
+  --theme-border-focus: #{$dark-border-focus};
+  --theme-border-error: #{$dark-border-error};
+  --theme-border-success: #{$dark-border-success};
+
+  // Shadows
+  --theme-shadow-sm: #{$dark-shadow-sm};
+  --theme-shadow-md: #{$dark-shadow-md};
+  --theme-shadow-lg: #{$dark-shadow-lg};
+  --theme-shadow-xl: #{$dark-shadow-xl};
+
+  // Status Colors (same as light)
+  --theme-status-pending: #{$status-pending};
+  --theme-status-confirmed: #{$status-confirmed};
+  --theme-status-assigned: #{$status-assigned};
+  --theme-status-checkin: #{$status-checkin};
+  --theme-status-closed: #{$status-closed};
+
+  // Legacy Compatibility (will be deprecated)
+  --app-bg: var(--theme-bg);
+  --app-card-bg: var(--theme-bg-card);
+  --app-border: var(--theme-border);
+  --app-heading: var(--theme-primary-light);
+  --app-text-primary: var(--theme-text-primary);
+  --app-text-secondary: var(--theme-text-secondary);
+  --app-accent: var(--theme-accent);
+  --color-pending: #{$status-pending};
+  --color-confirmed: #{$status-confirmed};
+  --color-assigned: #{$status-assigned};
+  --color-checkin: #{$status-checkin};
+  --color-closed: #{$status-closed};
+
+  // Dark-specific sero-* overrides
+  --sero-app-bg: #{$dark-bg-primary};
+  --sero-card-bg: #{$dark-bg-card};
+  --sero-surface-2: #{$dark-bg-secondary};
+  --sero-surface-3: #{$dark-bg-hover};
+  --sero-surface-4: #{$dark-bg-selected};
+  --sero-bg-hover: #{$dark-bg-hover};
+  --sero-bg-selected: #{$dark-bg-selected};
+  --sero-text-primary: #{$dark-text-primary};
+  --sero-text-secondary: #{$dark-text-secondary};
+  --sero-text-tertiary: #{$dark-text-tertiary};
+  --sero-text-muted: #{$dark-text-disabled};
+  --sero-text-inverse: #{$dark-text-inverse};
+  --sero-border: #{$dark-border-primary};
+  --sero-border-light: #{$dark-border-secondary};
+  --sero-border-strong: #{$dark-border-hover};
+  --sero-topbar-bg: #{$dark-bg-card};
+
+  // Body background override
+  body {
+    background: var(--theme-bg);
+    color: var(--theme-text-primary);
+  }
+}

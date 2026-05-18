@@ -1,19 +1,16 @@
-<div class="relative">
-  <loading-spinner [isLoading]="isLoading()" [message]="'Loading data...' | translate"/>
-<div class="font-sans  text-gray-800 antialiased">
+<main class="salam-analytics flex-1 overflow-y-auto p-5">
+  <div class="relative">
+    <loading-spinner [isLoading]="isLoading()" [message]="'Loading data...' | translate"/>
 
-  <div class="min-h-screen flex flex-col">
-    <main class="flex-1 container mx-auto px-2 sm:px-4 lg:px-5 py-3 sm:py-5">
-      <stepper-header
-        [currentStep]="currentStep()"
-        [totalSteps]="totalSteps"
-        [maxEnabledStep]="maxEnabledStep()"
-        (stepSelected)="goToStep($event)"
-      />
+    <stepper-header
+      [currentStep]="currentStep()"
+      [totalSteps]="totalSteps"
+      [maxEnabledStep]="maxEnabledStep()"
+      (stepSelected)="goToStep($event)"
+    />
 
-      <div class="package-builder-layout">
-        <div class="package-builder-main w-full">
-          <div id="stepper-contianer-id" class="package-builder-card bg-white border border-gray-200 rounded-xl shadow-soft-lg shadow-sm">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div id="stepper-contianer-id" class="lg:col-span-2 bg-white rounded-md border border-gray-200">
 
             @switch (this.currentStep()){
               @case (1) {
@@ -141,22 +138,18 @@
                 />
               }
             }
-          </div>
-        </div>
-        <stepper-summary-panel 
-          class="package-builder-summary block w-full"
-          [makkahHotelListState]="state.makkahHotelListState"
-          [makkahHotelCountState]="state.makkahHotelCountState"
-          [madinahHotelListState]="state.madinaHotelListState"
-          [madinahHotelCountState]="state.madinaHotelCountState"
-          [foodListState]="state.foodListState"
-          [transportListState]="state.transportListState"
-          [ticketListState]="state.ticketListState"
-          [finalDetailsState]="state.finalDetailsState"
-        />
       </div>
-    </main>
+      <stepper-summary-panel
+        class="block w-full"
+        [makkahHotelListState]="state.makkahHotelListState"
+        [makkahHotelCountState]="state.makkahHotelCountState"
+        [madinahHotelListState]="state.madinaHotelListState"
+        [madinahHotelCountState]="state.madinaHotelCountState"
+        [foodListState]="state.foodListState"
+        [transportListState]="state.transportListState"
+        [ticketListState]="state.ticketListState"
+        [finalDetailsState]="state.finalDetailsState"
+      />
+    </div>
   </div>
-
-</div>
-</div>
+</main>

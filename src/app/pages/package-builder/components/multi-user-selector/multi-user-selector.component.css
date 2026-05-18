@@ -3,13 +3,13 @@
 }
 .user-chip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--app-text-primary) 10%, transparent);
 }
 .dropdown-option:hover {
-  background-color: #f8fafc;
+  background-color: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg));
 }
 .dropdown-option.selected {
-  background-color: #f0f7ff;
+  background-color: color-mix(in srgb, var(--app-heading) 10%, var(--app-card-bg));
 }
 @media (max-width: 640px) {
   .container {

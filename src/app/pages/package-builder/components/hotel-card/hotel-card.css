@@ -2,25 +2,25 @@
 /* Card hover effects */
 .hotel-card {
     transition: all 0.4s ease;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--app-border);
 }
 
 .hotel-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-primary-500);
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--app-text-primary) 8%, transparent);
+    border-color: var(--app-heading);
 }
 
 .hotel-card.selected {
-    border-color: var(--color-primary-500);
-    background-color: var(--color-primary-50);
-    box-shadow: 0 5px 15px rgba(20, 184, 166, 0.15);
+    border-color: var(--app-heading);
+    background-color: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg));
+    box-shadow: 0 5px 15px color-mix(in srgb, var(--app-heading) 15%, transparent);
 }
 
 
 /* Star ratings */
 .rating-stars {
-    color: var(--color-warning-500);
+    color: var(--app-heading);
 }
 
 /* Floating animation */

@@ -36,14 +36,14 @@
 .stepper-item::before {
 	left: -50%;
 	width: 100%;
-	background: #e5e7eb;
+	background: var(--app-border);
 	z-index: 0;
 }
 
 .stepper-item::after {
 	left: 50%;
 	width: 0;
-	background: var(--color-primary-500);
+	background: var(--app-heading);
 	transition: width 0.3s ease;
 	z-index: 1;
 }
@@ -90,7 +90,7 @@
 
 .stepper-item.active .step-indicator {
 	transform: scale(1.08);
-	box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+	box-shadow: 0 0 0 6px color-mix(in srgb, var(--app-heading) 18%, transparent);
 }
 
 .step-label {

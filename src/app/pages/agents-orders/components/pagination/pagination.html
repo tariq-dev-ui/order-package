@@ -1,0 +1,41 @@
+<nav class="flex items-center gap-1">
+    <button
+        class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100"
+                type="button"
+                [disabled]="currentNormalized() === 1"
+                (click)="changePage(currentNormalized() - 1)"
+                [attr.aria-label]="'Previous page' | translate">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+
+        @for (item of pageItems(); track $index) {
+            @if (item === '...') {
+                <span class="w-10 h-10 flex items-center justify-center text-gray-500 select-none" aria-hidden="true">…</span>
+            } @else {
+                <button
+                    type="button"
+                    class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg"
+                    [attr.aria-current]="item === currentNormalized() ? 'page' : null"
+                    [attr.aria-label]="('Page' | translate) + ' ' + item"
+                    [class.bg-primary-500]="item === currentNormalized()"
+                    [class.text-white]="item === currentNormalized()"
+                    [class.font-medium]="true"
+                    [class.border]="item !== currentNormalized()"
+                    [class.border-gray-200]="item !== currentNormalized()"
+                    [class.text-gray-700]="item !== currentNormalized()"
+                    [class.hover\:bg-gray-100]="item !== currentNormalized()"
+                    (click)="changePage(item)">
+                    {{ item }}
+                </button>
+            }
+        }
+
+    <button
+        class="cursor-pointer w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100"
+                type="button"
+                [disabled]="currentNormalized() === totalNormalized()"
+                (click)="changePage(currentNormalized() + 1)"
+                [attr.aria-label]="'Next page' | translate">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+</nav>

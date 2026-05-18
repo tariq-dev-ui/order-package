@@ -4,7 +4,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: color-mix(in srgb, var(--app-text-primary) 15%, transparent);
   z-index: 1;
   display: flex;
   align-items: center;
@@ -12,17 +12,17 @@
 }
 
 .text-success {
-  color: #4caf50 !important;
+  color: var(--app-heading) !important;
 }
 
 .text-error {
-  color: #f44336 !important;
+  color: color-mix(in srgb, var(--app-text-primary) 78%, var(--app-heading)) !important;
 }
 
 .text-primary {
-  color: #2196f3 !important;
+  color: var(--app-heading) !important;
 }
 
 .text-info {
-  color: #00bcd4 !important;
+  color: var(--app-text-secondary) !important;
 }

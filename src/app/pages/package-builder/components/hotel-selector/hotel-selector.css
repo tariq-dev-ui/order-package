@@ -1,86 +1,163 @@
-.hotel-list-container::-webkit-scrollbar {
-  width: 8px;
-}
-.hotel-list-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-.hotel-list-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-.hotel-list-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
+/* ──────────────────────────────────────────
+   Step content wrapper
+   ────────────────────────────────────────── */
+.step-content {
+  min-height: 400px;
 }
 
+/* ──────────────────────────────────────────
+   Custom Select
+   ────────────────────────────────────────── */
+.custom-select {
+  position: relative;
+}
 
-/* Card hover effects */
+.custom-select select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 46px;
+  padding: 0 40px 0 12px;
+  border: 1px solid var(--app-border, #e2e8f0);
+  border-radius: 10px;
+  background: var(--app-card-bg, #fff)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+    no-repeat right 12px center;
+  font-size: 14px;
+  color: var(--app-text-primary, #2a3524);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.custom-select select:focus {
+  border-color: var(--app-heading, #3a472a);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-heading, #3a472a) 12%, transparent);
+}
+
+.custom-select select:disabled {
+  background-color: var(--app-bg, #f8fafc);
+  color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.custom-select select option {
+  color: var(--app-text-primary, #2a3524);
+  background: var(--app-card-bg, #fff);
+}
+
+/* ──────────────────────────────────────────
+   Tabs
+   ────────────────────────────────────────── */
+.tab-btn {
+  font-size: 14px;
+  color: #718096;
+  border-bottom: 2px solid transparent;
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s, border-color 0.15s;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--app-heading, #3a472a);
+}
+
+.tab-btn.active {
+  color: var(--app-heading, #3a472a);
+  border-bottom-color: var(--app-heading, #3a472a);
+  font-weight: 600;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ──────────────────────────────────────────
+   Hotel Cards
+   ────────────────────────────────────────── */
 .hotel-card {
-    transition: all 0.4s ease;
-    border: 1px solid #e2e8f0;
+  transition: all 0.25s ease;
+  border: 1px solid var(--app-border, #e2e8f0);
+  border-radius: 12px;
 }
 
 .hotel-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-primary-500);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--app-text-primary, #2a3524) 8%, transparent);
+  border-color: color-mix(in srgb, var(--app-heading, #3a472a) 40%, var(--app-border, #e2e8f0));
 }
 
 .hotel-card.selected {
-    border-color: var(--color-primary-500);
-    background-color: var(--color-primary-50);
-    box-shadow: 0 5px 15px rgba(20, 184, 166, 0.15);
+  border-color: var(--app-heading, #3a472a);
+  background-color: color-mix(in srgb, var(--app-heading, #3a472a) 6%, var(--app-card-bg, #fff));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--app-heading, #3a472a) 14%, transparent);
+  margin-block: 0.375rem;
 }
 
-
-/* Star ratings */
-.rating-stars {
-    color: var(--color-warning-500);
-}
-
-/* Floating animation */
-.float-animate {
-    animation: float 3s ease-in-out infinite;
-}
-
-
+/* ──────────────────────────────────────────
+   Expand animation (selected hotel details)
+   ────────────────────────────────────────── */
 .animate-expand {
-  animation: expand 0.4s ease-out forwards;
+  animation: expand 0.3s ease-out forwards;
+  overflow: hidden;
 }
 
 @keyframes expand {
-  from { 
+  from {
     opacity: 0;
     max-height: 0;
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
-  to { 
+  to {
     opacity: 1;
-    max-height: 300px;
+    max-height: 400px;
     transform: translateY(0);
   }
 }
 
-.hotel-card.selected {
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+/* ──────────────────────────────────────────
+   Star ratings
+   ────────────────────────────────────────── */
+.rating-stars {
+  color: var(--app-heading, #3a472a);
 }
 
-
-/* .spinner {
-  color: var(--primary-color);
-  animation: pulse 1.5s infinite;
+/* ──────────────────────────────────────────
+   Float animation (decorative)
+   ────────────────────────────────────────── */
+.float-animate {
+  animation: float 3s ease-in-out infinite;
 }
 
-.loading-text {
-  color: var(--primary-color);
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-} */
-
-
-.option-icon::before {
-  content: "\f099";
+/* ──────────────────────────────────────────
+   Hotel list scrollbar
+   ────────────────────────────────────────── */
+.hotel-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+.hotel-list-container::-webkit-scrollbar-track {
+  background: var(--app-bg, #f8fafc);
+  border-radius: 4px;
+}
+.hotel-list-container::-webkit-scrollbar-thumb {
+  background: var(--app-border, #e2e8f0);
+  border-radius: 4px;
+}
+.hotel-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--app-heading, #3a472a);
 }

@@ -1,0 +1,73 @@
+.nights-counter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 46px;
+  border: 1px solid var(--app-border, #e2e8f0);
+  border-radius: 10px;
+  background: var(--app-card-bg, #fff);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.nights-counter:focus-within {
+  border-color: var(--app-heading, #3a472a);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-heading, #3a472a) 12%, transparent);
+}
+
+.nights-decrement,
+.nights-increment {
+  flex-shrink: 0;
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--app-text-primary, #2a3524);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-radius: 0;
+}
+
+.nights-decrement {
+  border-right: 1px solid var(--app-border, #e2e8f0);
+}
+
+.nights-increment {
+  border-left: 1px solid var(--app-border, #e2e8f0);
+}
+
+.nights-decrement:hover,
+.nights-increment:hover {
+  background: color-mix(in srgb, var(--app-heading, #3a472a) 8%, transparent);
+  color: var(--app-heading, #3a472a);
+}
+
+.nights-decrement:active,
+.nights-increment:active {
+  background: color-mix(in srgb, var(--app-heading, #3a472a) 16%, transparent);
+}
+
+.nights-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--app-text-primary, #2a3524);
+  outline: none;
+  /* Hide native number spinners */
+  -moz-appearance: textfield;
+}
+
+.nights-input::-webkit-outer-spin-button,
+.nights-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
