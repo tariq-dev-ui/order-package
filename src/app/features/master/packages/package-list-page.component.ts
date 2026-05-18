@@ -41,7 +41,13 @@ import { PackageBookingModalComponent } from './components/package-booking-modal
           }
 
           <!-- Create Your Own Package Card -->
-          <div class="create-card" (click)="router.navigate(['/admin/agent-packages/new'])">
+          <div
+            class="create-card"
+            role="button"
+            tabindex="0"
+            (click)="openCreatePackage()"
+            (keydown.enter)="openCreatePackage()"
+            (keydown.space)="openCreatePackage(); $event.preventDefault()">
             <div class="create-icon-wrap">
               <span class="material-icons-round create-icon">add</span>
             </div>
@@ -94,9 +100,11 @@ import { PackageBookingModalComponent } from './components/package-booking-modal
       padding: 32px; cursor: pointer; min-height: 240px;
       transition: border-color 0.2s, background 0.2s;
     }
-    .create-card:hover {
+    .create-card:hover,
+    .create-card:focus-visible {
       border-color: var(--sero-primary, #3a472a);
       background: var(--sero-primary-50, #f2f4ee);
+      outline: none;
     }
     .create-icon-wrap {
       width: 56px; height: 56px; border-radius: 50%;
@@ -164,5 +172,9 @@ export class PackageListPageComponent implements OnInit {
       data: { package: pkg },
       disableClose: false,
     });
+  }
+
+  openCreatePackage(): void {
+    this.router.navigate(['/packages/create']);
   }
 }

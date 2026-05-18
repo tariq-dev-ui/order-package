@@ -51,6 +51,7 @@ const userGroupsPage = () => import('./features/admin/user-groups/user-groups-pa
 const systemAdminsPage = () => import('./features/admin/system-admins/system-admins-page.component').then(m => m.SystemAdminsPageComponent);
 const providerUsersPage = () => import('./features/admin/provider-users/provider-users-page.component').then(m => m.ProviderUsersPageComponent);
 const agentUsersPage = () => import('./features/admin/agent-users/agent-users-page.component').then(m => m.AgentUsersPageComponent);
+const packageCreatePage = () => import('./features/master/packages/package-create-page.component').then(m => m.PackageCreatePageComponent);
 const myServicesMakkahPage = () => import('./pages/my-services/makkah-service/makkah-service').then(m => m.MakkahServicePage);
 const myServicesMadinaPage = () => import('./pages/my-services/madina-service/madina-service').then(m => m.MadinaServicePage);
 const myServicesTransportPage = () => import('./pages/my-services/transport-service/transport-service').then(m => m.TransportServicePage);
@@ -157,6 +158,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'distributed', pathMatch: 'full' },
       { path: 'distributed', loadComponent: () => import('./features/master/distributed/distributed-page.component').then(m => m.DistributedPageComponent) },
+      { path: 'packages/create', loadComponent: packageCreatePage },
       { path: 'packages',    loadComponent: () => import('./features/master/packages/package-list-page.component').then(m => m.PackageListPageComponent) },
       { path: 'my-packages', loadComponent: () => import('./features/master/packages/my-packages-page.component').then(m => m.MyPackagesPageComponent) },
       { path: 'orders', loadComponent: () => import('./features/master/orders/orders-page.component').then(m => m.OrdersPageComponent) },
@@ -196,6 +198,7 @@ export const routes: Routes = [
       { path: 'orders/:id', loadComponent: emptyPage }
     ]
   },
+  { path: 'packages/create', redirectTo: 'master/packages/create', pathMatch: 'full' },
   { path: 'admin/my-services',        redirectTo: 'master/my-services',           pathMatch: 'full' },
   { path: 'my-services',             redirectTo: 'master/my-services',           pathMatch: 'full' },
   { path: 'my-services/makkah',      redirectTo: 'master/my-services/makkah',    pathMatch: 'full' },
