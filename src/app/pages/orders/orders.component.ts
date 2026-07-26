@@ -37,7 +37,11 @@ export class OrdersComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly typeMeta = ORDER_TYPE_META;
-  readonly pageSize = 10;
+  readonly itemsPerPageOptions = [10, 25, 50, 100];
+  readonly itemsPerPageDropdownOptions: SeroDropdownOption<number>[] = this.itemsPerPageOptions.map((count) => ({
+    value: count,
+    label: String(count),
+  }));
 
   private readonly typeIconMap: Record<OrderTypeFilter, string> = {
     all: 'shopping-cart',
@@ -72,6 +76,7 @@ export class OrdersComponent implements OnInit {
   rows = signal<OrderRow[]>([]);
   isLoading = signal(false);
   page = signal(1);
+  itemsPerPage = signal(this.itemsPerPageOptions[0]);
   totalCount = signal(0);
   typeCounts = signal<TypeCounts>({});
 
@@ -83,7 +88,9 @@ export class OrdersComponent implements OnInit {
   agentStatusFilter = signal<AgentStatus | null>(null);
   openMoreMenuId = signal<number | null>(null);
 
-  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize)));
+  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.itemsPerPage())));
+  readonly rangeStart = computed(() => (this.totalCount() === 0 ? 0 : ((this.page() - 1) * this.itemsPerPage()) + 1));
+  readonly rangeEnd = computed(() => Math.min(this.page() * this.itemsPerPage(), this.totalCount()));
   readonly activeFilterCount = computed(() => [
     this.paymentFilter(),
     this.operationFilter(),
@@ -194,6 +201,12 @@ export class OrdersComponent implements OnInit {
     this.loadRows();
   }
 
+  onItemsPerPageChange(count: number): void {
+    this.itemsPerPage.set(count);
+    this.page.set(1);
+    this.loadRows();
+  }
+
   toggleMoreMenu(rowId: number, event: Event): void {
     event.stopPropagation();
     this.openMoreMenuId.update((current) => (current === rowId ? null : rowId));
@@ -281,7 +294,7 @@ export class OrdersComponent implements OnInit {
     this.ordersService.getOrders({
       ...this.currentFilters(),
       pageIndex: this.page() - 1,
-      pageSize: this.pageSize,
+      pageSize: this.itemsPerPage(),
     }).subscribe((result) => {
       this.rows.set(result.rows);
       this.totalCount.set(result.total);

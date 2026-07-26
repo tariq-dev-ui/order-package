@@ -347,13 +347,29 @@
       }
         </table>
       </div>
-    </div>
 
-    <div class="op-pagination">
-      <pkg-pagination
-        [currentPage]="page()"
-        [totalPages]="totalPages()"
-        (pageChange)="setPage($event)" />
+      @if (!isLoading() && rows().length > 0) {
+        <div class="table-footer">
+          <pkg-pagination
+            [currentPage]="page()"
+            [totalPages]="totalPages()"
+            (pageChange)="setPage($event)" />
+
+          <div class="footer-meta">
+            <span class="footer-range">{{ rangeStart() }}–{{ rangeEnd() }} <span class="footer-range-of">of</span> {{ totalCount() }}</span>
+
+            <div class="items-per-page">
+              <span>Items per page:</span>
+              <app-sero-dropdown
+                [options]="itemsPerPageDropdownOptions"
+                [value]="itemsPerPage()"
+                size="sm"
+                (valueChange)="onItemsPerPageChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </section>
