@@ -1,175 +1,130 @@
 // Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
-import { RequestVoucherModel } from '../orders/orders.model';
+import {
+  AgentStatus,
+  OperationStatus,
+  PaymentStatus,
+  QuotationRow,
+  QuotationType,
+} from './quotations.model';
 
-export const MOCK_ALL_VOUCHERS: RequestVoucherModel[] = [
+const PREFIX_BY_TYPE: Record<QuotationType, string> = {
+  hotel: 'HTL',
+  transportation: 'TRAN',
+  visa: 'VISA',
+  catering: 'CAT',
+  ticket: 'TCKT',
+  custom: 'CSVC',
+};
+
+// Target totals for the top filter cards — All must equal the sum of every type below.
+export const QUOTATION_TYPE_COUNTS: Record<QuotationType, number> = {
+  hotel: 123,
+  transportation: 21,
+  visa: 18,
+  catering: 21,
+  ticket: 14,
+  custom: 4,
+};
+
+export const QUOTATION_TOTAL_COUNT = Object.values(QUOTATION_TYPE_COUNTS).reduce((sum, n) => sum + n, 0);
+
+// Exact rows for page 1 / "All" filter, in this order, as given by the reference data.
+const CANONICAL_ROWS: QuotationRow[] = [
   {
-    RequestVoucherID: 5001,
-    RequestVoucherCode: 'VCH-5001',
-    SeroPackageRequestID: 1001,
-    RequestVoucherTypeID: 1,
-    VoucherStatusForAgentID: 1,
-    VoucherStatusForAdminID: 2,
-    VoucherStatusForAgentTitle: 'Confirmed',
-    VoucherStatusForAdminTitle: 'Pending Approval',
-    TotalCostPrice: 1800,
-    TotalOriginalPrice: 2000,
-    TotalSellingPrice: 2200,
-    TotalTax: 110,
-    TotalPriceWithTax: 2310,
-    AddedDate: '2025-02-16T10:00:00',
-    AgentID: 10,
+    id: 1, type: 'hotel', quotationNo: 'HTL-20260722-0145', quotationDate: '2026-07-23T01:30:00',
+    agent: 'Third Agent', totalPrice: 900, paid: 100, remaining: 800,
+    paymentStatus: 'partially_paid', operationStatus: 'operation_approved', agentStatus: 'in_progress',
   },
   {
-    RequestVoucherID: 5002,
-    RequestVoucherCode: 'VCH-5002',
-    SeroPackageRequestID: 1001,
-    RequestVoucherTypeID: 3,
-    VoucherStatusForAgentID: 1,
-    VoucherStatusForAdminID: 1,
-    VoucherStatusForAgentTitle: 'Confirmed',
-    VoucherStatusForAdminTitle: 'Approved',
-    TotalCostPrice: 500,
-    TotalOriginalPrice: 600,
-    TotalSellingPrice: 650,
-    TotalTax: 32,
-    TotalPriceWithTax: 682,
-    AddedDate: '2025-02-16T10:05:00',
-    AgentID: 10,
+    id: 2, type: 'transportation', quotationNo: 'TRAN-20260722-0020', quotationDate: '2026-07-22T17:07:00',
+    agent: 'Third Agent', totalPrice: 220, paid: 0, remaining: 220,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5003,
-    RequestVoucherCode: 'VCH-5003',
-    SeroPackageRequestID: 1001,
-    RequestVoucherTypeID: 2,
-    VoucherStatusForAgentID: 1,
-    VoucherStatusForAdminID: 1,
-    VoucherStatusForAgentTitle: 'Confirmed',
-    VoucherStatusForAdminTitle: 'Approved',
-    TotalCostPrice: 900,
-    TotalOriginalPrice: 1000,
-    TotalSellingPrice: 1100,
-    TotalTax: 55,
-    TotalPriceWithTax: 1155,
-    AddedDate: '2025-02-16T10:10:00',
-    AgentID: 10,
+    id: 3, type: 'visa', quotationNo: 'VISA-20260722-0014', quotationDate: '2026-07-23T00:48:00',
+    agent: 'Third Agent', totalPrice: 300, paid: 0, remaining: 300,
+    paymentStatus: 'unpaid', operationStatus: 'account_manager_approved', agentStatus: 'in_progress',
   },
   {
-    RequestVoucherID: 5004,
-    RequestVoucherCode: 'VCH-5004',
-    SeroPackageRequestID: 1002,
-    RequestVoucherTypeID: 1,
-    VoucherStatusForAgentID: 2,
-    VoucherStatusForAdminID: 2,
-    VoucherStatusForAgentTitle: 'Pending',
-    VoucherStatusForAdminTitle: 'Pending Approval',
-    TotalCostPrice: 900,
-    TotalOriginalPrice: 1000,
-    TotalSellingPrice: 1100,
-    TotalTax: 55,
-    TotalPriceWithTax: 1155,
-    AddedDate: '2025-03-02T09:00:00',
-    AgentID: 10,
+    id: 4, type: 'visa', quotationNo: 'VISA-20260722-0013', quotationDate: '2026-07-22T17:07:00',
+    agent: 'Third Agent', totalPrice: 1000, paid: 0, remaining: 1000,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5005,
-    RequestVoucherCode: 'VCH-5005',
-    SeroPackageRequestID: 1003,
-    RequestVoucherTypeID: 4,
-    VoucherStatusForAgentID: 3,
-    VoucherStatusForAdminID: 10,
-    VoucherStatusForAgentTitle: 'Rejected',
-    VoucherStatusForAdminTitle: 'Rejected',
-    TotalCostPrice: 400,
-    TotalOriginalPrice: 480,
-    TotalSellingPrice: 520,
-    TotalTax: 26,
-    TotalPriceWithTax: 546,
-    AddedDate: '2025-04-02T08:30:00',
-    AgentID: 10,
+    id: 5, type: 'catering', quotationNo: 'CAT-20260722-0017', quotationDate: '2026-07-23T00:41:00',
+    agent: 'Third Agent', totalPrice: 700, paid: 0, remaining: 700,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5006,
-    RequestVoucherCode: 'VCH-5006',
-    SeroPackageRequestID: 1005,
-    RequestVoucherTypeID: 5,
-    VoucherStatusForAgentID: 1,
-    VoucherStatusForAdminID: 1,
-    VoucherStatusForAgentTitle: 'Confirmed',
-    VoucherStatusForAdminTitle: 'Approved',
-    TotalCostPrice: 2500,
-    TotalOriginalPrice: 3000,
-    TotalSellingPrice: 3300,
-    TotalTax: 165,
-    TotalPriceWithTax: 3465,
-    AddedDate: '2024-12-02T10:00:00',
-    AgentID: 10,
+    id: 6, type: 'catering', quotationNo: 'CAT-20260722-0016', quotationDate: '2026-07-22T23:45:00',
+    agent: 'Third Agent', totalPrice: 600, paid: 0, remaining: 600,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5007,
-    RequestVoucherCode: 'VCH-5007',
-    SeroPackageRequestID: 1005,
-    RequestVoucherTypeID: 1,
-    VoucherStatusForAgentID: 1,
-    VoucherStatusForAdminID: 1,
-    VoucherStatusForAgentTitle: 'Confirmed',
-    VoucherStatusForAdminTitle: 'Approved',
-    TotalCostPrice: 3000,
-    TotalOriginalPrice: 3500,
-    TotalSellingPrice: 3800,
-    TotalTax: 190,
-    TotalPriceWithTax: 3990,
-    AddedDate: '2024-12-02T10:15:00',
-    AgentID: 10,
+    id: 7, type: 'ticket', quotationNo: 'TCKT-20260722-0014', quotationDate: '2026-07-23T00:39:00',
+    agent: 'Third Agent', totalPrice: 3000, paid: 0, remaining: 3000,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5008,
-    RequestVoucherCode: 'VCH-5008',
-    SeroPackageRequestID: 1004,
-    RequestVoucherTypeID: 3,
-    VoucherStatusForAgentID: 2,
-    VoucherStatusForAdminID: 2,
-    VoucherStatusForAgentTitle: 'Pending',
-    VoucherStatusForAdminTitle: 'Pending Approval',
-    TotalCostPrice: 350,
-    TotalOriginalPrice: 420,
-    TotalSellingPrice: 460,
-    TotalTax: 23,
-    TotalPriceWithTax: 483,
-    AddedDate: '2025-05-21T08:00:00',
-    AgentID: 10,
+    id: 8, type: 'ticket', quotationNo: 'TCKT-20260722-0013', quotationDate: '2026-07-22T23:45:00',
+    agent: 'Third Agent', totalPrice: 3000, paid: 0, remaining: 3000,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
   {
-    RequestVoucherID: 5009,
-    RequestVoucherCode: 'VCH-5009',
-    SeroPackageRequestID: 1004,
-    RequestVoucherTypeID: 2,
-    VoucherStatusForAgentID: 2,
-    VoucherStatusForAdminID: 2,
-    VoucherStatusForAgentTitle: 'Pending',
-    VoucherStatusForAdminTitle: 'Pending Approval',
-    TotalCostPrice: 700,
-    TotalOriginalPrice: 800,
-    TotalSellingPrice: 880,
-    TotalTax: 44,
-    TotalPriceWithTax: 924,
-    AddedDate: '2025-05-21T08:05:00',
-    AgentID: 10,
+    id: 9, type: 'custom', quotationNo: 'CSVC-20260722-0003', quotationDate: '2026-07-23T00:48:00',
+    agent: 'Third Agent', totalPrice: 600, paid: 0, remaining: 600,
+    paymentStatus: 'unpaid', operationStatus: 'account_manager_approved', agentStatus: 'in_progress',
   },
   {
-    RequestVoucherID: 5010,
-    RequestVoucherCode: 'VCH-5010',
-    SeroPackageRequestID: 1003,
-    RequestVoucherTypeID: 1,
-    VoucherStatusForAgentID: 3,
-    VoucherStatusForAdminID: 10,
-    VoucherStatusForAgentTitle: 'Rejected',
-    VoucherStatusForAdminTitle: 'Rejected',
-    TotalCostPrice: 1200,
-    TotalOriginalPrice: 1400,
-    TotalSellingPrice: 1540,
-    TotalTax: 77,
-    TotalPriceWithTax: 1617,
-    AddedDate: '2025-04-02T09:00:00',
-    AgentID: 10,
+    id: 10, type: 'custom', quotationNo: 'CSVC-20260722-0002', quotationDate: '2026-07-22T23:45:00',
+    agent: 'Third Agent', totalPrice: 300, paid: 0, remaining: 300,
+    paymentStatus: 'unpaid', operationStatus: 'preparing', agentStatus: 'preparing',
   },
 ];
+
+const AGENTS = ['Third Agent', 'First Agent', 'Second Agent', 'Main Agent'];
+const PAYMENT_CYCLE: PaymentStatus[] = ['unpaid', 'unpaid', 'partially_paid', 'paid'];
+const OPERATION_CYCLE: OperationStatus[] = ['preparing', 'account_manager_approved', 'operation_approved', 'rejected'];
+const AGENT_STATUS_CYCLE: AgentStatus[] = ['preparing', 'in_progress', 'completed', 'cancelled'];
+
+function buildAdditionalRows(): QuotationRow[] {
+  const canonicalCountByType = CANONICAL_ROWS.reduce((acc, row) => {
+    acc[row.type] = (acc[row.type] ?? 0) + 1;
+    return acc;
+  }, {} as Record<QuotationType, number>);
+
+  const rows: QuotationRow[] = [];
+  let nextId = CANONICAL_ROWS.length + 1;
+
+  (Object.keys(QUOTATION_TYPE_COUNTS) as QuotationType[]).forEach((type) => {
+    const remaining = QUOTATION_TYPE_COUNTS[type] - (canonicalCountByType[type] ?? 0);
+    for (let i = 0; i < remaining; i++) {
+      const seq = 1000 - i;
+      const minutesAgo = i * 47;
+      const date = new Date(2026, 6, 21, 12, 0, 0);
+      date.setMinutes(date.getMinutes() - minutesAgo);
+
+      const totalPrice = 100 * (2 + ((i * 3 + 1) % 28));
+      const paymentStatus = PAYMENT_CYCLE[i % PAYMENT_CYCLE.length];
+      const paid = paymentStatus === 'paid' ? totalPrice : paymentStatus === 'partially_paid' ? Math.round(totalPrice * 0.4) : 0;
+
+      rows.push({
+        id: nextId++,
+        type,
+        quotationNo: `${PREFIX_BY_TYPE[type]}-20260721-${String(seq).padStart(4, '0')}`,
+        quotationDate: date.toISOString().slice(0, 19),
+        agent: AGENTS[i % AGENTS.length],
+        totalPrice,
+        paid,
+        remaining: totalPrice - paid,
+        paymentStatus,
+        operationStatus: OPERATION_CYCLE[i % OPERATION_CYCLE.length],
+        agentStatus: AGENT_STATUS_CYCLE[i % AGENT_STATUS_CYCLE.length],
+      });
+    }
+  });
+
+  return rows;
+}
+
+export const MOCK_QUOTATIONS: QuotationRow[] = [...CANONICAL_ROWS, ...buildAdditionalRows()];

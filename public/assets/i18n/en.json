@@ -172,6 +172,174 @@
     }
   },
 
+  "orders": {
+    "title": "All Orders",
+    "subtitle": "Browse and manage all orders across all services.",
+    "types": {
+      "all": "All",
+      "hotel": "Hotels",
+      "transportation": "Transportation",
+      "visa": "Visa",
+      "catering": "Catering",
+      "ticket": "Tickets",
+      "custom": "Custom Service"
+    },
+    "actions": {
+      "export": "Export",
+      "filter": "Filter",
+      "advancedFilters": "Advanced Filters",
+      "searchPlaceholder": "Search order number, agent or service...",
+      "clearFilters": "Clear Filters"
+    },
+    "filters": {
+      "paymentStatus": "Payment Status",
+      "operationStatus": "Operation Status",
+      "agentStatus": "Agent Status",
+      "any": "Any"
+    },
+    "columns": {
+      "type": "Type",
+      "orderNo": "Order No.",
+      "orderDate": "Order Date",
+      "agent": "Agent",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "paymentStatus": "Payment Status",
+      "operationStatus": "Operation Status",
+      "agentStatus": "Agent Status",
+      "actions": "Actions"
+    },
+    "payment": {
+      "paid": "Paid",
+      "partial": "Partially Paid",
+      "unpaid": "Unpaid"
+    },
+    "operation": {
+      "preparing": "Preparing",
+      "amApproved": "Account Manager Approved",
+      "opApproved": "Operation Approved",
+      "rejected": "Rejected"
+    },
+    "agentStatus": {
+      "preparing": "Preparing",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "footer": {
+      "total": "Total"
+    },
+    "empty": {
+      "title": "No orders found",
+      "description": "Try adjusting your filters or search terms."
+    },
+    "actionsMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "print": "Print",
+      "more": "More",
+      "duplicate": "Duplicate",
+      "downloadPdf": "Download PDF",
+      "statusLog": "Status Log",
+      "delete": "Delete"
+    },
+    "feedback": {
+      "view": "Viewing order {{no}}",
+      "edit": "Editing order {{no}}",
+      "print": "Printing order {{no}}",
+      "duplicate": "Duplicated order {{no}}",
+      "downloadPdf": "Downloading PDF for {{no}}",
+      "statusLog": "Opening status log for {{no}}",
+      "delete": "Deleted order {{no}}",
+      "exportStarted": "Exporting {{count}} orders..."
+    }
+  },
+
+  "quotations": {
+    "title": "All Quotations",
+    "subtitle": "Browse and manage all quotations across all services.",
+    "types": {
+      "all": "All",
+      "hotel": "Hotels",
+      "transportation": "Transportation",
+      "visa": "Visa",
+      "catering": "Catering",
+      "ticket": "Tickets",
+      "custom": "Custom Service"
+    },
+    "actions": {
+      "export": "Export",
+      "filter": "Filter",
+      "advancedFilters": "Advanced Filters",
+      "searchPlaceholder": "Search quotation number, agent or service...",
+      "clearFilters": "Clear Filters"
+    },
+    "filters": {
+      "paymentStatus": "Payment Status",
+      "operationStatus": "Operation Status",
+      "agentStatus": "Agent Status",
+      "any": "Any"
+    },
+    "columns": {
+      "type": "Type",
+      "quotationNo": "Quotation No.",
+      "quotationDate": "Quotation Date",
+      "agent": "Agent",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "paymentStatus": "Payment Status",
+      "operationStatus": "Operation Status",
+      "agentStatus": "Agent Status",
+      "actions": "Actions"
+    },
+    "payment": {
+      "paid": "Paid",
+      "partial": "Partially Paid",
+      "unpaid": "Unpaid"
+    },
+    "operation": {
+      "preparing": "Preparing",
+      "amApproved": "Account Manager Approved",
+      "opApproved": "Operation Approved",
+      "rejected": "Rejected"
+    },
+    "agentStatus": {
+      "preparing": "Preparing",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "footer": {
+      "total": "Total"
+    },
+    "empty": {
+      "title": "No quotations found",
+      "description": "Try adjusting your filters or search terms."
+    },
+    "actionsMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "print": "Print",
+      "more": "More",
+      "duplicate": "Duplicate",
+      "downloadPdf": "Download PDF",
+      "statusLog": "Status Log",
+      "delete": "Delete"
+    },
+    "feedback": {
+      "view": "Viewing quotation {{no}}",
+      "edit": "Editing quotation {{no}}",
+      "print": "Printing quotation {{no}}",
+      "duplicate": "Duplicated quotation {{no}}",
+      "downloadPdf": "Downloading PDF for {{no}}",
+      "statusLog": "Opening status log for {{no}}",
+      "delete": "Deleted quotation {{no}}",
+      "exportStarted": "Exporting {{count}} quotations..."
+    }
+  },
+
   "topbar": {
     "notifications":  "Notifications",
     "help":           "Help & Support",

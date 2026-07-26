@@ -2,13 +2,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { QuotationRow, QuotationsPage, QuotationsQuery, QuotationType } from './quotations.model';
-import { MOCK_QUOTATIONS, QUOTATION_TOTAL_COUNT, QUOTATION_TYPE_COUNTS } from './quotations.mock';
+import { OrderRow, OrdersPage, OrdersQuery, OrderType } from './orders.model';
+import { MOCK_ORDERS, ORDER_TOTAL_COUNT, ORDER_TYPE_COUNTS } from './orders.mock';
 
 @Injectable({ providedIn: 'root' })
-export class QuotationsService {
+export class OrdersService {
   // Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
-  getQuotations(query: QuotationsQuery): Observable<QuotationsPage> {
+  getOrders(query: OrdersQuery): Observable<OrdersPage> {
     const filtered = this.filterRows(query);
     const start = query.pageIndex * query.pageSize;
     const rows = filtered.slice(start, start + query.pageSize);
@@ -17,17 +17,21 @@ export class QuotationsService {
   }
 
   // Full matching set (unpaginated) for CSV export.
-  getAllMatching(query: Omit<QuotationsQuery, 'pageIndex' | 'pageSize'>): Observable<QuotationRow[]> {
+  getAllMatching(query: Omit<OrdersQuery, 'pageIndex' | 'pageSize'>): Observable<OrderRow[]> {
     return of(this.filterRows(query)).pipe(delay(150));
   }
 
-  private filterRows(query: Omit<QuotationsQuery, 'pageIndex' | 'pageSize'>): QuotationRow[] {
+  getTypeCounts(): Observable<Record<OrderType, number> & { all: number }> {
+    return of({ ...ORDER_TYPE_COUNTS, all: ORDER_TOTAL_COUNT }).pipe(delay(100));
+  }
+
+  private filterRows(query: Omit<OrdersQuery, 'pageIndex' | 'pageSize'>): OrderRow[] {
     const term = query.search.trim().toLowerCase();
 
-    return MOCK_QUOTATIONS.filter((row) => {
+    return MOCK_ORDERS.filter((row) => {
       const matchesType = query.typeFilter === 'all' || row.type === query.typeFilter;
       const matchesSearch = !term
-        || row.quotationNo.toLowerCase().includes(term)
+        || row.orderNo.toLowerCase().includes(term)
         || row.agent.toLowerCase().includes(term)
         || row.type.toLowerCase().includes(term);
       const matchesPayment = !query.paymentStatus || row.paymentStatus === query.paymentStatus;
@@ -35,9 +39,5 @@ export class QuotationsService {
       const matchesAgentStatus = !query.agentStatus || row.agentStatus === query.agentStatus;
       return matchesType && matchesSearch && matchesPayment && matchesOperation && matchesAgentStatus;
     });
-  }
-
-  getTypeCounts(): Observable<Record<QuotationType, number> & { all: number }> {
-    return of({ ...QUOTATION_TYPE_COUNTS, all: QUOTATION_TOTAL_COUNT }).pipe(delay(100));
   }
 }

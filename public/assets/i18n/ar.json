@@ -218,6 +218,174 @@
     }
   },
 
+  "orders": {
+    "title": "جميع الطلبات",
+    "subtitle": "تصفح وأدر جميع الطلبات عبر جميع الخدمات.",
+    "types": {
+      "all": "الكل",
+      "hotel": "الفنادق",
+      "transportation": "النقل",
+      "visa": "التأشيرات",
+      "catering": "التموين",
+      "ticket": "التذاكر",
+      "custom": "خدمة مخصصة"
+    },
+    "actions": {
+      "export": "تصدير",
+      "filter": "فلتر",
+      "advancedFilters": "فلاتر متقدمة",
+      "searchPlaceholder": "ابحث برقم الطلب أو الوكيل أو الخدمة...",
+      "clearFilters": "مسح الفلاتر"
+    },
+    "filters": {
+      "paymentStatus": "حالة الدفع",
+      "operationStatus": "حالة العملية",
+      "agentStatus": "حالة الوكيل",
+      "any": "الكل"
+    },
+    "columns": {
+      "type": "النوع",
+      "orderNo": "رقم الطلب",
+      "orderDate": "تاريخ الطلب",
+      "agent": "الوكيل",
+      "totalPrice": "السعر الإجمالي",
+      "paid": "المدفوع",
+      "remaining": "المتبقي",
+      "paymentStatus": "حالة الدفع",
+      "operationStatus": "حالة العملية",
+      "agentStatus": "حالة الوكيل",
+      "actions": "الإجراءات"
+    },
+    "payment": {
+      "paid": "مدفوع",
+      "partial": "مدفوع جزئياً",
+      "unpaid": "غير مدفوع"
+    },
+    "operation": {
+      "preparing": "قيد التحضير",
+      "amApproved": "موافقة مدير الحساب",
+      "opApproved": "موافقة العمليات",
+      "rejected": "مرفوض"
+    },
+    "agentStatus": {
+      "preparing": "قيد التحضير",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "footer": {
+      "total": "الإجمالي"
+    },
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "جرّب تعديل الفلاتر أو كلمات البحث."
+    },
+    "actionsMenu": {
+      "view": "عرض",
+      "edit": "تعديل",
+      "print": "طباعة",
+      "more": "المزيد",
+      "duplicate": "نسخ",
+      "downloadPdf": "تحميل PDF",
+      "statusLog": "سجل الحالة",
+      "delete": "حذف"
+    },
+    "feedback": {
+      "view": "عرض الطلب {{no}}",
+      "edit": "تعديل الطلب {{no}}",
+      "print": "طباعة الطلب {{no}}",
+      "duplicate": "تم نسخ الطلب {{no}}",
+      "downloadPdf": "تنزيل PDF لـ {{no}}",
+      "statusLog": "فتح سجل الحالة لـ {{no}}",
+      "delete": "تم حذف الطلب {{no}}",
+      "exportStarted": "تصدير {{count}} طلب..."
+    }
+  },
+
+  "quotations": {
+    "title": "جميع عروض الأسعار",
+    "subtitle": "تصفح وأدر جميع عروض الأسعار عبر جميع الخدمات.",
+    "types": {
+      "all": "الكل",
+      "hotel": "الفنادق",
+      "transportation": "النقل",
+      "visa": "التأشيرات",
+      "catering": "التموين",
+      "ticket": "التذاكر",
+      "custom": "خدمة مخصصة"
+    },
+    "actions": {
+      "export": "تصدير",
+      "filter": "فلتر",
+      "advancedFilters": "فلاتر متقدمة",
+      "searchPlaceholder": "ابحث برقم عرض السعر أو الوكيل أو الخدمة...",
+      "clearFilters": "مسح الفلاتر"
+    },
+    "filters": {
+      "paymentStatus": "حالة الدفع",
+      "operationStatus": "حالة العملية",
+      "agentStatus": "حالة الوكيل",
+      "any": "الكل"
+    },
+    "columns": {
+      "type": "النوع",
+      "quotationNo": "رقم عرض السعر",
+      "quotationDate": "تاريخ عرض السعر",
+      "agent": "الوكيل",
+      "totalPrice": "السعر الإجمالي",
+      "paid": "المدفوع",
+      "remaining": "المتبقي",
+      "paymentStatus": "حالة الدفع",
+      "operationStatus": "حالة العملية",
+      "agentStatus": "حالة الوكيل",
+      "actions": "الإجراءات"
+    },
+    "payment": {
+      "paid": "مدفوع",
+      "partial": "مدفوع جزئياً",
+      "unpaid": "غير مدفوع"
+    },
+    "operation": {
+      "preparing": "قيد التحضير",
+      "amApproved": "موافقة مدير الحساب",
+      "opApproved": "موافقة العمليات",
+      "rejected": "مرفوض"
+    },
+    "agentStatus": {
+      "preparing": "قيد التحضير",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "footer": {
+      "total": "الإجمالي"
+    },
+    "empty": {
+      "title": "لا توجد عروض أسعار",
+      "description": "جرّب تعديل الفلاتر أو كلمات البحث."
+    },
+    "actionsMenu": {
+      "view": "عرض",
+      "edit": "تعديل",
+      "print": "طباعة",
+      "more": "المزيد",
+      "duplicate": "نسخ",
+      "downloadPdf": "تحميل PDF",
+      "statusLog": "سجل الحالة",
+      "delete": "حذف"
+    },
+    "feedback": {
+      "view": "عرض عرض السعر {{no}}",
+      "edit": "تعديل عرض السعر {{no}}",
+      "print": "طباعة عرض السعر {{no}}",
+      "duplicate": "تم نسخ عرض السعر {{no}}",
+      "downloadPdf": "تنزيل PDF لـ {{no}}",
+      "statusLog": "فتح سجل الحالة لـ {{no}}",
+      "delete": "تم حذف عرض السعر {{no}}",
+      "exportStarted": "تصدير {{count}} عرض سعر..."
+    }
+  },
+
   "topbar": {
     "notifications":   "الإشعارات",
     "help":            "المساعدة والدعم",
