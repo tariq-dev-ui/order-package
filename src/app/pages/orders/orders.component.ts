@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { SeroDropdownComponent, SeroDropdownOption } from '../../shared/components/sero-dropdown/sero-dropdown.component';
@@ -37,6 +38,15 @@ type TypeCounts = Record<string, number>;
               <h1 class="page-title">{{ 'orders.title' | translate }}</h1>
               <p class="page-description">{{ 'orders.subtitle' | translate }}</p>
             </div>
+          </div>
+          <div class="header-actions">
+            <button
+              type="button"
+              class="action-btn new-request-btn"
+              (click)="createNewRequest()">
+              <tabler-icon name="plus"></tabler-icon>
+              <span>طلب جديد</span>
+            </button>
           </div>
         </div>
       </div>
@@ -381,6 +391,115 @@ type TypeCounts = Record<string, number>;
       background: var(--app-bg);
     }
 
+    .op-page .page-header {
+      display: block;
+      width: 100%;
+      padding: 1.5rem 0;
+      margin: 0 0 2rem;
+      border-bottom: 1px solid var(--app-border);
+      background: var(--app-card-bg);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .op-page .page-header .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .op-page .page-header .header-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 1rem;
+      min-width: 240px;
+    }
+
+    .op-page .page-header .page-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 0.75rem;
+      background: var(--app-heading);
+      color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .op-page .page-header .page-icon tabler-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .op-page .page-header .header-text {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      text-align: start;
+    }
+
+    .op-page .page-header .page-title {
+      margin: 0;
+      color: var(--app-text-primary);
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .op-page .page-header .page-description {
+      margin: 0;
+      color: var(--app-text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+
+    .op-page .page-header .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      margin-inline-start: auto;
+    }
+
+    .new-request-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      min-height: 36px;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.375rem;
+      background: var(--sero-linear-gradient, linear-gradient(135deg, #3a472a, #627b47));
+      color: white;
+      box-shadow: 0 2px 8px rgba(58, 71, 42, 0.3);
+      font-size: 0.875rem;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+
+    .new-request-btn:hover {
+      background: var(--sero-linear-gradient-hover, linear-gradient(135deg, #2d3821, #556842));
+      box-shadow: 0 4px 12px rgba(58, 71, 42, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .new-request-btn tabler-icon {
+      width: 16px;
+      height: 16px;
+    }
+
     .statistics-section {
       max-width: 1400px;
       margin: 0 auto 2rem;
@@ -394,12 +513,13 @@ type TypeCounts = Record<string, number>;
     }
 
     .stat-card {
-      min-height: 72px;
+      min-height: 104px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      padding: 1rem 1.25rem;
+      gap: 0.625rem;
+      padding: 0.875rem 0.75rem;
       border: 1px solid var(--app-border);
       border-radius: 0.5rem;
       background: var(--app-card-bg);
@@ -426,8 +546,8 @@ type TypeCounts = Record<string, number>;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 1.55rem;
+      height: 1.55rem;
       color: var(--app-heading);
       flex: 0 0 auto;
       transition: color 0.3s ease;
@@ -435,8 +555,8 @@ type TypeCounts = Record<string, number>;
 
     .stat-icon tabler-icon,
     .stat-icon i-tabler {
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 1.55rem;
+      height: 1.55rem;
     }
 
     .stat-icon--transportation,
@@ -462,25 +582,27 @@ type TypeCounts = Record<string, number>;
     .stat-content {
       min-width: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 0.35rem;
       flex: 1;
+      width: 100%;
     }
 
     .stat-value {
-      min-width: 40px;
+      min-width: 34px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 4px 12px;
+      padding: 0.2rem 0.65rem;
       border: 1px solid color-mix(in srgb, var(--app-heading) 15%, transparent);
       border-radius: 0.5rem;
       background: color-mix(in srgb, var(--app-heading) 10%, var(--app-card-bg));
       color: var(--app-heading);
-      font-size: 1.5rem;
+      font-size: 1.125rem;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.1;
       font-variant-numeric: tabular-nums;
       transition: all 0.3s ease;
     }
@@ -493,34 +615,193 @@ type TypeCounts = Record<string, number>;
     .stat-label {
       min-width: 0;
       color: var(--app-text-secondary);
-      font-size: 0.875rem;
-      font-weight: 500;
-      line-height: 1.4;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1.45;
+      white-space: normal;
+      overflow: visible;
+      text-align: center;
+      overflow-wrap: anywhere;
       transition: color 0.3s ease;
     }
 
     .filters-section {
-      margin-bottom: 2rem;
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
     }
 
+    .filters-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-card-bg);
+      transition: all 0.3s ease;
+    }
+
+    .filters-header-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: nowrap;
+      width: 100%;
+    }
+
+    .filter-button-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      order: 1;
+      white-space: nowrap;
+    }
+
+    .filter-main-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-width: fit-content;
+      height: 42px;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: var(--app-heading);
+      color: white;
+      box-shadow: 0 2px 4px rgba(58, 71, 42, 0.15);
+      font-size: 0.875rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .filter-main-btn tabler-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .filter-main-btn:hover,
     .filter-main-btn.is-open {
-      background: color-mix(in srgb, var(--app-heading) 88%, var(--app-text-primary));
+      background: #4a5a2e;
+      box-shadow: 0 4px 8px rgba(58, 71, 42, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .filter-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 0.375rem;
+      margin-inline-start: 0.25rem;
+      border-radius: 10px;
+      background: white;
+      color: var(--app-heading);
+      font-size: 0.75rem;
+      font-weight: 700;
     }
 
     .search-field-wrapper {
       position: relative;
+      order: 2;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 200px;
+      max-width: 100%;
+      gap: 0;
+      border: 1.5px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-bg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-field-wrapper:hover {
+      border-color: var(--app-heading);
+      background: var(--app-card-bg);
+      box-shadow: 0 2px 6px rgba(58, 71, 42, 0.08);
+    }
+
+    .search-field-wrapper:focus-within {
+      border-color: var(--app-heading);
+      background: var(--app-card-bg);
+      box-shadow: 0 0 0 3px rgba(58, 71, 42, 0.12), 0 2px 8px rgba(58, 71, 42, 0.1);
+    }
+
+    .search-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      color: var(--app-text-secondary);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-icon tabler-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .search-divider {
+      width: 1px;
+      height: 24px;
+      flex-shrink: 0;
+      background: var(--app-border);
+      transition: all 0.3s ease;
+    }
+
+    .search-field-wrapper:hover .search-icon,
+    .search-field-wrapper:focus-within .search-icon {
+      color: var(--app-heading);
+    }
+
+    .search-field-wrapper:hover .search-divider,
+    .search-field-wrapper:focus-within .search-divider {
+      background: var(--app-heading);
+    }
+
+    .search-input {
+      flex: 1;
+      width: 100%;
+      height: 42px;
+      min-width: 0;
+      padding: 0.75rem 1rem;
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: var(--app-text-primary) !important;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+
+    .search-input::placeholder {
+      color: var(--app-text-secondary);
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .search-input:focus::placeholder {
+      opacity: 0.5;
     }
 
     .search-clear-btn {
-      width: 30px;
-      height: 30px;
-      margin-inline-end: 0.35rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 30px;
+      height: 30px;
+      margin-inline-end: 0.35rem;
       border: none;
       border-radius: 0.375rem;
       background: transparent;
@@ -538,17 +819,126 @@ type TypeCounts = Record<string, number>;
       height: 14px;
     }
 
-    .op-active-filters {
+    .export-btn {
+      order: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      min-width: fit-content;
+      height: 42px;
+      padding: 0.75rem 1.25rem;
+      border: 1.5px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-card-bg);
+      color: var(--app-text-primary);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      font-size: 0.875rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .export-btn tabler-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--app-heading);
+    }
+
+    .export-btn:hover {
+      border-color: var(--app-heading);
+      background: var(--app-bg);
+      box-shadow: 0 2px 6px rgba(58, 71, 42, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .export-btn:active {
+      transform: translateY(0);
+    }
+
+    .active-filters-display {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
       align-items: stretch;
+      gap: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--app-border);
     }
 
-    .op-active-filters .active-filter-item {
+    .active-filter-item {
+      display: flex;
+      flex: 0 0 auto;
+      flex-direction: column;
+      gap: 0.5rem;
       min-width: 220px;
+      max-width: 280px;
+      padding: 0.75rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-bg);
+      transition: all 0.3s ease;
     }
 
-    .op-active-filters app-sero-dropdown {
+    .active-filter-item:hover {
+      border-color: var(--app-heading);
+    }
+
+    .filter-item-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-item-header tabler-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--app-heading);
+      flex-shrink: 0;
+    }
+
+    .filter-item-label {
+      flex: 1;
+      overflow: hidden;
+      color: var(--app-text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .filter-item-input app-sero-dropdown {
       display: block;
       width: 100%;
+    }
+
+    .clear-all-filters-btn {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 0.375rem;
+      height: fit-content;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #f3b8b8;
+      border-radius: 0.375rem;
+      background: transparent;
+      color: #d96565;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .clear-all-filters-btn tabler-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .clear-all-filters-btn:hover {
+      border-color: #d96565;
+      background: #fee2e2;
     }
 
     .table-section {
@@ -568,7 +958,6 @@ type TypeCounts = Record<string, number>;
 
     .table-container {
       overflow-x: auto;
-      max-height: calc(100vh - 280px);
     }
 
     .orders-table {
@@ -580,7 +969,7 @@ type TypeCounts = Record<string, number>;
 
     .orders-table thead tr {
       height: 44px;
-      background: var(--app-heading);
+      background: var(--app-heading) !important;
     }
 
     .orders-table th {
@@ -589,8 +978,8 @@ type TypeCounts = Record<string, number>;
       z-index: 2;
       padding: 0 1rem;
       border-bottom: none;
-      background: var(--app-heading);
-      color: color-mix(in srgb, var(--app-card-bg) 85%, transparent);
+      background: var(--app-heading) !important;
+      color: color-mix(in srgb, var(--app-card-bg) 85%, transparent) !important;
       font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: 0.03em;
@@ -603,8 +992,8 @@ type TypeCounts = Record<string, number>;
     .orders-table td {
       height: 52px;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid color-mix(in srgb, var(--app-border) 60%, transparent);
-      color: var(--app-text-primary);
+      border-bottom: 1px solid color-mix(in srgb, var(--app-border) 60%, transparent) !important;
+      color: var(--app-text-primary) !important;
       font-size: 0.8125rem;
       line-height: 1.4;
       text-align: center;
@@ -692,47 +1081,47 @@ type TypeCounts = Record<string, number>;
     }
 
     .status-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 22px;
-      padding: 0.18rem 0.55rem;
-      border: 1px solid;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      line-height: 1.2;
-      white-space: nowrap;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 22px !important;
+      padding: 0.18rem 0.55rem !important;
+      border: 1px solid !important;
+      border-radius: 999px !important;
+      font-size: 0.7rem !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
     }
 
     .status-success {
-      background: color-mix(in srgb, var(--sero-success) 10%, transparent);
-      color: var(--sero-success);
-      border-color: color-mix(in srgb, var(--sero-success) 25%, transparent);
+      background: color-mix(in srgb, var(--sero-success) 10%, transparent) !important;
+      color: var(--sero-success) !important;
+      border-color: color-mix(in srgb, var(--sero-success) 25%, transparent) !important;
     }
 
     .status-warning {
-      background: color-mix(in srgb, var(--sero-warning) 10%, transparent);
-      color: var(--sero-warning);
-      border-color: color-mix(in srgb, var(--sero-warning) 25%, transparent);
+      background: color-mix(in srgb, var(--sero-warning) 10%, transparent) !important;
+      color: var(--sero-warning) !important;
+      border-color: color-mix(in srgb, var(--sero-warning) 25%, transparent) !important;
     }
 
     .status-danger {
-      background: color-mix(in srgb, var(--sero-danger) 10%, transparent);
-      color: var(--sero-danger);
-      border-color: color-mix(in srgb, var(--sero-danger) 25%, transparent);
+      background: color-mix(in srgb, var(--sero-danger) 10%, transparent) !important;
+      color: var(--sero-danger) !important;
+      border-color: color-mix(in srgb, var(--sero-danger) 25%, transparent) !important;
     }
 
     .status-info {
-      background: color-mix(in srgb, var(--sero-info) 10%, transparent);
-      color: var(--sero-info);
-      border-color: color-mix(in srgb, var(--sero-info) 25%, transparent);
+      background: color-mix(in srgb, var(--sero-info) 10%, transparent) !important;
+      color: var(--sero-info) !important;
+      border-color: color-mix(in srgb, var(--sero-info) 25%, transparent) !important;
     }
 
     .status-muted {
-      background: color-mix(in srgb, var(--app-text-secondary) 10%, transparent);
-      color: var(--app-text-secondary);
-      border-color: color-mix(in srgb, var(--app-text-secondary) 25%, transparent);
+      background: color-mix(in srgb, var(--app-text-secondary) 10%, transparent) !important;
+      color: var(--app-text-secondary) !important;
+      border-color: color-mix(in srgb, var(--app-text-secondary) 25%, transparent) !important;
     }
 
     .pms-actions-cell {
@@ -933,6 +1322,22 @@ type TypeCounts = Record<string, number>;
     }
 
     @media (max-width: 768px) {
+      .op-page .page-header {
+        padding: 1rem 0;
+      }
+
+      .op-page .page-header .header-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+
+      .op-page .page-header .header-actions,
+      .new-request-btn {
+        width: 100%;
+      }
+
       .statistics-section {
         padding: 0 1rem;
       }
@@ -969,6 +1374,7 @@ export class OrdersComponent implements OnInit {
   private readonly ordersService = inject(OrdersService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
 
   readonly typeMeta = ORDER_TYPE_META;
   readonly pageSize = 10;
@@ -1087,6 +1493,10 @@ export class OrdersComponent implements OnInit {
     this.searchText.set('');
     this.page.set(1);
     this.loadRows();
+  }
+
+  createNewRequest(): void {
+    this.router.navigate(['/admin/agent-requests/new']);
   }
 
   toggleAdvancedFilters(): void {
