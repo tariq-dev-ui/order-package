@@ -34,10 +34,9 @@ interface LanguageOption {
         <tabler-icon name="menu-2" class="icon-20"></tabler-icon>
       </button>
 
-      <button class="topbar-search" type="button" aria-label="Search">
-        <tabler-icon name="search" class="icon-18"></tabler-icon>
-        <span class="topbar-search__text">{{ currentTitleKey | translate }}</span>
-      </button>
+      <div class="topbar-title">
+        {{ currentTitleKey | translate }}
+      </div>
 
       <div class="topbar-actions" aria-label="Navbar actions">
         <div class="navbar-menu">
@@ -220,27 +219,20 @@ interface LanguageOption {
       transition: left var(--t-slow), right var(--t-slow), background 0.2s ease, border-color 0.2s ease;
     }
 
-    .topbar-search {
+    .topbar-title {
       grid-column: 2;
       justify-self: center;
       min-width: 0;
       width: 100%;
       max-width: 620px;
-      height: var(--topbar-control-size);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 14px;
-      border: 1px solid var(--theme-border, var(--app-border));
-      border-radius: 10px;
-      background: var(--theme-bg, #f8f9f7);
-      color: var(--theme-text-secondary, #5c6652);
-      font: inherit;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      text-align: start;
-      cursor: pointer;
-      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+      overflow: hidden;
+      color: var(--theme-text-primary, #1f2937);
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .topbar-actions {
@@ -252,24 +244,6 @@ interface LanguageOption {
       justify-content: flex-end;
       gap: var(--topbar-control-gap);
       direction: ltr;
-    }
-
-    .topbar-search:hover {
-      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 30%, var(--theme-border, #d8decf));
-      background: var(--theme-bg-card, #fff);
-      color: var(--theme-primary, #3a472a);
-    }
-
-    .topbar-search__text {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .topbar-title {
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .rms-icon-btn,
@@ -381,7 +355,6 @@ interface LanguageOption {
     }
 
     .rms-icon-btn:focus-visible,
-    .topbar-search:focus-visible,
     .profile-trigger:focus-visible,
     .language-option:focus-visible,
     .profile-menu-item:focus-visible {
@@ -835,13 +808,8 @@ interface LanguageOption {
         display: none;
       }
 
-      .topbar-search {
-        gap: 8px;
-        padding: 0 10px;
-      }
-
-      .topbar-search__text {
-        max-width: 100%;
+      .topbar-title {
+        font-size: 0.82rem;
       }
 
       .dropdown-panel {
