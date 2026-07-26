@@ -59,23 +59,31 @@ import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util
 
       <div class="kpi-grid">
         <article class="kpi-card">
-          <span class="kpi-label">إجمالي الأصول</span>
-          <strong>{{ formatMoney(totalAssets) }}</strong>
+          <div class="kpi-top">
+            <span class="kpi-label">إجمالي الأصول</span>
+            <span class="kpi-value"><span class="kpi-icon material-icons-round">account_balance</span>{{ formatMoney(totalAssets) }}</span>
+          </div>
           <span class="kpi-foot">من الشجرة المحاسبية</span>
         </article>
         <article class="kpi-card">
-          <span class="kpi-label">إجمالي الالتزامات</span>
-          <strong>{{ formatMoney(totalLiabilities) }}</strong>
+          <div class="kpi-top">
+            <span class="kpi-label">إجمالي الالتزامات</span>
+            <span class="kpi-value"><span class="kpi-icon material-icons-round">receipt_long</span>{{ formatMoney(totalLiabilities) }}</span>
+          </div>
           <span class="kpi-foot">ذمم وضرائب مستحقة</span>
         </article>
         <article class="kpi-card">
-          <span class="kpi-label">صافي الدخل</span>
-          <strong>{{ formatMoney(netIncome) }}</strong>
+          <div class="kpi-top">
+            <span class="kpi-label">صافي الدخل</span>
+            <span class="kpi-value"><span class="kpi-icon material-icons-round">trending_up</span>{{ formatMoney(netIncome) }}</span>
+          </div>
           <span class="kpi-foot">إيرادات ناقص مصروفات</span>
         </article>
         <article class="kpi-card">
-          <span class="kpi-label">القيود المرحلة</span>
-          <strong>{{ postedEntriesCount }}</strong>
+          <div class="kpi-top">
+            <span class="kpi-label">القيود المرحلة</span>
+            <span class="kpi-value"><span class="kpi-icon material-icons-round">fact_check</span>{{ postedEntriesCount }}</span>
+          </div>
           <span class="kpi-foot">بيانات محلية فقط</span>
         </article>
       </div>
@@ -696,6 +704,14 @@ import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util
       padding: 14px;
     }
 
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
     .kpi-label,
     .kpi-foot,
     .record-meta,
@@ -707,14 +723,33 @@ import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util
       font-weight: 700;
     }
 
-    .kpi-card strong {
-      display: block;
-      margin: 5px 0;
+    .kpi-value {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--app-heading) 14%, var(--app-card-bg));
       color: var(--app-heading);
-      font-size: 1.22rem;
+      font-size: 0.86rem;
       font-weight: 900;
       direction: ltr;
       text-align: right;
+      white-space: nowrap;
+    }
+
+    .kpi-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--app-heading) 18%, var(--app-card-bg));
+      color: var(--app-heading);
+      font-size: 16px;
+      flex-shrink: 0;
     }
 
     .surface-card {

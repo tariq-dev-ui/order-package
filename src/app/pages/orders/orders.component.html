@@ -34,8 +34,8 @@
             <tabler-icon [name]="tablerIconForType(meta.type)"></tabler-icon>
           </div>
           <div class="stat-content">
-            <span class="stat-value">{{ countFor(meta.type) }}</span>
             <span class="stat-label">{{ meta.labelKey | translate }}</span>
+            <span class="stat-value">{{ countFor(meta.type) }}</span>
           </div>
         </button>
       }

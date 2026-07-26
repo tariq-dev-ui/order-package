@@ -154,7 +154,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 0.55rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--app-border);
@@ -227,13 +227,26 @@
 
 .stat-content {
   min-width: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
   flex: 1;
   width: auto;
+}
+
+.stat-label {
+  min-width: 0;
+  color: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  justify-self: center;
+  overflow: visible;
+  overflow-wrap: normal;
+  transition: color 0.3s ease;
 }
 
 .stat-value {
@@ -241,39 +254,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 0.2rem 0.58rem;
   border: none;
-  border-radius: 0;
-  background: transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-heading) 12%, transparent);
   color: var(--app-heading);
-  font-size: 1.12rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  justify-self: end;
 }
 
 .stat-card.active .stat-value {
-  background: transparent;
-  border-color: transparent;
+  background: color-mix(in srgb, var(--app-card-bg) 18%, transparent);
+  color: var(--app-card-bg);
 }
 
 .stat-card.active .stat-icon {
   border-color: color-mix(in srgb, var(--app-card-bg) 30%, transparent);
   background: color-mix(in srgb, var(--app-card-bg) 16%, transparent);
-}
-
-.stat-label {
-  min-width: 0;
-  color: var(--app-text-secondary);
-  font-size: 0.8rem;
-  font-weight: 650;
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: visible;
-  text-align: start;
-  overflow-wrap: normal;
-  transition: color 0.3s ease;
 }
 
 .filters-section {
