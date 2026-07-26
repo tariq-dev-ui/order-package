@@ -24,34 +24,22 @@ interface LanguageOption {
   imports: [CommonModule, TranslateModule, TablerIconComponent],
   template: `
     <header class="sero-topbar" role="banner">
-      <div class="topbar-section topbar-section--left">
-        <button
-          class="rms-icon-btn rms-icon-btn--sidebar"
-          type="button"
-          (click)="layout.toggle()"
-          [attr.aria-label]="'topbar.toggleSidebar' | translate"
-          [attr.aria-pressed]="layout.sidebarCollapsed()"
-        >
-          <tabler-icon name="menu-2" class="icon-20"></tabler-icon>
-        </button>
+      <button
+        class="rms-icon-btn rms-icon-btn--sidebar"
+        type="button"
+        (click)="layout.toggle()"
+        [attr.aria-label]="'topbar.toggleSidebar' | translate"
+        [attr.aria-pressed]="layout.sidebarCollapsed()"
+      >
+        <tabler-icon name="menu-2" class="icon-20"></tabler-icon>
+      </button>
 
-        <button class="topbar-search" type="button" aria-label="Search">
-          <tabler-icon name="search" class="icon-18"></tabler-icon>
-          <span class="topbar-search__text">{{ currentTitleKey | translate }}</span>
-        </button>
-      </div>
+      <button class="topbar-search" type="button" aria-label="Search">
+        <tabler-icon name="search" class="icon-18"></tabler-icon>
+        <span class="topbar-search__text">{{ currentTitleKey | translate }}</span>
+      </button>
 
-      <div class="topbar-section topbar-section--right" aria-label="Navbar actions">
-        <button
-          class="rms-icon-btn theme-trigger"
-          type="button"
-          (click)="toggleTheme($event)"
-          [attr.aria-label]="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-          [attr.title]="theme === 'dark' ? 'Light mode' : 'Dark mode'"
-        >
-          <tabler-icon [name]="theme === 'dark' ? 'sun-high' : 'moon'" class="icon-20"></tabler-icon>
-        </button>
-
+      <div class="topbar-actions" aria-label="Navbar actions">
         <div class="navbar-menu">
           <button
             class="rms-icon-btn language-trigger"
@@ -88,34 +76,15 @@ interface LanguageOption {
           }
         </div>
 
-        <div class="navbar-menu">
-          <button
-            class="rms-icon-btn notification-trigger"
-            type="button"
-            (click)="toggleMenu('notifications', $event)"
-            [class.is-open]="activeMenu === 'notifications'"
-            [attr.aria-expanded]="activeMenu === 'notifications'"
-            aria-haspopup="menu"
-            aria-label="Notifications"
-            title="Notifications"
-          >
-            <tabler-icon name="bell" class="icon-20"></tabler-icon>
-            <span class="notification-dot" aria-hidden="true"></span>
-          </button>
-
-          @if (activeMenu === 'notifications') {
-            <div class="dropdown-panel notifications-panel" role="menu" aria-label="Notifications menu">
-              <div class="notifications-header">
-                <strong>Notifications</strong>
-                <span>0 new</span>
-              </div>
-              <div class="notifications-empty">
-                <tabler-icon name="bell-off" class="notifications-empty-icon"></tabler-icon>
-                <span>No notifications</span>
-              </div>
-            </div>
-          }
-        </div>
+        <button
+          class="rms-icon-btn theme-trigger"
+          type="button"
+          (click)="toggleTheme($event)"
+          [attr.aria-label]="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+          [attr.title]="theme === 'dark' ? 'Light mode' : 'Dark mode'"
+        >
+          <tabler-icon [name]="theme === 'dark' ? 'sun-high' : 'moon'" class="icon-20"></tabler-icon>
+        </button>
 
         <div class="navbar-menu">
           <button
@@ -131,6 +100,7 @@ interface LanguageOption {
             <span class="profile-avatar" aria-hidden="true">
               <tabler-icon name="user-circle" class="profile-avatar-icon"></tabler-icon>
             </span>
+            <span class="profile-trigger__name">{{ displayName() }}</span>
             <tabler-icon
               name="chevron-down"
               class="profile-chevron"
@@ -188,6 +158,35 @@ interface LanguageOption {
             </div>
           }
         </div>
+
+        <div class="navbar-menu">
+          <button
+            class="rms-icon-btn notification-trigger"
+            type="button"
+            (click)="toggleMenu('notifications', $event)"
+            [class.is-open]="activeMenu === 'notifications'"
+            [attr.aria-expanded]="activeMenu === 'notifications'"
+            aria-haspopup="menu"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <tabler-icon name="bell" class="icon-20"></tabler-icon>
+            <span class="notification-dot" aria-hidden="true"></span>
+          </button>
+
+          @if (activeMenu === 'notifications') {
+            <div class="dropdown-panel notifications-panel" role="menu" aria-label="Notifications menu">
+              <div class="notifications-header">
+                <strong>Notifications</strong>
+                <span>0 new</span>
+              </div>
+              <div class="notifications-empty">
+                <tabler-icon name="bell-off" class="notifications-empty-icon"></tabler-icon>
+                <span>No notifications</span>
+              </div>
+            </div>
+          }
+        </div>
       </div>
     </header>
   `,
@@ -200,14 +199,16 @@ interface LanguageOption {
 
     .sero-topbar {
       --topbar-control-size: 40px;
-      --topbar-control-radius: 10px;
+      --topbar-control-radius: 50%;
+      --topbar-control-gap: 16px;
       height: var(--sero-topbar-height);
       background: var(--theme-bg-card, var(--sero-card-bg));
       border-bottom: 1px solid var(--theme-border, var(--sero-border));
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(var(--topbar-control-size), 1fr) minmax(220px, 620px) minmax(max-content, 1fr);
       align-items: center;
-      gap: clamp(8px, 2vw, 16px);
-      padding: 0 clamp(14px, 2vw, 20px) 0 0;
+      column-gap: var(--topbar-control-gap);
+      padding: 0 24px;
       position: fixed;
       top: 0;
       left: var(--layout-sidebar-offset, var(--sero-sidebar-width));
@@ -219,31 +220,13 @@ interface LanguageOption {
       transition: left var(--t-slow), right var(--t-slow), background 0.2s ease, border-color 0.2s ease;
     }
 
-    .topbar-section {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      align-self: center;
-      min-width: 0;
-    }
-
-    .topbar-section--left {
-      flex: 1 1 auto;
-      justify-content: flex-start;
-      gap: 12px;
-    }
-
-    .topbar-section--right {
-      flex: 0 0 auto;
-      justify-content: flex-end;
-      gap: 12px;
-      direction: ltr;
-    }
-
     .topbar-search {
+      grid-column: 2;
+      justify-self: center;
       min-width: 0;
-      width: min(520px, 42vw);
-      height: 42px;
+      width: 100%;
+      max-width: 620px;
+      height: var(--topbar-control-size);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -258,6 +241,17 @@ interface LanguageOption {
       text-align: start;
       cursor: pointer;
       transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .topbar-actions {
+      grid-column: 3;
+      justify-self: end;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--topbar-control-gap);
+      direction: ltr;
     }
 
     .topbar-search:hover {
@@ -302,36 +296,25 @@ interface LanguageOption {
     }
 
     .rms-icon-btn--sidebar {
-      width: 64px;
-      min-width: 64px;
-      height: 100%;
-      min-height: var(--sero-topbar-height);
-      border: 0;
-      border-inline-end: 1px solid var(--theme-border, var(--sero-border));
-      border-radius: 0;
-      background: transparent;
+      grid-column: 1;
+      justify-self: start;
+      border-radius: 50%;
       color: var(--theme-text-primary, #1f2937);
     }
 
     .rms-icon-btn--sidebar .icon-20 {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
 
     .rms-icon-btn--sidebar:hover {
-      border-color: var(--theme-border, var(--sero-border));
-      background: color-mix(in srgb, var(--theme-primary, #3a472a) 4%, transparent);
-      color: var(--theme-text-primary, #1f2937);
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 32%, var(--theme-border, #e2e8f0));
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 7%, var(--theme-bg-card, #fff));
+      color: var(--theme-primary, #3a472a);
     }
 
     .theme-trigger {
-      width: 34px;
-      min-width: 34px;
-      height: 34px;
-      min-height: 34px;
-      border-color: transparent;
       border-radius: 50%;
-      background: transparent;
       color: var(--theme-text-primary, #1f2937);
     }
 
@@ -343,18 +326,12 @@ interface LanguageOption {
     }
 
     .theme-trigger .icon-20 {
-      width: 25px;
-      height: 25px;
+      width: 21px;
+      height: 21px;
     }
 
     .language-trigger {
-      width: 32px;
-      min-width: 32px;
-      height: 32px;
-      min-height: 32px;
-      border: 1px solid transparent;
       border-radius: 50%;
-      background: transparent;
       color: var(--theme-text-primary, #2a3524);
       overflow: hidden;
     }
@@ -384,9 +361,9 @@ interface LanguageOption {
 
     .rms-icon-btn--sidebar:hover,
     .rms-icon-btn--sidebar.is-open {
-      border-color: var(--theme-border, var(--sero-border));
-      background: color-mix(in srgb, var(--theme-primary, #3a472a) 4%, transparent);
-      color: var(--theme-text-primary, #1f2937);
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 32%, var(--theme-border, #e2e8f0));
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 7%, var(--theme-bg-card, #fff));
+      color: var(--theme-primary, #3a472a);
     }
 
     .theme-trigger:hover,
@@ -568,25 +545,21 @@ interface LanguageOption {
     }
 
     .profile-trigger {
-      width: 52px;
-      min-width: 52px;
-      height: 52px;
-      min-height: 52px;
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      background: transparent;
+      width: auto;
+      max-width: 220px;
+      padding: 0 10px 0 5px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0;
+      gap: 8px;
     }
 
     .profile-trigger:hover,
     .profile-trigger.is-open {
-      border-color: transparent;
-      background: transparent;
-      color: var(--theme-text-primary, #1f2937);
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 32%, var(--theme-border, #e2e8f0));
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 7%, var(--theme-bg-card, #fff));
+      color: var(--theme-primary, #3a472a);
     }
 
     .profile-avatar,
@@ -604,8 +577,8 @@ interface LanguageOption {
     }
 
     .profile-avatar {
-      width: 52px;
-      height: 52px;
+      width: 28px;
+      height: 28px;
       border: 0;
       border-radius: 50%;
       background: color-mix(in srgb, var(--theme-primary, #3a472a) 9%, transparent);
@@ -615,14 +588,27 @@ interface LanguageOption {
     }
 
     .profile-avatar-icon {
-      width: 26px;
-      height: 26px;
+      width: 19px;
+      height: 19px;
+    }
+
+    .profile-trigger__name {
+      display: block;
+      max-width: 128px;
+      min-width: 0;
+      overflow: hidden;
+      color: var(--theme-text-primary, #1f2937);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      line-height: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .profile-chevron {
-      display: none;
-      width: 15px;
-      height: 15px;
+      display: inline-flex;
+      width: 14px;
+      height: 14px;
       color: var(--theme-text-secondary, #64748b);
       transition: transform 0.22s ease;
     }
@@ -780,56 +766,35 @@ interface LanguageOption {
       right: var(--layout-sidebar-offset, var(--sero-sidebar-width));
     }
 
-    :host-context([dir="rtl"]) .topbar-section--left {
-      justify-content: flex-end;
-    }
-
-    :host-context([dir="rtl"]) .topbar-section--right {
-      justify-content: flex-end;
-      flex-direction: row-reverse;
-    }
-
-    :host-context([dir="rtl"]) .topbar-title,
     :host-context([dir="rtl"]) .dropdown-panel {
       direction: rtl;
     }
 
-    :host-context([dir="rtl"]) .dropdown-panel {
-      right: auto;
-      left: 0;
-    }
-
-    :host-context([dir="rtl"]) .sero-topbar {
-      padding: 0 0 0 clamp(14px, 2vw, 20px);
-    }
-
-    :host-context([dir="rtl"]) .rms-icon-btn--sidebar {
-      border-inline-end: 0;
-      border-inline-start: 1px solid var(--theme-border, var(--sero-border));
-    }
-
     @media (max-width: 1023px) {
       .sero-topbar {
+        grid-template-columns: auto minmax(120px, 1fr) auto;
         left: 0 !important;
         right: 0 !important;
-        padding: 0 12px;
-        gap: 10px;
+        column-gap: 12px;
+        padding: 0 16px;
       }
 
-      .topbar-search {
-        width: min(420px, 44vw);
+      .topbar-actions {
+        gap: 12px;
+      }
+
+      .profile-trigger__name {
+        max-width: 96px;
       }
     }
 
     @media (max-width: 575.98px) {
       .sero-topbar {
         --topbar-control-size: 36px;
-        --topbar-control-radius: 9px;
-        gap: 8px;
-      }
-
-      .topbar-section--right {
-        gap: 6px;
+        --topbar-control-gap: 8px;
+        grid-template-columns: auto minmax(40px, 1fr) auto;
+        column-gap: var(--topbar-control-gap);
+        padding: 0 12px;
       }
 
       .rms-icon-btn {
@@ -840,58 +805,43 @@ interface LanguageOption {
       }
 
       .rms-icon-btn--sidebar {
-        width: 54px;
-        min-width: 54px;
-        height: 100%;
-        min-height: var(--sero-topbar-height);
-      }
-
-      .theme-trigger {
-        width: 32px;
-        min-width: 32px;
-        height: 32px;
-        min-height: 32px;
-      }
-
-      .language-trigger {
-        width: 30px;
-        min-width: 30px;
-        height: 30px;
-        min-height: 30px;
+        width: var(--topbar-control-size);
+        min-width: var(--topbar-control-size);
+        height: var(--topbar-control-size);
+        min-height: var(--topbar-control-size);
       }
 
       .profile-trigger {
-        width: 44px;
-        min-width: 44px;
-        height: 44px;
-        min-height: 44px;
+        width: var(--topbar-control-size);
+        min-width: var(--topbar-control-size);
+        max-width: var(--topbar-control-size);
+        padding: 0;
       }
 
       .profile-avatar {
-        width: 44px;
-        height: 44px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         font-size: 0.64rem;
       }
 
       .profile-avatar-icon {
-        width: 23px;
-        height: 23px;
+        width: 18px;
+        height: 18px;
       }
 
+      .profile-trigger__name,
       .profile-chevron {
         display: none;
       }
 
       .topbar-search {
-        width: 40px;
-        min-width: 40px;
-        justify-content: center;
-        padding: 0;
+        gap: 8px;
+        padding: 0 10px;
       }
 
       .topbar-search__text {
-        display: none;
+        max-width: 100%;
       }
 
       .dropdown-panel {
