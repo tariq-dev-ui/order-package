@@ -1,0 +1,350 @@
+<section class="op-page">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="shopping-cart"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">{{ 'orders.title' | translate }}</h1>
+          <p class="page-description">{{ 'orders.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          class="action-btn new-request-btn"
+          (click)="createNewRequest()">
+          <tabler-icon name="plus"></tabler-icon>
+          <span>طلب جديد</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="statistics-section">
+    <div class="statistics-grid">
+      @for (meta of typeMeta; track meta.type) {
+        <button
+          type="button"
+          class="stat-card"
+          [class.active]="activeType() === meta.type"
+          (click)="selectType(meta.type)">
+          <div class="stat-icon" [ngClass]="'stat-icon--' + meta.type">
+            <tabler-icon [name]="tablerIconForType(meta.type)"></tabler-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ countFor(meta.type) }}</span>
+            <span class="stat-label">{{ meta.labelKey | translate }}</span>
+          </div>
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filters-header-row">
+        <div class="filter-button-wrapper">
+          <button
+            type="button"
+            class="filter-main-btn"
+            [class.is-open]="showAdvancedFilters()"
+            (click)="toggleAdvancedFilters()">
+            <tabler-icon name="filter"></tabler-icon>
+            <span>{{ 'orders.actions.filter' | translate }}</span>
+            @if (activeFilterCount() > 0) {
+              <span class="filter-badge">{{ activeFilterCount() }}</span>
+            }
+          </button>
+        </div>
+
+        <div class="search-field-wrapper">
+          <div class="search-icon">
+            <tabler-icon name="search"></tabler-icon>
+          </div>
+          <div class="search-divider"></div>
+          <input
+            type="text"
+            class="search-input"
+            [placeholder]="'orders.actions.searchPlaceholder' | translate"
+            [value]="searchText()"
+            (input)="onSearchInput($event)" />
+          @if (searchText()) {
+            <button
+              type="button"
+              class="search-clear-btn"
+              [attr.aria-label]="'orders.actions.clearFilters' | translate"
+              (click)="clearSearch()">
+              <tabler-icon name="x"></tabler-icon>
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="export-btn"
+          (click)="exportCsv()">
+          <tabler-icon name="download"></tabler-icon>
+          <span>{{ 'orders.actions.export' | translate }}</span>
+        </button>
+      </div>
+
+      @if (showAdvancedFilters()) {
+        <div class="active-filters-display op-active-filters">
+          <div class="active-filter-item">
+            <div class="filter-item-header">
+              <tabler-icon name="credit-card"></tabler-icon>
+              <span class="filter-item-label">{{ 'orders.filters.paymentStatus' | translate }}</span>
+            </div>
+            <div class="filter-item-input">
+              <app-sero-dropdown
+                [options]="paymentOptions"
+                [value]="paymentFilter()"
+                [placeholderKey]="'orders.filters.any'"
+                (valueChange)="onPaymentFilterChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+
+          <div class="active-filter-item">
+            <div class="filter-item-header">
+              <tabler-icon name="progress-check"></tabler-icon>
+              <span class="filter-item-label">{{ 'orders.filters.operationStatus' | translate }}</span>
+            </div>
+            <div class="filter-item-input">
+              <app-sero-dropdown
+                [options]="operationOptions"
+                [value]="operationFilter()"
+                [placeholderKey]="'orders.filters.any'"
+                (valueChange)="onOperationFilterChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+
+          <div class="active-filter-item">
+            <div class="filter-item-header">
+              <tabler-icon name="user-check"></tabler-icon>
+              <span class="filter-item-label">{{ 'orders.filters.agentStatus' | translate }}</span>
+            </div>
+            <div class="filter-item-input">
+              <app-sero-dropdown
+                [options]="agentStatusOptions"
+                [value]="agentStatusFilter()"
+                [placeholderKey]="'orders.filters.any'"
+                (valueChange)="onAgentStatusFilterChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+
+          @if (activeFilterCount() > 0) {
+            <button
+              type="button"
+              class="clear-all-filters-btn"
+              (click)="clearAdvancedFilters()">
+              <tabler-icon name="trash"></tabler-icon>
+              <span>{{ 'orders.actions.clearFilters' | translate }}</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="table-section">
+    <div class="table-card">
+      <div class="table-container">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>{{ 'orders.columns.type' | translate }}</th>
+              <th>{{ 'orders.columns.orderNo' | translate }}</th>
+              <th>{{ 'orders.columns.orderDate' | translate }}</th>
+              <th>{{ 'orders.columns.agent' | translate }}</th>
+              <th>{{ 'orders.columns.totalPrice' | translate }}</th>
+              <th>{{ 'orders.columns.paid' | translate }}</th>
+              <th>{{ 'orders.columns.remaining' | translate }}</th>
+              <th>{{ 'orders.columns.paymentStatus' | translate }}</th>
+              <th>{{ 'orders.columns.operationStatus' | translate }}</th>
+              <th>{{ 'orders.columns.agentStatus' | translate }}</th>
+              <th>{{ 'orders.columns.actions' | translate }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="11" class="op-state-cell">
+                  <div class="op-spinner"></div>
+                </td>
+              </tr>
+            } @else if (rows().length === 0) {
+              <tr>
+                <td colspan="11" class="op-state-cell">
+                  <div class="empty-state">
+                    <tabler-icon name="shopping-cart-off"></tabler-icon>
+                    <h3>{{ 'orders.empty.title' | translate }}</h3>
+                    <p>{{ 'orders.empty.description' | translate }}</p>
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              @for (row of rows(); track row.id) {
+                <tr class="order-row">
+                  <td>
+                    <span class="booking-type-badge">
+                      <tabler-icon [name]="tablerIconForType(row.type)"></tabler-icon>
+                      {{ typeLabelKey(row.type) | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="cell-ref">{{ row.orderNo }}</span>
+                  </td>
+                  <td>
+                    <span class="cell-date">
+                      <span>{{ row.orderDate | date:'dd MMM yyyy' }}</span>
+                      <span class="cell-time">{{ row.orderDate | date:'HH:mm' }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="cell-name">{{ row.agent }}</span>
+                  </td>
+                  <td>
+                    <span class="amount-currency-wrap">
+                      <span class="amount-value">{{ row.totalPrice | number:'1.2-2' }}</span>
+                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="amount-currency-wrap">
+                      <span class="amount-value paid-value">{{ row.paid | number:'1.2-2' }}</span>
+                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="amount-currency-wrap">
+                      <span class="amount-value remaining-value">{{ row.remaining | number:'1.2-2' }}</span>
+                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge status-{{ paymentMeta(row.paymentStatus).cls }}">
+                      {{ paymentMeta(row.paymentStatus).labelKey | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge status-{{ operationMeta(row.operationStatus).cls }}">
+                      {{ operationMeta(row.operationStatus).labelKey | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge status-{{ agentStatusMeta(row.agentStatus).cls }}">
+                      {{ agentStatusMeta(row.agentStatus).labelKey | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="pms-actions-cell">
+                      <button
+                        type="button"
+                        class="op-icon-btn btn-view"
+                        [attr.aria-label]="'orders.actionsMenu.view' | translate"
+                        [title]="'orders.actionsMenu.view' | translate"
+                        (click)="viewRow(row)">
+                        <tabler-icon name="eye"></tabler-icon>
+                      </button>
+                      <button
+                        type="button"
+                        class="op-icon-btn btn-edit"
+                        [attr.aria-label]="'orders.actionsMenu.edit' | translate"
+                        [title]="'orders.actionsMenu.edit' | translate"
+                        (click)="editRow(row)">
+                        <tabler-icon name="edit"></tabler-icon>
+                      </button>
+                      <button
+                        type="button"
+                        class="op-icon-btn btn-print"
+                        [attr.aria-label]="'orders.actionsMenu.print' | translate"
+                        [title]="'orders.actionsMenu.print' | translate"
+                        (click)="printRow(row)">
+                        <tabler-icon name="printer"></tabler-icon>
+                      </button>
+                      <div class="op-more-wrap">
+                        <button
+                          type="button"
+                          class="op-icon-btn btn-more"
+                          [attr.aria-label]="'orders.actionsMenu.more' | translate"
+                          [title]="'orders.actionsMenu.more' | translate"
+                          (click)="toggleMoreMenu(row.id, $event)">
+                          <tabler-icon name="dots-vertical"></tabler-icon>
+                        </button>
+                        @if (openMoreMenuId() === row.id) {
+                          <div class="op-more-menu">
+                            <button type="button" (click)="duplicateRow(row)">
+                              <tabler-icon name="copy"></tabler-icon>
+                              {{ 'orders.actionsMenu.duplicate' | translate }}
+                            </button>
+                            <button type="button" (click)="downloadPdf(row)">
+                              <tabler-icon name="file-type-pdf"></tabler-icon>
+                              {{ 'orders.actionsMenu.downloadPdf' | translate }}
+                            </button>
+                            <button type="button" (click)="viewStatusLog(row)">
+                              <tabler-icon name="history"></tabler-icon>
+                              {{ 'orders.actionsMenu.statusLog' | translate }}
+                            </button>
+                            <button type="button" class="op-more-menu-danger" (click)="deleteRow(row)">
+                              <tabler-icon name="trash"></tabler-icon>
+                              {{ 'orders.actionsMenu.delete' | translate }}
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+
+          @if (!isLoading() && rows().length > 0) {
+            <tfoot>
+              <tr class="op-footer-row">
+                <td class="op-footer-label" colspan="4">{{ 'orders.footer.total' | translate }}</td>
+                <td>
+                  <span class="amount-currency-wrap">
+                    <span class="amount-value">{{ footerTotal() | number:'1.2-2' }}</span>
+                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="amount-currency-wrap">
+                    <span class="amount-value paid-value">{{ footerPaid() | number:'1.2-2' }}</span>
+                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="amount-currency-wrap">
+                    <span class="amount-value remaining-value">{{ footerRemaining() | number:'1.2-2' }}</span>
+                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge status-{{ footerPaymentMeta().cls }}">
+                    {{ footerPaymentMeta().labelKey | translate }}
+                  </span>
+                </td>
+                <td colspan="3"></td>
+              </tr>
+            </tfoot>
+          }
+        </table>
+      </div>
+    </div>
+
+    <div class="op-pagination">
+      <pkg-pagination
+        [currentPage]="page()"
+        [totalPages]="totalPages()"
+        (pageChange)="setPage($event)" />
+    </div>
+  </div>
+</section>
