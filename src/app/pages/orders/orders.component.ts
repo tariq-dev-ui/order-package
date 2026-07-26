@@ -957,7 +957,7 @@ export class OrdersComponent implements OnInit {
 
   exportCsv(): void {
     this.ordersService.getAllMatching(this.currentFilters()).subscribe((rows) => {
-      const header = ['Type', 'Order No.', 'Order Date', 'Agent', 'Total Price', 'Paid', 'Remaining', 'Payment Status', 'Operation Status', 'Agent Status'];
+      const header = ['Type', 'Quotation No.', 'Quotation Date', 'Agent', 'Total Price', 'Paid', 'Remaining', 'Payment Status', 'Operation Status', 'Agent Status'];
       const lines = rows.map((r) => [
         r.type, r.orderNo, r.orderDate, r.agent, r.totalPrice, r.paid, r.remaining,
         this.translate.instant(this.paymentMeta(r.paymentStatus).labelKey),
@@ -969,7 +969,7 @@ export class OrdersComponent implements OnInit {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'orders.csv';
+      link.download = 'quotations.csv';
       link.click();
       URL.revokeObjectURL(url);
 

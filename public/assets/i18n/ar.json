@@ -211,7 +211,7 @@
       "hotelProvidersGroup":    "مزودو الفنادق",
       "providersList":          "قائمة المزودين",
       "subscriptions":          "الاشتراكات",
-      "allOrders":              "جميع الطلبات"
+      "allOrders":              "جميع عروض الأسعار"
     },
     "badges": {
       "new": "جديد"
@@ -219,8 +219,8 @@
   },
 
   "orders": {
-    "title": "جميع الطلبات",
-    "subtitle": "تصفح وأدر جميع الطلبات عبر جميع الخدمات.",
+    "title": "جميع عروض الأسعار",
+    "subtitle": "تصفح وأدر جميع عروض الأسعار عبر جميع الخدمات.",
     "types": {
       "all": "الكل",
       "hotel": "الفنادق",
@@ -234,7 +234,7 @@
       "export": "تصدير",
       "filter": "فلتر",
       "advancedFilters": "فلاتر متقدمة",
-      "searchPlaceholder": "ابحث برقم الطلب أو الوكيل أو الخدمة...",
+      "searchPlaceholder": "ابحث برقم عرض السعر أو الوكيل أو الخدمة...",
       "clearFilters": "مسح الفلاتر"
     },
     "filters": {
@@ -245,8 +245,8 @@
     },
     "columns": {
       "type": "النوع",
-      "orderNo": "رقم الطلب",
-      "orderDate": "تاريخ الطلب",
+      "orderNo": "رقم عرض السعر",
+      "orderDate": "تاريخ عرض السعر",
       "agent": "الوكيل",
       "totalPrice": "السعر الإجمالي",
       "paid": "المدفوع",
@@ -277,7 +277,7 @@
       "total": "الإجمالي"
     },
     "empty": {
-      "title": "لا توجد طلبات",
+      "title": "لا توجد عروض أسعار",
       "description": "جرّب تعديل الفلاتر أو كلمات البحث."
     },
     "actionsMenu": {
@@ -291,14 +291,14 @@
       "delete": "حذف"
     },
     "feedback": {
-      "view": "عرض الطلب {{no}}",
-      "edit": "تعديل الطلب {{no}}",
-      "print": "طباعة الطلب {{no}}",
-      "duplicate": "تم نسخ الطلب {{no}}",
+      "view": "عرض عرض السعر {{no}}",
+      "edit": "تعديل عرض السعر {{no}}",
+      "print": "طباعة عرض السعر {{no}}",
+      "duplicate": "تم نسخ عرض السعر {{no}}",
       "downloadPdf": "تنزيل PDF لـ {{no}}",
       "statusLog": "فتح سجل الحالة لـ {{no}}",
-      "delete": "تم حذف الطلب {{no}}",
-      "exportStarted": "تصدير {{count}} طلب..."
+      "delete": "تم حذف عرض السعر {{no}}",
+      "exportStarted": "تصدير {{count}} عرض سعر..."
     }
   },
 

@@ -404,7 +404,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     { prefix: '/admin/packages/builder',             key: 'sidebar.nav.defineNewPackage' },
     { prefix: '/admin/packages',                     key: 'sidebar.nav.agentPackages' },
     { prefix: '/admin/orders/new',                   key: 'sidebar.nav.newOrder' },
-    { prefix: '/admin/orders',                       key: 'sidebar.nav.ordersGroup' },
+    { prefix: '/admin/orders',                       key: 'sidebar.nav.allOrders' },
     { prefix: '/admin/analytics',                    key: 'sidebar.nav.statisticsGroup' },
     { prefix: '/admin/operations/hotel-bookings',    key: 'sidebar.nav.hotelBookings' },
     { prefix: '/admin/operations/visa-requests',     key: 'sidebar.nav.visaRequests' },

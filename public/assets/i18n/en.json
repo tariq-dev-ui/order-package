@@ -165,7 +165,7 @@
       "hotelProvidersGroup":    "Hotel Providers",
       "providersList":          "Providers List",
       "subscriptions":          "Subscriptions",
-      "allOrders":              "All Orders"
+      "allOrders":              "All Quotations"
     },
     "badges": {
       "new": "New"
@@ -173,8 +173,8 @@
   },
 
   "orders": {
-    "title": "All Orders",
-    "subtitle": "Browse and manage all orders across all services.",
+    "title": "All Quotations",
+    "subtitle": "Browse and manage all quotations across all services.",
     "types": {
       "all": "All",
       "hotel": "Hotels",
@@ -188,7 +188,7 @@
       "export": "Export",
       "filter": "Filter",
       "advancedFilters": "Advanced Filters",
-      "searchPlaceholder": "Search order number, agent or service...",
+      "searchPlaceholder": "Search quotation number, agent or service...",
       "clearFilters": "Clear Filters"
     },
     "filters": {
@@ -199,8 +199,8 @@
     },
     "columns": {
       "type": "Type",
-      "orderNo": "Order No.",
-      "orderDate": "Order Date",
+      "orderNo": "Quotation No.",
+      "orderDate": "Quotation Date",
       "agent": "Agent",
       "totalPrice": "Total Price",
       "paid": "Paid",
@@ -231,7 +231,7 @@
       "total": "Total"
     },
     "empty": {
-      "title": "No orders found",
+      "title": "No quotations found",
       "description": "Try adjusting your filters or search terms."
     },
     "actionsMenu": {
@@ -245,14 +245,14 @@
       "delete": "Delete"
     },
     "feedback": {
-      "view": "Viewing order {{no}}",
-      "edit": "Editing order {{no}}",
-      "print": "Printing order {{no}}",
-      "duplicate": "Duplicated order {{no}}",
+      "view": "Viewing quotation {{no}}",
+      "edit": "Editing quotation {{no}}",
+      "print": "Printing quotation {{no}}",
+      "duplicate": "Duplicated quotation {{no}}",
       "downloadPdf": "Downloading PDF for {{no}}",
       "statusLog": "Opening status log for {{no}}",
-      "delete": "Deleted order {{no}}",
-      "exportStarted": "Exporting {{count}} orders..."
+      "delete": "Deleted quotation {{no}}",
+      "exportStarted": "Exporting {{count}} quotations..."
     }
   },
 
