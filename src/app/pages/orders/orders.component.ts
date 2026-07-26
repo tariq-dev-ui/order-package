@@ -207,10 +207,6 @@ export class OrdersComponent implements OnInit {
     this.notify('orders.feedback.view', row);
   }
 
-  editRow(row: OrderRow): void {
-    this.notify('orders.feedback.edit', row);
-  }
-
   printRow(row: OrderRow): void {
     this.notify('orders.feedback.print', row);
   }
