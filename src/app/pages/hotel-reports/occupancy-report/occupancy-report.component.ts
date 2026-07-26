@@ -11,6 +11,7 @@ import {
   Room,
   RoomStatus,
 } from './occupancy-report.service';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 interface QuickReservationForm {
   guestName: string;
@@ -248,10 +249,7 @@ export class OccupancyReportComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency', currency: 'SAR',
-      minimumFractionDigits: 0, maximumFractionDigits: 0,
-    }).format(amount);
+    return formatSeroCurrency(amount, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
   occupancyBarStyle(): { width: string; background: string } {

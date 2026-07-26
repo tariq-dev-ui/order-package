@@ -170,8 +170,7 @@
                 </p>
                 <span class="text-xs font-semibold text-primary-500 whitespace-nowrap">
                   @if (pkg.Price !== 0) {
-                    {{ pkg.Price }}
-                    <span class="sar-symbol">R</span>
+                    {{ pkg.Price | seroCurrency }}
                   } @else {
                     <span class="text-gray-400 italic">{{ 'Estimating' | translate }}</span>
                   }

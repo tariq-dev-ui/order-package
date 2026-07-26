@@ -18,6 +18,7 @@ import {
   PAYMENT_STATUS_META,
   PaymentStatus,
 } from './orders.model';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 type TypeCounts = Record<string, number>;
 
@@ -25,7 +26,7 @@ type TypeCounts = Record<string, number>;
   selector: 'app-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslateModule, TablerIconComponent, SeroDropdownComponent, PaginationComponent],
+  imports: [CommonModule, TranslateModule, TablerIconComponent, SeroDropdownComponent, SeroCurrencyPipe, PaginationComponent],
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.scss'],
 })

@@ -20,6 +20,7 @@ import { JournalEntry } from 'src/app/models/journal-entry.model';
 import { Account } from 'src/app/models/chart-of-accounts.model';
 import { CoreService } from 'src/app/services/core.service';
 import { ViewEntryDialogComponent } from './view-entry-dialog/view-entry-dialog.component';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 @Component({
   selector: 'app-pending-entries',
@@ -264,10 +265,7 @@ export class PendingEntriesComponent implements OnInit, AfterViewInit {
    * Format Currency
    */
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
+    return formatSeroCurrency(amount);
   }
 
   /**

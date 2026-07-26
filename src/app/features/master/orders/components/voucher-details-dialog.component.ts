@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { VoucherDetailsModel } from '../orders.model';
 import { OrdersService } from '../orders.service';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 export interface VoucherDetailsDialogData {
   voucherId: number;
@@ -23,7 +24,7 @@ const TYPE_NAMES: Record<number, string> = {
   selector: 'voucher-details-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, SeroCurrencyPipe],
   template: `
     <div class="vdd-panel">
       <!-- Header -->
@@ -57,23 +58,23 @@ const TYPE_NAMES: Record<number, string> = {
           <div class="vdd-summary-row">
             <div class="vdd-summary-card">
               <span class="sc-label">Cost</span>
-              <span class="sc-val">{{ details()!.Voucher.TotalCostPrice | number:'1.2-2' }} SAR</span>
+              <span class="sc-val">{{ details()!.Voucher.TotalCostPrice | seroCurrency }}</span>
             </div>
             <div class="vdd-summary-card">
               <span class="sc-label">Original</span>
-              <span class="sc-val">{{ details()!.Voucher.TotalOriginalPrice | number:'1.2-2' }} SAR</span>
+              <span class="sc-val">{{ details()!.Voucher.TotalOriginalPrice | seroCurrency }}</span>
             </div>
             <div class="vdd-summary-card">
               <span class="sc-label">Selling</span>
-              <span class="sc-val">{{ details()!.Voucher.TotalSellingPrice | number:'1.2-2' }} SAR</span>
+              <span class="sc-val">{{ details()!.Voucher.TotalSellingPrice | seroCurrency }}</span>
             </div>
             <div class="vdd-summary-card">
               <span class="sc-label">Tax</span>
-              <span class="sc-val">{{ details()!.Voucher.TotalTax | number:'1.2-2' }} SAR</span>
+              <span class="sc-val">{{ details()!.Voucher.TotalTax | seroCurrency }}</span>
             </div>
             <div class="vdd-summary-card highlight">
               <span class="sc-label">Grand Total</span>
-              <span class="sc-val">{{ details()!.Voucher.TotalPriceWithTax | number:'1.2-2' }} SAR</span>
+              <span class="sc-val">{{ details()!.Voucher.TotalPriceWithTax | seroCurrency }}</span>
             </div>
           </div>
 
@@ -100,9 +101,9 @@ const TYPE_NAMES: Record<number, string> = {
                         <td>{{ h.EndDate | date:'dd MMM yyyy' }}</td>
                         <td class="center">{{ h.NightsCount }}</td>
                         <td class="center">{{ h.RoomCount }}</td>
-                        <td class="right">{{ h.UnitSellingPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ h.UnitTax | number:'1.2-2' }}</td>
-                        <td class="right bold">{{ h.TotalPriceWithTax | number:'1.2-2' }}</td>
+                        <td class="right">{{ h.UnitSellingPrice | seroCurrency }}</td>
+                        <td class="right">{{ h.UnitTax | seroCurrency }}</td>
+                        <td class="right bold">{{ h.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>
@@ -131,9 +132,9 @@ const TYPE_NAMES: Record<number, string> = {
                         <td>{{ t.TripPathTitle }}</td>
                         <td>{{ t.CarTypeTitle }}</td>
                         <td class="center">{{ t.Count }}</td>
-                        <td class="right">{{ t.UnitSellingPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ t.UnitTax | number:'1.2-2' }}</td>
-                        <td class="right bold">{{ t.TotalPriceWithTax | number:'1.2-2' }}</td>
+                        <td class="right">{{ t.UnitSellingPrice | seroCurrency }}</td>
+                        <td class="right">{{ t.UnitTax | seroCurrency }}</td>
+                        <td class="right bold">{{ t.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>
@@ -159,10 +160,10 @@ const TYPE_NAMES: Record<number, string> = {
                     @for (vi of details()!.VisaVouchers; track vi.RequestVisaVoucherDetailID) {
                       <tr>
                         <td class="center">{{ vi.Count }}</td>
-                        <td class="right">{{ vi.UnitCostPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ vi.UnitSellingPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ vi.UnitTax | number:'1.2-2' }}</td>
-                        <td class="right bold">{{ vi.TotalPriceWithTax | number:'1.2-2' }}</td>
+                        <td class="right">{{ vi.UnitCostPrice | seroCurrency }}</td>
+                        <td class="right">{{ vi.UnitSellingPrice | seroCurrency }}</td>
+                        <td class="right">{{ vi.UnitTax | seroCurrency }}</td>
+                        <td class="right bold">{{ vi.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>
@@ -191,9 +192,9 @@ const TYPE_NAMES: Record<number, string> = {
                         <td>{{ c.CateringTitle }}</td>
                         <td>{{ c.FoodTypeTitle }}</td>
                         <td class="center">{{ c.Count }}</td>
-                        <td class="right">{{ c.UnitSellingPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ c.UnitTax | number:'1.2-2' }}</td>
-                        <td class="right bold">{{ c.TotalPriceWithTax | number:'1.2-2' }}</td>
+                        <td class="right">{{ c.UnitSellingPrice | seroCurrency }}</td>
+                        <td class="right">{{ c.UnitTax | seroCurrency }}</td>
+                        <td class="right bold">{{ c.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>
@@ -225,9 +226,9 @@ const TYPE_NAMES: Record<number, string> = {
                         <td>{{ tk.TripType }}</td>
                         <td>{{ tk.TravelDate | date:'dd MMM yyyy' }}</td>
                         <td class="center">{{ tk.Count }}</td>
-                        <td class="right">{{ tk.UnitSellingPrice | number:'1.2-2' }}</td>
-                        <td class="right">{{ tk.UnitTax | number:'1.2-2' }}</td>
-                        <td class="right bold">{{ tk.TotalPriceWithTax | number:'1.2-2' }}</td>
+                        <td class="right">{{ tk.UnitSellingPrice | seroCurrency }}</td>
+                        <td class="right">{{ tk.UnitTax | seroCurrency }}</td>
+                        <td class="right bold">{{ tk.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>

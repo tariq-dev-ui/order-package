@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 import { OfferStatus, OfferType, PriceOfferItem } from '../statistics.mock';
 
 @Component({
   selector: 'app-price-offers-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SeroCurrencyPipe],
   template: `
     <section class="panel">
       <header class="panel-head">
@@ -43,7 +44,7 @@ import { OfferStatus, OfferType, PriceOfferItem } from '../statistics.mock';
                 <td>{{ offer.orderNumber }}</td>
                 <td>{{ offer.offerCode }}</td>
                 <td>{{ offer.date }}</td>
-                <td class="price-col">{{ offer.price | number:'1.0-0' }} <span>ر.س</span></td>
+                <td class="price-col">{{ offer.price | seroCurrency:'symbol':'':0:0 }}</td>
                 <td><span class="status-badge" [class]="statusClass(offer.adminStatus)">{{ offer.adminStatus }}</span></td>
                 <td><span class="status-badge" [class]="statusClass(offer.agentStatus)">{{ offer.agentStatus }}</span></td>
                 <td>

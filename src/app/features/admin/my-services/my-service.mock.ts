@@ -1,4 +1,8 @@
 import { SeroDropdownOption } from '../../../shared/components/sero-dropdown/sero-dropdown.component';
+import { formatSeroCurrency } from '../../../shared/currency/currency-format.util';
+
+const wholeRiyal = (value: number): string =>
+  formatSeroCurrency(value, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
 export type MyServiceStatus = 'active' | 'inactive' | 'pending' | 'draft' | 'fully_booked' | 'expired';
 export type MyServiceHealth = 'healthy' | 'warning' | 'issue';
@@ -106,10 +110,10 @@ export const MY_SERVICE_STATUS_OPTIONS: SeroDropdownOption<string>[] = [
 
 export const MY_SERVICE_PRICING_RANGE_OPTIONS: SeroDropdownOption<string>[] = [
   { value: '', label: 'كل الأسعار' },
-  { value: 'under_250', label: 'أقل من ₪ 250' },
-  { value: '250_750', label: '₪ 250 - ₪ 750' },
-  { value: '750_2000', label: '₪ 750 - ₪ 2,000' },
-  { value: 'over_2000', label: 'أكثر من ₪ 2,000' },
+  { value: 'under_250', label: `أقل من ${wholeRiyal(250)}` },
+  { value: '250_750', label: `${wholeRiyal(250)} - ${wholeRiyal(750)}` },
+  { value: '750_2000', label: `${wholeRiyal(750)} - ${wholeRiyal(2000)}` },
+  { value: 'over_2000', label: `أكثر من ${wholeRiyal(2000)}` },
 ];
 
 export const MY_SERVICE_LIFECYCLE_OPTIONS: SeroDropdownOption<string>[] = [

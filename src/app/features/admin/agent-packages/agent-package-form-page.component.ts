@@ -12,6 +12,8 @@ import {
   createAgentPackageFormValue,
 } from './agent-package.mock';
 import { AgentPackagesService } from './agent-packages.service';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
+import { SAUDI_RIYAL_SYMBOL } from 'src/app/shared/currency/currency-format.util';
 
 type AgentPackageFormMode = 'create' | 'edit' | 'view';
 type RequiredField = 'name' | 'price' | 'startDate' | 'endDate';
@@ -19,7 +21,7 @@ type RequiredField = 'name' | 'price' | 'startDate' | 'endDate';
 @Component({
   selector: 'app-agent-package-form-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent],
+  imports: [CommonModule, SeroDropdownComponent, SeroDatePickerComponent, SeroCurrencyPipe],
   template: `
     <section class="pkg-form-page" dir="rtl">
       <header class="page-head">
@@ -75,11 +77,11 @@ type RequiredField = 'name' | 'price' | 'startDate' | 'endDate';
             </label>
             @if (isViewMode) {
               <div class="readonly-value" dir="ltr">
-                {{ form.price !== null ? ('R ' + (form.price | number:'1.2-2')) : '—' }}
+                {{ form.price !== null ? ((form.price | seroCurrency)) : '—' }}
               </div>
             } @else {
               <div class="price-wrap">
-                <span class="price-prefix">R</span>
+                <span class="price-prefix">{{ riyalSymbol }}</span>
                 <input
                   id="pkg-price"
                   class="form-control price-input"
@@ -595,6 +597,7 @@ export class AgentPackageFormPageComponent implements OnInit {
   private readonly service = inject(AgentPackagesService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  readonly riyalSymbol = SAUDI_RIYAL_SYMBOL;
 
   readonly countryOptions = AGENT_PACKAGE_COUNTRY_OPTIONS;
   readonly regionOptions = AGENT_PACKAGE_REGION_OPTIONS;

@@ -19,6 +19,7 @@ import { PackageTagsDetailsComponent } from 'src/app/pages/components/request-pa
 import { PackageTripsDetailsComponent } from 'src/app/pages/components/request-package-details/package-trips-details/package-trips-details.component';
 import { PackageTicketsDetailsComponent } from 'src/app/pages/components/request-package-details/package-tickets-details/package-tickets-details.component';
 import { PackageCateringsDetailsComponent } from 'src/app/pages/components/request-package-details/package-caterings-details/package-caterings-details.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 // ────────────────────────────────────────────────────────────
 // Main Page Component
@@ -32,6 +33,7 @@ import { PackageCateringsDetailsComponent } from 'src/app/pages/components/reque
     PackageHotelsDetailsComponent, PackageTagsDetailsComponent,
     PackageTripsDetailsComponent, PackageTicketsDetailsComponent,
     PackageCateringsDetailsComponent, SingleAgentSelectorComponent,
+    SeroCurrencyPipe,
   ],
   template: `
     <!-- Filters -->
@@ -110,8 +112,7 @@ import { PackageCateringsDetailsComponent } from 'src/app/pages/components/reque
                   <h2 class="nr-card-title">{{ pkg.Title }}</h2>
                   <div class="nr-price-block">
                     <span class="nr-price">
-                      <span class="nr-sar">SAR</span>
-                      @if ((pkg.Price ?? 0) > 0) { {{ pkg.Price | number }} } @else { N/A }
+                      @if ((pkg.Price ?? 0) > 0) { {{ pkg.Price | seroCurrency }} } @else { N/A }
                     </span>
                     <div class="nr-price-flags">
                       <span class="nr-flag" [class.verified]="pkg.VerifiedPrice" [class.approx]="!pkg.VerifiedPrice">
@@ -332,7 +333,6 @@ import { PackageCateringsDetailsComponent } from 'src/app/pages/components/reque
     .nr-card-title { font-size: 18px; font-weight: 700; color: #1f2937; margin: 0; }
     .nr-price-block { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
     .nr-price { font-size: 18px; font-weight: 700; color: var(--sero-primary, #3a472a); }
-    .nr-sar { font-size: 12px; color: #9ca3af; font-weight: 400; }
     .nr-price-flags { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
     .nr-flag {
       display: inline-flex; align-items: center; gap: 4px;

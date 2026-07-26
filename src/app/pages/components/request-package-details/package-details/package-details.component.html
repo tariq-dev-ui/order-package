@@ -55,8 +55,7 @@
                     <p class="text-[9px] font-semibold text-primary-400 uppercase tracking-wide">{{ 'Price' | translate
                         }}</p>
                     <p class="text-sm font-bold text-primary-700 leading-tight">
-                        {{ pkg?.Price | number:'1.2-2' }}
-                        <span class="text-[10px] font-medium text-primary-400">SAR</span>
+                        {{ pkg?.Price | seroCurrency }}
                     </p>
                 </div>
             </div>

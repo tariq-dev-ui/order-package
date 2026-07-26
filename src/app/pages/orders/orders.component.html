@@ -155,17 +155,30 @@
     <div class="table-card">
       <div class="table-container">
         <table class="orders-table">
+          <colgroup>
+            <col class="col-quote">
+            <col class="col-agent">
+            <col class="col-money">
+            <col class="col-payment-status">
+            <col class="col-operation-status">
+            <col class="col-type">
+            <col class="col-date">
+            <col class="col-money">
+            <col class="col-money">
+            <col class="col-agent-status">
+            <col class="col-actions">
+          </colgroup>
           <thead>
             <tr>
-              <th>{{ 'orders.columns.type' | translate }}</th>
               <th>{{ 'orders.columns.orderNo' | translate }}</th>
-              <th>{{ 'orders.columns.orderDate' | translate }}</th>
               <th>{{ 'orders.columns.agent' | translate }}</th>
               <th>{{ 'orders.columns.totalPrice' | translate }}</th>
-              <th>{{ 'orders.columns.paid' | translate }}</th>
-              <th>{{ 'orders.columns.remaining' | translate }}</th>
               <th>{{ 'orders.columns.paymentStatus' | translate }}</th>
               <th>{{ 'orders.columns.operationStatus' | translate }}</th>
+              <th>{{ 'orders.columns.type' | translate }}</th>
+              <th>{{ 'orders.columns.orderDate' | translate }}</th>
+              <th>{{ 'orders.columns.paid' | translate }}</th>
+              <th>{{ 'orders.columns.remaining' | translate }}</th>
               <th>{{ 'orders.columns.agentStatus' | translate }}</th>
               <th>{{ 'orders.columns.actions' | translate }}</th>
             </tr>
@@ -192,12 +205,6 @@
               @for (row of rows(); track row.id) {
                 <tr class="order-row">
                   <td>
-                    <span class="booking-type-badge">
-                      <tabler-icon [name]="tablerIconForType(row.type)"></tabler-icon>
-                      {{ typeLabelKey(row.type) | translate }}
-                    </span>
-                  </td>
-                  <td>
                     <span class="quote-cell">
                       <span class="cell-ref">{{ row.orderNo }}</span>
                       <button
@@ -208,12 +215,6 @@
                         (click)="viewRow(row)">
                         <tabler-icon name="arrow-up-right"></tabler-icon>
                       </button>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="cell-date">
-                      <span>{{ row.orderDate | date:'dd MMM yyyy' }}</span>
-                      <span class="cell-time">{{ row.orderDate | date:'HH:mm' }}</span>
                     </span>
                   </td>
                   <td>
@@ -231,35 +232,44 @@
                   </td>
                   <td>
                     <span class="amount-currency-wrap">
-                      <span class="amount-value">{{ row.totalPrice | number:'1.2-2' }}</span>
-                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="amount-currency-wrap">
-                      <span class="amount-value paid-value">{{ row.paid | number:'1.2-2' }}</span>
-                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="amount-currency-wrap">
-                      <span class="amount-value remaining-value">{{ row.remaining | number:'1.2-2' }}</span>
-                      <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                      <span class="amount-value">{{ row.totalPrice | seroCurrency }}</span>
                     </span>
                   </td>
                   <td>
                     <span class="status-badge status-{{ paymentMeta(row.paymentStatus).cls }}">
-                      {{ paymentMeta(row.paymentStatus).labelKey | translate }}
+                      <span class="status-text">{{ paymentMeta(row.paymentStatus).labelKey | translate }}</span>
                     </span>
                   </td>
                   <td>
                     <span class="status-badge status-{{ operationMeta(row.operationStatus).cls }}">
-                      {{ operationMeta(row.operationStatus).labelKey | translate }}
+                      <span class="status-text">{{ operationMeta(row.operationStatus).labelKey | translate }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="booking-type-badge">
+                      <tabler-icon [name]="tablerIconForType(row.type)"></tabler-icon>
+                      <span class="booking-type-text">{{ typeLabelKey(row.type) | translate }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="cell-date">
+                      <span>{{ row.orderDate | date:'dd MMM yyyy' }}</span>
+                      <span class="cell-time">{{ row.orderDate | date:'HH:mm' }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="amount-currency-wrap">
+                      <span class="amount-value paid-value">{{ row.paid | seroCurrency }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="amount-currency-wrap">
+                      <span class="amount-value remaining-value">{{ row.remaining | seroCurrency }}</span>
                     </span>
                   </td>
                   <td>
                     <span class="status-badge status-{{ agentStatusMeta(row.agentStatus).cls }}">
-                      {{ agentStatusMeta(row.agentStatus).labelKey | translate }}
+                      <span class="status-text">{{ agentStatusMeta(row.agentStatus).labelKey | translate }}</span>
                     </span>
                   </td>
                   <td>
@@ -312,31 +322,29 @@
           @if (!isLoading() && rows().length > 0) {
             <tfoot>
               <tr class="op-footer-row">
-                <td class="op-footer-label" colspan="4">{{ 'orders.footer.total' | translate }}</td>
+                <td class="op-footer-label" colspan="2">{{ 'orders.footer.total' | translate }}</td>
                 <td>
                   <span class="amount-currency-wrap">
-                    <span class="amount-value">{{ footerTotal() | number:'1.2-2' }}</span>
-                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
-                  </span>
-                </td>
-                <td>
-                  <span class="amount-currency-wrap">
-                    <span class="amount-value paid-value">{{ footerPaid() | number:'1.2-2' }}</span>
-                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
-                  </span>
-                </td>
-                <td>
-                  <span class="amount-currency-wrap">
-                    <span class="amount-value remaining-value">{{ footerRemaining() | number:'1.2-2' }}</span>
-                    <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                    <span class="amount-value">{{ footerTotal() | seroCurrency }}</span>
                   </span>
                 </td>
                 <td>
                   <span class="status-badge status-{{ footerPaymentMeta().cls }}">
-                    {{ footerPaymentMeta().labelKey | translate }}
+                    <span class="status-text">{{ footerPaymentMeta().labelKey | translate }}</span>
                   </span>
                 </td>
                 <td colspan="3"></td>
+                <td>
+                  <span class="amount-currency-wrap">
+                    <span class="amount-value paid-value">{{ footerPaid() | seroCurrency }}</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="amount-currency-wrap">
+                    <span class="amount-value remaining-value">{{ footerRemaining() | seroCurrency }}</span>
+                  </span>
+                </td>
+                <td colspan="2"></td>
               </tr>
             </tfoot>
           }

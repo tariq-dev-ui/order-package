@@ -6,12 +6,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActionsDropdownComponent, DropdownAction } from 'src/app/components/actions-dropdown/actions-dropdown.component';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner';
 import { AdminAPIClient, RequestVoucherModel, VoucherDetailsModel, VoucherStatusLogModel } from 'src/app/services/admin.api.client';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'voucher-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, ActionsDropdownComponent, CommonModule, LoadingSpinnerComponent, TranslateModule],
+  imports: [DatePipe, ActionsDropdownComponent, CommonModule, LoadingSpinnerComponent, TranslateModule, SeroCurrencyPipe],
   template: `
     <div class="relative">
       <loading-spinner [isLoading]="isLoading()" [message]="'Downloading PDF...' | translate" />
@@ -53,8 +54,7 @@ import { AdminAPIClient, RequestVoucherModel, VoucherDetailsModel, VoucherStatus
                       @if ((voucher.Voucher?.TotalPriceWithTax ?? 0) === 0) {
                         <div class="text-xs sm:text-sm font-bold text-gray-900">{{ 'N/A' | translate }}</div>
                       } @else {
-                        <div class="text-xs sm:text-sm font-bold text-gray-900">{{ voucher.Voucher?.TotalPriceWithTax | number }}</div>
-                        <div class="text-xs text-gray-500 sar-symbol">R</div>
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">{{ voucher.Voucher?.TotalPriceWithTax | seroCurrency }}</div>
                       }
                     </td>
                     <td class="px-3 py-2 text-center whitespace-nowrap">
@@ -346,7 +346,7 @@ export class VoucherStatusChangeDialogComponent {
 @Component({
   selector: 'voucher-details-dialog',
   standalone: true,
-  imports: [CommonModule, DatePipe, LoadingSpinnerComponent, MatDialogModule, TranslateModule],
+  imports: [CommonModule, DatePipe, LoadingSpinnerComponent, MatDialogModule, TranslateModule, SeroCurrencyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="relative overflow-hidden">
@@ -376,7 +376,7 @@ export class VoucherStatusChangeDialogComponent {
             </div>
             <div class="rounded-lg border border-gray-100 p-3">
               <div class="text-xs text-gray-500">{{ 'Total' | translate }}</div>
-              <div class="font-semibold">{{ item.Voucher?.TotalPriceWithTax | number }} <span class="text-gray-500 sar-symbol">R</span></div>
+              <div class="font-semibold">{{ item.Voucher?.TotalPriceWithTax | seroCurrency }}</div>
             </div>
           </div>
           <div class="bg-white rounded-lg border border-gray-100 overflow-x-auto">
@@ -394,8 +394,8 @@ export class VoucherStatusChangeDialogComponent {
                   <tr>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ detail.label | translate }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ detail.count }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ detail.price | number }}</td>
-                    <td class="px-4 py-3 text-sm font-semibold text-gray-900">{{ detail.total | number }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">{{ detail.price | seroCurrency }}</td>
+                    <td class="px-4 py-3 text-sm font-semibold text-gray-900">{{ detail.total | seroCurrency }}</td>
                   </tr>
                 }
               </tbody>

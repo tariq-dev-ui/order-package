@@ -12,6 +12,8 @@ import {
 } from '../../models/operation-voucher.model';
 import { OperationsMockService } from '../../operations-mock.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 type VoucherDetailsDialogData = {
   voucherId: number;
@@ -21,7 +23,7 @@ type VoucherDetailsDialogData = {
 @Component({
   selector: 'voucher-details',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, TranslateModule],
+  imports: [CommonModule, LoadingSpinnerComponent, TranslateModule, SeroCurrencyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="side-backdrop" (click)="close()">
@@ -123,7 +125,7 @@ type VoucherDetailsDialogData = {
                         </td>
                         <ng-container *ngTemplateOutlet="priceCells; context: { row: row }"></ng-container>
                         <td><strong>{{ row.RoomCount }}</strong><small>{{ label('Rooms', 'غرف') }}</small></td>
-                        <td class="total-cell">{{ row.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                        <td class="total-cell">{{ row.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
 
@@ -132,7 +134,7 @@ type VoucherDetailsDialogData = {
                         <td class="info-col"><strong>{{ row.TripPathTitle }}</strong><span>{{ row.CarTypeTitle }}</span></td>
                         <ng-container *ngTemplateOutlet="priceCells; context: { row: row }"></ng-container>
                         <td><strong>{{ row.Count }}</strong><small>{{ 'Vehicles' | translate }}</small></td>
-                        <td class="total-cell">{{ row.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                        <td class="total-cell">{{ row.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
 
@@ -141,7 +143,7 @@ type VoucherDetailsDialogData = {
                         <td class="info-col"><strong>{{ row.VisaTypeTitle }}</strong><span>{{ 'Visa request batch' | translate }}</span></td>
                         <ng-container *ngTemplateOutlet="priceCells; context: { row: row }"></ng-container>
                         <td><strong>{{ row.Count }}</strong><small>{{ 'Visas' | translate }}</small></td>
-                        <td class="total-cell">{{ row.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                        <td class="total-cell">{{ row.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
 
@@ -150,7 +152,7 @@ type VoucherDetailsDialogData = {
                         <td class="info-col"><strong>{{ row.CateringTitle }}</strong><span>{{ row.FoodTypeTitle }}</span></td>
                         <ng-container *ngTemplateOutlet="priceCells; context: { row: row }"></ng-container>
                         <td><strong>{{ row.Count }}</strong><small>{{ 'Meals' | translate }}</small></td>
-                        <td class="total-cell">{{ row.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                        <td class="total-cell">{{ row.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
 
@@ -162,7 +164,7 @@ type VoucherDetailsDialogData = {
                         </td>
                         <ng-container *ngTemplateOutlet="priceCells; context: { row: row }"></ng-container>
                         <td><strong>{{ row.Count }}</strong><small>{{ 'Tickets' | translate }}</small></td>
-                        <td class="total-cell">{{ row.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                        <td class="total-cell">{{ row.TotalPriceWithTax | seroCurrency }}</td>
                       </tr>
                     }
                   </tbody>
@@ -176,11 +178,11 @@ type VoucherDetailsDialogData = {
           @if (voucher()) {
             <div class="price-summary">
               <strong>{{ label('Price Summary', 'ملخص الأسعار') }}</strong>
-              <span>{{ label('Cost Price:', 'سعر التكلفة:') }} {{ voucher()?.TotalCostPrice | number:'1.2-2' }} <span class="sar-symbol">R</span></span>
-              <span>{{ label('Original Price:', 'السعر الأصلي:') }} {{ voucher()?.TotalOriginalPrice | number:'1.2-2' }} <span class="sar-symbol">R</span></span>
-              <span>{{ label('Selling Price:', 'سعر البيع:') }} {{ voucher()?.TotalSellingPrice | number:'1.2-2' }} <span class="sar-symbol">R</span></span>
-              <span>{{ label('Tax:', 'الضريبة:') }} {{ voucher()?.TotalTax | number:'1.2-2' }} <span class="sar-symbol">R</span></span>
-              <span class="grand-total">{{ label('Grand Total:', 'الإجمالي الكلي:') }} {{ voucher()?.TotalPriceWithTax | number:'1.2-2' }} <span class="sar-symbol">R</span></span>
+              <span>{{ label('Cost Price:', 'سعر التكلفة:') }} {{ voucher()?.TotalCostPrice | seroCurrency }}</span>
+              <span>{{ label('Original Price:', 'السعر الأصلي:') }} {{ voucher()?.TotalOriginalPrice | seroCurrency }}</span>
+              <span>{{ label('Selling Price:', 'سعر البيع:') }} {{ voucher()?.TotalSellingPrice | seroCurrency }}</span>
+              <span>{{ label('Tax:', 'الضريبة:') }} {{ voucher()?.TotalTax | seroCurrency }}</span>
+              <span class="grand-total">{{ label('Grand Total:', 'الإجمالي الكلي:') }} {{ voucher()?.TotalPriceWithTax | seroCurrency }}</span>
             </div>
 
             <div class="status-summary">
@@ -197,11 +199,11 @@ type VoucherDetailsDialogData = {
     </div>
 
     <ng-template #priceCells let-row="row">
-      <td>{{ asMoney(row.CostUnitPrice) }} <span class="sar-symbol">R</span></td>
-      <td>{{ asMoney(row.OriginalUnitPrice) }} <span class="sar-symbol">R</span></td>
-      <td><strong>{{ asMoney(row.SellingUnitPrice) }} <span class="sar-symbol">R</span></strong></td>
-      <td>{{ asMoney(row.Tax) }} <span class="sar-symbol">R</span></td>
-      <td>{{ asMoney(row.SellingUnitPrice + row.Tax) }} <span class="sar-symbol">R</span></td>
+      <td>{{ asMoney(row.CostUnitPrice) }}</td>
+      <td>{{ asMoney(row.OriginalUnitPrice) }}</td>
+      <td><strong>{{ asMoney(row.SellingUnitPrice) }}</strong></td>
+      <td>{{ asMoney(row.Tax) }}</td>
+      <td>{{ asMoney(row.SellingUnitPrice + row.Tax) }}</td>
     </ng-template>
   `,
   styles: [`
@@ -301,7 +303,7 @@ export class VoucherDetailsDialogComponent implements OnInit {
   }
 
   asMoney(value: number | undefined): string {
-    return (value ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return formatSeroCurrency(value ?? 0);
   }
 
   getTicketRouteLabel(ticketVoucher: FlightVoucherLine): string {

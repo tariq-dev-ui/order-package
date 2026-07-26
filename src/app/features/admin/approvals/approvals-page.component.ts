@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActionsDropdownComponent, DropdownAction } from 'src/app/components/actions-dropdown/actions-dropdown.component';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 // ── Voucher Model ──────────────────────────────────────────────────────────────
 
@@ -135,7 +136,7 @@ export class FinanceApprovalDialogComponent {
 @Component({
   selector: 'app-voucher-detail-dialog',
   standalone: true,
-  imports: [CommonModule, DatePipe, MatDialogModule, MatButtonModule, TranslateModule],
+  imports: [CommonModule, DatePipe, MatDialogModule, MatButtonModule, TranslateModule, SeroCurrencyPipe],
   template: `
     <h2 mat-dialog-title>{{ 'Quotation Details' | translate }}: {{ voucher.RequestVoucherCode }}</h2>
     <div mat-dialog-content style="min-width:400px;">
@@ -143,7 +144,7 @@ export class FinanceApprovalDialogComponent {
         <tr><td class="vd-label">{{ 'Type' | translate }}</td><td>{{ getTypeName(voucher.RequestVoucherTypeID) }}</td></tr>
         <tr><td class="vd-label">{{ 'Quotation No.' | translate }}</td><td>{{ voucher.RequestVoucherCode }}</td></tr>
         <tr><td class="vd-label">{{ 'Date' | translate }}</td><td>{{ voucher.AddedDate | date:'dd MMM yyyy HH:mm' }}</td></tr>
-        <tr><td class="vd-label">{{ 'Price' | translate }}</td><td>{{ voucher.TotalPriceWithTax | number:'1.2-2' }} SAR</td></tr>
+        <tr><td class="vd-label">{{ 'Price' | translate }}</td><td>{{ voucher.TotalPriceWithTax | seroCurrency }}</td></tr>
         <tr><td class="vd-label">{{ 'Admin Status' | translate }}</td><td>{{ voucher.VoucherStatusForAdminTitle }}</td></tr>
         <tr><td class="vd-label">{{ 'Agent Status' | translate }}</td><td>{{ voucher.VoucherStatusForAgentTitle }}</td></tr>
         <tr><td class="vd-label">{{ 'Agent' | translate }}</td><td>{{ voucher.AgentName }}</td></tr>
@@ -180,7 +181,7 @@ export class VoucherDetailDialogComponent {
     CommonModule, DatePipe,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatPaginatorModule,
     MatTooltipModule, TranslateModule,
-    ActionsDropdownComponent, LoadingSpinnerComponent
+    ActionsDropdownComponent, LoadingSpinnerComponent, SeroCurrencyPipe
   ],
   template: `
     <div class="ap-page">
@@ -269,8 +270,7 @@ export class VoucherDetailDialogComponent {
                             <div class="price-na">{{ 'N/A' | translate }}</div>
                           } @else {
                             <div class="price-amount">
-                              {{ voucher.TotalPriceWithTax ?? 0 | number:'1.2-2' }}
-                              <span class="currency-symbol sar-symbol">R</span>
+                              {{ voucher.TotalPriceWithTax ?? 0 | seroCurrency }}
                             </div>
                           }
                         </td>

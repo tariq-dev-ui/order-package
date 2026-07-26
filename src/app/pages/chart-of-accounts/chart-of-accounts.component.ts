@@ -29,6 +29,7 @@ import { ZeroPaddingDialogComponent, ZeroPaddingDialogData, ZeroPaddingPreviewRo
 import { AddAccountDialogComponent, AddAccountDialogData } from './add-account-dialog/add-account-dialog.component';
 import { AddCodeDialogComponent, AddCodeDialogData } from './add-code-dialog/add-code-dialog.component';
 import { DeleteAccountDialogComponent, DeleteAccountDialogData } from './delete-account-dialog/delete-account-dialog.component';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 /**
  * Tree Node Interface
@@ -3657,10 +3658,7 @@ export class ChartOfAccountsComponent implements OnInit {
    * Format Currency
    */
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
+    return formatSeroCurrency(amount);
   }
 
   /**

@@ -5,6 +5,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { formatSeroCurrency, SAUDI_RIYAL_SYMBOL } from 'src/app/shared/currency/currency-format.util';
 
 export type ServiceType = string;
 
@@ -49,6 +50,7 @@ export class AddServiceDialogComponent {
   serviceForm: FormGroup;
   serviceTypes: ServiceTypeInfo[];
   existingServices = signal<Service[]>(this.data?.existingServices || []);
+  readonly riyalSymbol = SAUDI_RIYAL_SYMBOL;
 
   // Computed: Filter services by selected type
   filteredServices = computed(() => {
@@ -84,7 +86,7 @@ export class AddServiceDialogComponent {
   }
 
   formatPrice(price: number): string {
-    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return formatSeroCurrency(price);
   }
 
   onSave(): void {

@@ -71,8 +71,7 @@
               @if (voucher.TotalPriceWithTax === 0) {
                 <div class="text-xs sm:text-xs font-bold text-gray-900">{{ 'N/A' | translate }}</div>
               } @else {
-                <div class="text-xs sm:text-xs font-bold text-gray-900">{{ voucher.TotalPriceWithTax }}</div>
-                <div class="text-xs text-gray-500 sar-symbol">{{ voucher.TotalPriceWithTax ? ' R' : '' }}</div>
+                <div class="text-xs sm:text-xs font-bold text-gray-900">{{ voucher.TotalPriceWithTax | seroCurrency }}</div>
               }
             </td>
             <td class="py-4 pl-4 text-center">

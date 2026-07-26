@@ -10,20 +10,20 @@
         <div class="account-balance-section">
           <div class="balance-item">
             <span class="balance-label" translate>الرصيد الافتتاحي:</span>
-            <span class="balance-value">{{ formatCurrency(accountBalance.openingBalance) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+            <span class="balance-value">{{ formatCurrency(accountBalance.openingBalance) }}</span>
           </div>
           <div class="balance-item">
             <span class="balance-label" translate>إجمالي المدين:</span>
-            <span class="balance-value debit">{{ formatCurrency(accountBalance.totalDebit) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+            <span class="balance-value debit">{{ formatCurrency(accountBalance.totalDebit) }}</span>
           </div>
           <div class="balance-item">
             <span class="balance-label" translate>إجمالي الدائن:</span>
-            <span class="balance-value credit">{{ formatCurrency(accountBalance.totalCredit) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span></span>
+            <span class="balance-value credit">{{ formatCurrency(accountBalance.totalCredit) }}</span>
           </div>
           <div class="balance-item total">
             <span class="balance-label" translate>الرصيد الحالي:</span>
             <span class="balance-value" [class.positive]="accountBalance.currentBalance >= 0" [class.negative]="accountBalance.currentBalance < 0">
-              {{ formatCurrency(accountBalance.currentBalance) }} <span class="currency-symbol">{{ 'SAR' | translate }}</span>
+              {{ formatCurrency(accountBalance.currentBalance) }}
             </span>
           </div>
         </div>

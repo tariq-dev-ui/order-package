@@ -593,14 +593,15 @@
 }
 
 .table-section {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 0 1rem 2rem;
 }
 
 .table-card {
   margin-bottom: 1rem;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--app-border);
   border-radius: 0.75rem;
   background: var(--app-card-bg);
@@ -608,18 +609,57 @@
 }
 
 .table-container {
-  overflow-x: auto;
+  width: 100%;
+  overflow: visible;
 }
 
 .orders-table {
   width: 100%;
-  min-width: 1180px;
+  max-width: 100%;
+  min-width: 0;
   border-collapse: collapse;
   background: transparent;
+  table-layout: fixed;
+}
+
+.orders-table .col-quote {
+  width: 20%;
+}
+
+.orders-table .col-agent {
+  width: 13.5%;
+}
+
+.orders-table .col-money {
+  width: 7.5%;
+}
+
+.orders-table .col-payment-status {
+  width: 8.5%;
+}
+
+.orders-table .col-operation-status {
+  width: 12%;
+}
+
+.orders-table .col-type {
+  width: 5.5%;
+}
+
+.orders-table .col-date {
+  width: 6.5%;
+}
+
+.orders-table .col-agent-status {
+  width: 6%;
+}
+
+.orders-table .col-actions {
+  width: 6.5%;
 }
 
 .orders-table thead tr {
-  height: 44px;
+  height: 42px;
   background: var(--app-heading) !important;
 }
 
@@ -627,39 +667,57 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  padding: 0 1rem;
+  height: 42px;
+  overflow: hidden;
+  padding: 0 0.45rem;
   border-bottom: none;
   background: var(--app-heading) !important;
   color: color-mix(in srgb, var(--app-card-bg) 85%, transparent) !important;
-  font-size: 0.78rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  line-height: 44px;
+  line-height: 1.15;
   text-align: center;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
+.orders-table thead th:first-child {
+  border-start-start-radius: 0.75rem;
+}
+
+.orders-table thead th:last-child {
+  border-start-end-radius: 0.75rem;
+}
+
 .orders-table td {
-  height: 52px;
-  padding: 0.75rem 1rem;
+  height: 48px;
+  padding: 0 0.45rem;
   border-bottom: 1px solid color-mix(in srgb, var(--app-border) 60%, transparent) !important;
   color: var(--app-text-primary) !important;
-  font-size: 0.8125rem;
-  line-height: 1.4;
+  font-size: 0.76rem;
+  line-height: 1.25;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
 }
 
-.orders-table th:nth-child(4),
-.orders-table td:nth-child(4) {
-  min-width: 220px;
-}
-
+.orders-table th:nth-child(1),
+.orders-table td:nth-child(1),
 .orders-table th:nth-child(2),
 .orders-table td:nth-child(2) {
-  min-width: 180px;
+  text-align: start;
+}
+
+.orders-table th:nth-child(3),
+.orders-table td:nth-child(3),
+.orders-table th:nth-child(8),
+.orders-table td:nth-child(8),
+.orders-table th:nth-child(9),
+.orders-table td:nth-child(9) {
+  text-align: right;
 }
 
 .orders-table tbody tr {
@@ -675,13 +733,23 @@
 }
 
 .cell-ref {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
   color: var(--app-heading);
-  font-size: 0.8rem;
+  direction: ltr;
+  font-size: 0.74rem;
   font-weight: 700;
+  text-overflow: ellipsis;
+  unicode-bidi: isolate;
 }
 
 .cell-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
   font-weight: 600;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -689,17 +757,19 @@
 .agent-cell {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  max-width: none;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   vertical-align: middle;
   white-space: nowrap;
 }
 
 .quote-view-btn,
 .agent-view-btn {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -716,8 +786,8 @@
 
 .quote-view-btn tabler-icon,
 .agent-view-btn tabler-icon {
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
 }
 
 :host-context([dir="rtl"]) .quote-view-btn tabler-icon,
@@ -742,40 +812,53 @@
   display: inline-flex;
   flex-direction: column;
   gap: 2px;
+  width: 100%;
   direction: ltr;
+  font-size: 0.66rem;
   unicode-bidi: isolate;
   line-height: 1.25;
 }
 
 .cell-time {
   color: var(--app-text-secondary);
-  font-size: 0.72rem;
+  font-size: 0.62rem;
 }
 
 .booking-type-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.15rem 0.5rem;
+  gap: 0.25rem;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.12rem 0.35rem;
   border: 1px solid color-mix(in srgb, var(--app-heading) 20%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--app-heading) 8%, transparent);
   color: var(--app-heading);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .booking-type-badge tabler-icon {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   flex: 0 0 auto;
+}
+
+.booking-type-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .amount-currency-wrap {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.3rem;
+  justify-content: flex-end;
+  gap: 0.22rem;
+  width: 100%;
   direction: ltr;
   font-variant-numeric: tabular-nums;
   unicode-bidi: isolate;
@@ -783,7 +866,7 @@
 
 .amount-value {
   color: var(--app-text-primary);
-  font-size: 0.825rem;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
@@ -799,14 +882,37 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 22px !important;
-  padding: 0.18rem 0.55rem !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: min(76px, 100%) !important;
+  height: 22px !important;
+  overflow: hidden !important;
+  padding: 0 0.28rem !important;
   border: 1px solid !important;
   border-radius: 999px !important;
-  font-size: 0.7rem !important;
+  font-size: 0.6rem !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
+  text-overflow: ellipsis !important;
   white-space: nowrap !important;
+}
+
+.status-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orders-table td:nth-child(4) .status-badge {
+  min-width: min(78px, 100%) !important;
+}
+
+.orders-table td:nth-child(5) .status-badge {
+  min-width: min(120px, 100%) !important;
+}
+
+.orders-table td:nth-child(10) .status-badge {
+  min-width: min(48px, 100%) !important;
 }
 
 .status-success {
@@ -843,12 +949,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
+  gap: 0.25rem;
+  width: 100%;
 }
 
 .op-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -862,8 +969,8 @@
 }
 
 .op-icon-btn tabler-icon {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .op-icon-btn:hover {

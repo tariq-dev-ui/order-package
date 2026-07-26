@@ -76,8 +76,7 @@
                       <div class="price-na">{{ 'N/A' | translate }}</div>
                     } @else {
                       <div class="price-amount">
-                        {{ voucher.TotalPriceWithTax | number:'1.2-2' }}
-                        <span class="currency-symbol sar-symbol">R</span>
+                        {{ voucher.TotalPriceWithTax | seroCurrency }}
                       </div>
                     }
                   </td>

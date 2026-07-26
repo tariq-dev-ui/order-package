@@ -16,6 +16,7 @@ import {
   QuotationRow,
   QuotationTypeFilter,
 } from './quotations.model';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 type TypeCounts = Record<string, number>;
 
@@ -23,7 +24,7 @@ type TypeCounts = Record<string, number>;
   selector: 'quotations-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslateModule, SeroDropdownComponent, PaginationComponent],
+  imports: [CommonModule, TranslateModule, SeroDropdownComponent, SeroCurrencyPipe, PaginationComponent],
   template: `
     <section class="qp-page">
 
@@ -167,9 +168,9 @@ type TypeCounts = Record<string, number>;
                       <span class="qp-date-time">{{ row.quotationDate | date:'HH:mm' }}</span>
                     </td>
                     <td>{{ row.agent }}</td>
-                    <td class="qp-amount">{{ row.totalPrice | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                    <td class="qp-amount">{{ row.paid | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                    <td class="qp-amount">{{ row.remaining | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                    <td class="qp-amount">{{ row.totalPrice | seroCurrency }}</td>
+                    <td class="qp-amount">{{ row.paid | seroCurrency }}</td>
+                    <td class="qp-amount">{{ row.remaining | seroCurrency }}</td>
                     <td>
                       <span class="qp-badge qp-badge--{{ paymentMeta(row.paymentStatus).cls }}">
                         {{ paymentMeta(row.paymentStatus).labelKey | translate }}
@@ -231,9 +232,9 @@ type TypeCounts = Record<string, number>;
               <tfoot>
                 <tr class="qp-footer-row">
                   <td class="qp-footer-label" colspan="4">{{ 'quotations.footer.total' | translate }}</td>
-                  <td class="qp-amount qp-strong">{{ footerTotal() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                  <td class="qp-amount qp-strong">{{ footerPaid() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                  <td class="qp-amount qp-strong">{{ footerRemaining() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
+                  <td class="qp-amount qp-strong">{{ footerTotal() | seroCurrency }}</td>
+                  <td class="qp-amount qp-strong">{{ footerPaid() | seroCurrency }}</td>
+                  <td class="qp-amount qp-strong">{{ footerRemaining() | seroCurrency }}</td>
                   <td>
                     <span class="qp-badge qp-badge--{{ footerPaymentMeta().cls }}">
                       {{ footerPaymentMeta().labelKey | translate }}

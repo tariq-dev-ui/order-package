@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DropdownAction } from 'src/app/components/actions-dropdown/actions-dropdown.component';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner';
 import { AdminAPIClient, RequestModel, SeroRequestROVViewModel, VoucherDetailsModel } from 'src/app/services/admin.api.client';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 import { VoucherTableComponent } from '../voucher-table/voucher-table.component';
 
 type VoucherTabKey = 'vouchers' | 'rov_open' | 'rov_closed';
@@ -14,7 +15,7 @@ type VoucherCreateType = 'hotel' | 'visa' | 'catering' | 'transport' | 'ticket';
 @Component({
   selector: 'voucher-section',
   standalone: true,
-  imports: [CommonModule, VoucherTableComponent, LoadingSpinnerComponent, TranslateModule],
+  imports: [CommonModule, VoucherTableComponent, LoadingSpinnerComponent, TranslateModule, SeroCurrencyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6">
@@ -116,7 +117,7 @@ type VoucherCreateType = 'hotel' | 'visa' | 'catering' | 'transport' | 'ticket';
                       {{ row.IsClosed ? ('Closed' | translate) : ('Open' | translate) }}
                     </span>
                   </td>
-                  <td class="px-4 py-3 text-sm text-gray-900">{{ row.Price | number }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900">{{ row.Price | seroCurrency }}</td>
                   <td class="px-4 py-3 text-sm text-gray-900">{{ row.AddedDate | date:'mediumDate' }}</td>
                 </tr>
               } @empty {
@@ -267,7 +268,7 @@ export class VoucherSectionComponent {
   selector: 'voucher-create-dialog',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, LoadingSpinnerComponent, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, LoadingSpinnerComponent, TranslateModule, SeroCurrencyPipe],
   template: `
     <div class="relative overflow-hidden">
       <loading-spinner [isLoading]="isSubmitting()" [message]="'Saving quotation...' | translate" />
@@ -315,15 +316,15 @@ export class VoucherSectionComponent {
           <div class="rounded-lg bg-primary-50 border border-primary-100 p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <div class="text-xs text-gray-500">{{ 'Subtotal' | translate }}</div>
-              <div class="text-lg font-semibold">{{ subtotal() | number }}</div>
+              <div class="text-lg font-semibold">{{ subtotal() | seroCurrency }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-500">{{ 'Tax Amount' | translate }}</div>
-              <div class="text-lg font-semibold">{{ taxAmount() | number }}</div>
+              <div class="text-lg font-semibold">{{ taxAmount() | seroCurrency }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-500">{{ 'Total' | translate }}</div>
-              <div class="text-lg font-semibold text-primary-700">{{ total() | number }}</div>
+              <div class="text-lg font-semibold text-primary-700">{{ total() | seroCurrency }}</div>
             </div>
           </div>
 

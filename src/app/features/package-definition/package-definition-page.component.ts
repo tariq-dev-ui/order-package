@@ -25,6 +25,7 @@ import { OrderSummarySidebarComponent } from './components/order-summary-sidebar
 import { HotelStepFormComponent } from './components/hotel-step-form/hotel-step-form.component';
 import { CounterInputComponent } from './components/counter-input/counter-input.component';
 import { SeroDatePickerComponent } from '../../shared/components/sero-date-picker/sero-date-picker.component';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 const INITIAL_SUMMARY: OrderSummary = {
   makkahHotels: [],
@@ -1893,8 +1894,7 @@ export class PackageDefinitionPageComponent {
   }
 
   formatSar(value: number | null): string {
-    const amount = value ?? 0;
-    return `${amount.toFixed(2)} ${this.translate.instant('common.labels.currency')}`;
+    return formatSeroCurrency(value ?? 0);
   }
 
   private parseNonNegativeCurrency(value: string): number | null {

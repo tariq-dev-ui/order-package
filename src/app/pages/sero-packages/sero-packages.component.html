@@ -176,8 +176,7 @@
         <td mat-cell *matCellDef="let element" class="pkg-td">
           @if (element.Price) {
             <div class="pkg-cell-price">
-              <span class="pkg-cell-price-sym">R</span>
-              {{ element.Price | number:'1.2-2' }}
+              {{ element.Price | seroCurrency }}
             </div>
           } @else {
             <span class="pkg-cell-na">{{ 'N/A' | translate }}</span>

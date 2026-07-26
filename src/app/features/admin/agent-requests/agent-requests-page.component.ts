@@ -10,12 +10,13 @@ import { SingleAgentSelectorComponent } from 'src/app/pages/agents-list/componen
 import { VoucherSectionComponent } from '../../../features/master/orders/components/voucher-section.component';
 import { ConfirmationDialogComponent } from 'src/app/components/confirmation-dialog/confirmation-dialog.component';
 import { ChatDialogComponent } from '../../../features/master/orders/components/chat-dialog.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'agent-requests-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, TitleCasePipe, SingleAgentSelectorComponent, VoucherSectionComponent],
+  imports: [CommonModule, DatePipe, TitleCasePipe, SingleAgentSelectorComponent, VoucherSectionComponent, SeroCurrencyPipe],
   template: `
     <div class="ar-page">
 
@@ -167,7 +168,7 @@ import { ChatDialogComponent } from '../../../features/master/orders/components/
                       </div>
                       <div class="ar-req-info-item">
                         <span class="ar-req-info-label">Price</span>
-                        <span class="ar-req-info-value">{{ req.Price | number }} SAR</span>
+                        <span class="ar-req-info-value">{{ req.Price | seroCurrency }}</span>
                       </div>
                       @if (req.Notes) {
                         <div class="ar-req-info-item ar-req-notes">

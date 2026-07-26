@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 // Currently using local mock data for frontend prototype. Later this can be replaced with backend API.
 
@@ -41,12 +42,16 @@ type ServicePreviewRow = {
 })
 export class MyServicesPage {
   isPickerOpen = false;
+  private readonly money = (value: number) => formatSeroCurrency(value, {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  });
 
   readonly summaryCards = [
     { label: 'Total Services', value: '6', subLabel: 'Operational catalog', iconClass: 'fas fa-layer-group', accentClass: 'bg-primary-100 text-primary-700' },
     { label: 'Active Services', value: '2', subLabel: 'Ready for booking', iconClass: 'fas fa-check-circle', accentClass: 'bg-emerald-100 text-emerald-700' },
     { label: 'Drafts', value: '1', subLabel: 'Needs completion', iconClass: 'fas fa-pencil-alt', accentClass: 'bg-violet-100 text-violet-700' },
-    { label: 'Average Pricing', value: 'SAR 622', subLabel: 'Across visible services', iconClass: 'fas fa-receipt', accentClass: 'bg-amber-100 text-amber-700' },
+    { label: 'Average Pricing', value: this.money(622), subLabel: 'Across visible services', iconClass: 'fas fa-receipt', accentClass: 'bg-amber-100 text-amber-700' },
   ] as const;
 
   readonly filterPills = [
@@ -108,7 +113,7 @@ export class MyServicesPage {
       location: 'Al Haram — Makkah',
       capacity: '4 Rooms',
       availability: '12 Jun - 18 Jun',
-      pricing: 'Starting from SAR 450',
+      pricing: `Starting from ${this.money(450)}`,
       updated: 'Updated 2h ago',
       notes: 'Visa included, family rooms confirmed, late check-in supported.',
       status: 'Active',
@@ -122,7 +127,7 @@ export class MyServicesPage {
       location: 'Airport Transfer — Madina',
       capacity: '3 Vehicles',
       availability: 'Daily departures',
-      pricing: 'Per vehicle SAR 150',
+      pricing: `Per vehicle ${this.money(150)}`,
       updated: 'Updated 6h ago',
       notes: 'Two drivers assigned, luggage trailer available on request.',
       status: 'Active',
@@ -136,7 +141,7 @@ export class MyServicesPage {
       location: 'Quba — Madina',
       capacity: '150 Meals',
       availability: '14 Jun - 20 Jun',
-      pricing: 'Per guest SAR 80',
+      pricing: `Per guest ${this.money(80)}`,
       updated: 'Updated yesterday',
       notes: 'Kitchen is at full allocation for Friday dinner.',
       status: 'Fully Booked',
@@ -150,7 +155,7 @@ export class MyServicesPage {
       location: 'Riyadh Station',
       capacity: '40 Seats',
       availability: 'Expired 10 May',
-      pricing: 'Starting from SAR 350',
+      pricing: `Starting from ${this.money(350)}`,
       updated: 'Updated 2w ago',
       notes: 'Fare window expired. Refresh supplier allocation before reuse.',
       status: 'Expired',
@@ -164,7 +169,7 @@ export class MyServicesPage {
       location: 'Central Area — Madina',
       capacity: '2 Rooms',
       availability: 'Pending schedule',
-      pricing: 'Starting from SAR 390',
+      pricing: `Starting from ${this.money(390)}`,
       updated: 'Updated 1d ago',
       notes: 'Draft needs confirmed room split and final nights count.',
       status: 'Draft',

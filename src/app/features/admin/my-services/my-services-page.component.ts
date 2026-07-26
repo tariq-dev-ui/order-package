@@ -20,11 +20,12 @@ import {
 } from './my-service.mock';
 import { MyServicesFormComponent } from './my-services-form/my-services-form.component';
 import { MyServicesService } from './my-services.service';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-my-services-page',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, SeroDropdownComponent],
+  imports: [CommonModule, MatDialogModule, SeroDropdownComponent, SeroCurrencyPipe],
   template: `
     <section class="my-services-page" dir="rtl">
       <header class="page-head">
@@ -128,7 +129,7 @@ import { MyServicesService } from './my-services.service';
         </article>
         <article class="summary-card">
           <span class="summary-label">Average Pricing</span>
-          <strong dir="ltr">₪ {{ summary().averagePricing | number:'1.0-0' }}</strong>
+          <strong dir="ltr">{{ summary().averagePricing | seroCurrency:'symbol':'':0:0 }}</strong>
           <span class="summary-note">Across visible services</span>
         </article>
       </section>
@@ -284,7 +285,7 @@ import { MyServicesService } from './my-services.service';
 
                   <div class="pricing-cell">
                     <span>{{ service.pricing.label }}</span>
-                    <strong dir="ltr">₪ {{ service.pricing.amount | number:'1.0-0' }}</strong>
+                    <strong dir="ltr">{{ service.pricing.amount | seroCurrency:'symbol':'':0:0 }}</strong>
                   </div>
 
                   <div class="update-cell">

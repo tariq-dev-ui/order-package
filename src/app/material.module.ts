@@ -45,12 +45,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserModule } from '@angular/platform-browser';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @NgModule({
   declarations: [],
-  imports: [MatSelectGlobalSearchDirective],
+  imports: [MatSelectGlobalSearchDirective, SeroCurrencyPipe],
   exports: [
     MatSelectGlobalSearchDirective,
+    SeroCurrencyPipe,
     MatAutocompleteModule,
     MatCheckboxModule,
     MatDatepickerModule,

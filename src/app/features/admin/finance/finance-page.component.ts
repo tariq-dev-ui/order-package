@@ -21,6 +21,7 @@ import {
   TrialBalanceRow,
 } from './finance.models';
 import { FinanceLocalStoreService } from './finance-local-store.service';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 @Component({
   selector: 'app-finance-page',
@@ -357,7 +358,7 @@ import { FinanceLocalStoreService } from './finance-local-store.service';
                 </div>
                 <h3>{{ wallet.name }}</h3>
                 <p class="mono">{{ wallet.accountNumber }}</p>
-                <strong>{{ formatMoney(wallet.balance) }} {{ wallet.currency }}</strong>
+                <strong>{{ formatMoney(wallet.balance) }}</strong>
                 @if (wallet.isDefault) {
                   <span class="default-label">افتراضي</span>
                 }
@@ -1270,10 +1271,7 @@ export class FinancePageComponent implements OnInit, OnDestroy {
   }
 
   formatMoney(value: number): string {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+    return formatSeroCurrency(value, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
   showLocalNotice(message: string): void {

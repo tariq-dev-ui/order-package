@@ -125,7 +125,7 @@ export interface SelectOption {
                           <span class="block text-[10px] mt-0.5 font-semibold"
                             [class.text-primary-100]="option.id === selectedOption()?.id"
                             [class.text-primary-500]="option.id !== selectedOption()?.id">
-                            <span class="sar-symbol me-0.5">R</span>{{ option.description }}
+                            {{ option.description }}
                           </span>
                         }
                       </div>

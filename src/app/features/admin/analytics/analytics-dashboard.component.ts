@@ -8,11 +8,12 @@ import { OperationVoucher } from '../operations/models/operation-voucher.model';
 import { AnalyticsRequest } from './analytics.model';
 import { AnalyticsService } from './analytics.service';
 import { DashboardVouchersComponent } from './components/dashboard-vouchers.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-analytics-dashboard',
   standalone: true,
-  imports: [RouterLink, CommonModule, LoadingSpinnerComponent, DashboardVouchersComponent, TranslateModule],
+  imports: [RouterLink, CommonModule, LoadingSpinnerComponent, DashboardVouchersComponent, TranslateModule, SeroCurrencyPipe],
   templateUrl: './analytics-dashboard.component.html',
   styleUrl: './analytics-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -37,16 +37,11 @@
    (جدول، بطاقة، نص، إلخ) حسب لغة الواجهة [dir] على الحاوية.
 ======================================== */
 /* غلاف المبلغ + الرمز في الجداول (يُطبَّق من جذر المستند) */
-html[dir="rtl"] .amount-currency-wrap {
-  direction: rtl !important;
-  unicode-bidi: embed;
-  display: inline-block;
-}
-
+html[dir="rtl"] .amount-currency-wrap,
 html[dir="ltr"] .amount-currency-wrap {
   direction: ltr !important;
-  unicode-bidi: embed;
-  display: inline-block;
+  unicode-bidi: isolate;
+  display: inline-flex;
 }
 
 [dir="rtl"] :has(> .currency-symbol),
@@ -55,8 +50,8 @@ html[dir="ltr"] .amount-currency-wrap {
 [dir="rtl"] td:has(.sar-symbol),
 [dir="rtl"] th:has(.currency-symbol),
 [dir="rtl"] th:has(.sar-symbol) {
-  direction: rtl !important;
-  unicode-bidi: embed;
+  direction: ltr !important;
+  unicode-bidi: isolate;
 }
 
 [dir="ltr"] :has(> .currency-symbol),
@@ -66,7 +61,7 @@ html[dir="ltr"] .amount-currency-wrap {
 [dir="ltr"] th:has(.currency-symbol),
 [dir="ltr"] th:has(.sar-symbol) {
   direction: ltr !important;
-  unicode-bidi: embed;
+  unicode-bidi: isolate;
 }
 
 /* ── نوافذ منبثقة (Material Dialog + CDK overlay): اتجاه النص مع لغة الواجهة ── */

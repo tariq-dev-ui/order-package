@@ -14,11 +14,12 @@ import {
   AgentPackageFilterState,
 } from './agent-package.mock';
 import { AgentPackagesService } from './agent-packages.service';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-agent-packages-page',
   standalone: true,
-  imports: [CommonModule, SeroDropdownComponent, TableFilterHeaderComponent],
+  imports: [CommonModule, SeroDropdownComponent, TableFilterHeaderComponent, SeroCurrencyPipe],
   template: `
     <section class="agent-packages-page" dir="rtl">
       <header class="page-head">
@@ -133,7 +134,7 @@ import { AgentPackagesService } from './agent-packages.service';
                       }
                     </td>
 
-                    <td class="price-cell" dir="ltr">R {{ pkg.price | number:'1.2-2' }}</td>
+                    <td class="price-cell" dir="ltr">{{ pkg.price | seroCurrency }}</td>
 
                     <td class="date-cell">{{ pkg.startDate | date:'d/M/yyyy' }}</td>
 

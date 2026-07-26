@@ -11,6 +11,7 @@ import { Account } from 'src/app/models/chart-of-accounts.model';
 import { CoreService } from 'src/app/services/core.service';
 import { FormsModule } from '@angular/forms';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 interface TrialBalanceItem {
   id: string;
@@ -264,12 +265,7 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'SAR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    return formatSeroCurrency(amount);
   }
 
   formatDate(date: Date): string {

@@ -22,15 +22,19 @@ import {
   TransportState,
 } from '../../services/package-builder-state-management-service';
 import { dropdownSearchListComponent, SelectOption } from 'src/app/components/dropdown-search-list/dropdown-search-list.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
+import { formatSeroCurrency, SAUDI_RIYAL_SYMBOL } from 'src/app/shared/currency/currency-format.util';
 
 @Component({
   selector: 'pricing-step',
   standalone: true,
-  imports: [CommonModule, TranslateModule, dropdownSearchListComponent],
+  imports: [CommonModule, TranslateModule, dropdownSearchListComponent, SeroCurrencyPipe],
   templateUrl: './pricing.html',
   styleUrl: './pricing.css',
 })
 export class Pricing implements OnInit {
+  readonly riyalSymbol = SAUDI_RIYAL_SYMBOL;
+
   @Input() makkahHotelListState!: Signal<HotelState[]>;
   @Input() makkahHotelCountState!: Signal<HotelCountState>;
   @Input() madinahHotelListState!: Signal<HotelState[]>;
@@ -80,12 +84,12 @@ export class Pricing implements OnInit {
         const packageOptions = this.getFilteredHotelPolicies(hotel).map(item => ({
           id: item.policy.HotelPricePolicyID!,
           label: item.policy.Title ?? '',
-          description: `${item.price.toFixed(2)} / room / night`,
+          description: `${formatSeroCurrency(item.price)} / room / night`,
         }));
         const original = city === 'makkah' ? this.originalMakkahPrices[idx] : this.originalMadinahPrices[idx];
         if (original != null) {
           return [
-            { id: 'current', label: 'Current price', description: `${original.toFixed(2)} total` },
+            { id: 'current', label: 'Current price', description: `${formatSeroCurrency(original)} total` },
             ...packageOptions,
           ];
         }
@@ -129,12 +133,12 @@ export class Pricing implements OnInit {
           .map(item => ({
             id: item.pkg.TransPackageID!,
             label: item.pkg.PackageTitle ?? '',
-            description: `${item.price.toFixed(2)} / vehicle`,
+            description: `${formatSeroCurrency(item.price)} / vehicle`,
           }));
         const original = this.originalTransportPrices[idx];
         if (original != null) {
           return [
-            { id: 'current', label: 'Current price', description: `${original.toFixed(2)} total` },
+            { id: 'current', label: 'Current price', description: `${formatSeroCurrency(original)} total` },
             ...packageOptions,
           ];
         }
@@ -154,12 +158,12 @@ export class Pricing implements OnInit {
           .map(item => ({
             id: item.pkg.CateringPackageID!,
             label: item.pkg.PackageTitle ?? '',
-            description: `${item.price.toFixed(2)} / serving`,
+            description: `${formatSeroCurrency(item.price)} / serving`,
           }));
         const original = this.originalFoodPrices[idx];
         if (original != null) {
           return [
-            { id: 'current', label: 'Current price', description: `${original.toFixed(2)} total` },
+            { id: 'current', label: 'Current price', description: `${formatSeroCurrency(original)} total` },
             ...packageOptions,
           ];
         }

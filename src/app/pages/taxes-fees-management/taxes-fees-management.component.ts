@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { CURRENCY_SYMBOL } from 'src/app/core/constants/currency.constants';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MockDataService } from 'src/app/services/mock-data.service';
 import { AppSnackBarService } from 'src/app/services/app-snack-bar.service';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 interface TaxOrFee {
   id: number;
@@ -110,8 +110,8 @@ export class TaxesFeesManagementComponent implements OnInit {
           appliesTo: 'bookings',
           isMandatory: true,
           isActive: true,
-          description: `رسوم المدينة بمبلغ ثابت 50 ${CURRENCY_SYMBOL}`,
-          descriptionEn: `City tax at fixed amount of 50 ${CURRENCY_SYMBOL}`,
+          description: `رسوم المدينة بمبلغ ثابت ${formatSeroCurrency(50)}`,
+          descriptionEn: `City tax at fixed amount of ${formatSeroCurrency(50)}`,
           createdAt: new Date('2024-01-01'),
         },
         {
@@ -124,8 +124,8 @@ export class TaxesFeesManagementComponent implements OnInit {
           appliesTo: 'bookings',
           isMandatory: false,
           isActive: true,
-          description: `رسوم تنظيف بمبلغ ثابت 100 ${CURRENCY_SYMBOL}`,
-          descriptionEn: `Cleaning fee at fixed amount of 100 ${CURRENCY_SYMBOL}`,
+          description: `رسوم تنظيف بمبلغ ثابت ${formatSeroCurrency(100)}`,
+          descriptionEn: `Cleaning fee at fixed amount of ${formatSeroCurrency(100)}`,
           createdAt: new Date('2024-01-01'),
         },
         {
@@ -318,7 +318,7 @@ export class TaxesFeesManagementComponent implements OnInit {
     if (item.calculationType === 'percentage') {
       return `${item.value}%`;
     }
-    return `${item.value} ${CURRENCY_SYMBOL}`;
+    return formatSeroCurrency(item.value);
   }
 
   getStatusText(item: TaxOrFee): string {

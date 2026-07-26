@@ -5,12 +5,13 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { DashboardVoucherDetailsModel, DropdownAction } from '../distributed-dashboard.model';
 import { DashActionsDropdownComponent } from './actions-dropdown.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-dash-voucher-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, CommonModule, DashActionsDropdownComponent],
+  imports: [DatePipe, CommonModule, DashActionsDropdownComponent, SeroCurrencyPipe],
   template: `
     <div class="vt-wrap">
       <div class="vt-scroll custom-scroll">
@@ -90,9 +91,8 @@ import { DashActionsDropdownComponent } from './actions-dropdown.component';
                       <span class="vt-text vt-text--bold">N/A</span>
                     } @else {
                       <span class="vt-text vt-text--bold">
-                        {{ (voucher.Voucher?.TotalSellingPrice ?? 0) + (voucher.Voucher?.TotalTax ?? 0) | number:'1.2-2' }}
+                        {{ (voucher.Voucher?.TotalSellingPrice ?? 0) + (voucher.Voucher?.TotalTax ?? 0) | seroCurrency }}
                       </span>
-                      <span class="vt-text vt-text--sub sar-symbol">R</span>
                     }
                   </td>
 

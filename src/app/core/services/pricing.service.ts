@@ -5,6 +5,7 @@ import {
   PricingSimulationInput, PricingSimulationResult, PricingConfig
 } from '../models/pricing.model';
 import { MarkupType } from '../models/enums';
+import { formatSeroCurrency } from '../../shared/currency/currency-format.util';
 
 @Injectable({ providedIn: 'root' })
 export class PricingService {
@@ -56,8 +57,11 @@ export class PricingService {
   }
 
   formatCurrency(amount: number, currency = 'SAR'): string {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency', currency, minimumFractionDigits: 0
-    }).format(amount);
+    return formatSeroCurrency(amount, {
+      currency,
+      display: currency === 'SAR' ? 'symbol' : 'code',
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    });
   }
 }

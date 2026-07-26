@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PackageCardView } from '../../../core/models/package.model';
 import { PackageType, BookingMode, VisaStatus } from '../../../core/models/enums';
+import { SeroCurrencyPipe } from '../../pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-package-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, SeroCurrencyPipe],
   template: `
     <div class="pkg-card" [class.pkg-card--resell]="pkg.type === PackageType.PRIVATE_RESELL">
 
@@ -128,12 +129,11 @@ import { PackageType, BookingMode, VisaStatus } from '../../../core/models/enums
             @if (pkg.hasMarkup && pkg.markupAmount && pkg.markupAmount > 0) {
               <div class="markup-indicator">
                 <span class="material-icons-round">trending_up</span>
-                +{{ pkg.markupAmount | number:'1.0-0' }} {{ pkg.currency }} {{ 'package.card.markup' | translate }}
+                +{{ pkg.markupAmount | seroCurrency:'code':'':0:0 }} {{ 'package.card.markup' | translate }}
               </div>
             }
             <div class="price-main">
-              <span class="price-currency">{{ pkg.currency }}</span>
-              <span class="price-amount">{{ pkg.sellingPrice | number:'1.0-0' }}</span>
+              <span class="price-amount">{{ pkg.sellingPrice | seroCurrency:'code':'':0:0 }}</span>
             </div>
             <div class="price-per">{{ 'package.card.perPerson' | translate }}</div>
           </div>
@@ -389,7 +389,6 @@ import { PackageType, BookingMode, VisaStatus } from '../../../core/models/enums
 
     .price-main { display: flex; align-items: baseline; gap: 3px; }
 
-    .price-currency { font-size: 0.78rem; font-weight: 600; color: var(--sero-text-tertiary); }
     .price-amount   { font-size: 1.75rem; font-weight: 800; color: var(--sero-text-primary); letter-spacing: -0.04em; }
     .price-per      { font-size: 0.7rem; color: var(--sero-text-muted); }
 

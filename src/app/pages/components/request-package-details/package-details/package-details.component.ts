@@ -10,6 +10,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PackageImagePreviewDialogComponent } from '../../../sero-packages/package-image-preview-dialog/package-image-preview-dialog.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'package-details',
@@ -23,6 +24,7 @@ import { PackageImagePreviewDialogComponent } from '../../../sero-packages/packa
     DatePipe,
     DecimalPipe,
     TranslateModule,
+    SeroCurrencyPipe,
   ],
   templateUrl: './package-details.component.html',
 })

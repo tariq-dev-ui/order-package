@@ -5,11 +5,12 @@ import { ActionsDropdownComponent } from '../../../../components/actions-dropdow
 import { GeneralVoucherTableComponent } from '../../operations/components/general-voucher-table/general-voucher-table.component';
 import { LoadingSpinnerComponent } from '../../operations/components/loading-spinner/loading-spinner.component';
 import { OperationVoucher } from '../../operations/models/operation-voucher.model';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'dashboard-vouchers',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, ActionsDropdownComponent, TranslateModule],
+  imports: [CommonModule, LoadingSpinnerComponent, ActionsDropdownComponent, TranslateModule, SeroCurrencyPipe],
   templateUrl: './dashboard-vouchers.component.html',
 })
 export class DashboardVouchersComponent extends GeneralVoucherTableComponent {

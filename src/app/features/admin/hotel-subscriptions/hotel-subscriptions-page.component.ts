@@ -23,6 +23,7 @@ import { delay } from 'rxjs/operators';
 
 import { dropdownSearchListComponent, SelectOption } from 'src/app/components/dropdown-search-list/dropdown-search-list.component';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 // ── Local Models ───────────────────────────────────────────────────────────
 
@@ -218,7 +219,7 @@ function endDateValidator(control: AbstractControl) {
 @Component({
   selector: 'app-view-subscription-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SeroCurrencyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="relative">
@@ -341,7 +342,7 @@ function endDateValidator(control: AbstractControl) {
                           <tr>
                             <td class="px-2 py-2 text-xs text-gray-900">{{ room.RoomTypeName }}</td>
                             <td class="px-2 py-2 text-xs text-gray-900">{{ room.RoomCount }}</td>
-                            <td class="px-2 py-2 text-xs text-gray-900">{{ room.AveragePrice | number:'1.2-2' }} <span class="text-gray-500 sar-symbol">R</span></td>
+                            <td class="px-2 py-2 text-xs text-gray-900">{{ room.AveragePrice | seroCurrency }}</td>
                             <td class="px-2 py-2">
                               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                                 [class]="room.IsActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">

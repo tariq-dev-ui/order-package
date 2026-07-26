@@ -26,6 +26,7 @@ import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/load
 import { AppSnackBarService } from 'src/app/services/app-snack-bar.service';
 import { SingleAgentSelectorComponent } from 'src/app/pages/agents-list/components/single-agent-selector/single-agent-selector.component';
 import { distinctUntilChanged, map } from 'rxjs/operators';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-sero-package-new-request',
@@ -50,7 +51,8 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
     PackageCateringsDetailsComponent,
     SingleAgentSelectorComponent,
     NgOptimizedImage,
-    Pagination
+    Pagination,
+    SeroCurrencyPipe
   ],
   templateUrl: './sero-package-new-request.component.html',
   styleUrl: './sero-package-new-request.component.scss',

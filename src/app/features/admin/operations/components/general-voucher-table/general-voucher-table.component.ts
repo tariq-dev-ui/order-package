@@ -14,12 +14,13 @@ import { VoucherStatusChangeDialogComponent } from '../voucher-status-change-dia
 import { DocumentationStatusSwitcherComponent } from '../documentation-status-switcher/documentation-status-switcher.component';
 import { DocumentationStatus } from '../../models/documentation-status.model';
 import { DocumentationStatusFilterService } from '../../services/documentation-status-filter.service';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'general-voucher-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, ActionsDropdownComponent, CommonModule, LoadingSpinnerComponent, MatDialogModule, TranslateModule, DocumentationStatusSwitcherComponent],
+  imports: [DatePipe, ActionsDropdownComponent, CommonModule, LoadingSpinnerComponent, MatDialogModule, TranslateModule, DocumentationStatusSwitcherComponent, SeroCurrencyPipe],
   templateUrl: './general-voucher-table.component.html',
   styleUrl: './general-voucher-table.component.scss',
 })

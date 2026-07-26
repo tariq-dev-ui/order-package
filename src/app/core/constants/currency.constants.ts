@@ -1,6 +1,3 @@
-/**
- * المصدر الوحيد لرمز العملة (الريال السعودي) في التطبيق.
- * تُستخدم الحرف 'R' مع خط SaudiRiyal المخصص الذي يحوّله إلى رمز الريال السعودي ﷼.
- * استخدمه دائماً داخل: <span class="sar-symbol">R</span>
- */
-export const CURRENCY_SYMBOL = 'R';
+import { SAUDI_RIYAL_SYMBOL } from '../../shared/currency/currency-format.util';
+
+export const CURRENCY_SYMBOL = SAUDI_RIYAL_SYMBOL;

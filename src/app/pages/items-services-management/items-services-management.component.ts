@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
-import { CURRENCY_SYMBOL } from 'src/app/core/constants/currency.constants';
 import { TranslateModule } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { AppSnackBarService } from 'src/app/services/app-snack-bar.service';
 import { AddServiceDialogComponent } from './add-service-dialog/add-service-dialog.component';
 import { AddServiceTypeDialogComponent } from './add-service-type-dialog/add-service-type-dialog.component';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 export type ServiceType = string; // Now dynamic, using string keys
 
@@ -269,7 +269,7 @@ export class ItemsServicesManagementComponent implements OnInit {
   }
 
   formatPrice(price: number): string {
-    return `${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${CURRENCY_SYMBOL}`;
+    return formatSeroCurrency(price);
   }
 }
 

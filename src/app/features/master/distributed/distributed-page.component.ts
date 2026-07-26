@@ -7,12 +7,13 @@ import { RouterLink } from '@angular/router';
 import { DashboardRequestModel, DashboardVoucherDetailsModel, DropdownAction } from './distributed-dashboard.model';
 import { DistributedDashboardService } from './distributed-dashboard.service';
 import { DashVoucherTableComponent } from './components/voucher-table.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'app-distributed-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, DashVoucherTableComponent],
+  imports: [CommonModule, RouterLink, DashVoucherTableComponent, SeroCurrencyPipe],
   template: `
     <!-- Quick Actions -->
     <div class="dash-card mb-8">
@@ -109,8 +110,7 @@ import { DashVoucherTableComponent } from './components/voucher-table.component'
                 <p class="order-title">{{ pkg.Title | titlecase }}</p>
                 <span class="order-price">
                   @if ((pkg.Price ?? 0) !== 0) {
-                    {{ pkg.Price }}
-                    <span class="sar-symbol">R</span>
+                    {{ pkg.Price | seroCurrency }}
                   } @else {
                     <span class="order-estimating">Estimating</span>
                   }

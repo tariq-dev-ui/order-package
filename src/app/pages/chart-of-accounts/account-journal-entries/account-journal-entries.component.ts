@@ -22,6 +22,7 @@ import {
   AccountBalance 
 } from 'src/app/models/journal-entry.model';
 import { CoreService } from 'src/app/services/core.service';
+import { formatSeroCurrency } from 'src/app/shared/currency/currency-format.util';
 
 @Component({
   selector: 'app-account-journal-entries',
@@ -149,10 +150,7 @@ export class AccountJournalEntriesComponent implements OnInit, AfterViewInit {
    * Format Currency
    */
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
+    return formatSeroCurrency(amount);
   }
 
   /**

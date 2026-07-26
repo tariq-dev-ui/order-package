@@ -8,6 +8,7 @@ import { ActionsDropdownComponent, DropdownAction } from '../../../../components
 import { VoucherDetailsDialogComponent } from './voucher-details-dialog.component';
 import { VoucherStatusChangeDialogComponent } from './voucher-status-change-dialog.component';
 import { VoucherLogsDialogComponent } from './voucher-logs-dialog.component';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 const TYPE_LABELS: Record<number, { label: string; icon: string; colorClass: string }> = {
   1: { label: 'Hotel',     icon: 'hotel',         colorClass: 'type-hotel' },
@@ -21,7 +22,7 @@ const TYPE_LABELS: Record<number, { label: string; icon: string; colorClass: str
   selector: 'voucher-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ActionsDropdownComponent],
+  imports: [CommonModule, ActionsDropdownComponent, SeroCurrencyPipe],
   template: `
     <div class="vt-wrap">
       @if (vouchers().length === 0) {
@@ -64,8 +65,7 @@ const TYPE_LABELS: Record<number, { label: string; icon: string; colorClass: str
                     @if (v.TotalPriceWithTax === 0) {
                       <span class="price-na">N/A</span>
                     } @else {
-                      <span class="price-val">{{ v.TotalPriceWithTax | number:'1.2-2' }}</span>
-                      <span class="price-cur">SAR</span>
+                      <span class="price-val">{{ v.TotalPriceWithTax | seroCurrency }}</span>
                     }
                   </td>
                   <td class="center">

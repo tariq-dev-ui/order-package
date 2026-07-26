@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RequestModel } from '../orders.model';
+import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({
   selector: 'request-package-details',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, SeroCurrencyPipe],
   template: `
     <div class="rpd-wrap">
       <div class="rpd-grid">
@@ -67,7 +68,7 @@ import { RequestModel } from '../orders.model';
             </div>
             <div class="rpd-row">
               <span class="rpd-label">Price</span>
-              <span class="rpd-value price">{{ rqst().Price | number:'1.2-2' }} SAR</span>
+              <span class="rpd-value price">{{ rqst().Price | seroCurrency }}</span>
             </div>
             @if (rqst().PackageModel; as pm) {
               <div class="rpd-row">

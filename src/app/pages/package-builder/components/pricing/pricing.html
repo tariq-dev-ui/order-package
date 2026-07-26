@@ -46,7 +46,7 @@
             @if (mHotelCost != null) {
               <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
                 <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
-                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | seroCurrency }}</span>
               </div>
             }
           </div>
@@ -66,7 +66,7 @@
                 class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
                 [value]="hotel.sellingPrice ?? null" placeholder="0.00"
                 (input)="onMakkahHotelPrice($index, parsePrice($any($event.target).value))">
-                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">{{ riyalSymbol }}</span>
               </div>
               <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
             </div>
@@ -109,7 +109,7 @@
             @if (mHotelCost != null) {
               <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
                 <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
-                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+                <span class="text-xs font-bold text-amber-700">{{ mHotelCost | seroCurrency }}</span>
               </div>
             }
           </div>
@@ -129,7 +129,7 @@
                 class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
                 [value]="hotel.sellingPrice ?? null" placeholder="0.00"
                 (input)="onMadinahHotelPrice($index, parsePrice($any($event.target).value))">
-                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">{{ riyalSymbol }}</span>
               </div>
               <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
             </div>
@@ -184,7 +184,7 @@
                 class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
                 [value]="transport.sellingPrice ?? null" placeholder="0.00"
                 (input)="onTransportPrice(tIdx, parsePrice($any($event.target).value))">
-                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">{{ riyalSymbol }}</span>
               </div>
               <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
             </div>
@@ -240,7 +240,7 @@
                 class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
                 [value]="ticket.sellingPrice ?? null" placeholder="0.00"
                 (input)="onTicketPrice($index, parsePrice($any($event.target).value))">
-                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">{{ riyalSymbol }}</span>
               </div>
               <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
             </div>
@@ -282,7 +282,7 @@
             @if (foodCostTotal != null) {
               <div class="flex-shrink-0 flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
                 <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wide">{{ 'Cost' | translate }}</span>
-                <span class="text-xs font-bold text-amber-700">{{ foodCostTotal | number:'1.2-2' }} <span class="sar-symbol text-[10px] text-amber-500 font-normal">R</span></span>
+                <span class="text-xs font-bold text-amber-700">{{ foodCostTotal | seroCurrency }}</span>
               </div>
             }
           </div>
@@ -302,7 +302,7 @@
                 class="w-full h-9 pl-3 pr-8 border border-gray-200 rounded-lg text-sm font-bold text-gray-800 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
                 [value]="food.sellingPrice ?? null" placeholder="0.00"
                 (input)="onFoodPrice(fIdx, parsePrice($any($event.target).value))">
-                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">R</span>
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs sar-symbol">{{ riyalSymbol }}</span>
               </div>
               <p class="text-[10px] font-semibold text-primary-500 uppercase tracking-wide">{{ 'Sell' | translate }}</p>
             </div>
@@ -320,7 +320,7 @@
 
     <div class="flex justify-between items-center text-sm">
       <span class="text-gray-600">{{ 'Sum of services' | translate }}</span>
-      <span class="font-semibold">{{ sumOfServices() | number:'1.2-2' }} <span class="sar-symbol text-gray-500">R</span></span>
+      <span class="font-semibold">{{ sumOfServices() | seroCurrency }}</span>
     </div>
 
     <!-- Adjust Price -->
@@ -391,14 +391,13 @@
           <span class="font-semibold"
             [class.text-red-500]="adjustmentMode() === 'discount'"
             [class.text-primary-600]="adjustmentMode() === 'markup_percent'">
-            {{ adjustmentMode() === 'discount' ? '' : '+' }}{{ previewAmount() | number:'1.2-2' }}
-            <span class="sar-symbol">R</span>
+            {{ adjustmentMode() === 'discount' ? '' : '+' }}{{ previewAmount() | seroCurrency }}
           </span>
         </span>
         <span class="text-gray-300">|</span>
         <span class="text-gray-500">{{ 'New Total' | translate }}:
           <span class="font-bold text-primary-700">
-            {{ previewTotal() | number:'1.2-2' }} <span class="sar-symbol font-normal text-gray-400">R</span>
+            {{ previewTotal() | seroCurrency }}
           </span>
         </span>
       </div>
@@ -419,7 +418,7 @@
           class="w-full h-12 pl-3 pr-10 border-2 border-gray-800 rounded-xl text-base font-bold text-gray-900 focus:ring-1 focus:ring-primary-400 focus:border-primary-400"
           [value]="computedBlendedPrice() || null" placeholder="0.00"
           (input)="onBlendedPriceInput($any($event.target).value)">
-        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm sar-symbol">R</span>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm sar-symbol">{{ riyalSymbol }}</span>
       </div>
     </div>
 
