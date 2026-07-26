@@ -508,18 +508,36 @@ type TypeCounts = Record<string, number>;
 
     .statistics-grid {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns: repeat(7, minmax(154px, 1fr));
       gap: 0.75rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 0.125rem;
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--app-heading) 26%, transparent) transparent;
+    }
+
+    .statistics-grid::-webkit-scrollbar {
+      height: 5px;
+    }
+
+    .statistics-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .statistics-grid::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--app-heading) 26%, transparent);
     }
 
     .stat-card {
-      min-height: 104px;
+      min-height: 58px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      gap: 0.625rem;
-      padding: 0.875rem 0.75rem;
+      justify-content: flex-start;
+      gap: 0.55rem;
+      padding: 0.5rem 0.75rem;
       border: 1px solid var(--app-border);
       border-radius: 0.5rem;
       background: var(--app-card-bg);
@@ -546,30 +564,39 @@ type TypeCounts = Record<string, number>;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 1.55rem;
-      height: 1.55rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      border: 1px solid color-mix(in srgb, var(--app-heading) 14%, transparent);
+      border-radius: 0.5rem;
+      background: color-mix(in srgb, var(--app-heading) 8%, transparent);
       color: var(--app-heading);
       flex: 0 0 auto;
-      transition: color 0.3s ease;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 
     .stat-icon tabler-icon,
     .stat-icon i-tabler {
-      width: 1.55rem;
-      height: 1.55rem;
+      width: 0.95rem;
+      height: 0.95rem;
     }
 
     .stat-icon--transportation,
     .stat-icon--ticket {
+      border-color: color-mix(in srgb, var(--sero-info) 18%, transparent);
+      background: color-mix(in srgb, var(--sero-info) 8%, transparent);
       color: var(--sero-info);
     }
 
     .stat-icon--visa,
     .stat-icon--custom {
+      border-color: color-mix(in srgb, var(--sero-warning) 18%, transparent);
+      background: color-mix(in srgb, var(--sero-warning) 8%, transparent);
       color: var(--sero-warning);
     }
 
     .stat-icon--catering {
+      border-color: color-mix(in srgb, var(--sero-success) 18%, transparent);
+      background: color-mix(in srgb, var(--sero-success) 8%, transparent);
       color: var(--sero-success);
     }
 
@@ -582,25 +609,25 @@ type TypeCounts = Record<string, number>;
     .stat-content {
       min-width: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: flex-start;
+      gap: 0.5rem;
       flex: 1;
-      width: 100%;
+      width: auto;
     }
 
     .stat-value {
-      min-width: 34px;
+      min-width: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.2rem 0.65rem;
-      border: 1px solid color-mix(in srgb, var(--app-heading) 15%, transparent);
-      border-radius: 0.5rem;
-      background: color-mix(in srgb, var(--app-heading) 10%, var(--app-card-bg));
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
       color: var(--app-heading);
-      font-size: 1.125rem;
+      font-size: 1.12rem;
       font-weight: 800;
       line-height: 1.1;
       font-variant-numeric: tabular-nums;
@@ -608,20 +635,25 @@ type TypeCounts = Record<string, number>;
     }
 
     .stat-card.active .stat-value {
-      background: color-mix(in srgb, var(--app-card-bg) 22%, transparent);
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .stat-card.active .stat-icon {
       border-color: color-mix(in srgb, var(--app-card-bg) 30%, transparent);
+      background: color-mix(in srgb, var(--app-card-bg) 16%, transparent);
     }
 
     .stat-label {
       min-width: 0;
       color: var(--app-text-secondary);
       font-size: 0.8rem;
-      font-weight: 600;
-      line-height: 1.45;
-      white-space: normal;
+      font-weight: 650;
+      line-height: 1.25;
+      white-space: nowrap;
       overflow: visible;
-      text-align: center;
-      overflow-wrap: anywhere;
+      text-align: start;
+      overflow-wrap: normal;
       transition: color 0.3s ease;
     }
 
@@ -1317,7 +1349,7 @@ type TypeCounts = Record<string, number>;
 
     @media (max-width: 1200px) {
       .statistics-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(7, minmax(150px, 1fr));
       }
     }
 
@@ -1343,7 +1375,7 @@ type TypeCounts = Record<string, number>;
       }
 
       .statistics-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(7, minmax(148px, 1fr));
       }
 
       .table-section {
@@ -1357,7 +1389,7 @@ type TypeCounts = Record<string, number>;
 
     @media (max-width: 480px) {
       .statistics-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(7, minmax(146px, 1fr));
       }
 
       .stat-card {
