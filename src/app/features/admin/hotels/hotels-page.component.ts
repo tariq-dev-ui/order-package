@@ -174,25 +174,42 @@ import { HotelsService } from './hotels.service';
           </table>
         </div>
 
-        <footer class="pagination-bar">
-          <div class="pagination-controls">
-            <button type="button" class="pager-btn" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+        <footer class="table-footer">
+          <nav class="footer-pager" aria-label="الصفحات">
+            <button type="button" class="page-btn page-btn--nav" (click)="goToPreviousPage()" [disabled]="currentPage === 1" aria-label="الصفحة السابقة">
               <span class="material-icons-round">chevron_right</span>
             </button>
-            <button type="button" class="pager-btn" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+
+            @for (item of pageItems; track $index) {
+              @if (item === '...') {
+                <span class="page-ellipsis" aria-hidden="true">…</span>
+              } @else {
+                <button type="button"
+                  class="page-btn"
+                  [class.page-btn--active]="item === currentPage"
+                  [attr.aria-current]="item === currentPage ? 'page' : null"
+                  (click)="goToPage(item)">
+                  {{ item }}
+                </button>
+              }
+            }
+
+            <button type="button" class="page-btn page-btn--nav" (click)="goToNextPage()" [disabled]="currentPage === totalPages" aria-label="الصفحة التالية">
               <span class="material-icons-round">chevron_left</span>
             </button>
+          </nav>
 
-            <span class="page-counter">{{ rangeStart }} – {{ rangeEnd }} of {{ totalItemsCount }}</span>
+          <div class="footer-meta">
+            <span class="footer-range">{{ rangeStart }}–{{ rangeEnd }} <span class="footer-range-of">of</span> {{ totalItemsCount }}</span>
 
             <div class="items-per-page">
+              <span>Items per page:</span>
               <app-sero-dropdown
                 [options]="itemsPerPageDropdownOptions"
                 [value]="itemsPerPage"
                 size="sm"
                 (valueChange)="onItemsPerPageChange($event)">
               </app-sero-dropdown>
-              <span>Items per page:</span>
             </div>
           </div>
         </footer>
@@ -491,55 +508,90 @@ import { HotelsService } from './hotels.service';
       color: var(--sero-danger);
     }
 
-    .pagination-bar {
-      border-top: 1px solid var(--sero-border-light);
-      padding: 10px 14px;
-    }
-
-    .pagination-controls {
+    .table-footer {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-height: 60px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--sero-border-light);
+      background: var(--sero-surface-2);
+    }
+
+    .footer-pager {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
-    .pager-btn {
-      width: 30px;
-      height: 30px;
+    .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 6px;
       border: 1px solid var(--sero-border);
-      border-radius: 8px;
+      border-radius: 11px;
       background: var(--sero-card-bg);
       color: var(--sero-text-secondary);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      font-family: var(--sero-font);
+      font-size: 0.8rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+      transition: background var(--t-base), border-color var(--t-base), color var(--t-base), transform var(--t-fast);
     }
 
-    .pager-btn:hover:not(:disabled) {
+    .page-btn:hover:not(:disabled):not(.page-btn--active) {
       background: var(--sero-primary-50);
       border-color: var(--sero-primary-100);
       color: var(--sero-primary);
     }
 
-    .pager-btn:disabled {
-      opacity: 0.45;
+    .page-btn:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .pager-btn .material-icons-round {
+    .page-btn--nav .material-icons-round {
       font-size: 18px;
     }
 
-    .page-counter {
+    .page-btn--active {
+      background: var(--sero-primary);
+      border-color: var(--sero-primary);
+      color: #fff;
+    }
+
+    .page-ellipsis {
+      min-width: 24px;
+      text-align: center;
+      color: var(--sero-text-muted);
+      user-select: none;
+    }
+
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-range {
       color: var(--sero-text-secondary);
       direction: ltr;
       font-size: 0.78rem;
       font-weight: 900;
-      min-width: 100px;
-      text-align: center;
+      white-space: nowrap;
+    }
+
+    .footer-range-of {
+      font-weight: 600;
+      color: var(--sero-text-muted);
+      margin: 0 2px;
     }
 
     .items-per-page {
@@ -549,6 +601,7 @@ import { HotelsService } from './hotels.service';
       color: var(--sero-text-secondary);
       font-size: 0.76rem;
       font-weight: 800;
+      white-space: nowrap;
     }
 
     .items-per-page app-sero-dropdown {
@@ -589,7 +642,7 @@ import { HotelsService } from './hotels.service';
       }
 
       .actions-bar,
-      .pagination-controls {
+      .table-footer {
         justify-content: flex-start;
       }
 
@@ -654,6 +707,36 @@ export class HotelsPageComponent implements OnDestroy {
   get pagedHotels(): HotelModel[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredHotels.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get pageItems(): (number | '...')[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const max = 7;
+
+    if (total <= max) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const side = Math.floor((max - 3) / 2);
+    let left = Math.max(2, current - side);
+    let right = Math.min(total - 1, current + side);
+
+    if (current - 1 <= side) {
+      left = 2;
+      right = Math.min(total - 1, max - 2);
+    }
+    if (total - current <= side) {
+      right = total - 1;
+      left = Math.max(2, total - (max - 3));
+    }
+
+    const items: (number | '...')[] = [1];
+    if (left > 2) items.push('...');
+    for (let i = left; i <= right; i++) items.push(i);
+    if (right < total - 1) items.push('...');
+    items.push(total);
+    return items;
   }
 
   onCityChange(value: string): void {
@@ -767,6 +850,10 @@ export class HotelsPageComponent implements OnDestroy {
     if (this.currentPage < this.totalPages) {
       this.currentPage += 1;
     }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = Math.min(Math.max(1, page), this.totalPages);
   }
 
   @HostListener('document:keydown.escape')

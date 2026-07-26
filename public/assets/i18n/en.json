@@ -47,8 +47,6 @@
     },
     "roles": {
       "admin":        "Admin",
-      "masterAgent":  "Master Agent",
-      "subAgent":     "Sub Agent",
       "viewer":       "Viewer"
     },
     "validation": {
@@ -103,9 +101,6 @@
       "createPackage":      "Create Package",
       "myPackages":         "My Packages",
       "distributionNetwork":"Distribution Network",
-      "distributedPackages":"Distributed Packages",
-      "subagents":          "Subagents",
-      "marketplace":        "Marketplace",
       "analytics":          "Analytics",
       "performance":        "Performance",
       "settings":           "Settings",
@@ -116,8 +111,6 @@
       "agentPackages":          "Agent Packages",
       "newOrder":               "New Order",
       "agentOrders":            "Agent Orders",
-      "myServices":             "My Services",
-      "myServicesManagement":   "My Services",
       "operationsGroup":        "Operations Management",
       "hotelBookings":          "Hotel Bookings",
       "visaRequests":           "Visa Requests",
@@ -347,13 +340,7 @@
     "help":           "Help & Support",
     "profile":        "Profile",
     "darkMode":       "Dark Mode",
-    "toggleSidebar":  "Toggle Sidebar",
-    "roleView": {
-      "admin":        "Admin View",
-      "masterAgent":  "Master Agent View",
-      "subAgent":     "Sub Agent View"
-    },
-    "switchView":     "Switch View"
+    "toggleSidebar":  "Toggle Sidebar"
   },
 
   "package": {
@@ -753,51 +740,6 @@
     },
     "finalSummary": {
       "profit": "+{{pct}}% profit"
-    }
-  },
-
-  "masterAgent": {
-    "dashboard": {
-      "title":    "Distributed Packages",
-      "subtitle": "Manage and redistribute packages assigned to your network"
-    },
-    "buttons": {
-      "manageDistribution": "Manage Distribution",
-      "newAllocation":    "New Allocation",
-      "createAllocation": "Create Allocation"
-    },
-    "packages": {
-      "sectionTitle":   "My Package Portfolio",
-      "sectionSubtitle":"{{count}} packages assigned to your network",
-      "searchPlaceholder": "Search packages...",
-      "filterAll":      "All Status",
-      "filterActive":   "Active",
-      "filterPaused":   "Paused"
-    },
-    "allocations": {
-      "title":      "Subagent Allocations",
-      "subtitle":   "Current inventory distribution across your subagent network",
-      "columns": {
-        "subagent":   "Subagent",
-        "package":    "Package",
-        "allocated":  "Allocated",
-        "sold":       "Sold",
-        "remaining":  "Remaining",
-        "sellPrice":  "Sell Price",
-        "status":     "Status",
-        "actions":    "Actions"
-      },
-      "markup":     "markup"
-    },
-    "modal": {
-      "newAlloc":   "New Subagent Allocation",
-      "selectPkg":  "Select Package",
-      "pkgPlaceholder": "— Select Package —",
-      "selectAgent":"Select Subagent",
-      "agentPlaceholder": "— Select Subagent —",
-      "units":      "Units to Allocate",
-      "sellPrice":  "Selling Price (SAR)",
-      "markup":     "Markup Amount (SAR)"
     }
   },
 

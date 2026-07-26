@@ -53,14 +53,6 @@ const userGroupsPage = () => import('./features/admin/user-groups/user-groups-pa
 const systemAdminsPage = () => import('./features/admin/system-admins/system-admins-page.component').then(m => m.SystemAdminsPageComponent);
 const providerUsersPage = () => import('./features/admin/provider-users/provider-users-page.component').then(m => m.ProviderUsersPageComponent);
 const agentUsersPage = () => import('./features/admin/agent-users/agent-users-page.component').then(m => m.AgentUsersPageComponent);
-const packageCreatePage = () => import('./features/master/packages/package-create-page.component').then(m => m.PackageCreatePageComponent);
-const myServicesPage = () => import('./pages/my-services/my-services').then(m => m.MyServicesPage);
-const myServicesHotelPage = () => import('./pages/my-services/hotel-service/hotel-service').then(m => m.HotelServicePage);
-const myServicesMakkahPage = () => import('./pages/my-services/makkah-service/makkah-service').then(m => m.MakkahServicePage);
-const myServicesMadinaPage = () => import('./pages/my-services/madina-service/madina-service').then(m => m.MadinaServicePage);
-const myServicesTransportPage = () => import('./pages/my-services/transport-service/transport-service').then(m => m.TransportServicePage);
-const myServicesTicketsPage = () => import('./pages/my-services/tickets-service/tickets-service').then(m => m.TicketsServicePage);
-const myServicesFoodPage = () => import('./pages/my-services/food-service/food-service').then(m => m.FoodServicePage);
 
 const ordersPage = () => import('./pages/orders/orders.component').then(m => m.OrdersComponent);
 
@@ -158,62 +150,6 @@ export const routes: Routes = [
       { path: 'hotel-providers/subscriptions',       loadComponent: hotelSubscriptionsPage }
     ]
   },
-  {
-    path: 'master',
-    component: AdminLayoutComponent,
-    children: [
-      { path: '', redirectTo: 'distributed', pathMatch: 'full' },
-      { path: 'distributed', loadComponent: () => import('./features/master/distributed/distributed-page.component').then(m => m.DistributedPageComponent) },
-      { path: 'packages/create', loadComponent: packageCreatePage },
-      { path: 'packages',    loadComponent: () => import('./features/master/packages/package-list-page.component').then(m => m.PackageListPageComponent) },
-      { path: 'my-packages', loadComponent: () => import('./features/master/packages/my-packages-page.component').then(m => m.MyPackagesPageComponent) },
-      { path: 'orders', loadComponent: () => import('./features/master/orders/orders-page.component').then(m => m.OrdersPageComponent) },
-      { path: 'quotations', loadComponent: () => import('./features/master/quotations/quotations-page.component').then(m => m.QuotationsPageComponent) },
-      { path: 'subagents',   loadComponent: () => import('./features/master/subagents/subagents-page.component').then(m => m.SubagentsPageComponent) },
-      { path: 'analytics',   loadComponent: emptyPage },
-      { path: 'settings',    loadComponent: emptyPage },
-      { path: 'finance/chart-of-accounts', loadComponent: () => import('./pages/chart-of-accounts/chart-of-accounts.component').then(m => m.ChartOfAccountsComponent) },
-      { path: 'finance/fiscal-year',        loadComponent: () => import('./pages/fiscal-year/fiscal-year.component').then(m => m.FiscalYearComponent) },
-      { path: 'finance/journal-entries',    loadComponent: () => import('./pages/journal-entries/journal-entries.component').then(m => m.JournalEntriesComponent) },
-      { path: 'finance/account-statement',  loadComponent: () => import('./pages/account-statement/account-statement.component').then(m => m.AccountStatementComponent) },
-      { path: 'finance/trial-balance',      loadComponent: () => import('./pages/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent) },
-      { path: 'finance/opening-balance',    loadComponent: () => import('./pages/journal-entries/create-journal-entry/create-journal-entry.component').then(m => m.CreateJournalEntryComponent) },
-      { path: 'finance/account-routing',    loadComponent: () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent) },
-      { path: 'finance/income-statement',   loadComponent: () => import('./pages/income-statement/income-statement.component').then(m => m.IncomeStatementComponent) },
-      { path: 'finance/cashier-session',    loadComponent: emptyPage },
-      { path: 'my-services',                loadComponent: myServicesPage },
-      { path: 'my-services/hotel',          redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
-      { path: 'my-services/makkah',         redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
-      { path: 'my-services/madina',         redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
-      { path: 'my-services/transport',      redirectTo: 'my-services/transport/new', pathMatch: 'full' },
-      { path: 'my-services/tickets',        redirectTo: 'my-services/tickets/new', pathMatch: 'full' },
-      { path: 'my-services/food',           redirectTo: 'my-services/food/new', pathMatch: 'full' },
-      { path: 'my-services/hotel/new',      loadComponent: myServicesHotelPage },
-      { path: 'my-services/makkah/new',     redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
-      { path: 'my-services/madina/new',     redirectTo: 'my-services/hotel/new', pathMatch: 'full' },
-      { path: 'my-services/transport/new',  loadComponent: myServicesTransportPage },
-      { path: 'my-services/tickets/new',    loadComponent: myServicesTicketsPage },
-      { path: 'my-services/food/new',       loadComponent: myServicesFoodPage }
-    ]
-  },
-  {
-    path: 'agent',
-    component: AdminLayoutComponent,
-    children: [
-      { path: '', redirectTo: 'marketplace', pathMatch: 'full' },
-      { path: 'marketplace', loadComponent: emptyPage },
-      { path: 'orders', loadComponent: emptyPage },
-      { path: 'orders/:id', loadComponent: emptyPage }
-    ]
-  },
-  { path: 'packages/create', redirectTo: 'master/packages/create', pathMatch: 'full' },
-  { path: 'admin/my-services',        redirectTo: 'master/my-services',           pathMatch: 'full' },
-  { path: 'my-services',             redirectTo: 'master/my-services',           pathMatch: 'full' },
-  { path: 'my-services/makkah',      redirectTo: 'master/my-services/makkah',    pathMatch: 'full' },
-  { path: 'my-services/madina',      redirectTo: 'master/my-services/madina',    pathMatch: 'full' },
-  { path: 'my-services/transport',   redirectTo: 'master/my-services/transport', pathMatch: 'full' },
-  { path: 'my-services/tickets',     redirectTo: 'master/my-services/tickets',   pathMatch: 'full' },
-  { path: 'my-services/food',        redirectTo: 'master/my-services/food',      pathMatch: 'full' },
   { path: 'journal-entries', redirectTo: 'admin/finance/journal-entries', pathMatch: 'full' },
   { path: 'journal-entries/create', redirectTo: 'admin/finance/journal-entries/create', pathMatch: 'full' },
   { path: 'journal-entries-pending', redirectTo: 'admin/finance/journal-entries-pending', pathMatch: 'full' },

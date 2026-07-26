@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../core/services/layout.service';
-import { ViewMode, ViewModeService } from '../../../core/services/view-mode.service';
 
 interface NavChild {
   label: string;
@@ -655,73 +654,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   ];
 
-  private readonly masterNavGroups: NavGroup[] = [
-    { id: 'master-dashboard',   label: 'Dashboard',   icon: 'pie_chart',           route: '/master/distributed', exact: true },
-    { id: 'master-packages',    label: 'Packages',    icon: 'inventory_2',         route: '/master/packages',    exact: true },
-    { id: 'master-my-packages', label: 'My Packages', icon: 'inventory',           route: '/master/my-packages', exact: true },
-    {
-      id: 'master-my-services-mgmt',
-      label: 'sidebar.nav.myServicesManagement',
-      icon: 'miscellaneous_services',
-      route: '/master/my-services',
-      exact: true
-    },
-    {
-      id: 'master-my-services-group',
-      label: 'My Services',
-      icon: 'layers',
-      children: [
-        { label: 'Makkah',    route: '/master/my-services/makkah',    icon: 'mosque' },
-        { label: 'Madina',    route: '/master/my-services/madina',    icon: 'mosque' },
-        { label: 'Transport', route: '/master/my-services/transport', icon: 'directions_bus' },
-        { label: 'Tickets',   route: '/master/my-services/tickets',   icon: 'confirmation_number' },
-        { label: 'Food',      route: '/master/my-services/food',      icon: 'restaurant' }
-      ]
-    },
-    { id: 'master-orders',      label: 'Orders',      icon: 'luggage',             route: '/master/orders',      badge: '34', exact: true },
-    { id: 'master-quotations',  label: 'Quotations',  icon: 'confirmation_number', route: '/master/quotations',  exact: true },
-    { id: 'master-subagents',   label: 'Subagents',   icon: 'group',               route: '/master/subagents',   exact: true },
-    {
-      id: 'master-finance',
-      label: 'Finance',
-      icon: 'account_balance',
-      children: [
-        { label: 'Chart of Accounts', route: '/master/finance/chart-of-accounts', icon: 'account_tree' },
-        { label: 'Fiscal Year',       route: '/master/finance/fiscal-year',        icon: 'calendar_month' },
-        { label: 'Journal Entries',   route: '/master/finance/journal-entries',    icon: 'receipt_long' },
-        { label: 'Account Statement', route: '/master/finance/account-statement',  icon: 'description' },
-        { label: 'Trial Balance',     route: '/master/finance/trial-balance',      icon: 'balance' },
-        { label: 'Opening Balance',   route: '/master/finance/opening-balance',    icon: 'account_balance_wallet' },
-        { label: 'Account Routing',   route: '/master/finance/account-routing',    icon: 'alt_route' },
-        { label: 'Income Statement',  route: '/master/finance/income-statement',   icon: 'trending_up' },
-        { label: 'Cashier Session',   route: '/master/finance/cashier-session',    icon: 'point_of_sale' }
-      ]
-    },
-    { id: 'master-settings', label: 'Settings', icon: 'settings', route: '/master/settings', exact: true }
-  ];
-
-  private readonly subAgentNavGroups: NavGroup[] = [
-    { id: 'agent-marketplace', label: 'Marketplace', icon: 'storefront', route: '/agent/marketplace', exact: true },
-    { id: 'agent-orders', label: 'Orders', icon: 'shopping_bag', route: '/agent/orders' }
-  ];
-
   constructor(
     public readonly layout: LayoutService,
     private readonly router: Router,
-    private readonly hostElement: ElementRef<HTMLElement>,
-    private readonly viewModeService: ViewModeService
+    private readonly hostElement: ElementRef<HTMLElement>
   ) {}
 
   ngOnInit(): void {
-    this.applyNavForMode(this.viewModeService.getCurrentMode());
+    this.navGroups = this.adminNavGroups;
     this.currentUrl = this.router.url;
     this.autoExpandActive();
-
-    this.viewModeService.selectedView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((mode) => {
-        this.applyNavForMode(mode);
-      });
 
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -817,18 +759,5 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private isRtl(): boolean {
     return document.documentElement.dir === 'rtl'
       || this.hostElement.nativeElement.closest('[dir="rtl"]') !== null;
-  }
-
-  private applyNavForMode(mode: ViewMode): void {
-    if (mode === 'master') {
-      this.navGroups = this.masterNavGroups;
-    } else if (mode === 'subAgent') {
-      this.navGroups = this.subAgentNavGroups;
-    } else {
-      this.navGroups = this.adminNavGroups;
-    }
-
-    this.closePopup();
-    this.autoExpandActive();
   }
 }

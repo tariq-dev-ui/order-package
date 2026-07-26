@@ -7,9 +7,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AgentRequestsService } from './agent-requests.service';
 import { RequestModelLocal } from './agent-requests.mock';
 import { SingleAgentSelectorComponent } from 'src/app/pages/agents-list/components/single-agent-selector/single-agent-selector.component';
-import { VoucherSectionComponent } from '../../../features/master/orders/components/voucher-section.component';
+import { VoucherSectionComponent } from '../../../shared/order-vouchers/components/voucher-section.component';
 import { ConfirmationDialogComponent } from 'src/app/components/confirmation-dialog/confirmation-dialog.component';
-import { ChatDialogComponent } from '../../../features/master/orders/components/chat-dialog.component';
+import { ChatDialogComponent } from '../../../shared/order-vouchers/components/chat-dialog.component';
 import { SeroCurrencyPipe } from 'src/app/shared/pipes/sero-currency.pipe';
 
 @Component({

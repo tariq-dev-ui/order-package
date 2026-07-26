@@ -840,18 +840,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ];
 
   private readonly routeTitleMap: { prefix: string; key: string }[] = [
-    { prefix: '/master/my-services/makkah', key: 'Makkah' },
-    { prefix: '/master/my-services/madina', key: 'Madina' },
-    { prefix: '/master/my-services/transport', key: 'Transport' },
-    { prefix: '/master/my-services/tickets', key: 'Tickets' },
-    { prefix: '/master/my-services/food', key: 'Food' },
-    { prefix: '/master/my-services', key: 'sidebar.nav.myServices' },
-    { prefix: '/my-services/makkah', key: 'Makkah' },
-    { prefix: '/my-services/madina', key: 'Madina' },
-    { prefix: '/my-services/transport', key: 'Transport' },
-    { prefix: '/my-services/tickets', key: 'Tickets' },
-    { prefix: '/my-services/food', key: 'Food' },
-    { prefix: '/my-services', key: 'sidebar.nav.myServices' },
     { prefix: '/admin/agent-packages/new', key: 'sidebar.nav.defineNewPackage' },
     { prefix: '/admin/agent-packages', key: 'sidebar.nav.agentPackages' },
     { prefix: '/admin/packages/builder', key: 'sidebar.nav.defineNewPackage' },
@@ -922,26 +910,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     { prefix: '/admin/users', key: 'sidebar.nav.usersGroup' },
     { prefix: '/admin/hotel-providers/list', key: 'sidebar.nav.providersList' },
     { prefix: '/admin/hotel-providers/subscriptions', key: 'sidebar.nav.subscriptions' },
-    { prefix: '/admin/hotel-providers', key: 'sidebar.nav.hotelProvidersGroup' },
-    { prefix: '/agent/orders', key: 'sidebar.nav.agentOrders' },
-    { prefix: '/agent/marketplace', key: 'sidebar.nav.marketplace' },
-    { prefix: '/master/finance/chart-of-accounts', key: 'sidebar.nav.accountingTree' },
-    { prefix: '/master/finance/fiscal-year', key: 'sidebar.nav.financialYear' },
-    { prefix: '/master/finance/journal-entries', key: 'sidebar.nav.journalEntries' },
-    { prefix: '/master/finance/account-statement', key: 'sidebar.nav.accountStatement' },
-    { prefix: '/master/finance/trial-balance', key: 'sidebar.nav.trialBalance' },
-    { prefix: '/master/finance/opening-balance', key: 'sidebar.nav.openingBalance' },
-    { prefix: '/master/finance/account-routing', key: 'sidebar.nav.accountRouting' },
-    { prefix: '/master/finance/income-statement', key: 'sidebar.nav.incomeStatement' },
-    { prefix: '/master/finance/cashier-session', key: 'Cashier Session' },
-    { prefix: '/master/packages/create', key: 'Create Package' },
-    { prefix: '/master/packages', key: 'Packages' },
-    { prefix: '/master/my-packages', key: 'My Packages' },
-    { prefix: '/master/orders', key: 'Orders' },
-    { prefix: '/master/quotations', key: 'Quotations' },
-    { prefix: '/master/subagents', key: 'sidebar.nav.subagents' },
-    { prefix: '/master/settings', key: 'sidebar.nav.settings' },
-    { prefix: '/master', key: 'sidebar.nav.distributedPackages' }
+    { prefix: '/admin/hotel-providers', key: 'sidebar.nav.hotelProvidersGroup' }
   ];
 
   constructor(
@@ -1002,24 +971,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
   navigateToAccount(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    const route = this.routeRoot() === '/master' ? '/master/settings' : '/admin/users/agent-users';
-    void this.router.navigate([route]);
+    void this.router.navigate(['/admin/users/agent-users']);
   }
 
   navigateToSettings(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    const route = this.routeRoot() === '/master' ? '/master/settings' : '/admin/users/system-admins';
-    void this.router.navigate([route]);
+    void this.router.navigate(['/admin/users/system-admins']);
   }
 
   navigateToWallet(event: Event): void {
     event.stopPropagation();
     this.closeMenus();
-    const route = this.routeRoot() === '/master'
-      ? '/master/finance/account-statement'
-      : '/admin/finance/account-statement';
-    void this.router.navigate([route]);
+    void this.router.navigate(['/admin/finance/account-statement']);
   }
 
   logout(event: Event): void {
@@ -1073,10 +1037,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     }
     return 'sidebar.nav.statisticsGroup';
-  }
-
-  private routeRoot(): '/admin' | '/master' {
-    return this.router.url.split('?')[0].startsWith('/master') ? '/master' : '/admin';
   }
 
   private readTheme(): ThemeMode {

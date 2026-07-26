@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { SeroDropdownComponent, SeroDropdownOption } from '../../shared/components/sero-dropdown/sero-dropdown.component';
-import { PaginationComponent } from '../../features/master/packages/components/pagination.component';
+import { PaginationComponent } from '../../shared/components/pkg-pagination/pagination.component';
 import { OrdersService } from './orders.service';
 import {
   AGENT_STATUS_META,

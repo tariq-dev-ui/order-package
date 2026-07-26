@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationDialogComponent } from 'src/app/components/confirmation-dialog/confirmation-dialog.component';
 import { SingleAgentSelectorComponent } from 'src/app/pages/agents-list/components/single-agent-selector/single-agent-selector.component';
-import { ChatDialogComponent } from 'src/app/features/master/orders/components/chat-dialog.component';
+import { ChatDialogComponent } from 'src/app/shared/order-vouchers/components/chat-dialog.component';
 
 @Component({
   selector: 'app-agents-orders',

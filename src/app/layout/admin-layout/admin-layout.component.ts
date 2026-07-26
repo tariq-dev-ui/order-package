@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
 import { TopbarComponent } from '../components/topbar/topbar.component';
 import { LayoutService } from '../../core/services/layout.service';
-import { ViewModeService } from '../../core/services/view-mode.service';
-import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-admin-layout',
@@ -82,31 +80,5 @@ import { filter } from 'rxjs';
   `]
 })
 export class AdminLayoutComponent {
-  pageTitle = 'SERO Platform';
-
-  constructor(
-    public layout: LayoutService,
-    private readonly viewModeService: ViewModeService,
-    private readonly router: Router
-  ) {
-    this.viewModeService.selectedView$.subscribe((mode) => {
-      this.pageTitle = mode === 'admin'
-        ? 'Admin View'
-        : mode === 'master'
-          ? 'Master Agent View'
-          : 'Sub Agent View';
-    });
-
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        if (event.urlAfterRedirects.startsWith('/admin/analytics')) {
-          this.pageTitle = 'الإحصائيات';
-        }
-      });
-
-    if ((this.router.url || '').startsWith('/admin/analytics')) {
-      this.pageTitle = 'الإحصائيات';
-    }
-  }
+  constructor(public layout: LayoutService) {}
 }
