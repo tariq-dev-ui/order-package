@@ -474,6 +474,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      id: 'allOrders',
+      label: 'sidebar.nav.allOrders',
+      icon: 'shopping_cart',
+      route: '/admin/orders'
+    },
+    {
       id: 'operations',
       label: 'sidebar.nav.operationsGroup',
       icon: 'tune',

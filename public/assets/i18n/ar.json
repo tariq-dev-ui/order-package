@@ -210,7 +210,8 @@
       "agentUsers":             "مستخدمو الوكلاء",
       "hotelProvidersGroup":    "مزودو الفنادق",
       "providersList":          "قائمة المزودين",
-      "subscriptions":          "الاشتراكات"
+      "subscriptions":          "الاشتراكات",
+      "allOrders":              "جميع الطلبات"
     },
     "badges": {
       "new": "جديد"

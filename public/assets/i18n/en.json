@@ -164,7 +164,8 @@
       "agentUsers":             "Agent Users",
       "hotelProvidersGroup":    "Hotel Providers",
       "providersList":          "Providers List",
-      "subscriptions":          "Subscriptions"
+      "subscriptions":          "Subscriptions",
+      "allOrders":              "All Orders"
     },
     "badges": {
       "new": "New"

@@ -1,0 +1,679 @@
+<div class="rms-report" dir="rtl">
+
+  <!-- ══════════════════════════════════════════════════════════
+       REPORT HEADER
+  ══════════════════════════════════════════════════════════ -->
+  <div class="rms-header">
+    <div class="rms-header__identity">
+      <div class="rms-header__icon">
+        <i class="fas fa-bed"></i>
+      </div>
+      <div class="rms-header__text">
+        <h1 class="rms-header__title">نافذة تقرير إشغال الغرف والحجوزات</h1>
+        <p class="rms-header__subtitle">عرض تفاعلي لحالة الغرف والحجوزات حسب التاريخ والطابق ونوع الغرفة</p>
+      </div>
+    </div>
+
+    <div class="rms-header__actions">
+      <div class="rms-date-nav">
+        <button class="rms-nav-btn" (click)="navigatePrev()" title="الفترة السابقة">
+          <i class="fas fa-chevron-right"></i>
+          السابق
+        </button>
+        <button class="rms-today-btn" (click)="goToToday()">
+          <i class="fas fa-calendar-day"></i>
+          اليوم
+        </button>
+        <button class="rms-nav-btn" (click)="navigateNext()" title="الفترة التالية">
+          التالي
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </div>
+
+      <div class="rms-date-range-label">
+        <i class="fas fa-calendar-alt"></i>
+        {{ dateRangeLabel() }}
+      </div>
+
+      <div class="rms-header__btns">
+        <button class="rms-btn rms-btn--outline" (click)="refreshData()" [class.rms-btn--loading]="isRefreshing()">
+          <i class="fas" [class.fa-sync-alt]="!isRefreshing()" [class.fa-spinner]="isRefreshing()" [class.fa-spin]="isRefreshing()"></i>
+          تحديث البيانات
+        </button>
+        <button class="rms-btn rms-btn--primary" (click)="exportReport()">
+          <i class="fas fa-file-export"></i>
+          تصدير التقرير
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SUMMARY CARDS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="rms-summary-strip">
+
+    <div class="rms-summary-card rms-summary-card--total">
+      <div class="rms-summary-card__icon">
+        <i class="fas fa-building"></i>
+      </div>
+      <div class="rms-summary-card__body">
+        <span class="rms-summary-card__num">{{ summary().totalRooms }}</span>
+        <span class="rms-summary-card__label">إجمالي الغرف</span>
+        <span class="rms-summary-card__sub">الطاقة الاستيعابية الكاملة</span>
+      </div>
+    </div>
+
+    <div class="rms-summary-card rms-summary-card--occupied">
+      <div class="rms-summary-card__icon">
+        <i class="fas fa-door-closed"></i>
+      </div>
+      <div class="rms-summary-card__body">
+        <span class="rms-summary-card__num">{{ summary().occupiedRooms }}</span>
+        <span class="rms-summary-card__label">الغرف المشغولة</span>
+        <span class="rms-summary-card__sub">محجوزة حالياً</span>
+      </div>
+    </div>
+
+    <div class="rms-summary-card rms-summary-card--available">
+      <div class="rms-summary-card__icon">
+        <i class="fas fa-door-open"></i>
+      </div>
+      <div class="rms-summary-card__body">
+        <span class="rms-summary-card__num">{{ summary().availableRooms }}</span>
+        <span class="rms-summary-card__label">الغرف المتاحة</span>
+        <span class="rms-summary-card__sub">جاهزة للحجز</span>
+      </div>
+    </div>
+
+    <div class="rms-summary-card rms-summary-card--maintenance">
+      <div class="rms-summary-card__icon">
+        <i class="fas fa-tools"></i>
+      </div>
+      <div class="rms-summary-card__body">
+        <span class="rms-summary-card__num">{{ summary().maintenanceRooms }}</span>
+        <span class="rms-summary-card__label">تحت الصيانة</span>
+        <span class="rms-summary-card__sub">خارج الخدمة مؤقتاً</span>
+      </div>
+    </div>
+
+    <div class="rms-summary-card rms-summary-card--rate">
+      <div class="rms-summary-card__icon">
+        <i class="fas fa-chart-pie"></i>
+      </div>
+      <div class="rms-summary-card__body">
+        <span class="rms-summary-card__num">{{ summary().occupancyRate }}%</span>
+        <span class="rms-summary-card__label">نسبة الإشغال</span>
+        <div class="rms-occupancy-bar">
+          <div class="rms-occupancy-bar__fill" [ngStyle]="occupancyBarStyle()"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       LEGEND
+  ══════════════════════════════════════════════════════════ -->
+  <div class="rms-legend">
+    <span class="rms-legend__item rms-legend__item--confirmed">
+      <span class="rms-legend__dot"></span> حجز مؤكد
+    </span>
+    <span class="rms-legend__item rms-legend__item--checkin">
+      <span class="rms-legend__dot"></span> وصول اليوم
+    </span>
+    <span class="rms-legend__item rms-legend__item--checkout">
+      <span class="rms-legend__dot"></span> مغادرة اليوم
+    </span>
+    <span class="rms-legend__item rms-legend__item--maintenance">
+      <span class="rms-legend__dot"></span> صيانة
+    </span>
+    <span class="rms-legend__item rms-legend__item--available">
+      <span class="rms-legend__dot"></span> متاحة
+    </span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FILTERS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="rms-filters">
+
+    <div class="rms-filter-group">
+      <label class="rms-filter-label">
+        <i class="fas fa-layer-group"></i>
+        الطابق
+      </label>
+      <select class="rms-select" [value]="selectedFloor()" (change)="selectedFloor.set($any($event.target).value)">
+        <option value="all">جميع الطوابق</option>
+        <option value="floor1">الطابق الأول</option>
+        <option value="floor2">الطابق الثاني</option>
+        <option value="floor3">الطابق الثالث</option>
+        <option value="penthouse">البنتهاوس</option>
+      </select>
+    </div>
+
+    <div class="rms-filter-group">
+      <label class="rms-filter-label">
+        <i class="fas fa-bed"></i>
+        نوع الغرفة
+      </label>
+      <select class="rms-select" [value]="selectedRoomType()" (change)="selectedRoomType.set($any($event.target).value)">
+        <option value="all">جميع الأنواع</option>
+        <option value="Standard">Standard</option>
+        <option value="Deluxe">Deluxe</option>
+        <option value="Suite">Suite</option>
+        <option value="Premium">Premium</option>
+        <option value="Penthouse">Penthouse</option>
+      </select>
+    </div>
+
+    <div class="rms-filter-group">
+      <label class="rms-filter-label">
+        <i class="fas fa-circle"></i>
+        الحالة
+      </label>
+      <select class="rms-select" [value]="selectedStatus()" (change)="selectedStatus.set($any($event.target).value)">
+        <option value="all">جميع الحالات</option>
+        <option value="available">متاحة</option>
+        <option value="booked">محجوزة</option>
+        <option value="checkin-today">تسجيل وصول اليوم</option>
+        <option value="checkout-today">تسجيل مغادرة اليوم</option>
+        <option value="maintenance">تحت الصيانة</option>
+      </select>
+    </div>
+
+    <div class="rms-filter-group">
+      <label class="rms-filter-label">
+        <i class="fas fa-calendar-week"></i>
+        الفترة
+      </label>
+      <div class="rms-preset-group">
+        @for (p of [['today','اليوم'],['week','هذا الأسبوع'],['month','هذا الشهر'],['custom','مخصص']] ; track p[0]) {
+          <button
+            class="rms-preset-btn"
+            [class.rms-preset-btn--active]="datePreset() === p[0]"
+            (click)="setDatePreset($any(p[0]))">
+            {{ p[1] }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="rms-filter-group rms-filter-group--search">
+      <label class="rms-filter-label">
+        <i class="fas fa-search"></i>
+        بحث
+      </label>
+      <div class="rms-search-wrap">
+        <i class="fas fa-search rms-search-icon"></i>
+        <input
+          type="text"
+          class="rms-search-input"
+          placeholder="رقم الغرفة، اسم النزيل، رقم الحجز..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        @if (searchQuery()) {
+          <button class="rms-search-clear" (click)="searchQuery.set('')">
+            <i class="fas fa-times"></i>
+          </button>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CALENDAR REPORT
+  ══════════════════════════════════════════════════════════ -->
+  <div class="rms-calendar-section">
+    <div class="rms-calendar-header-bar">
+      <div class="rms-calendar-title">
+        <i class="fas fa-calendar-alt"></i>
+        تقرير الغرف – {{ dateRangeLabel() }}
+      </div>
+      <div class="rms-calendar-meta">
+        <span class="rms-rooms-count">{{ filteredRooms().length }} غرفة</span>
+      </div>
+    </div>
+
+    <div class="rms-calendar-wrapper">
+      <!-- ── HEADER ROW ── -->
+      <div class="rms-cal-head-row">
+        <div class="rms-cal-room-header">
+          <i class="fas fa-bed"></i>
+          الغرفة
+        </div>
+        <div class="rms-cal-days-header">
+          @for (day of calendarDays(); track day.date) {
+            <div
+              class="rms-cal-day-header"
+              [class.rms-cal-day-header--today]="day.isToday"
+              [class.rms-cal-day-header--weekend]="day.isWeekend">
+              <span class="rms-cal-day-short">{{ day.dayShort }}</span>
+              <span class="rms-cal-day-num">{{ day.dayNumber }}</span>
+              <span class="rms-cal-month-short">{{ day.monthShort }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- ── ROOM ROWS ── -->
+      <div class="rms-cal-body">
+        @if (!filteredRooms().length) {
+          <div class="rms-cal-empty">
+            <i class="fas fa-search"></i>
+            <p>لا توجد غرف تطابق معايير البحث</p>
+          </div>
+        }
+
+        @for (room of filteredRooms(); track room.id) {
+          <div class="rms-cal-row" [class.rms-cal-row--maintenance]="room.status === 'maintenance'">
+
+            <!-- Room Info -->
+            <div class="rms-cal-room-info">
+              <div class="rms-room-num">{{ room.number }}</div>
+              <div class="rms-room-type-badge rms-room-type--{{ room.type.toLowerCase() }}">
+                {{ room.type }}
+              </div>
+              <div class="rms-room-floor">{{ room.floorLabel }}</div>
+              <span class="rms-status-badge rms-status--{{ room.status }}">
+                {{ getStatusLabel(room.status) }}
+              </span>
+            </div>
+
+            <!-- Day Cells -->
+            <div class="rms-cal-cells">
+              @for (seg of getSegmentsForRoom(room.id); track seg.dayDate) {
+                @if (seg.type === 'reservation') {
+                  <div
+                    class="rms-res-block rms-res--{{ seg.reservation!.status }}"
+                    [style.grid-column]="'span ' + seg.span"
+                    (click)="onReservationClick(seg.reservation!)"
+                    (mouseenter)="onCellHover(seg.reservation!, $event)"
+                    (mouseleave)="onCellLeave()"
+                    [title]="seg.reservation!.guestName">
+                    <div class="rms-res-guest">{{ seg.reservation!.guestName }}</div>
+                    @if (seg.span >= 3) {
+                      <div class="rms-res-num">{{ seg.reservation!.bookingNumber }}</div>
+                    }
+                    <div class="rms-res-payment rms-pay--{{ seg.reservation!.paymentStatus }}">
+                      {{ getPaymentLabel(seg.reservation!.paymentStatus) }}
+                    </div>
+                  </div>
+                } @else {
+                  <div
+                    class="rms-avail-cell"
+                    [class.rms-avail-cell--maintenance]="room.status === 'maintenance'"
+                    (click)="room.status !== 'maintenance' && onAvailableSlotClick(room.id, seg.dayDate)">
+                    @if (room.status !== 'maintenance') {
+                      <span class="rms-avail-plus">+</span>
+                    } @else {
+                      <span class="rms-maintenance-icon"><i class="fas fa-wrench"></i></span>
+                    }
+                  </div>
+                }
+              }
+            </div>
+
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TOOLTIP
+  ══════════════════════════════════════════════════════════ -->
+  @if (tooltipData() && tooltipPosition()) {
+    <div
+      class="rms-tooltip"
+      [style.top.px]="tooltipPosition()!.top"
+      [style.left.px]="tooltipPosition()!.left">
+
+      <div class="rms-tooltip__header">
+        <span class="rms-tooltip__booking">{{ tooltipData()!.bookingNumber }}</span>
+        <span class="rms-tooltip__status rms-res--{{ tooltipData()!.status }}">
+          {{ getReservationStatusLabel(tooltipData()!.status) }}
+        </span>
+      </div>
+
+      <div class="rms-tooltip__grid">
+        <div class="rms-tt-row">
+          <i class="fas fa-user rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">النزيل</span>
+            <span class="rms-tt-val">{{ tooltipData()!.guestName }}</span>
+          </div>
+        </div>
+        <div class="rms-tt-row">
+          <i class="fas fa-bed rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">الغرفة</span>
+            <span class="rms-tt-val">{{ getRoomLabel(tooltipData()!.roomId) }}</span>
+          </div>
+        </div>
+        <div class="rms-tt-row">
+          <i class="fas fa-sign-in-alt rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">الوصول</span>
+            <span class="rms-tt-val">{{ formatDate(tooltipData()!.checkIn) }}</span>
+          </div>
+        </div>
+        <div class="rms-tt-row">
+          <i class="fas fa-sign-out-alt rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">المغادرة</span>
+            <span class="rms-tt-val">{{ formatDate(tooltipData()!.checkOut) }}</span>
+          </div>
+        </div>
+        <div class="rms-tt-row">
+          <i class="fas fa-moon rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">الليالي</span>
+            <span class="rms-tt-val">{{ tooltipData()!.nights }} ليلة</span>
+          </div>
+        </div>
+        <div class="rms-tt-row">
+          <i class="fas fa-wallet rms-tt-icon"></i>
+          <div>
+            <span class="rms-tt-label">السداد</span>
+            <span class="rms-tt-val rms-pay--{{ tooltipData()!.paymentStatus }}">
+              {{ getPaymentLabel(tooltipData()!.paymentStatus) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rms-tooltip__amount">
+        {{ formatCurrency(tooltipData()!.totalAmount) }}
+      </div>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════
+       BOOKING DETAIL MODAL
+  ══════════════════════════════════════════════════════════ -->
+  @if (isDetailModalOpen() && selectedReservation()) {
+    <div class="rms-modal-overlay" (click)="closeModals()">
+      <div class="rms-modal" (click)="$event.stopPropagation()">
+
+        <div class="rms-modal__header">
+          <div class="rms-modal__title-wrap">
+            <div class="rms-modal__icon">
+              <i class="fas fa-file-invoice"></i>
+            </div>
+            <div>
+              <h2 class="rms-modal__title">تفاصيل الحجز</h2>
+              <p class="rms-modal__subtitle">{{ selectedReservation()!.bookingNumber }}</p>
+            </div>
+          </div>
+          <button class="rms-modal__close" (click)="closeModals()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="rms-modal__body">
+
+          <div class="rms-detail-grid">
+
+            <div class="rms-detail-block">
+              <h3 class="rms-detail-block__title">
+                <i class="fas fa-user"></i> بيانات النزيل
+              </h3>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">الاسم</span>
+                <span class="rms-detail-val">{{ selectedReservation()!.guestName }}</span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">الهاتف</span>
+                <span class="rms-detail-val rms-ltr">{{ selectedReservation()!.guestPhone }}</span>
+              </div>
+            </div>
+
+            <div class="rms-detail-block">
+              <h3 class="rms-detail-block__title">
+                <i class="fas fa-bed"></i> بيانات الغرفة
+              </h3>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">رقم الغرفة</span>
+                <span class="rms-detail-val">
+                  {{ getRoomById(selectedReservation()!.roomId)?.number }}
+                </span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">الطابق</span>
+                <span class="rms-detail-val">
+                  {{ getRoomById(selectedReservation()!.roomId)?.floorLabel }}
+                </span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">نوع الغرفة</span>
+                <span class="rms-detail-val">
+                  {{ getRoomById(selectedReservation()!.roomId)?.type }}
+                </span>
+              </div>
+            </div>
+
+            <div class="rms-detail-block">
+              <h3 class="rms-detail-block__title">
+                <i class="fas fa-calendar-check"></i> تواريخ الإقامة
+              </h3>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">تسجيل الوصول</span>
+                <span class="rms-detail-val">{{ formatDate(selectedReservation()!.checkIn) }}</span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">تسجيل المغادرة</span>
+                <span class="rms-detail-val">{{ formatDate(selectedReservation()!.checkOut) }}</span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">عدد الليالي</span>
+                <span class="rms-detail-val rms-detail-val--accent">
+                  {{ selectedReservation()!.nights }} ليلة
+                </span>
+              </div>
+            </div>
+
+            <div class="rms-detail-block">
+              <h3 class="rms-detail-block__title">
+                <i class="fas fa-info-circle"></i> حالة الحجز
+              </h3>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">حالة الحجز</span>
+                <span class="rms-status-badge rms-status--{{ selectedReservation()!.status }}">
+                  {{ getReservationStatusLabel(selectedReservation()!.status) }}
+                </span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">حالة السداد</span>
+                <span class="rms-pay-badge rms-pay--{{ selectedReservation()!.paymentStatus }}">
+                  {{ getPaymentLabel(selectedReservation()!.paymentStatus) }}
+                </span>
+              </div>
+              <div class="rms-detail-row">
+                <span class="rms-detail-label">المبلغ الإجمالي</span>
+                <span class="rms-detail-val rms-detail-val--amount">
+                  {{ formatCurrency(selectedReservation()!.totalAmount) }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          @if (selectedReservation()!.notes) {
+            <div class="rms-detail-notes">
+              <i class="fas fa-sticky-note"></i>
+              <span>{{ selectedReservation()!.notes }}</span>
+            </div>
+          }
+
+        </div>
+
+        <div class="rms-modal__footer">
+          <button class="rms-btn rms-btn--ghost" (click)="closeModals()">
+            <i class="fas fa-times"></i>
+            إغلاق
+          </button>
+          <button class="rms-btn rms-btn--outline">
+            <i class="fas fa-edit"></i>
+            تعديل الحالة
+          </button>
+          <button class="rms-btn rms-btn--primary">
+            <i class="fas fa-eye"></i>
+            عرض الحجز
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════
+       QUICK CREATE MODAL
+  ══════════════════════════════════════════════════════════ -->
+  @if (isCreateModalOpen()) {
+    <div class="rms-modal-overlay" (click)="closeModals()">
+      <div class="rms-modal rms-modal--create" (click)="$event.stopPropagation()">
+
+        <div class="rms-modal__header">
+          <div class="rms-modal__title-wrap">
+            <div class="rms-modal__icon rms-modal__icon--create">
+              <i class="fas fa-plus"></i>
+            </div>
+            <div>
+              <h2 class="rms-modal__title">إنشاء حجز سريع</h2>
+              <p class="rms-modal__subtitle">إضافة حجز جديد للغرفة المحددة</p>
+            </div>
+          </div>
+          <button class="rms-modal__close" (click)="closeModals()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="rms-modal__body">
+          <form class="rms-quick-form" (ngSubmit)="saveQuickReservation()">
+
+            <div class="rms-form-grid">
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-user"></i>
+                  اسم النزيل <span class="rms-required">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="rms-form-input"
+                  placeholder="الاسم الكامل"
+                  [(ngModel)]="newReservation.guestName"
+                  name="guestName"
+                  required
+                />
+              </div>
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-phone"></i>
+                  رقم الهاتف
+                </label>
+                <input
+                  type="tel"
+                  class="rms-form-input rms-ltr"
+                  placeholder="+966 5X XXX XXXX"
+                  [(ngModel)]="newReservation.guestPhone"
+                  name="guestPhone"
+                />
+              </div>
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-bed"></i>
+                  الغرفة <span class="rms-required">*</span>
+                </label>
+                <select class="rms-form-select" [(ngModel)]="newReservation.roomId" name="roomId" required>
+                  <option value="">اختر الغرفة</option>
+                  @for (room of filteredRooms(); track room.id) {
+                    <option [value]="room.id" [disabled]="room.status === 'maintenance'">
+                      {{ room.number }} – {{ room.type }} – {{ room.floorLabel }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-tag"></i>
+                  نوع الحجز
+                </label>
+                <select class="rms-form-select" [(ngModel)]="newReservation.bookingType" name="bookingType">
+                  <option value="">اختر النوع</option>
+                  <option value="direct">حجز مباشر</option>
+                  <option value="online">حجز إلكتروني</option>
+                  <option value="agency">حجز وكالة</option>
+                  <option value="corporate">حجز شركة</option>
+                </select>
+              </div>
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-sign-in-alt"></i>
+                  تاريخ الوصول <span class="rms-required">*</span>
+                </label>
+                <input
+                  type="date"
+                  class="rms-form-input rms-ltr"
+                  [(ngModel)]="newReservation.checkIn"
+                  name="checkIn"
+                  required
+                />
+              </div>
+
+              <div class="rms-form-field">
+                <label class="rms-form-label">
+                  <i class="fas fa-sign-out-alt"></i>
+                  تاريخ المغادرة <span class="rms-required">*</span>
+                </label>
+                <input
+                  type="date"
+                  class="rms-form-input rms-ltr"
+                  [(ngModel)]="newReservation.checkOut"
+                  name="checkOut"
+                  required
+                />
+              </div>
+
+              <div class="rms-form-field rms-form-field--full">
+                <label class="rms-form-label">
+                  <i class="fas fa-sticky-note"></i>
+                  ملاحظات
+                </label>
+                <textarea
+                  class="rms-form-textarea"
+                  rows="3"
+                  placeholder="أي ملاحظات خاصة بالحجز..."
+                  [(ngModel)]="newReservation.notes"
+                  name="notes">
+                </textarea>
+              </div>
+
+            </div>
+
+          </form>
+        </div>
+
+        <div class="rms-modal__footer">
+          <button class="rms-btn rms-btn--ghost" (click)="closeModals()">
+            <i class="fas fa-times"></i>
+            إلغاء
+          </button>
+          <button class="rms-btn rms-btn--primary" (click)="saveQuickReservation()">
+            <i class="fas fa-save"></i>
+            حفظ الحجز
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
+import { OrderPermissions } from './core/constants/order-permissions';
 
 const emptyPage = () => import('./features/shared/placeholder/placeholder.component').then(m => m.PlaceholderComponent);
 const statisticsPage = () => import('./features/admin/statistics/statistics-page.component').then(m => m.StatisticsPageComponent);
@@ -29,6 +30,7 @@ const importJournalEntriesPage = () => import('./pages/journal-entries/import-en
 const taxExpenseEntryPage = () => import('./pages/journal-entries/tax-expense-entry/tax-expense-entry.component').then(m => m.TaxExpenseEntryComponent);
 const fiscalYearPage = () => import('./pages/fiscal-year/fiscal-year.component').then(m => m.FiscalYearComponent);
 const financialReportsPage = () => import('./pages/financial-reports/financial-reports.component').then(m => m.FinancialReportsComponent);
+const occupancyReportPage = () => import('./pages/hotel-reports/occupancy-report/occupancy-report.component').then(m => m.OccupancyReportComponent);
 const accountRoutingPage = () => import('./pages/account-routing/account-routing.component').then(m => m.AccountRoutingComponent);
 const banksManagementPage = () => import('./pages/banks-management/banks-management.component').then(m => m.BanksManagementComponent);
 const expensesManagementPage = () => import('./pages/expenses-management/expenses-management.component').then(m => m.ExpensesManagementComponent);
@@ -60,6 +62,8 @@ const myServicesTransportPage = () => import('./pages/my-services/transport-serv
 const myServicesTicketsPage = () => import('./pages/my-services/tickets-service/tickets-service').then(m => m.TicketsServicePage);
 const myServicesFoodPage = () => import('./pages/my-services/food-service/food-service').then(m => m.FoodServicePage);
 
+const ordersPage = () => import('./pages/orders/orders.component').then(m => m.OrdersComponent);
+
 export const routes: Routes = [
   { path: '', redirectTo: 'admin/analytics', pathMatch: 'full' },
   {
@@ -81,6 +85,7 @@ export const routes: Routes = [
       { path: 'orders/confirmation/:orderId', loadComponent: emptyPage },
       // TODO: new order form
       { path: 'orders/new', loadComponent: emptyPage },
+      { path: 'orders', loadComponent: ordersPage, data: { permission: OrderPermissions.View } },
       { path: 'operations/hotel-bookings',     loadComponent: operationsHotelBookingsPage },
       { path: 'operations/visa-requests',      loadComponent: operationsVisaRequestsPage },
       { path: 'operations/transport-requests', loadComponent: operationsTransportRequestsPage },
@@ -130,6 +135,7 @@ export const routes: Routes = [
       { path: 'finance/cost-centers',            loadComponent: costCentersPage },
       { path: 'finance/reports',                 loadComponent: financialReportsPage },
       { path: 'finance/financial-reports',       loadComponent: financialReportsPage },
+      { path: 'hotel/occupancy-report',          loadComponent: occupancyReportPage },
       { path: 'finance/account-routing',         loadComponent: accountRoutingPage },
       { path: 'finance/income-statement',        loadComponent: incomeStatementPage },
       // TODO: financials
