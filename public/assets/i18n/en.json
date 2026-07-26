@@ -236,6 +236,7 @@
     },
     "actionsMenu": {
       "view": "View",
+      "viewAgent": "View Agent",
       "edit": "Edit",
       "print": "Print",
       "more": "More",

@@ -282,6 +282,7 @@
     },
     "actionsMenu": {
       "view": "عرض",
+      "viewAgent": "عرض الوكيل",
       "edit": "تعديل",
       "print": "طباعة",
       "more": "المزيد",

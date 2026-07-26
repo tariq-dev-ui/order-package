@@ -207,7 +207,17 @@
                     </span>
                   </td>
                   <td>
-                    <span class="cell-name">{{ row.agent }}</span>
+                    <span class="agent-cell">
+                      <span class="cell-name">{{ row.agent }}</span>
+                      <button
+                        type="button"
+                        class="agent-view-btn"
+                        [attr.aria-label]="'orders.actionsMenu.viewAgent' | translate"
+                        [title]="'orders.actionsMenu.viewAgent' | translate"
+                        (click)="viewRow(row)">
+                        <tabler-icon name="arrow-up-right"></tabler-icon>
+                      </button>
+                    </span>
                   </td>
                   <td>
                     <span class="amount-currency-wrap">
@@ -244,14 +254,6 @@
                   </td>
                   <td>
                     <div class="pms-actions-cell">
-                      <button
-                        type="button"
-                        class="op-icon-btn btn-view"
-                        [attr.aria-label]="'orders.actionsMenu.view' | translate"
-                        [title]="'orders.actionsMenu.view' | translate"
-                        (click)="viewRow(row)">
-                        <tabler-icon name="eye"></tabler-icon>
-                      </button>
                       <button
                         type="button"
                         class="op-icon-btn btn-edit"

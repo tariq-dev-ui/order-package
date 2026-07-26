@@ -652,6 +652,11 @@
   white-space: nowrap;
 }
 
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4) {
+  min-width: 220px;
+}
+
 .orders-table tbody tr {
   transition: background 150ms ease;
 }
@@ -672,6 +677,54 @@
 
 .cell-name {
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.agent-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.agent-view-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--app-text-secondary) 14%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--app-text-secondary) 7%, transparent);
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  line-height: 1;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.agent-view-btn tabler-icon {
+  width: 17px;
+  height: 17px;
+}
+
+:host-context([dir="rtl"]) .agent-view-btn tabler-icon {
+  transform: scaleX(-1);
+}
+
+.agent-view-btn:hover {
+  border-color: color-mix(in srgb, var(--app-heading) 24%, transparent);
+  background: color-mix(in srgb, var(--app-heading) 10%, transparent);
+  color: var(--app-heading);
+}
+
+.agent-view-btn:focus-visible {
+  outline: 2px solid var(--app-heading);
+  outline-offset: 2px;
 }
 
 .cell-date {
