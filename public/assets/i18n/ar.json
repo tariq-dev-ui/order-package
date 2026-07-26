@@ -225,6 +225,8 @@
     },
     "actions": {
       "export": "تصدير",
+      "exportPdf": "PDF",
+      "exportExcel": "Excel",
       "filter": "فلتر",
       "advancedFilters": "فلاتر متقدمة",
       "searchPlaceholder": "ابحث برقم عرض السعر أو الوكيل أو الخدمة...",

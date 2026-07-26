@@ -81,13 +81,22 @@
           }
         </div>
 
-        <button
-          type="button"
-          class="export-btn"
-          (click)="exportCsv()">
-          <tabler-icon name="download"></tabler-icon>
-          <span>{{ 'orders.actions.export' | translate }}</span>
-        </button>
+        <div class="export-buttons-group">
+          <button
+            type="button"
+            class="export-format-btn export-format-btn--pdf"
+            (click)="exportCsv()">
+            <tabler-icon name="file-type-pdf"></tabler-icon>
+            <span>{{ 'orders.actions.exportPdf' | translate }}</span>
+          </button>
+          <button
+            type="button"
+            class="export-format-btn export-format-btn--excel"
+            (click)="exportCsv()">
+            <tabler-icon name="file-spreadsheet"></tabler-icon>
+            <span>{{ 'orders.actions.exportExcel' | translate }}</span>
+          </button>
+        </div>
       </div>
 
       @if (showAdvancedFilters()) {

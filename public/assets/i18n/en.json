@@ -179,6 +179,8 @@
     },
     "actions": {
       "export": "Export",
+      "exportPdf": "PDF",
+      "exportExcel": "Excel",
       "filter": "Filter",
       "advancedFilters": "Advanced Filters",
       "searchPlaceholder": "Search quotation number, agent or service...",

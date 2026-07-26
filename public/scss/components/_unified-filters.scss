@@ -30,7 +30,7 @@
         display: flex;
         align-items: center;
         white-space: nowrap;
-        order: 1;
+        order: 4;
       }
 
       .search-field-wrapper {
@@ -38,7 +38,7 @@
         min-width: 200px;
         max-width: 100%;
         position: relative;
-        order: 2;
+        order: 3;
         display: flex;
         align-items: center;
         gap: 0;
@@ -128,7 +128,15 @@
         }
       }
 
-      .export-btn {
+      .export-buttons-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        order: 1;
+      }
+
+      .export-format-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -144,21 +152,18 @@
         font-size: 0.875rem;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         white-space: nowrap;
         flex-shrink: 0;
-        order: 3;
 
-        tabler-icon {
+        tabler-icon,
+        i-tabler {
           width: 18px;
           height: 18px;
-          color: var(--app-heading);
         }
 
         &:hover {
           border-color: var(--app-heading);
           background: var(--app-bg);
-          box-shadow: 0 2px 6px rgba(58, 71, 42, 0.08);
           transform: translateY(-1px);
         }
 
@@ -167,24 +172,33 @@
         }
       }
 
+      .export-format-btn--pdf tabler-icon,
+      .export-format-btn--pdf i-tabler {
+        color: #d92d20;
+      }
+
+      .export-format-btn--excel tabler-icon,
+      .export-format-btn--excel i-tabler {
+        color: #16794c;
+      }
+
       @media (max-width: 768px) {
         flex-wrap: wrap;
         gap: 0.75rem;
 
+        .export-buttons-group {
+          order: 1;
+        }
+
         .search-field-wrapper {
           min-width: calc(100% - 240px);
           flex: 1 1 auto;
-          order: 2;
+          order: 3;
         }
 
         .filter-button-wrapper {
           flex-shrink: 0;
-          order: 1;
-        }
-
-        .export-btn {
-          flex-shrink: 0;
-          order: 3;
+          order: 4;
         }
       }
 
@@ -192,26 +206,29 @@
         flex-direction: column;
         align-items: stretch;
 
+        .export-buttons-group {
+          width: 100%;
+          order: 1;
+
+          .export-format-btn {
+            flex: 1 1 0;
+          }
+        }
+
         .search-field-wrapper {
           min-width: 100%;
           max-width: 100%;
-          order: 2;
+          order: 3;
         }
 
         .filter-button-wrapper {
           width: 100%;
-          order: 1;
-          
+          order: 4;
+
           .filter-main-btn {
             width: 100%;
             justify-content: center;
           }
-        }
-
-        .export-btn {
-          width: 100%;
-          order: 3;
-          justify-content: center;
         }
       }
     }

@@ -28,6 +28,24 @@
   <div class="filters-section">
     <div class="filters-container">
       <div class="filters-header-row">
+        <!-- Export Buttons -->
+        <div class="export-buttons-group">
+          <button
+            type="button"
+            class="export-format-btn export-format-btn--pdf"
+            (click)="exportExpenses()">
+            <tabler-icon name="file-type-pdf"></tabler-icon>
+            <span>PDF</span>
+          </button>
+          <button
+            type="button"
+            class="export-format-btn export-format-btn--excel"
+            (click)="exportExpenses()">
+            <tabler-icon name="file-spreadsheet"></tabler-icon>
+            <span>Excel</span>
+          </button>
+        </div>
+
         <!-- Filter Button -->
         <div class="filter-button-wrapper" #filterButtonContainer>
           <button 
@@ -76,15 +94,6 @@
             (input)="updateFilterValue('search', $any($event.target).value)"
             (blur)="onFilterChange()">
         </div>
-
-        <!-- Export Button -->
-        <button 
-          type="button"
-          class="export-btn"
-          (click)="exportExpenses()">
-          <tabler-icon name="download"></tabler-icon>
-          <span translate>تصدير</span>
-        </button>
       </div>
 
       <!-- Active Filters Display -->

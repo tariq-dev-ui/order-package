@@ -361,7 +361,7 @@
 
 .search-field-wrapper {
   position: relative;
-  order: 2;
+  order: 3;
   display: flex;
   align-items: center;
   flex: 1;
@@ -472,8 +472,15 @@
   height: 14px;
 }
 
-.export-btn {
-  order: 3;
+.export-buttons-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  order: 4;
+}
+
+.export-format-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -486,27 +493,32 @@
   border-radius: 0.5rem;
   background: var(--app-card-bg);
   color: var(--app-text-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.export-btn tabler-icon {
+.export-format-btn tabler-icon {
   width: 18px;
   height: 18px;
-  color: var(--app-heading);
 }
 
-.export-btn:hover {
+.export-format-btn--pdf tabler-icon {
+  color: #d92d20;
+}
+
+.export-format-btn--excel tabler-icon {
+  color: #16794c;
+}
+
+.export-format-btn:hover {
   border-color: var(--app-heading);
   background: var(--app-bg);
-  box-shadow: 0 2px 6px rgba(58, 71, 42, 0.08);
   transform: translateY(-1px);
 }
 
-.export-btn:active {
+.export-format-btn:active {
   transform: translateY(0);
 }
 
