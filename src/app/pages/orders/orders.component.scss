@@ -622,12 +622,20 @@
   table-layout: fixed;
 }
 
+.orders-table .col-type {
+  width: 6.5%;
+}
+
 .orders-table .col-quote {
-  width: 20%;
+  width: 17%;
+}
+
+.orders-table .col-date {
+  width: 8%;
 }
 
 .orders-table .col-agent {
-  width: 13.5%;
+  width: 12.5%;
 }
 
 .orders-table .col-money {
@@ -639,15 +647,7 @@
 }
 
 .orders-table .col-operation-status {
-  width: 12%;
-}
-
-.orders-table .col-type {
-  width: 5.5%;
-}
-
-.orders-table .col-date {
-  width: 6.5%;
+  width: 11.5%;
 }
 
 .orders-table .col-agent-status {
@@ -707,16 +707,18 @@
 .orders-table th:nth-child(1),
 .orders-table td:nth-child(1),
 .orders-table th:nth-child(2),
-.orders-table td:nth-child(2) {
+.orders-table td:nth-child(2),
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4) {
   text-align: start;
 }
 
-.orders-table th:nth-child(3),
-.orders-table td:nth-child(3),
-.orders-table th:nth-child(8),
-.orders-table td:nth-child(8),
-.orders-table th:nth-child(9),
-.orders-table td:nth-child(9) {
+.orders-table th:nth-child(5),
+.orders-table td:nth-child(5),
+.orders-table th:nth-child(6),
+.orders-table td:nth-child(6),
+.orders-table th:nth-child(7),
+.orders-table td:nth-child(7) {
   text-align: right;
 }
 
@@ -903,11 +905,11 @@
   text-overflow: ellipsis;
 }
 
-.orders-table td:nth-child(4) .status-badge {
+.orders-table td:nth-child(8) .status-badge {
   min-width: min(78px, 100%) !important;
 }
 
-.orders-table td:nth-child(5) .status-badge {
+.orders-table td:nth-child(9) .status-badge {
   min-width: min(120px, 100%) !important;
 }
 
