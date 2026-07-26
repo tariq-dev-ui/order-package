@@ -657,6 +657,11 @@
   min-width: 220px;
 }
 
+.orders-table th:nth-child(2),
+.orders-table td:nth-child(2) {
+  min-width: 180px;
+}
+
 .orders-table tbody tr {
   transition: background 150ms ease;
 }
@@ -680,6 +685,7 @@
   white-space: nowrap;
 }
 
+.quote-cell,
 .agent-cell {
   display: inline-flex;
   align-items: center;
@@ -690,6 +696,7 @@
   white-space: nowrap;
 }
 
+.quote-view-btn,
 .agent-view-btn {
   width: 28px;
   height: 28px;
@@ -707,21 +714,25 @@
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
+.quote-view-btn tabler-icon,
 .agent-view-btn tabler-icon {
   width: 17px;
   height: 17px;
 }
 
+:host-context([dir="rtl"]) .quote-view-btn tabler-icon,
 :host-context([dir="rtl"]) .agent-view-btn tabler-icon {
   transform: scaleX(-1);
 }
 
+.quote-view-btn:hover,
 .agent-view-btn:hover {
   border-color: color-mix(in srgb, var(--app-heading) 24%, transparent);
   background: color-mix(in srgb, var(--app-heading) 10%, transparent);
   color: var(--app-heading);
 }
 
+.quote-view-btn:focus-visible,
 .agent-view-btn:focus-visible {
   outline: 2px solid var(--app-heading);
   outline-offset: 2px;

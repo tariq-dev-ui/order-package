@@ -198,7 +198,17 @@
                     </span>
                   </td>
                   <td>
-                    <span class="cell-ref">{{ row.orderNo }}</span>
+                    <span class="quote-cell">
+                      <span class="cell-ref">{{ row.orderNo }}</span>
+                      <button
+                        type="button"
+                        class="quote-view-btn"
+                        [attr.aria-label]="'orders.actionsMenu.viewQuotation' | translate"
+                        [title]="'orders.actionsMenu.viewQuotation' | translate"
+                        (click)="viewRow(row)">
+                        <tabler-icon name="arrow-up-right"></tabler-icon>
+                      </button>
+                    </span>
                   </td>
                   <td>
                     <span class="cell-date">

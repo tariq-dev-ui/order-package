@@ -237,6 +237,7 @@
     "actionsMenu": {
       "view": "View",
       "viewAgent": "View Agent",
+      "viewQuotation": "View Quotation",
       "edit": "Edit",
       "print": "Print",
       "more": "More",

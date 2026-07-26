@@ -283,6 +283,7 @@
     "actionsMenu": {
       "view": "عرض",
       "viewAgent": "عرض الوكيل",
+      "viewQuotation": "عرض عرض السعر",
       "edit": "تعديل",
       "print": "طباعة",
       "more": "المزيد",
