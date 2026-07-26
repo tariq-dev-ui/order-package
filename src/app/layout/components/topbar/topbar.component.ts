@@ -9,7 +9,7 @@ import { AgentService } from '../../../core/services/agent.service';
 import { LanguageService, SupportedLang } from '../../../core/services/language.service';
 import { LayoutService } from '../../../core/services/layout.service';
 
-type NavbarMenu = 'language' | 'profile' | null;
+type NavbarMenu = 'language' | 'notifications' | 'profile' | null;
 type ThemeMode = 'light' | 'dark';
 
 interface LanguageOption {
@@ -34,10 +34,11 @@ interface LanguageOption {
         >
           <tabler-icon name="menu-2" class="icon-20"></tabler-icon>
         </button>
-      </div>
 
-      <div class="topbar-title-wrap" aria-live="polite">
-        <h1 class="topbar-title">{{ currentTitleKey | translate }}</h1>
+        <button class="topbar-search" type="button" aria-label="Search">
+          <tabler-icon name="search" class="icon-18"></tabler-icon>
+          <span class="topbar-search__text">{{ currentTitleKey | translate }}</span>
+        </button>
       </div>
 
       <div class="topbar-section topbar-section--right" aria-label="Navbar actions">
@@ -62,7 +63,7 @@ interface LanguageOption {
             aria-label="Choose language"
             title="Language"
           >
-            <span class="language-current-flag" aria-hidden="true">{{ currentLanguageFlag() }}</span>
+            <img class="language-current-flag" [src]="currentLanguageFlag()" alt="" aria-hidden="true" />
           </button>
 
           @if (activeMenu === 'language') {
@@ -76,13 +77,42 @@ interface LanguageOption {
                   [attr.aria-checked]="langService.currentLang() === lang.code"
                   (click)="selectLanguage(lang.code, $event)"
                 >
-                  <span class="language-flag" aria-hidden="true">{{ lang.flag }}</span>
+                  <img class="language-flag" [src]="lang.flag" alt="" aria-hidden="true" />
                   <span class="language-label">{{ lang.label }}</span>
                   @if (langService.currentLang() === lang.code) {
                     <tabler-icon name="check" class="language-check"></tabler-icon>
                   }
                 </button>
               }
+            </div>
+          }
+        </div>
+
+        <div class="navbar-menu">
+          <button
+            class="rms-icon-btn notification-trigger"
+            type="button"
+            (click)="toggleMenu('notifications', $event)"
+            [class.is-open]="activeMenu === 'notifications'"
+            [attr.aria-expanded]="activeMenu === 'notifications'"
+            aria-haspopup="menu"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <tabler-icon name="bell" class="icon-20"></tabler-icon>
+            <span class="notification-dot" aria-hidden="true"></span>
+          </button>
+
+          @if (activeMenu === 'notifications') {
+            <div class="dropdown-panel notifications-panel" role="menu" aria-label="Notifications menu">
+              <div class="notifications-header">
+                <strong>Notifications</strong>
+                <span>0 new</span>
+              </div>
+              <div class="notifications-empty">
+                <tabler-icon name="bell-off" class="notifications-empty-icon"></tabler-icon>
+                <span>No notifications</span>
+              </div>
             </div>
           }
         </div>
@@ -174,12 +204,10 @@ interface LanguageOption {
       height: var(--sero-topbar-height);
       background: var(--theme-bg-card, var(--sero-card-bg));
       border-bottom: 1px solid var(--theme-border, var(--sero-border));
-      border-top: 1px solid color-mix(in srgb, var(--theme-border, var(--sero-border)) 70%, transparent);
-      display: grid;
-      grid-template-columns: minmax(140px, 1fr) minmax(0, auto) minmax(140px, 1fr);
+      display: flex;
       align-items: center;
-      column-gap: clamp(8px, 2vw, 16px);
-      padding: 0 0 0 clamp(14px, 2vw, 20px);
+      gap: clamp(8px, 2vw, 16px);
+      padding: 0 clamp(14px, 2vw, 20px) 0 0;
       position: fixed;
       top: 0;
       left: var(--layout-sidebar-offset, var(--sero-sidebar-width));
@@ -192,7 +220,6 @@ interface LanguageOption {
     }
 
     .topbar-section {
-      width: 100%;
       height: 100%;
       display: flex;
       align-items: center;
@@ -201,38 +228,52 @@ interface LanguageOption {
     }
 
     .topbar-section--left {
-      justify-self: start;
+      flex: 1 1 auto;
       justify-content: flex-start;
+      gap: 12px;
     }
 
     .topbar-section--right {
-      justify-self: end;
+      flex: 0 0 auto;
       justify-content: flex-end;
       gap: 12px;
       direction: ltr;
     }
 
-    .topbar-title-wrap {
+    .topbar-search {
       min-width: 0;
-      max-width: min(48vw, 640px);
-      justify-self: center;
-      align-self: center;
+      width: min(520px, 42vw);
+      height: 42px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
+      gap: 10px;
+      padding: 0 14px;
+      border: 1px solid var(--theme-border, var(--app-border));
+      border-radius: 10px;
+      background: var(--theme-bg, #f8f9f7);
+      color: var(--theme-text-secondary, #5c6652);
+      font: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      text-align: start;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .topbar-search:hover {
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 30%, var(--theme-border, #d8decf));
+      background: var(--theme-bg-card, #fff);
+      color: var(--theme-primary, #3a472a);
+    }
+
+    .topbar-search__text {
+      min-width: 0;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .topbar-title {
-      margin: 0;
-      max-width: 100%;
-      font-size: 1.18rem;
-      font-weight: 800;
-      line-height: 1.25;
-      letter-spacing: 0;
-      color: var(--theme-text-primary, var(--sero-text-primary));
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -307,31 +348,29 @@ interface LanguageOption {
     }
 
     .language-trigger {
-      width: 28px;
-      min-width: 28px;
-      height: 28px;
-      min-height: 28px;
-      border: 0;
+      width: 32px;
+      min-width: 32px;
+      height: 32px;
+      min-height: 32px;
+      border: 1px solid transparent;
       border-radius: 50%;
-      background: #159a52;
-      color: #fff;
+      background: transparent;
+      color: var(--theme-text-primary, #2a3524);
+      overflow: hidden;
     }
 
     .language-trigger:hover,
     .language-trigger.is-open {
-      border-color: transparent;
-      background: #13884a;
-      color: #fff;
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 18%, transparent);
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 7%, transparent);
+      color: var(--theme-primary, #3a472a);
     }
 
     .language-current-flag {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      font-size: 0.78rem;
-      line-height: 1;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
     .rms-icon-btn:hover,
@@ -359,12 +398,13 @@ interface LanguageOption {
 
     .language-trigger:hover,
     .language-trigger.is-open {
-      border-color: transparent;
-      background: #13884a;
-      color: #fff;
+      border-color: color-mix(in srgb, var(--theme-primary, #3a472a) 18%, transparent);
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 7%, transparent);
+      color: var(--theme-primary, #3a472a);
     }
 
     .rms-icon-btn:focus-visible,
+    .topbar-search:focus-visible,
     .profile-trigger:focus-visible,
     .language-option:focus-visible,
     .profile-menu-item:focus-visible {
@@ -373,6 +413,7 @@ interface LanguageOption {
     }
 
     .icon-20,
+    .icon-18,
     .icon-17,
     .language-check,
     .profile-chevron {
@@ -383,6 +424,7 @@ interface LanguageOption {
     }
 
     .icon-20 { width: 20px; height: 20px; }
+    .icon-18 { width: 18px; height: 18px; }
     .icon-17 { width: 17px; height: 17px; }
 
     .navbar-menu {
@@ -445,8 +487,9 @@ interface LanguageOption {
 
     .language-flag {
       width: 22px;
-      line-height: 1;
-      font-size: 1rem;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
       flex-shrink: 0;
     }
 
@@ -462,6 +505,66 @@ interface LanguageOption {
       width: 15px;
       height: 15px;
       color: var(--theme-primary, #3a472a);
+    }
+
+    .notification-trigger {
+      position: relative;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--theme-primary, #3a472a);
+      border: 1px solid var(--theme-bg-card, #fff);
+    }
+
+    .notifications-panel {
+      width: min(360px, calc(100vw - 24px));
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .notifications-header {
+      min-height: 54px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--theme-border, #d8decf);
+      color: var(--theme-text-primary, #2a3524);
+    }
+
+    .notifications-header strong {
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .notifications-header span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--theme-text-secondary, #5c6652);
+    }
+
+    .notifications-empty {
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--theme-text-secondary, #5c6652);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .notifications-empty-icon {
+      width: 26px;
+      height: 26px;
+      color: var(--theme-text-tertiary, #7b8574);
     }
 
     .profile-trigger {
@@ -505,8 +608,8 @@ interface LanguageOption {
       height: 52px;
       border: 0;
       border-radius: 50%;
-      background: #f0edff;
-      color: #262a33;
+      background: color-mix(in srgb, var(--theme-primary, #3a472a) 9%, transparent);
+      color: var(--theme-primary, #3a472a);
       font-size: 0.66rem;
       line-height: 1;
     }
@@ -678,18 +781,10 @@ interface LanguageOption {
     }
 
     :host-context([dir="rtl"]) .topbar-section--left {
-      grid-column: 3;
-      justify-self: end;
       justify-content: flex-end;
     }
 
-    :host-context([dir="rtl"]) .topbar-title-wrap {
-      grid-column: 2;
-    }
-
     :host-context([dir="rtl"]) .topbar-section--right {
-      grid-column: 1;
-      justify-self: start;
       justify-content: flex-end;
       flex-direction: row-reverse;
     }
@@ -715,15 +810,14 @@ interface LanguageOption {
 
     @media (max-width: 1023px) {
       .sero-topbar {
-        grid-template-columns: minmax(116px, 1fr) minmax(0, auto) minmax(116px, 1fr);
         left: 0 !important;
         right: 0 !important;
         padding: 0 12px;
-        column-gap: 10px;
+        gap: 10px;
       }
 
-      .topbar-title-wrap {
-        max-width: 44vw;
+      .topbar-search {
+        width: min(420px, 44vw);
       }
     }
 
@@ -731,8 +825,7 @@ interface LanguageOption {
       .sero-topbar {
         --topbar-control-size: 36px;
         --topbar-control-radius: 9px;
-        grid-template-columns: minmax(92px, 1fr) minmax(0, auto) minmax(92px, 1fr);
-        column-gap: 8px;
+        gap: 8px;
       }
 
       .topbar-section--right {
@@ -761,10 +854,10 @@ interface LanguageOption {
       }
 
       .language-trigger {
-        width: 26px;
-        min-width: 26px;
-        height: 26px;
-        min-height: 26px;
+        width: 30px;
+        min-width: 30px;
+        height: 30px;
+        min-height: 30px;
       }
 
       .profile-trigger {
@@ -790,8 +883,15 @@ interface LanguageOption {
         display: none;
       }
 
-      .topbar-title {
-        font-size: 0.9rem;
+      .topbar-search {
+        width: 40px;
+        min-width: 40px;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .topbar-search__text {
+        display: none;
       }
 
       .dropdown-panel {
@@ -817,8 +917,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   theme: ThemeMode = 'light';
 
   readonly languages: LanguageOption[] = [
-    { code: 'en', flag: '🇺🇸', label: 'English' },
-    { code: 'ar', flag: '🇸🇦', label: 'العربية' }
+    { code: 'en', flag: '/images/flag/icon-flag-en.svg', label: 'English' },
+    { code: 'ar', flag: '/images/flag/icon-flag-ar.svg', label: 'العربية' }
   ];
 
   private readonly routeTitleMap: { prefix: string; key: string }[] = [
@@ -1018,7 +1118,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   currentLanguageFlag(): string {
-    return this.languages.find((language) => language.code === this.langService.currentLang())?.flag ?? '🌐';
+    return this.languages.find((language) => language.code === this.langService.currentLang())?.flag ?? '/images/flag/icon-flag-en.svg';
   }
 
   getInitials(name: string): string {

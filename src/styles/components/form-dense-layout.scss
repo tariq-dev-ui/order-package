@@ -1,16 +1,33 @@
 // -----------------------------------------------------------------------------
 // Dense form layout system (dashboard-style)
+//
+// Patterns:
+// - Wrap the page main column in .form-dense-page (flex column + stack gap).
+// - Each logical block: .form-dense-stack (vertical siblings).
+// - Section title + fields: .form-dense-section (tight gap under headings).
+// - Label above control(s): .form-dense-field-group (4–8px label→input).
+// - Inline fields / actions: .form-dense-row (wrap + gap, avoid margin on children).
+// - Multi-column inputs: .form-dense-grid (4→2→1); optional modifier --cols-3 below.
+// - Section headings: .form-dense-section__title (no margins; sits in section gap).
+// - Nested blocks with tighter rhythm: .form-dense-stack--tight.
+//
+// Reuse elsewhere: @use "styles/components/form-dense-layout" in styles.scss (already
+// global). On a route host set --form-dense-* to tune without new CSS files.
+//
+// Override density per route: on host (e.g. .b2b-booking-page.form-dense-host) set --form-dense-*.
+// Prefer parent gap over margin-top/bottom between fields.
 // -----------------------------------------------------------------------------
 :root {
-  --form-dense-label-gap: 4px;
-  --form-dense-row-gap: 8px;
-  --form-dense-section-gap: 6px;
-  --form-dense-stack-gap: 8px;
+  --form-dense-label-gap: 4px; // label → control (max ~8px)
+  --form-dense-row-gap: 8px; // grid / wrapped row cells
+  --form-dense-section-gap: 6px; // heading → first field, subsection rhythm
+  --form-dense-stack-gap: 8px; // major vertical blocks (cards, steps)
   --form-dense-page-pad-inline: 16px;
   --form-dense-page-pad-block: 8px;
   --form-dense-card-pad: 10px 12px;
 }
 
+// Shell around steps + form card (dashboard column)
 .form-dense-page {
   display: flex;
   flex-direction: column;
@@ -51,11 +68,13 @@
   gap: var(--form-dense-row-gap);
 }
 
+// White panel (optional); pair with border on the host if needed
 .form-dense-card {
   padding: var(--form-dense-card-pad);
   border-radius: 12px;
 }
 
+// Responsive 4 → 2 → 1 columns (booking-style dense grids)
 .form-dense-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

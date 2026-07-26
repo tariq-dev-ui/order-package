@@ -1,0 +1,247 @@
+// ============================
+// SERO Dark Theme
+// سمة الوضع الداكن
+// ============================
+// CSS Variables mapping for dark mode
+// ============================
+
+@use './colors' as *;
+
+[data-theme="dark"],
+.dark-theme {
+  // ============================
+  // PRIMARY COLORS (same in both themes)
+  // ============================
+  --sero-primary: #{$primary-base};
+  --sero-primary-light: #{$primary-light};
+  --sero-primary-dark: #{$primary-dark};
+  --sero-primary-darker: #{$primary-darker};
+  --sero-primary-hover: #{$primary-hover};
+  --sero-primary-pressed: #{$primary-pressed};
+  
+  --sero-accent: #{$accent-base};
+  --sero-accent-light: #{$accent-light};
+  --sero-accent-dark: #{$accent-dark};
+  --sero-accent-darker: #{$accent-darker};
+  --sero-accent-hover: #{$accent-hover};
+  --sero-accent-pressed: #{$accent-pressed};
+  
+  // ============================
+  // SEMANTIC COLORS (muted for dark mode)
+  // ============================
+  --sero-success: #{$success-base};
+  --sero-success-light: #{$dark-success-muted};
+  --sero-success-dark: #{$success-dark};
+  --sero-success-hover: #{$success-hover};
+  
+  --sero-warning: #{$warning-base};
+  --sero-warning-light: #{$dark-warning-muted};
+  --sero-warning-dark: #{$warning-dark};
+  --sero-warning-hover: #{$warning-hover};
+  
+  --sero-error: #{$error-base};
+  --sero-error-light: #{$dark-error-muted};
+  --sero-error-dark: #{$error-dark};
+  --sero-error-hover: #{$error-hover};
+  
+  --sero-info: #{$info-base};
+  --sero-info-light: #{$dark-info-muted};
+  --sero-info-dark: #{$info-dark};
+  --sero-info-hover: #{$info-hover};
+  
+  // ============================
+  // BACKGROUNDS
+  // ============================
+  --sero-bg-primary: #{$dark-bg-primary};
+  --sero-bg-secondary: #{$dark-bg-secondary};
+  --sero-bg-tertiary: #{$dark-bg-tertiary};
+  --sero-bg-card: #{$dark-bg-card};
+  --sero-bg-hover: #{$dark-bg-hover};
+  --sero-bg-selected: #{$dark-bg-selected};
+  --sero-bg-disabled: #{$dark-bg-disabled};
+  --sero-bg-overlay: #{$dark-bg-overlay};
+  
+  // ============================
+  // TEXT COLORS
+  // ============================
+  --sero-text-primary: #{$dark-text-primary};
+  --sero-text-secondary: #{$dark-text-secondary};
+  --sero-text-tertiary: #{$dark-text-tertiary};
+  --sero-text-disabled: #{$dark-text-disabled};
+  --sero-text-inverse: #{$dark-text-inverse};
+  --sero-text-link: #{$dark-text-link};
+  --sero-text-link-hover: #{$dark-text-link-hover};
+  
+  // ============================
+  // BORDERS
+  // ============================
+  --sero-border-primary: #{$dark-border-primary};
+  --sero-border-secondary: #{$dark-border-secondary};
+  --sero-border-hover: #{$dark-border-hover};
+  --sero-border-focus: #{$dark-border-focus};
+  --sero-border-error: #{$dark-border-error};
+  --sero-border-success: #{$dark-border-success};
+  --sero-border-disabled: #{$dark-border-disabled};
+  
+  // ============================
+  // SHADOWS
+  // ============================
+  --sero-shadow-sm: #{$dark-shadow-sm};
+  --sero-shadow-md: #{$dark-shadow-md};
+  --sero-shadow-lg: #{$dark-shadow-lg};
+  --sero-shadow-xl: #{$dark-shadow-xl};
+  
+  // ============================
+  // STATUS COLORS (same in both themes)
+  // ============================
+  --sero-status-pending: #{$status-pending};
+  --sero-status-confirmed: #{$status-confirmed};
+  --sero-status-assigned: #{$status-assigned};
+  --sero-status-checkin: #{$status-checkin};
+  --sero-status-checkout: #{$status-checkout};
+  --sero-status-closed: #{$status-closed};
+  --sero-status-cancelled: #{$status-cancelled};
+  
+  // ============================
+  // GRADIENTS (same in both themes)
+  // ============================
+  --sero-gradient-primary: #{$gradient-primary};
+  --sero-gradient-primary-hover: #{$gradient-primary-hover};
+  --sero-gradient-accent: #{$gradient-accent};
+  --sero-gradient-success: #{$gradient-success};
+  --sero-gradient-warning: #{$gradient-warning};
+  --sero-gradient-error: #{$gradient-error};
+  --sero-gradient-light: #{$gradient-light};
+  
+  // ============================
+  // BADGES (adjusted for dark mode)
+  // ============================
+  --sero-badge-default: #{$dark-bg-disabled};
+  --sero-badge-primary: #{$dark-bg-selected};
+  --sero-badge-success: #{rgba($success-base, 0.2)};
+  --sero-badge-warning: #{rgba($warning-base, 0.2)};
+  --sero-badge-error: #{rgba($error-base, 0.2)};
+  --sero-badge-info: #{rgba($info-base, 0.2)};
+  
+  // ============================
+  // NEUTRAL COLORS (same in both themes)
+  // ============================
+  --sero-white: #{$neutral-white};
+  --sero-black: #{$neutral-black};
+  --sero-gray-50: #{$gray-50};
+  --sero-gray-100: #{$gray-100};
+  --sero-gray-200: #{$gray-200};
+  --sero-gray-300: #{$gray-300};
+  --sero-gray-400: #{$gray-400};
+  --sero-gray-500: #{$gray-500};
+  --sero-gray-600: #{$gray-600};
+  --sero-gray-700: #{$gray-700};
+  --sero-gray-800: #{$gray-800};
+  --sero-gray-900: #{$gray-900};
+  
+  // ============================
+  // LAYOUT & SPACING (same in both themes)
+  // ============================
+  --sero-radius-sm: #{$border-radius-sm};
+  --sero-radius-md: #{$border-radius-md};
+  --sero-radius-lg: #{$border-radius-lg};
+  --sero-radius-xl: #{$border-radius-xl};
+  --sero-radius-full: #{$border-radius-full};
+  
+  // ============================
+  // TRANSITIONS (same in both themes)
+  // ============================
+  --sero-transition-fast: #{$transition-fast};
+  --sero-transition-base: #{$transition-base};
+  --sero-transition-slow: #{$transition-slow};
+  --sero-transition-slower: #{$transition-slower};
+  
+  // ============================
+  // LEGACY COMPATIBILITY
+  // For backward compatibility with existing code
+  // ============================
+  --app-bg: var(--sero-bg-primary);
+  --app-card-bg: var(--sero-bg-card);
+  --app-border: var(--sero-border-primary);
+  --app-heading: var(--sero-primary-light);
+  --app-text-primary: var(--sero-text-primary);
+  --app-text-secondary: var(--sero-text-secondary);
+  
+  // Old variable names (will be deprecated)
+  --sidebarbg: var(--sero-bg-secondary);
+  --background: var(--sero-bg-primary);
+  --cardbg: var(--sero-bg-card);
+  --toolbar: var(--sero-bg-card);
+  --cardshadow: var(--sero-shadow-md);
+  --hoverBgColor: var(--sero-bg-hover);
+  --borderColor: var(--sero-border-primary);
+  --borderformColor: var(--sero-border-secondary);
+  --textPrimary: var(--sero-text-primary);
+  --textSecondary: var(--sero-text-secondary);
+  --textMuted: var(--sero-text-tertiary);
+
+  // Target app compatibility aliases mapped to RMS tokens
+  --sero-app-bg: var(--sero-bg-primary);
+  --sero-card-bg: var(--sero-bg-card);
+  --sero-surface: var(--sero-bg-card);
+  --sero-surface-2: var(--sero-bg-secondary);
+  --sero-surface-3: var(--sero-bg-hover);
+  --sero-surface-4: var(--sero-bg-selected);
+  --sero-bg-subtle: var(--sero-bg-secondary);
+  --sero-input-bg: var(--sero-bg-card);
+  --sero-border: var(--sero-border-primary);
+  --sero-border-light: var(--sero-border-secondary);
+  --sero-border-strong: var(--sero-border-hover);
+  --sero-danger: var(--sero-error);
+  --sero-danger-bg: var(--sero-error-light);
+  --sero-danger-border: var(--sero-border-error);
+  --sero-success-bg: var(--sero-success-light);
+  --sero-success-border: var(--sero-border-success);
+  --sero-warning-bg: var(--sero-warning-light);
+  --sero-warning-border: var(--sero-warning-dark);
+  --sero-info-bg: var(--sero-info-light);
+  --sero-info-border: var(--sero-info-dark);
+  --sero-text: var(--sero-text-primary);
+  --sero-text-muted: var(--sero-text-tertiary);
+  --sero-gold: var(--sero-accent);
+  --sero-gold-light: var(--sero-accent-light);
+  --sero-gold-dark: var(--sero-accent-dark);
+  --sero-gold-50: var(--sero-badge-warning);
+  --sero-gold-100: var(--sero-warning-light);
+  --sero-primary-50: var(--color-primary-50, #f4f6f2);
+  --sero-primary-100: var(--color-primary-100, #dfe6da);
+  --sero-primary-200: var(--color-primary-200, #c4d1b8);
+  --sero-primary-300: var(--color-primary-300, #a3b18a);
+  --sero-primary-400: var(--color-primary-400, #7b8e5a);
+  --sero-primary-600: var(--color-primary-600, #303b23);
+  --sero-primary-700: var(--color-primary-700, #242e1a);
+  --sero-sidebar-width: 270px;
+  --sero-sidebar-collapsed: 80px;
+  --sero-topbar-height: 70px;
+  --sero-font: "Noto Kufi Arabic", sans-serif;
+  --sero-font-heading: "Noto Kufi Arabic", sans-serif;
+  --sero-font-latin: "Noto Kufi Arabic", sans-serif;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --r-sm: var(--sero-radius-sm);
+  --r-md: var(--sero-radius-md);
+  --r-lg: var(--sero-radius-lg);
+  --r-xl: var(--sero-radius-xl);
+  --r-full: var(--sero-radius-full);
+  --shadow-sm: var(--sero-shadow-sm);
+  --shadow-md: var(--sero-shadow-md);
+  --shadow-lg: var(--sero-shadow-lg);
+  --shadow-xl: var(--sero-shadow-xl);
+  --shadow-card: var(--sero-shadow-md);
+  --t-fast: var(--sero-transition-fast);
+  --t-base: var(--sero-transition-base);
+  --t-slow: var(--sero-transition-slow);
+}
+

@@ -1,0 +1,71 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Custom ApexCharts tooltip — used by the sub-bookings horizontal bar chart
+// Must be global (not component-scoped) because ApexCharts renders tooltips
+// outside the Angular component tree.
+// ─────────────────────────────────────────────────────────────────────────────
+.sero-apex-tooltip {
+  padding: 10px 14px;
+  font-family: 'Noto Kufi Arabic', Roboto, sans-serif;
+  font-size: 12px;
+  min-width: 160px;
+  direction: rtl;
+  text-align: right;
+  border-radius: 6px;
+
+  .sat-ref {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--theme-text-primary, #1a1a1a);
+    margin-bottom: 2px;
+    letter-spacing: 0.01em;
+  }
+
+  .sat-guest {
+    font-size: 11px;
+    color: var(--theme-text-secondary, #666);
+    margin-bottom: 6px;
+  }
+
+  // gantt-specific tooltip elements
+  .sat-status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: color-mix(in srgb, currentColor 12%, transparent);
+    margin-bottom: 5px;
+  }
+
+  .sat-dates {
+    font-size: 11px;
+    color: var(--theme-text-secondary, #666);
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 2px;
+  }
+
+  .sat-meta {
+    font-size: 11px;
+    color: var(--theme-text-secondary, #666);
+    margin-bottom: 4px;
+  }
+
+  .sat-amount {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--theme-primary, #3a472a);
+    border-top: 1px solid var(--theme-border, #e0e0e0);
+    padding-top: 6px;
+    margin-top: 4px;
+
+    .sat-currency {
+      font-weight: 400;
+      font-size: 11px;
+      color: var(--theme-text-secondary, #666);
+      margin-inline-start: 3px;
+    }
+  }
+}

@@ -2,7 +2,15 @@
 // Unified Dropdown Design
 // تصميم وتنسيق الـ Dropdown الموحد
 // ============================
+// Applied to all select/dropdown panels:
+// - mat-select (Angular Material)
+// - CDK Overlay panels
+// - Custom dropdowns
+// ============================
 
+// ============================
+// 1. Panel Container
+// ============================
 .mat-mdc-select-panel,
 .mat-select-panel,
 .mat-mdc-autocomplete-panel,
@@ -18,9 +26,13 @@
   overflow-y: auto !important;
   overflow-x: hidden !important;
 
+  // ============================
+  // 2. Scrollbar Styling
+  // ============================
   scrollbar-width: thin;
   scrollbar-color: var(--theme-primary, var(--app-heading, #3a472a)) var(--theme-bg, var(--app-bg, #f8fafc));
 
+  // WebKit browsers (Chrome, Safari, Edge)
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -41,11 +53,15 @@
   }
 }
 
+// ============================
+// 3. Search Row (Optional)
+// ============================
 .mat-mdc-select-panel,
 .mat-select-panel,
 .mat-mdc-autocomplete-panel,
 .dropdown-panel-unified,
 [id*="mat-select-"][id*="-panel"] {
+  // ngx-mat-select-search option styling
   .mat-mdc-option.contains-mat-select-search {
     position: sticky !important;
     top: 0 !important;
@@ -61,6 +77,58 @@
     &:hover {
       background: var(--theme-bg-card, var(--app-card-bg, #ffffff)) !important;
     }
+
+    // ngx-mat-select-search input styling
+    ::ng-deep {
+      .ngx-mat-select-search {
+        width: 100% !important;
+
+        .mat-mdc-form-field {
+          width: 100% !important;
+          display: block !important;
+        }
+
+        .mat-mdc-text-field-wrapper {
+          background: var(--theme-bg, var(--app-bg, #f8fafc)) !important;
+          border: 1px solid var(--theme-border, var(--app-border, #e2e8f0)) !important;
+          border-radius: 6px !important;
+          padding: 0 !important;
+          transition: all 0.2s ease !important;
+
+          &:focus-within {
+            border-color: var(--theme-primary, var(--app-heading, #3a472a)) !important;
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary, var(--app-heading, #3a472a)) 20%, transparent) !important;
+            background: var(--theme-bg-card, var(--app-card-bg, #ffffff)) !important;
+          }
+        }
+
+        .mat-mdc-form-field-infix {
+          padding: 0 !important;
+          min-height: auto !important;
+        }
+
+        input {
+          width: 100% !important;
+          padding: 10px 12px !important;
+          border: none !important;
+          background: transparent !important;
+          font-size: 14px !important;
+          color: var(--theme-text-primary, var(--app-text-primary, #2a3524)) !important;
+          font-family: inherit !important;
+          outline: none !important;
+          box-sizing: border-box !important;
+
+          &::placeholder {
+            color: var(--theme-text-tertiary, var(--app-text-secondary, #718096)) !important;
+            opacity: 0.7 !important;
+          }
+        }
+
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none !important;
+        }
+      }
+    }
   }
 
   .dropdown-search-row,
@@ -75,6 +143,7 @@
     padding: 0 !important;
     margin: 0 !important;
 
+    // Search input wrapper
     .search-wrapper,
     .search-input-wrapper {
       display: flex;
@@ -85,6 +154,7 @@
       border-bottom: 1px solid var(--theme-border, var(--app-border, #e2e8f0));
     }
 
+    // Search input
     input[type="text"],
     .search-input,
     .country-search-input,
@@ -113,6 +183,7 @@
       }
     }
 
+    // Clear button
     .dropdown-clear-btn,
     .clear-search-btn {
       width: 32px;
@@ -134,10 +205,17 @@
         background: color-mix(in srgb, var(--theme-text-primary, var(--app-text-primary, #2a3524)) 5%, transparent);
         color: var(--theme-text-primary, var(--app-text-primary, #2a3524));
       }
+
+      &:active {
+        background: color-mix(in srgb, var(--theme-text-primary, var(--app-text-primary, #2a3524)) 10%, transparent);
+      }
     }
   }
 }
 
+// ============================
+// 4. Option Items
+// ============================
 .mat-mdc-option,
 .dropdown-option-unified {
   min-height: 40px !important;
@@ -152,17 +230,21 @@
   align-items: center !important;
   gap: 8px !important;
 
+  // Default state
   &:not(.mdc-list-item--disabled) {
+    // Hover state
     &:hover {
       background: var(--theme-bg-hover, var(--app-bg, #f8fafc)) !important;
     }
 
+    // Focus/Active state
     &:focus,
     &.mdc-list-item--focus,
     &.mat-mdc-option-active {
       background: var(--theme-bg-hover, var(--app-bg, #f8fafc)) !important;
     }
 
+    // Selected state
     &.mdc-list-item--selected,
     &.mat-mdc-option-selected {
       background: var(--theme-bg-selected, var(--app-bg, #f8fafc)) !important;
@@ -171,12 +253,14 @@
     }
   }
 
+  // Disabled state
   &.mdc-list-item--disabled {
     opacity: 0.5 !important;
     cursor: not-allowed !important;
     color: var(--theme-text-disabled, var(--app-text-secondary, #718096)) !important;
   }
 
+  // Option content (icon + text on same line in all dropdowns)
   .option-content,
   .option-label,
   .country-option,
@@ -193,6 +277,7 @@
     white-space: nowrap;
   }
 
+  // Icons
   .option-icon,
   .country-flag,
   i,
@@ -205,6 +290,7 @@
     justify-content: center;
   }
 
+  // Meta/Sub-label separator
   .option-meta,
   .separator {
     color: var(--theme-text-secondary, var(--app-text-secondary, #718096));
@@ -222,6 +308,9 @@
   }
 }
 
+// ============================
+// 5. No Results Message
+// ============================
 .no-results,
 .no-results-message {
   padding: 24px 16px !important;
@@ -230,6 +319,9 @@
   font-size: 14px !important;
 }
 
+// ============================
+// 6. RTL Support
+// ============================
 [dir="rtl"] {
   .mat-mdc-select-panel,
   .mat-select-panel,
@@ -245,6 +337,9 @@
   }
 }
 
+// ============================
+// 7. Dark Mode Support
+// ============================
 [data-theme="dark"],
 .dark-theme {
   .mat-mdc-select-panel,
@@ -255,12 +350,31 @@
     background: var(--theme-bg-card, #2b3424) !important;
     border-color: var(--theme-border, rgba(255, 255, 255, 0.12)) !important;
 
+    // ngx-mat-select-search dark mode
     .mat-mdc-option.contains-mat-select-search {
       background: var(--theme-bg-card, #2b3424) !important;
       border-bottom-color: var(--theme-border, rgba(255, 255, 255, 0.12)) !important;
 
       &:hover {
         background: var(--theme-bg-card, #2b3424) !important;
+      }
+
+      ::ng-deep {
+        .ngx-mat-select-search {
+          .mat-mdc-text-field-wrapper {
+            background: var(--theme-bg, #1e2419) !important;
+            border-color: var(--theme-border, rgba(255, 255, 255, 0.12)) !important;
+
+            &:focus-within {
+              border-color: var(--theme-primary-light, #627b47) !important;
+              background: var(--theme-bg-card, #2b3424) !important;
+            }
+          }
+
+          input {
+            color: var(--theme-text-primary, #e6e9e0) !important;
+          }
+        }
       }
     }
 
@@ -305,10 +419,15 @@
   }
 }
 
+// ============================
+// 8. Material Overrides
+// ============================
+// Remove default Material styles that conflict
 .mat-mdc-select-panel,
 .mat-select-panel,
 [id*="mat-select-"][id*="-panel"] {
   .mat-mdc-option {
+    // Remove default Material padding conflicts
     .mdc-list-item__primary-text {
       padding: 0 !important;
       display: flex !important;
@@ -318,6 +437,7 @@
       width: 100%;
     }
 
+    // Ensure proper text alignment
     .mdc-list-item__content {
       display: flex;
       align-items: center;
@@ -325,6 +445,7 @@
     }
   }
 
+  // Ensure panel has proper structure (icon + text on same line)
   .mat-mdc-option-text {
     display: flex;
     align-items: center;
@@ -334,6 +455,109 @@
   }
 }
 
+// ============================
+// 10. ngx-mat-select-search Global Styles
+// ============================
+// Global styles for ngx-mat-select-search component
+::ng-deep {
+  .ngx-mat-select-search {
+    width: 100% !important;
+
+    .mat-mdc-form-field {
+      width: 100% !important;
+      display: block !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      background: var(--theme-bg, var(--app-bg, #f8fafc)) !important;
+      border: 1px solid var(--theme-border, var(--app-border, #e2e8f0)) !important;
+      border-radius: 6px !important;
+      padding: 0 !important;
+      transition: all 0.2s ease !important;
+      box-shadow: none !important;
+
+      &:focus-within {
+        border-color: var(--theme-primary, var(--app-heading, #3a472a)) !important;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-primary, var(--app-heading, #3a472a)) 20%, transparent) !important;
+        background: var(--theme-bg-card, var(--app-card-bg, #ffffff)) !important;
+      }
+    }
+
+    .mat-mdc-form-field-infix {
+      padding: 0 !important;
+      min-height: auto !important;
+      border-top: none !important;
+    }
+
+    input {
+      width: 100% !important;
+      padding: 10px 12px !important;
+      border: none !important;
+      background: transparent !important;
+      font-size: 14px !important;
+      color: var(--theme-text-primary, var(--app-text-primary, #2a3524)) !important;
+      font-family: inherit !important;
+      outline: none !important;
+      box-sizing: border-box !important;
+
+      &::placeholder {
+        color: var(--theme-text-tertiary, var(--app-text-secondary, #718096)) !important;
+        opacity: 0.7 !important;
+      }
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+
+    .mat-mdc-form-field-hint-wrapper,
+    .mat-mdc-form-field-error-wrapper {
+      display: none !important;
+    }
+  }
+}
+
+// Dark mode for ngx-mat-select-search
+[data-theme="dark"],
+.dark-theme {
+  ::ng-deep {
+    .ngx-mat-select-search {
+      .mat-mdc-text-field-wrapper {
+        background: var(--theme-bg, #1e2419) !important;
+        border-color: var(--theme-border, rgba(255, 255, 255, 0.12)) !important;
+
+        &:focus-within {
+          border-color: var(--theme-primary-light, #627b47) !important;
+          background: var(--theme-bg-card, #2b3424) !important;
+        }
+      }
+
+      input {
+        color: var(--theme-text-primary, #e6e9e0) !important;
+      }
+    }
+  }
+}
+
+// ============================
+// 9. CDK Overlay Backdrop
+// ============================
+.cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(2px);
+}
+
+[data-theme="dark"],
+.dark-theme {
+  .cdk-overlay-backdrop {
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+// ============================
+// 11. Global mat-select panel search (MatSelectGlobalSearchDirective)
+// حقل بحث داخل لوحة mat-select — يُحقن برمجياً، التنسيق هنا موحّد على كل النظام
+// ============================
 .mat-mdc-select-panel {
   .rms-mat-select-panel-search-host {
     position: sticky;

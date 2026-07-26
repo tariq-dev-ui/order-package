@@ -1,0 +1,129 @@
+// ============================
+// SERO Main Styles Entry Point
+// نقطة الدخول الرئيسية للأنماط
+// ============================
+// Optimized, production-grade structure
+// ============================
+
+// ============================
+// 1. ANGULAR MATERIAL CORE
+// ============================
+@use "@angular/material" as mat;
+@include mat.core();
+
+// ============================
+// 2. CORE SYSTEM
+// ============================
+@use "core/variables";
+@use "core/functions";
+@use "core/mixins";
+
+// ============================
+// 3. THEMES
+// ============================
+@use "themes/colors";
+@use "theme" as *;
+@use "themes/material" as theme;
+
+// Apply Material themes
+@include mat.all-component-themes(theme.$sero-light-theme);
+@include theme.sero-material-vars();
+@include theme.sero-material-overrides();
+
+.dark-theme {
+  @include mat.all-component-colors(theme.$sero-dark-theme);
+}
+
+// ============================
+// 4. LAYOUT SYSTEM
+// ============================
+@use "layout/transitions";
+@use "layout/container";
+@use "layout/grid";
+@use "layout/sidebar";
+@use "layout/header";
+@use "layout/breadcrumb";
+@use "layout/customizer";
+
+// ============================
+// 5. UTILITIES
+// ============================
+@use "utilities/utilities";
+@use "utilities/rtl";
+
+// ============================
+// 6. COMPONENTS
+// ============================
+@use "components/page-header";
+@use "components/unified-filters";
+@use "components/datatable";
+@use "components/link-button";
+@use "components/loading-shade";
+@use "components/light-border-fieldset";
+@use "components/sar-symbol";
+@use "components/unified-dropdown";
+@use "components/action-btn";
+
+// ============================
+// 7. MATERIAL OVERRIDES
+// ============================
+@use "overrides/overrides";
+
+// ============================
+// 8. PAGES
+// ============================
+@use "pages/auth";
+@use "pages/dashboards";
+@use "pages/landingpage";
+
+// ============================
+// 9. APPS
+// ============================
+@use "apps/calendar";
+@use "apps/email";
+
+// ============================
+// 10. LAYOUT THEMES
+// ============================
+@use "themes/horizontal";
+
+// ============================
+// 11. EXTERNAL LIBRARIES
+// ============================
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+// ============================
+// 12. TAILWIND CSS
+// ============================
+@import "tailwindcss";
+
+// ============================
+// 13. TAILWIND THEME CONFIG
+// ============================
+@theme {
+  --color-primary-50: #f4f6f2;
+  --color-primary-100: #dfe6da;
+  --color-primary-200: #c4d1b8;
+  --color-primary-300: #a3b18a;
+  --color-primary-400: #7b8e5a;
+  --color-primary-500: #3a472a;
+  --color-primary-600: #303b23;
+  --color-primary-700: #242e1a;
+  --color-primary-800: #1a2113;
+  --color-primary-900: #10150b;
+
+  --color-secondary-500: #c8b7a9;
+  --color-danger-500: #d96565;
+  --color-danger-600: #c75050;
+  --color-danger-100: #f3d0ca;
+  --color-warning-500: #e3a72f;
+
+  /* Special Gradients */
+  --sero-linear-gradient: linear-gradient(135deg, #3a472a, #627b47);
+  --sero-linear-gradient-hover: linear-gradient(135deg, #2d3821, #556842);
+  --sero-accent-gradient: linear-gradient(135deg, #8c7b3d, #b7ac83);
+  --sero-success-gradient: linear-gradient(135deg, #3b7d57, #4e7a5d);
+
+  --font-family-arabic: 'Noto Kufi Arabic', sans-serif;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+}

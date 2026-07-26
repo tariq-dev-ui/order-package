@@ -1,0 +1,17 @@
+// =============================================================================
+// LEGACY: outlined border/radius for MDC fields was REMOVED — it fought the
+// luxury field system (src/styles/components/_luxury-form-system.scss).
+// Active field chrome: only _luxury-form-system.scss (+ Material theme).
+// =============================================================================
+
+// Utility: hide hint/subscript row when designers omit hints/errors
+.hide-hint {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+// Optional: standalone MDC checkbox/radio labels (not mat-form-field)
+.mdc-form-field > label {
+  font-size: 14px;
+}

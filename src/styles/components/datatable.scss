@@ -1,0 +1,17 @@
+@use "../core/variables" as *;
+@use "../themes/colors" as *;
+
+.mat-mdc-header-row {
+  background-color: $primary !important;
+  // font-size: 14px !important;
+  font-weight: 600 !important;
+  color: white !important;
+}
+
+// .mat-mdc-row {
+//   font-size: 14px !important;
+// }
+
+.mat-mdc-row:hover {
+  background-color: #efefef;
+}

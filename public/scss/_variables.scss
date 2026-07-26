@@ -1,0 +1,118 @@
+// ============================
+// Import Unified Color System
+// ============================
+@import 'color-system';
+
+// ============================
+// Fonts
+// ============================
+@import url("https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;400;600;700&display=swap");
+
+$font-family: "Noto Kufi Arabic", sans-serif;
+
+// ============================
+// Light Mode Colors
+// ============================
+$sidebarbg: #f8f9f7; // خلفية جانبية بلون فاتح مائل للأخضر
+$background: #fefefc; // خلفية رئيسية شبه بيضاء
+$cardbg: #ffffff; // بطاقات بيضاء ناعمة
+$toolbar: #ffffff; // شريط علوي أبيض
+$cardshadow: rgba(58, 71, 42, 0.08) 0px 2px 4px, rgba(58, 71, 42, 0.06) 0px 12px 24px -4px;
+$hoverBgColor: #edf0eb; // لون خلفية التفاعل
+
+// ============================
+// Dark Mode Colors
+// ============================
+$darksidebarbg: #1e2419; // داكن زيتوني عميق
+$darkbackground: #252d1f; // خلفية رئيسية داكنة مريحة للعين
+$darkcardbg: #2b3424; // بطاقات أفتح قليلًا
+$darktoolbar: #2b3424; // شريط علوي متناسق
+$darkcardshadow: rgba(0, 0, 0, 0.25) 0px 2px 4px, rgba(0, 0, 0, 0.15) 0px 12px 24px -4px;
+$darkborderColor: #3a472a;
+$darkformborderColor: #556347;
+$darkhoverbgcolor: #3d4a32;
+$darkthemelightprimary: #9da395;
+$darkthemelightaccent: #8c7b3d; // ذهبي زيتوني للأزرار أو الروابط
+$darkthemelightwarning: #b0892e;
+$darkthemelighterror: #a55d5d;
+$darkthemelightsuccess: #4e7a5d;
+
+// ============================
+// Core Brand Colors
+// ============================
+$primary: #3a472a; // اللون الأساسي للهوية
+$accent: #8c7b3d; // لون ثانوي (ذهبي زيتوني)
+$warning: #e3a72f;
+$error: #d96565;
+$success: #3b7d57;
+$white: #ffffff;
+
+// ============================
+// Special Gradients
+// ============================
+$sero-linear-gradient: linear-gradient(135deg, #3a472a, #627b47); // التدرج الأساسي للنظام
+$sero-linear-gradient-hover: linear-gradient(135deg, #2d3821, #556842); // التدرج عند التحويم
+
+// ============================
+// Borders & Shadows
+// ============================
+$borderColor: #d8decf;
+$borderformColor: #d0d7c4;
+$border-radius: 8px;
+
+// ============================
+// Text Colors
+// ============================
+$textPrimary: #2a3524;
+$textSecondary: #5c6652;
+$textMuted: #7b8574;
+
+$darkTextPrimary: #e6e9e0;
+$darkTextSecondary: #c5c9bf;
+$darkTextMuted: #a3a89b;
+
+// ============================
+// Status Colors (統一 الحالات)
+// ============================
+$pendingColor: #8c7b3d;
+$confirmedColor: #3a472a;
+$assignedColor: #627b47;
+$checkinColor: #2e5d34;
+$closedColor: #5a5a5a;
+
+// ============================
+// Layout & Sizes
+// ============================
+$sidenav-desktop: 270px !default;
+$sidenav-mini: 80px !default;
+$header-height: 70px !default;
+$boxedWidth: 1200px;
+
+// ============================
+// Utility Colors
+// ============================
+$light: #f2f6f0;
+$gray-100: #9da395;
+
+$light-primary: #9da395;
+$light-accent: #b7ac83;
+$light-warning: #f9e8c4;
+$light-error: #f3d0ca;
+$light-success: #e4f0e8;
+
+// ============================
+// Theme Harmony - Material Overwrites
+// ============================
+html {
+  --mat-divider-color: #d8decf;
+  --mat-tab-header-inactive-label-text-color: #2a3524;
+  --mat-tab-header-label-text-weight: 500;
+  --mat-expansion-container-shape: 12px;
+  // --mat-form-field-container-height removed: forced 37px and blocked luxury infix sizing
+  --mat-standard-button-toggle-selected-state-background-color: #edf0eb;
+  --mat-standard-button-toggle-selected-state-text-color: #3a472a;
+  --mdc-switch-unselected-handle-color: #3a472a;
+  --mdc-switch-unselected-track-color: #bfc7b4;
+  --mat-stepper-header-icon-background-color: #8c7b3d;
+  --mat-expansion-header-hover-state-layer-color: #edf0eb;
+}

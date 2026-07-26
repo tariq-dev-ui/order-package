@@ -1,0 +1,363 @@
+/* ========================================
+   🎨 ELEGANT IDENTITY-BASED SIDEBAR
+   Light & Dark Mode Support
+======================================== */
+
+.mat-drawer.sidebarNav {
+  width: $sidenav-desktop;
+  flex-shrink: 0;
+  transition: swift-ease-out(width);
+  position: absolute;
+  overflow-x: hidden;
+  
+  // 🌞 Light Mode - Elegant Organic
+  background: var(--app-bg, #f8f9f7);
+  border-right: 1px solid var(--app-border, #c6ccb8);
+  color: var(--app-text-primary, #2e3623);
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  transition: all 0.3s ease;
+}
+
+// 🌚 Dark Mode Support
+.dark-theme {
+  .mat-drawer.sidebarNav {
+    background: var(--app-bg, #1e2419);
+    border-right-color: var(--app-border, #3a472a);
+    color: var(--app-text-primary, #f0f3ea);
+  }
+}
+
+.branding {
+  padding: 20px;
+  background: var(--app-card-bg, #ffffff);
+  border-bottom: 1px solid var(--app-border, #c6ccb8);
+  transition: all 0.3s ease;
+  
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+  
+  img {
+    transition: opacity 0.3s ease;
+    max-width: 90%;
+    height: auto;
+  }
+}
+
+.dark-theme {
+  .branding {
+    background: var(--app-card-bg, #2b3424);
+    border-bottom-color: var(--app-border, #3a472a);
+  }
+}
+
+.sidebarNav-mini {
+  .sidebarNav {
+    width: $sidenav-mini;
+
+    .profile-bar {
+      display: none;
+    }
+
+    .sidebar-list {
+      .menu-list-item {
+        padding: 8px 17px;
+
+        .mdc-list-item__content {
+          display: none;
+        }
+
+        .mdc-list-item__start {
+          margin-left: 6px !important;
+          margin-right: 8px !important;
+        }
+      }
+    }
+
+  }
+
+  .hideMenu {
+    overflow: hidden;
+    width: $sidenav-mini;
+  }
+
+  .branding {
+    width: $sidenav-mini - 15px;
+    overflow: hidden;
+  }
+
+  .sidebar-list {
+    &.mdc-list {
+      padding: 0 12px;
+
+      .mdc-list-group__subheader {
+        text-align: center;
+      }
+    }
+  }
+
+  .contentWrapper {
+    transition: swift-ease-out(width);
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebarNav-mini {
+    .contentWrapper {
+      margin-left: $sidenav-mini !important;
+    }
+  }
+}
+
+.customizerBtn {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 9;
+}
+
+.sidebar-list {
+  &.mdc-list {
+    padding: 0 24px;
+    padding-top: 1.5rem;
+    background: transparent;
+
+    .mdc-list-group__subheader {
+      margin: 12px 0;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: 24px;
+      color: var(--app-text-secondary, #6b7280);
+      transition: color 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+    
+    // Nav Caption styling (subheaders)
+    .nav-caption {
+      margin: 12px 0;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: 24px;
+      color: var(--app-text-secondary, #6b7280);
+      transition: color 0.3s ease;
+      letter-spacing: 0.5px;
+      padding: 0 10px;
+    }
+    
+    .menu-list-item {
+      border-radius: 7px;
+      height: 45px;
+      padding: 8px 10px !important;
+      margin-bottom: 2px;
+      border-left: 4px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      
+      // 🌞 Light Mode - Default State
+      background: transparent;
+      color: #1a1f14; // أغمق قليلاً للزر الفرعي
+      
+      &:hover {
+        background: var(--app-bg, #f0f1ed);
+        border-left-color: var(--app-heading, #3a472a);
+      }
+
+      &.twoline {
+        height: 60px;
+        align-items: center;
+      }
+
+      &:before,
+      &:focus {
+        z-index: -1;
+      }
+
+      &.disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+
+      .item-chip {
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      // ✅ Active Menu State
+      &.activeMenu {
+        background: rgba(255, 255, 255, 0.4); // باهت أكثر للزر الرئيسي
+        border-left-color: var(--app-heading, #3a472a);
+        color: #9ca395; // لون باهت للنص
+        
+        .mdc-list-item__primary-text {
+          color: #9ca395 !important; // لون باهت للنص
+          font-weight: 600;
+        }
+
+        .mat-mdc-list-item-icon,
+        .routeIcon {
+          color: #9ca395 !important; // لون باهت للأيقونات
+        }
+      }
+
+      .mdc-list-item__start {
+        margin-right: 14px;
+        margin-left: 0 !important;
+        width: 20px;
+        height: 20px;
+        line-height: 0px;
+        fill: transparent !important;
+        color: var(--app-heading, #3a472a);
+        transition: color 0.3s ease;
+      }
+      
+      .routeIcon {
+        color: var(--app-heading, #3a472a);
+        transition: color 0.3s ease;
+      }
+
+      .mdc-list-item__primary-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #1a1f14; // أغمق قليلاً للزر الفرعي
+        transition: color 0.3s ease;
+        
+        .hide-menu {
+          color: inherit;
+        }
+
+        .arrow-icon {
+          display: flex;
+          
+          i-tabler {
+            color: var(--app-text-secondary, #6b7280);
+            transition: color 0.3s ease, transform 0.2s ease;
+          }
+
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+      
+      // Child items styling (nested menus)
+      &[style*="margin-left"] {
+        // For child items with indentation
+        &:hover {
+          background: var(--app-bg, #f0f1ed);
+          border-left-color: var(--app-heading, #3a472a);
+          padding-left: calc(var(--depth, 0) * 8px + 10px) !important;
+        }
+        
+        &.activeMenu {
+          background: rgba(255, 255, 255, 0.4); // باهت أكثر للزر الرئيسي
+          border-left-color: var(--app-heading, #3a472a);
+        }
+      }
+      
+      // Expanded parent item styling
+      &.expanded {
+        .arrow-icon i-tabler {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+  
+  // 🌚 Dark Mode - Menu Items
+  .dark-theme & {
+    .mdc-list {
+      .menu-list-item {
+        color: var(--app-text-primary, #f0f3ea);
+        
+        &:hover {
+          background: var(--app-bg, #27301f);
+          border-left-color: var(--app-accent, #8c7b3d);
+        }
+        
+        &.activeMenu {
+          background: rgba(43, 52, 36, 0.4); // باهت أكثر للزر الرئيسي في الوضع الداكن
+          border-left-color: var(--app-accent, #8c7b3d);
+          color: #7a8570; // لون باهت للنص في الوضع الداكن
+          
+          .mdc-list-item__primary-text {
+            color: #7a8570 !important; // لون باهت للنص
+          }
+          
+          .mat-mdc-list-item-icon,
+          .routeIcon {
+            color: #7a8570 !important; // لون باهت للأيقونات
+          }
+        }
+        
+        .mdc-list-item__start,
+        .routeIcon {
+          color: var(--app-heading, #d4d8c6);
+        }
+        
+        .mdc-list-item__primary-text {
+          color: #c5c9bf; // أغمق قليلاً للزر الفرعي في الوضع الداكن
+          
+          .arrow-icon i-tabler {
+            color: var(--app-text-secondary, #9ca3af);
+          }
+        }
+        
+        &:hover:not(.disabled) {
+          .routeIcon,
+          .mdc-list-item__start {
+            color: var(--app-accent, #8c7b3d);
+          }
+          
+          .arrow-icon i-tabler {
+            color: var(--app-accent, #8c7b3d);
+          }
+        }
+        
+        // Child items in dark mode
+        &[style*="margin-left"] {
+          &:hover {
+            background: var(--app-bg, #27301f);
+            border-left-color: var(--app-accent, #8c7b3d);
+          }
+          
+          &.activeMenu {
+            background: rgba(43, 52, 36, 0.4); // باهت أكثر للزر الرئيسي في الوضع الداكن
+            border-left-color: var(--app-accent, #8c7b3d);
+          }
+        }
+      }
+      
+      .mdc-list-group__subheader {
+        color: var(--app-text-secondary, #9ca3af);
+      }
+      
+      .nav-caption {
+        color: var(--app-text-secondary, #9ca3af);
+      }
+    }
+  }
+}
+
+.flex-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

@@ -1,6 +1,21 @@
 // =============================================================================
 // Luxury hotel enterprise — SINGLE ACTIVE form field design system
 // نظام تصميم الحقول الفاخر — المصدر الوحيد للمظهر (مدخلات، قوائم، تواريخ، لوحات)
+//
+// ENTRY POINT (do not duplicate field chrome in feature SCSS):
+//   → this file only, loaded last via: public/scss/style.scss → @import luxury-form-system
+//
+// LEGACY REMOVED elsewhere (conflicted via specificity / !important):
+//   • public/scss/overrides/_form.scss — old MDC outline border + radius
+//   • public/scss/_variables.scss — --mat-form-field-container-height: 37px
+//   • public/scss/dark/_dark.scss — global outlined border + input/label !important
+//   • Page-level ::ng-deep on wrappers/infix/outline — stripped in favor of this file
+//
+// Scope: mat-form-field appearance outline/fill, CDK select/autocomplete panels,
+//        checkbox/radio labels, shared .filters-row layout width.
+//
+// Tuning: --luxury-* on :root / dark. Tighter stacks: .luxury-field-compact on host.
+// Dense table / narrow column fields: add class `luxury-field-shell-compact` on mat-form-field (same tokens, smaller shell).
 // =============================================================================
 
 :root,
@@ -36,6 +51,7 @@
   --luxury-panel-shadow: 0 12px 48px rgba(0, 0, 0, 0.45), 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
+// Slightly more breathing room in shared dense layouts (still grid-friendly)
 :root {
   --form-dense-stack-gap: 14px;
   --form-dense-row-gap: 12px;
@@ -50,6 +66,9 @@
   --form-dense-label-gap: 4px;
 }
 
+// -----------------------------------------------------------------------------
+// Optional compact shell — tables, toolbars, narrow columns (opt-in on mat-form-field)
+// -----------------------------------------------------------------------------
 mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline {
   .mat-mdc-form-field-infix {
     min-height: 40px !important;
@@ -68,7 +87,9 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// -----------------------------------------------------------------------------
 // Outline text field — core shell
+// -----------------------------------------------------------------------------
 .mat-mdc-form-field-appearance-outline {
   .mat-mdc-text-field-wrapper {
     background-color: var(--luxury-field-bg);
@@ -117,6 +138,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     padding-bottom: var(--luxury-field-pad-block) !important;
   }
 
+  // Floating labels — calm hierarchy
   .mat-mdc-floating-label,
   .mdc-floating-label {
     font-size: var(--luxury-label-size) !important;
@@ -135,6 +157,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     color: color-mix(in srgb, var(--theme-danger, #c62828) 75%, var(--theme-text-secondary, #64748b)) !important;
   }
 
+  // Input / select value typography
   .mat-mdc-input-element,
   .mat-mdc-select-value-text,
   .mat-mdc-select-min-line {
@@ -154,6 +177,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     resize: vertical;
   }
 
+  // Hints & errors
   .mat-mdc-form-field-subscript-wrapper {
     margin-top: var(--luxury-subscript-margin-top) !important;
   }
@@ -168,6 +192,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     color: color-mix(in srgb, var(--theme-danger, #c62828) 88%, var(--theme-text-primary, #1e293b)) !important;
   }
 
+  // Prefix / suffix icons (datepicker, clear, etc.)
   .mat-mdc-form-field-icon-prefix,
   .mat-mdc-form-field-icon-suffix {
     .mat-icon,
@@ -176,11 +201,13 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     }
   }
 
+  // Subtle vertical rhythm between sibling fields
   & + & {
     margin-top: 0;
   }
 }
 
+// Elegant focus — soft outline shift + restrained glow (not aggressive)
 .mat-mdc-form-field-appearance-outline.mat-focused:not(.mat-form-field-invalid) {
   .mat-mdc-text-field-wrapper {
     box-shadow: 0 0 0 1px var(--luxury-field-focus-glow), 0 4px 20px color-mix(in srgb, var(--theme-primary, #3a472a) 6%, transparent);
@@ -218,6 +245,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// Fill appearance (if used anywhere) — align with luxury calm
 .mat-mdc-form-field-appearance-fill {
   .mat-mdc-text-field-wrapper {
     border-radius: var(--luxury-field-radius-inner);
@@ -230,12 +258,18 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// -----------------------------------------------------------------------------
+// Autocomplete trigger (same shell as outline field)
+// -----------------------------------------------------------------------------
 .mat-mdc-form-field-type-mat-autocomplete.mat-mdc-form-field-appearance-outline {
   .mat-mdc-input-element {
     font-size: var(--luxury-input-size) !important;
   }
 }
 
+// -----------------------------------------------------------------------------
+// Checkboxes & radios in forms — quieter, premium spacing
+// -----------------------------------------------------------------------------
 .mat-mdc-checkbox,
 .mat-mdc-radio-button {
   .mdc-label {
@@ -250,6 +284,14 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
 .mat-mdc-radio-touch-target {
   margin: 4px;
 }
+
+// -----------------------------------------------------------------------------
+// Dropdown & autocomplete panels — luxury overlay (aligns with unified-dropdown)
+//
+// Angular Material uses `div.mat-mdc-select-panel` (element + class). Rules that
+// only use `.mat-mdc-select-panel` lose the cascade — overlay block below fixes
+// real panels (#mat-select-N-panel inside .cdk-overlay-container).
+// -----------------------------------------------------------------------------
 
 .mat-mdc-select-panel,
 .mat-mdc-autocomplete-panel {
@@ -276,6 +318,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// --- CDK overlay: mat-select panel (e.g. #mat-select-8-panel) — wins over Material ---
 .cdk-overlay-container {
   div.mat-mdc-select-panel.mdc-menu-surface,
   div.mat-mdc-select-panel[role='listbox'],
@@ -295,6 +338,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     box-sizing: border-box !important;
   }
 
+  // Full card radius (Material default flattens the edge toward the trigger)
   .cdk-overlay-pane:not(.mat-mdc-select-panel-above) div.mat-mdc-select-panel,
   .cdk-overlay-pane.mat-mdc-select-panel-above div.mat-mdc-select-panel {
     border-top-left-radius: var(--luxury-panel-radius) !important;
@@ -369,12 +413,16 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// -----------------------------------------------------------------------------
+// Filter toolbars (journals, statements, financial reports) — width only, no 48px shell
+// -----------------------------------------------------------------------------
 .filters-row .filter-field .mat-mdc-form-field,
 .filters-row .filter-field mat-form-field {
   width: 100%;
   display: block;
 }
 
+// Optgroup labels in panels
 .mat-mdc-optgroup-label {
   font-size: 0.7rem !important;
   font-weight: 600 !important;
@@ -384,6 +432,13 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   padding: 10px 16px 6px !important;
 }
 
+// -----------------------------------------------------------------------------
+// Sero Form Block — reusable sectioned form layout utility
+// Usage: wrap a group of mat-form-fields in <div class="sero-form-block">
+// with an optional <div class="sero-form-block-header"> inside.
+//
+// Accent color is controlled by --sero-block-accent on the element.
+// -----------------------------------------------------------------------------
 .sero-form-block {
   --sero-block-accent: var(--theme-primary, #3a472a);
 
@@ -394,6 +449,8 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   background: var(--theme-bg-card, #fff);
   border: 1px solid color-mix(in srgb, var(--theme-border, #e2e8f0) 80%, transparent);
   overflow: hidden;
+
+  // Tinted top accent stripe
   border-top: 3px solid color-mix(in srgb, var(--sero-block-accent) 55%, transparent);
 
   .sero-form-block-header {
@@ -448,6 +505,7 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
     }
   }
 
+  // Focused field prefix icon takes block accent color
   &:focus-within mat-form-field.mat-focused {
     .mat-mdc-form-field-icon-prefix tabler-icon,
     .mat-mdc-form-field-icon-prefix .tabler-icon {
@@ -457,12 +515,14 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// Preset color modifiers
 .sero-form-block--entity  { --sero-block-accent: var(--theme-primary, #3a472a); }
 .sero-form-block--contact { --sero-block-accent: #0d9488; }
 .sero-form-block--finance { --sero-block-accent: #b45309; }
 .sero-form-block--address { --sero-block-accent: #3b5bdb; }
 .sero-form-block--accent  { --sero-block-accent: var(--theme-accent, #8c7b3d); }
 
+// Dark mode
 [data-theme='dark'],
 .dark-theme {
   .sero-form-block {
@@ -480,6 +540,10 @@ mat-form-field.luxury-field-shell-compact.mat-mdc-form-field-appearance-outline 
   }
 }
 
+// -----------------------------------------------------------------------------
+// Prefix icon brand tinting — when the parent block has a focus-within accent
+// (works without .sero-form-block too — any focused mat-form-field-appearance-outline)
+// -----------------------------------------------------------------------------
 .mat-mdc-form-field-appearance-outline.mat-focused {
   .mat-mdc-form-field-icon-prefix {
     tabler-icon,

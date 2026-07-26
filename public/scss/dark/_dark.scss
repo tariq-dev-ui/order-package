@@ -1,0 +1,158 @@
+@use "sass:meta";
+
+// -------------------------------------------------------
+// Dark Theme Customized for Viva Identity (#3a472a)
+// -------------------------------------------------------
+.dark-theme {
+$textPrimary: #f5f5f5;
+$textSecondary: #bfc5b7;
+
+// Typography
+.mat-headline-5,
+.mat-subtitle-1,
+.mat-headline-6,
+.mat-button-toggle-button,
+.mat-drawer-container,
+.mdc-data-table__header-cell,
+.breadcrumb-item a {
+color: $textPrimary;
+}
+
+.mat-mdc-menu-panel {
+color: $textPrimary !important;
+}
+
+.mat-subtitle-2,
+.mat-body-1,
+.mat-body-2,
+.ngx-pagination a,
+.ngx-pagination button,
+.mdc-data-table__pagination-total,
+.mdc-data-table__pagination-rows-per-page-label,
+.mdc-data-table__cell,
+.mat-mdc-icon-button,
+.mdc-list-item__secondary-text,
+.mat-mdc-menu-item,
+.mat-mdc-menu-item:visited,
+.mat-mdc-menu-item:link {
+color: $textSecondary;
+}
+
+// Backgrounds
+$darksidebarbg: #2c3721;
+$darkbackground: #3a472a;
+$darkcardbg: #344025;
+$darktoolbar: #3a472a;
+$darkborderColor: #4c5a36;
+$darkhoverbgcolor: #445233;
+
+// Light accents
+$darkthemelightprimary: #6b7850;
+$darkthemelightaccent: #c9e0b0;
+$darkthemelightwarning: #8a6d2c;
+$darkthemelighterror: #6d3f3f;
+$darkthemelightsuccess: #4a7850;
+
+// Base cards
+.mat-drawer,
+.mat-mdc-menu-panel {
+color: $textSecondary !important;
+background-color: $darksidebarbg;
+}
+
+.mat-drawer-container {
+background-color: $darkbackground;
+}
+
+.mat-mdc-card,
+.mat-mdc-table,
+.cal-week-view,
+.mat-datepicker-content {
+background-color: $darkcardbg;
+}
+
+.topbar {
+background-color: $darktoolbar;
+}
+
+.cardWithShadow {
+box-shadow: 0 0 10px rgba(58, 71, 42, 0.4);
+}
+
+// Borders
+.b-1 { border: 1px solid $darkborderColor !important; }
+.b-b-1 { border-bottom: 1px solid $darkborderColor !important; }
+.b-t-1 { border-top: 1px solid $darkborderColor !important; }
+.b-r-1 { border-right: 1px solid $darkborderColor !important; }
+.b-l-1 { border-left: 1px solid $darkborderColor !important; }
+
+// Light background tones
+.bg-light-primary { background-color: $darkthemelightprimary !important; }
+.bg-light-accent { background-color: $darkthemelightaccent !important; }
+.bg-light-error { background-color: $darkthemelighterror !important; }
+.bg-light-success { background-color: $darkthemelightsuccess !important; }
+.bg-light-warning { background-color: $darkthemelightwarning !important; }
+
+// Button & chip styles
+.mat-mdc-standard-chip { --mdc-chip-elevated-container-color: #445233; }
+.mat-mdc-raised-button.mat-unthemed,
+.mat-mdc-unelevated-button.mat-unthemed {
+--mdc-filled-button-container-color: #445233;
+--mdc-protected-button-container-color: #445233;
+--mdc-filled-button-label-text-color: #fff;
+}
+
+.mat-mdc-button,
+.mat-mdc-outlined-button {
+--mat-mdc-button-persistent-ripple-color: #c9e0b0 !important;
+}
+
+.mat-mdc-outlined-button {
+--mdc-outlined-button-outline-color: rgba(255,255,255,0.15);
+--mdc-outlined-button-label-text-color: #f5f5f5;
+}
+
+// Tables, pagination, lists
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
+border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.mdc-list-item__primary-text,
+.mdc-list-item__secondary-text {
+color: $textSecondary !important;
+}
+
+// LEGACY global outlined/input/label overrides REMOVED — they used !important and
+// overrode the luxury field system. Dark mode fields: _luxury-form-system.scss +
+// src/styles/theme.scss ([data-theme="dark"] / .dark-theme).
+
+// Syntax helper
+@mixin syntax-colors($args...) {
+@each $name, $color in meta.keywords($args) {
+.bg-#{$name} { background-color: $color !important; }
+.text-#{$name} { color: $color !important; }
+}
+}
+
+@include syntax-colors(
+$primary: #3a472a,
+$accent: #c9e0b0,
+$success: #4a7850,
+$warning: #8a6d2c,
+$error: #6d3f3f
+);
+}
+
+// Page title in header
+.dark-theme {
+  .page-title {
+    color: #c9e0b0; // اللون يتوافق مع خلفية الهيدر الداكنة
+  }
+}
+
+.light-theme {
+  .page-title {
+    color: $textPrimary; // لون واضح للعنوان في الوضع الفاتح
+  }
+}

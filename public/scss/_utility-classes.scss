@@ -1,0 +1,380 @@
+// ============================
+// Utility Classes - الكلاسات المساعدة
+// Auto-generated from Color System
+// ============================
+
+@import 'color-system';
+
+// ============================
+// 1. Background Colors
+// ============================
+@each $color-name, $variants in $colors {
+  @each $variant, $value in $variants {
+    .bg-#{$color-name}-#{$variant} {
+      background-color: $value !important;
+    }
+  }
+}
+
+// ============================
+// 2. Text Colors
+// ============================
+@each $color-name, $variants in $colors {
+  @each $variant, $value in $variants {
+    .text-#{$color-name}-#{$variant} {
+      color: $value !important;
+    }
+  }
+}
+
+// ============================
+// 3. Border Colors
+// ============================
+@each $color-name, $variants in $colors {
+  @each $variant, $value in $variants {
+    .border-#{$color-name}-#{$variant} {
+      border-color: $value !important;
+    }
+  }
+}
+
+// ============================
+// 4. Gradient Backgrounds
+// ============================
+@each $name, $gradient in $gradients {
+  .bg-gradient-#{$name} {
+    background: $gradient !important;
+  }
+}
+
+// Special gradient utilities
+.sero-linear-gradient {
+  background: gradient('sero-primary') !important;
+  
+  &:hover {
+    background: gradient('sero-primary-hover') !important;
+  }
+}
+
+// ============================
+// 5. Status Badges
+// ============================
+@each $status, $properties in $status-colors {
+  .status-badge-#{$status} {
+    @include status-badge($status);
+  }
+  
+  .status-dot-#{$status} {
+    width: 8px;
+    height: 8px;
+    border-radius: radius('full');
+    background-color: status-color($status, 'bg');
+    display: inline-block;
+  }
+}
+
+// ============================
+// 6. Spacing Utilities
+// ============================
+@each $name, $value in $spacing {
+  // Padding
+  .p-#{$name} { padding: $value !important; }
+  .pt-#{$name} { padding-top: $value !important; }
+  .pr-#{$name} { padding-right: $value !important; }
+  .pb-#{$name} { padding-bottom: $value !important; }
+  .pl-#{$name} { padding-left: $value !important; }
+  .px-#{$name} { 
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .py-#{$name} { 
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
+  
+  // Margin
+  .m-#{$name} { margin: $value !important; }
+  .mt-#{$name} { margin-top: $value !important; }
+  .mr-#{$name} { margin-right: $value !important; }
+  .mb-#{$name} { margin-bottom: $value !important; }
+  .ml-#{$name} { margin-left: $value !important; }
+  .mx-#{$name} { 
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  .my-#{$name} { 
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
+  
+  // Gap
+  .gap-#{$name} { gap: $value !important; }
+}
+
+// ============================
+// 6. Border Radius
+// ============================
+@each $name, $value in $radius {
+  .rounded-#{$name} { border-radius: $value !important; }
+  .rounded-t-#{$name} { 
+    border-top-left-radius: $value !important;
+    border-top-right-radius: $value !important;
+  }
+  .rounded-r-#{$name} { 
+    border-top-right-radius: $value !important;
+    border-bottom-right-radius: $value !important;
+  }
+  .rounded-b-#{$name} { 
+    border-bottom-left-radius: $value !important;
+    border-bottom-right-radius: $value !important;
+  }
+  .rounded-l-#{$name} { 
+    border-top-left-radius: $value !important;
+    border-bottom-left-radius: $value !important;
+  }
+}
+
+// ============================
+// 7. Typography Utilities
+// ============================
+@each $name, $value in $font-sizes {
+  .text-#{$name} {
+    font-size: $value !important;
+  }
+}
+
+@each $name, $value in $font-weights {
+  .font-#{$name} {
+    font-weight: $value !important;
+  }
+}
+
+// Text alignment
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.text-justify { text-align: justify !important; }
+
+// ============================
+// 8. Shadow Utilities
+// ============================
+.shadow-none { box-shadow: none !important; }
+.shadow-sm { box-shadow: var(--shadow-sm) !important; }
+.shadow-md { box-shadow: var(--shadow-md) !important; }
+.shadow-lg { box-shadow: var(--shadow-lg) !important; }
+.shadow-xl { box-shadow: var(--shadow-xl) !important; }
+
+// ============================
+// 9. Display Utilities
+// ============================
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+
+// ============================
+// 10. Flexbox Utilities
+// ============================
+.flex-row { flex-direction: row !important; }
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-nowrap { flex-wrap: nowrap !important; }
+
+.justify-start { justify-content: flex-start !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-around { justify-content: space-around !important; }
+.justify-evenly { justify-content: space-evenly !important; }
+
+.align-start { align-items: flex-start !important; }
+.align-end { align-items: flex-end !important; }
+.align-center { align-items: center !important; }
+.align-baseline { align-items: baseline !important; }
+.align-stretch { align-items: stretch !important; }
+
+.flex-1 { flex: 1 !important; }
+.flex-auto { flex: auto !important; }
+.flex-none { flex: none !important; }
+
+// ============================
+// 11. Position Utilities
+// ============================
+.position-static { position: static !important; }
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.position-fixed { position: fixed !important; }
+.position-sticky { position: sticky !important; }
+
+// ============================
+// 12. Width & Height Utilities
+// ============================
+.w-25 { width: 25% !important; }
+.w-50 { width: 50% !important; }
+.w-75 { width: 75% !important; }
+.w-100 { width: 100% !important; }
+.w-auto { width: auto !important; }
+
+.h-25 { height: 25% !important; }
+.h-50 { height: 50% !important; }
+.h-75 { height: 75% !important; }
+.h-100 { height: 100% !important; }
+.h-auto { height: auto !important; }
+
+// ============================
+// 13. Overflow Utilities
+// ============================
+.overflow-auto { overflow: auto !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-visible { overflow: visible !important; }
+.overflow-scroll { overflow: scroll !important; }
+
+// ============================
+// 14. Cursor Utilities
+// ============================
+.cursor-pointer { cursor: pointer !important; }
+.cursor-default { cursor: default !important; }
+.cursor-not-allowed { cursor: not-allowed !important; }
+
+// ============================
+// 15. Opacity Utilities
+// ============================
+.opacity-0 { opacity: 0 !important; }
+.opacity-25 { opacity: 0.25 !important; }
+.opacity-50 { opacity: 0.5 !important; }
+.opacity-75 { opacity: 0.75 !important; }
+.opacity-100 { opacity: 1 !important; }
+
+// ============================
+// 16. Z-Index Utilities
+// ============================
+@each $name, $value in $z-index {
+  .z-#{$name} { z-index: $value !important; }
+}
+
+// ============================
+// 17. Cards & Components
+// ============================
+.card {
+  @include card('light');
+  
+  &-header {
+    padding: spacing('lg');
+    border-bottom: 1px solid var(--border-primary);
+    font-weight: map-get($font-weights, 'semibold');
+  }
+  
+  &-body {
+    padding: spacing('lg');
+  }
+  
+  &-footer {
+    padding: spacing('lg');
+    border-top: 1px solid var(--border-primary);
+  }
+}
+
+[data-theme="dark"] .card,
+.dark-theme .card {
+  @include card('dark');
+}
+
+// ============================
+// 18. Buttons
+// ============================
+.btn {
+  @include button-variant('primary');
+  
+  &-primary {
+    @include button-variant('primary');
+  }
+  
+  &-accent {
+    @include button-variant('accent');
+  }
+  
+  &-success {
+    @include button-variant('success');
+  }
+  
+  &-warning {
+    @include button-variant('warning');
+  }
+  
+  &-error {
+    @include button-variant('error');
+  }
+  
+  &-sm {
+    padding: spacing('xs') spacing('md');
+    font-size: map-get($font-sizes, 'sm');
+  }
+  
+  &-lg {
+    padding: spacing('md') spacing('xl');
+    font-size: map-get($font-sizes, 'lg');
+  }
+}
+
+// ============================
+// 19. Borders
+// ============================
+.border { border: 1px solid var(--border-primary) !important; }
+.border-0 { border: 0 !important; }
+.border-t { border-top: 1px solid var(--border-primary) !important; }
+.border-r { border-right: 1px solid var(--border-primary) !important; }
+.border-b { border-bottom: 1px solid var(--border-primary) !important; }
+.border-l { border-left: 1px solid var(--border-primary) !important; }
+
+// ============================
+// 20. Theme-Aware Backgrounds
+// ============================
+.bg-primary { background-color: var(--bg-primary) !important; }
+.bg-secondary { background-color: var(--bg-secondary) !important; }
+.bg-tertiary { background-color: var(--bg-tertiary) !important; }
+.bg-card { background-color: var(--bg-card) !important; }
+.bg-hover { background-color: var(--bg-hover) !important; }
+
+// ============================
+// 21. Theme-Aware Text
+// ============================
+.text-primary-color { color: var(--text-primary) !important; }
+.text-secondary-color { color: var(--text-secondary) !important; }
+.text-tertiary-color { color: var(--text-tertiary) !important; }
+.text-disabled { color: var(--text-disabled) !important; }
+
+// ============================
+// 22. Interactive States
+// ============================
+.hover-primary:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transition: box-shadow 0.2s ease;
+}
+
+// ============================
+// 23. Transitions
+// ============================
+.transition-all {
+  transition: all 0.2s ease !important;
+}
+
+.transition-colors {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.transition-transform {
+  transition: transform 0.2s ease !important;
+}
+

@@ -1,0 +1,659 @@
+/* ========================================
+   🎨 PROFESSIONAL RESPONSIVE SIDEBAR
+   Fully Responsive Hotel Management Dashboard
+   Light & Dark Mode Support
+======================================== */
+
+.mat-drawer.sidebarNav {
+  width: $sidenav-desktop;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100vh;
+  z-index: 1000;
+  
+  // 🌞 Light Mode - Elegant Organic
+  background: var(--app-bg, #f8f9f7);
+  border-right: 1px solid var(--app-border, #c6ccb8);
+  color: var(--app-text-primary, #2e3623);
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  
+  // Smooth scrolling
+  scrollbar-width: thin;
+  scrollbar-color: rgba(58, 71, 42, 0.3) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(58, 71, 42, 0.3);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(58, 71, 42, 0.5);
+    }
+  }
+  
+  // Mobile & Tablet Responsive
+  @media (max-width: 1023px) {
+    width: min(320px, calc(100vw - 20px));
+    max-width: min(320px, calc(100dvw - 20px));
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    z-index: 1001;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    padding-top: env(safe-area-inset-top, 0px);
+    box-sizing: border-box;
+  }
+  
+  @media (max-width: 767px) {
+    width: min(288px, calc(100vw - 16px));
+    max-width: min(288px, calc(100dvw - 16px));
+  }
+
+  @media (max-width: 380px) {
+    width: calc(100vw - 12px);
+    max-width: calc(100dvw - 12px);
+  }
+}
+
+[dir='rtl'] .mat-drawer.sidebarNav {
+  @media (max-width: 1023px) {
+    left: auto !important;
+    right: 0 !important;
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// 🌚 Dark Mode Support
+.dark-theme {
+  .mat-drawer.sidebarNav {
+    background: var(--app-bg, #1e2419);
+    border-right-color: var(--app-border, #3a472a);
+    color: var(--app-text-primary, #f0f3ea);
+  }
+}
+
+.branding {
+  padding: 1.25rem 1rem;
+  background: var(--app-card-bg, #ffffff);
+  border-bottom: 1px solid var(--app-border, #c6ccb8);
+  transition: all 0.3s ease;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+  
+  img {
+    transition: all 0.3s ease;
+    max-width: 90%;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  // Mobile adjustments
+  @media (max-width: 1023px) {
+    padding: 1rem 0.75rem;
+    min-height: 60px;
+  }
+  
+  @media (max-width: 767px) {
+    padding: 0.875rem 0.5rem;
+    min-height: 56px;
+    
+    img {
+      max-width: 85%;
+    }
+  }
+}
+
+.dark-theme {
+  .branding {
+    background: var(--app-card-bg, #2b3424);
+    border-bottom-color: var(--app-border, #3a472a);
+  }
+}
+
+.sidebarNav-mini {
+  .sidebarNav {
+    width: $sidenav-mini;
+
+    .profile-bar {
+      display: none;
+    }
+
+    .sidebar-list {
+      .menu-list-item {
+        padding: 8px 17px;
+
+        .mdc-list-item__content {
+          display: none;
+        }
+
+        .mdc-list-item__start {
+          margin-left: 6px !important;
+          margin-right: 8px !important;
+        }
+      }
+    }
+
+  }
+
+  .hideMenu {
+    overflow: hidden;
+    width: $sidenav-mini;
+  }
+
+  .branding {
+    width: $sidenav-mini - 15px;
+    overflow: hidden;
+  }
+
+  .sidebar-list {
+    &.mdc-list {
+      padding: 0 12px;
+
+      .mdc-list-group__subheader {
+        text-align: center;
+      }
+    }
+  }
+
+  .contentWrapper {
+    transition: swift-ease-out(width);
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebarNav-mini {
+    .contentWrapper {
+      margin-left: $sidenav-mini !important;
+    }
+  }
+}
+
+.customizerBtn {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 9;
+}
+
+.sidebar-list {
+  &.mdc-list {
+    padding: 0 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+    background: transparent;
+    
+    // Mobile & Tablet adjustments
+    @media (max-width: 1023px) {
+      padding: 0 0.75rem;
+      padding-top: 0.75rem;
+      padding-bottom: 1rem;
+    }
+    
+    @media (max-width: 767px) {
+      padding: 0 0.5rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .mdc-list-group__subheader {
+      margin: 0.75rem 0;
+      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      margin-top: 1.5rem;
+      color: var(--app-text-secondary, #6b7280);
+      transition: color 0.3s ease;
+      letter-spacing: 0.5px;
+      padding: 0 0.5rem;
+      
+      @media (max-width: 767px) {
+        font-size: 0.625rem;
+        margin-top: 1rem;
+      }
+    }
+    
+    // Nav Caption styling (subheaders)
+    .nav-caption {
+      margin: 0.75rem 0;
+      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      margin-top: 1.5rem;
+      color: var(--app-text-secondary, #6b7280);
+      transition: color 0.3s ease;
+      letter-spacing: 0.5px;
+      padding: 0 0.5rem;
+      
+      @media (max-width: 767px) {
+        font-size: 0.625rem;
+        margin-top: 1rem;
+      }
+    }
+    
+    .menu-list-item {
+      border-radius: 8px;
+      min-height: 44px;
+      height: auto;
+      padding: 0.625rem 0.75rem !important;
+      margin-bottom: 0.25rem;
+      border-left: 3px solid transparent;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      
+      // Mobile adjustments
+      @media (max-width: 767px) {
+        min-height: 42px;
+        padding: 0.5rem 0.625rem !important;
+        margin-bottom: 0.125rem;
+        border-radius: 6px;
+      }
+      
+      // 🌞 Light Mode - Default State
+      background: transparent;
+      color: var(--app-text-primary, #1a1f14);
+      
+      &:hover {
+        background: var(--app-bg, #f0f1ed);
+        border-left-color: var(--app-heading, #3a472a);
+        transform: translateX(-2px);
+        
+        @media (max-width: 767px) {
+          transform: none;
+        }
+      }
+      
+      &:active {
+        transform: scale(0.98);
+        
+        @media (max-width: 767px) {
+          transform: scale(0.97);
+        }
+      }
+
+      &.twoline {
+        height: 60px;
+        align-items: center;
+      }
+
+      &:before,
+      &:focus {
+        z-index: -1;
+      }
+
+      &.disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+
+      .item-chip {
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      // ✅ Active Menu State
+      &.activeMenu {
+        background: linear-gradient(90deg, rgba(58, 71, 42, 0.1) 0%, rgba(58, 71, 42, 0.05) 100%);
+        border-left-color: var(--app-heading, #3a472a);
+        border-left-width: 4px;
+        color: var(--app-heading, #3a472a);
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(58, 71, 42, 0.08);
+        
+        .mdc-list-item__primary-text {
+          color: var(--app-heading, #3a472a) !important;
+          font-weight: 600;
+        }
+
+        .mat-mdc-list-item-icon,
+        .routeIcon {
+          color: var(--app-heading, #3a472a) !important;
+        }
+        
+        .hide-menu {
+          color: var(--app-heading, #3a472a) !important;
+          font-weight: 600;
+        }
+      }
+
+      .mdc-list-item__start {
+        margin-right: 0.875rem;
+        margin-left: 0 !important;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        line-height: 0px;
+        fill: transparent !important;
+        color: var(--app-text-secondary, #6b7280);
+        transition: all 0.25s ease;
+        flex-shrink: 0;
+        
+        @media (max-width: 767px) {
+          width: 18px;
+          height: 18px;
+          min-width: 18px;
+          margin-right: 0.75rem;
+        }
+      }
+      
+      .routeIcon {
+        color: var(--app-text-secondary, #6b7280);
+        transition: all 0.25s ease;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        
+        @media (max-width: 767px) {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .mdc-list-item__primary-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        color: var(--app-text-primary, #1a1f14);
+        transition: color 0.25s ease;
+        flex: 1;
+        min-width: 0;
+        
+        .hide-menu {
+          color: inherit;
+          font-size: 0.875rem;
+          font-weight: 500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          flex: 1;
+          transition: all 0.25s ease;
+          
+          @media (max-width: 767px) {
+            font-size: 0.8125rem;
+          }
+        }
+
+        .arrow-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 0.5rem;
+          flex-shrink: 0;
+          
+          i-tabler {
+            color: var(--app-text-secondary, #6b7280);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 16px;
+            height: 16px;
+            
+            @media (max-width: 767px) {
+              width: 14px;
+              height: 14px;
+            }
+          }
+
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+      
+      // Child items styling (nested menus)
+      &[style*="margin-left"] {
+        // For child items with indentation
+        padding-left: calc(var(--depth, 0) * 12px + 0.75rem) !important;
+        font-size: 0.875rem;
+        
+        &:hover {
+          background: var(--app-bg, #f0f1ed);
+          border-left-color: var(--app-heading, #3a472a);
+        }
+        
+        &.activeMenu {
+          background: linear-gradient(90deg, rgba(58, 71, 42, 0.12) 0%, rgba(58, 71, 42, 0.06) 100%);
+          border-left-color: var(--app-heading, #3a472a);
+          border-left-width: 3px;
+        }
+        
+        .routeIcon {
+          width: 18px;
+          height: 18px;
+          
+          @media (max-width: 767px) {
+            width: 16px;
+            height: 16px;
+          }
+        }
+        
+        .hide-menu {
+          font-size: 0.8125rem;
+          font-weight: 400;
+        }
+      }
+      
+      // Expanded parent item styling
+      &.expanded {
+        .arrow-icon i-tabler {
+          transform: rotate(180deg);
+        }
+        
+        + * {
+          animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      }
+    }
+  }
+  
+  // 🌚 Dark Mode - Menu Items
+  .dark-theme & {
+    .mdc-list {
+      .menu-list-item {
+        color: var(--app-text-primary, #f0f3ea);
+        
+        &:hover {
+          background: var(--app-bg, #27301f);
+          border-left-color: var(--app-accent, #8c7b3d);
+        }
+        
+        &.activeMenu {
+          background: rgba(43, 52, 36, 0.4); // باهت أكثر للزر الرئيسي في الوضع الداكن
+          border-left-color: var(--app-accent, #8c7b3d);
+          color: #7a8570; // لون باهت للنص في الوضع الداكن
+          
+          .mdc-list-item__primary-text {
+            color: #7a8570 !important; // لون باهت للنص
+          }
+          
+          .mat-mdc-list-item-icon,
+          .routeIcon {
+            color: #7a8570 !important; // لون باهت للأيقونات
+          }
+        }
+        
+        .mdc-list-item__start,
+        .routeIcon {
+          color: var(--app-heading, #d4d8c6);
+        }
+        
+        .mdc-list-item__primary-text {
+          color: #c5c9bf; // أغمق قليلاً للزر الفرعي في الوضع الداكن
+          
+          .arrow-icon i-tabler {
+            color: var(--app-text-secondary, #9ca3af);
+          }
+        }
+        
+        &:hover:not(.disabled) {
+          .routeIcon,
+          .mdc-list-item__start {
+            color: var(--app-accent, #8c7b3d);
+          }
+          
+          .arrow-icon i-tabler {
+            color: var(--app-accent, #8c7b3d);
+          }
+        }
+        
+        // Child items in dark mode
+        &[style*="margin-left"] {
+          &:hover {
+            background: var(--app-bg, #27301f);
+            border-left-color: var(--app-accent, #8c7b3d);
+          }
+          
+          &.activeMenu {
+            background: rgba(43, 52, 36, 0.4); // باهت أكثر للزر الرئيسي في الوضع الداكن
+            border-left-color: var(--app-accent, #8c7b3d);
+          }
+        }
+      }
+      
+      .mdc-list-group__subheader {
+        color: var(--app-text-secondary, #9ca3af);
+      }
+      
+      .nav-caption {
+        color: var(--app-text-secondary, #9ca3af);
+      }
+    }
+  }
+}
+
+.flex-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// ========================================
+// Animations for smooth transitions
+// ========================================
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ========================================
+// Additional Responsive Breakpoints
+// ========================================
+
+// Tablet adjustments (عرض متناسق مع القواعد العلوية)
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mat-drawer.sidebarNav {
+    width: min(300px, calc(100vw - 24px));
+    max-width: min(300px, calc(100dvw - 24px));
+  }
+  
+  .sidebar-list.mdc-list {
+    padding: 0 0.875rem;
+  }
+  
+  .branding {
+    padding: 1rem 0.75rem;
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 767px) {
+  .mat-drawer.sidebarNav {
+    width: min(288px, calc(100vw - 16px));
+    max-width: min(288px, calc(100dvw - 16px));
+  }
+  
+  // Ensure sidebar closes on mobile after selection
+  .menu-list-item {
+    &:active {
+      background: var(--app-bg, #f0f1ed);
+    }
+  }
+  
+  // Improve touch targets
+  .menu-list-item {
+    min-height: 48px;
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .menu-list-item {
+    min-height: 48px;
+    padding: 0.75rem 0.875rem !important;
+    
+    &:active {
+      background: var(--app-bg, #f0f1ed);
+      transform: scale(0.98);
+    }
+  }
+}
+
+// High DPI displays
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .routeIcon,
+  .mdc-list-item__start i-tabler {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+// Print styles - hide sidebar
+@media print {
+  .mat-drawer.sidebarNav {
+    display: none !important;
+  }
+}

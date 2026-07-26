@@ -1,0 +1,85 @@
+@use "@angular/material" as mat;
+@include mat.core();
+
+@import "color-system";
+@import "themecolors/default_theme";
+@import "variables";
+@import "utility-classes";
+@import "layouts/transitions";
+@import "helpers/color";
+@import "helpers/icon-size";
+
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+//Theme colors
+
+@import "themecolors/default_theme";
+
+@include mat.all-component-themes($salamTheme);
+
+.dark-theme {
+  @include mat.all-component-colors($darkSalamTheme);
+}
+
+
+//container layout
+@import "overrides/materialoverrides";
+@import "dark/dark";
+@import "container";
+@import "layouts/layouts";
+@import "grid/grid";
+@import "helpers/custom-flex";
+@import "helpers/index";
+
+// horizontal
+@import "horizontal/horizontal";
+
+// apps
+@import "apps/calendar";
+@import "apps/email";
+
+// pages
+@import "pages/dashboards";
+@import "pages/auth";
+@import "pages/landingpage";
+
+// components
+@import "components/page-header";
+@import "components/unified-filters";
+
+// RTL Theme
+@import "rtl/rtl";
+
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #f4f6f2;
+  --color-primary-100: #dfe6da;
+  --color-primary-200: #c4d1b8;
+  --color-primary-300: #a3b18a;
+  --color-primary-400: #7b8e5a;
+  --color-primary-500: #3a472a;
+  --color-primary-600: #303b23;
+  --color-primary-700: #242e1a;
+  --color-primary-800: #1a2113;
+  --color-primary-900: #10150b;
+
+  --color-secondary-500: #c8b7a9;
+  /* --color-secondary-500: #9da395;  */
+  --color-danger-500: #d96565;
+  --color-danger-600: #c75050;
+  --color-danger-100: #f3d0ca;
+  --color-warning-500: #e3a72f;
+
+  /* Special Gradients - التدرجات الخاصة */
+  --sero-linear-gradient: linear-gradient(135deg, #3a472a, #627b47);
+  --sero-linear-gradient-hover: linear-gradient(135deg, #2d3821, #556842);
+  --sero-accent-gradient: linear-gradient(135deg, #8c7b3d, #b7ac83);
+  --sero-success-gradient: linear-gradient(135deg, #3b7d57, #4e7a5d);
+
+  --font-family-arabic: 'IBM Plex Sans Arabic', sans-serif;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+// Luxury hotel form system — loaded last so it wins over legacy material form overrides
+@import "../../src/styles/components/luxury-form-system";

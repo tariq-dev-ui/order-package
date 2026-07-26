@@ -1,0 +1,133 @@
+// Room status report — premium date dropdown + range picker overlays (global / CDK)
+
+/* الـ pane الخارجي غالباً يضيق بعرض الـ trigger — نوسّع الحاوية التي تحتوي لوحتنا */
+.cdk-overlay-container .cdk-overlay-pane:has(.rsr-premium-date-dropdown-panel) {
+  min-width: min(92vw, 640px) !important;
+  max-width: min(96vw, 720px);
+}
+
+.cdk-overlay-container .mat-mdc-menu-panel.rsr-premium-date-dropdown-panel {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100%;
+  border-radius: 16px;
+  box-shadow: var(--theme-shadow-lg, 0 16px 48px rgba(15, 23, 42, 0.14));
+  border: 1px solid var(--theme-border-secondary, rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+}
+
+.cdk-overlay-container .rsr-premium-date-dropdown-panel .mat-mdc-menu-content {
+  padding: 0;
+  width: 100%;
+  min-width: 100%;
+}
+
+/* تقويم Material داخل اللوحة — مظهر أوضح (رسمي / MDC) */
+.cdk-overlay-container .rsr-premium-date-dropdown-panel {
+  --rsr-cal-accent: var(--theme-primary, #1565c0);
+  --rsr-cal-accent-contrast: var(--theme-text-inverse, #fff);
+  --rsr-cal-range-bg: color-mix(in srgb, var(--rsr-cal-accent) 14%, transparent);
+
+  .mat-calendar {
+    width: 100%;
+    min-width: 0;
+    font-family: inherit;
+  }
+
+  /* تقليل الارتفاع: رأس مضغوط + خلايا أصغر */
+  .mat-calendar-header {
+    padding: 0.1rem 0.15rem 0.2rem;
+  }
+
+  .mat-calendar-controls {
+    margin: 0 0 0.15rem;
+  }
+
+  .mat-calendar-period-button {
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    min-height: 36px;
+    padding: 0 0.35rem;
+  }
+
+  .mat-calendar-previous-button,
+  .mat-calendar-next-button {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+  }
+
+  .mat-calendar-table-header th {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--theme-text-secondary, rgba(0, 0, 0, 0.55));
+    padding: 0.15rem 0;
+  }
+
+  .mat-calendar-body-cell-content {
+    min-width: 2rem;
+    min-height: 2rem;
+    line-height: 2rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: 50%;
+  }
+
+  .mat-calendar-body-selected:not(.mat-calendar-body-in-range):not(.mat-calendar-body-comparison-bridge-start)::before,
+  .mat-calendar-body-selected:not(.mat-calendar-body-in-range):not(.mat-calendar-body-comparison-bridge-end)::after {
+    background: var(--rsr-cal-accent);
+  }
+
+  .mat-calendar-body-selected .mat-calendar-body-cell-content:not(.mat-calendar-body-range-start):not(
+      .mat-calendar-body-range-end
+    ) {
+    color: var(--rsr-cal-accent-contrast);
+  }
+
+  .mat-calendar-body-in-range::before {
+    background: var(--rsr-cal-range-bg);
+  }
+
+  .mat-calendar-body-range-start .mat-calendar-body-cell-content,
+  .mat-calendar-body-range-end .mat-calendar-body-cell-content {
+    background-color: var(--rsr-cal-accent);
+    color: var(--rsr-cal-accent-contrast);
+  }
+
+  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-range-start):not(.mat-calendar-body-range-end)
+    .mat-calendar-body-cell-content {
+    border-color: var(--rsr-cal-accent);
+    border-width: 1px;
+  }
+}
+
+// UX: لوحة التقويم المنبثقة — عرض أكبر يحسّن قراءة المدى (Material قد يعرض شهراً أو أكثر حسب السمة)
+.cdk-overlay-container .mat-datepicker-content.rsr-premium-range-panel,
+.cdk-overlay-container .mat-mdc-datepicker-content.rsr-premium-range-panel {
+  border-radius: 16px;
+  box-shadow: var(--theme-shadow-lg, 0 16px 48px rgba(15, 23, 42, 0.14));
+  border: 1px solid var(--theme-border-secondary, rgba(0, 0, 0, 0.08));
+}
+
+.cdk-overlay-container .rsr-premium-range-panel {
+  $rsr-teal: #0d7377;
+  $rsr-range: rgba(0, 0, 0, 0.06);
+
+  .mat-calendar-body-in-range::before {
+    background: $rsr-range;
+  }
+
+  .mat-calendar-body-range-start .mat-calendar-body-cell-content,
+  .mat-calendar-body-range-end .mat-calendar-body-cell-content {
+    background-color: $rsr-teal;
+    color: #fff;
+  }
+
+  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-range-start):not(.mat-calendar-body-range-end)
+    .mat-calendar-body-cell-content {
+    border-color: $rsr-teal;
+  }
+}

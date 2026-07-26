@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, HostListener } from '@angular
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TablerIconComponent } from 'angular-tabler-icons';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../core/services/layout.service';
 import { ViewMode, ViewModeService } from '../../../core/services/view-mode.service';
@@ -26,16 +27,16 @@ interface NavGroup {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, TablerIconComponent],
   template: `
     <aside class="sero-sidebar" [class.collapsed]="layout.sidebarCollapsed()">
 
       <!-- ── Logo Header ── -->
       <div class="sidebar-header">
         @if (layout.sidebarCollapsed()) {
-          <img class="sidebar-mini-logo" src="/IMG/logo.png" alt="Sero" />
+          <img class="sidebar-mini-logo" src="/images/logos/logo.png" alt="Sero" />
         } @else {
-          <img class="sidebar-logo-img" src="/IMG/logo.png" alt="Sero" />
+          <img class="sidebar-logo-img" src="/images/logos/sero-hotel-light-logo.png" alt="Sero" />
         }
       </div>
 
@@ -49,7 +50,7 @@ interface NavGroup {
                [class.active]="isActive(group.route!, group.exact)"
                [routerLink]="group.route"
                [attr.title]="layout.sidebarCollapsed() ? (group.label | translate) : null">
-              <span class="material-icons-round nav-icon">{{ group.icon }}</span>
+              <tabler-icon [name]="toTablerIcon(group.icon)" class="nav-icon"></tabler-icon>
               @if (!layout.sidebarCollapsed()) {
                 <span class="nav-label">{{ group.label | translate }}</span>
                 @if (group.badge) {
@@ -67,11 +68,14 @@ interface NavGroup {
                       [class.open]="isGroupOpen(group.id)"
                       [attr.title]="layout.sidebarCollapsed() ? (group.label | translate) : null"
                       (click)="toggleGroup(group.id, $event)">
-                <span class="material-icons-round nav-icon">{{ group.icon }}</span>
+                <tabler-icon [name]="toTablerIcon(group.icon)" class="nav-icon"></tabler-icon>
                 @if (!layout.sidebarCollapsed()) {
                   <span class="nav-label">{{ group.label | translate }}</span>
-                  <span class="material-icons-round nav-chevron"
-                        [class.open]="isGroupOpen(group.id)">expand_more</span>
+                  <tabler-icon
+                    name="chevron-down"
+                    class="nav-chevron"
+                    [class.open]="isGroupOpen(group.id)"
+                  ></tabler-icon>
                 }
               </button>
 
@@ -81,7 +85,7 @@ interface NavGroup {
                     <a class="nav-child"
                        [class.active]="isActive(child.route, child.exact)"
                        [routerLink]="child.route">
-                      <span class="material-icons-round child-icon">{{ child.icon }}</span>
+                      <tabler-icon [name]="toTablerIcon(child.icon)" class="child-icon"></tabler-icon>
                       <span class="child-label">{{ child.label | translate }}</span>
                     </a>
                   }
@@ -100,7 +104,7 @@ interface NavGroup {
                          [class.active]="isActive(child.route, child.exact)"
                          [routerLink]="child.route"
                          (click)="closePopup()">
-                        <span class="material-icons-round child-icon">{{ child.icon }}</span>
+                        <tabler-icon [name]="toTablerIcon(child.icon)" class="child-icon"></tabler-icon>
                         <span class="child-label">{{ child.label | translate }}</span>
                       </a>
                     }
@@ -123,8 +127,8 @@ interface NavGroup {
     .sero-sidebar {
       width: var(--sero-sidebar-width);
       height: 100vh;
-      background: var(--sero-surface-2);
-      border-inline-end: 0.1px solid var(--sero-border);
+      background: var(--theme-bg-secondary);
+      border-inline-end: 1px solid var(--theme-border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -142,10 +146,11 @@ interface NavGroup {
 
     /* ── Logo Header ── */
     .sidebar-header {
-      height: 106px;
-      padding: 6px 10px;
-      background: var(--sero-card-bg);
-      border-bottom: 1px solid var(--sero-border);
+      min-height: 56px;
+      height: 56px;
+      padding: 10px 12px;
+      background: var(--theme-bg-card);
+      border-bottom: 1px solid var(--theme-border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -153,16 +158,16 @@ interface NavGroup {
     }
 
     .sidebar-logo-img {
-      width: 100%;
-      height: 100%;
-      max-height: 94px;
+      width: min(170px, 100%);
+      height: auto;
+      max-height: 38px;
       object-fit: contain;
       display: block;
     }
 
     .sidebar-mini-logo {
-      width: 54px;
-      height: 54px;
+      width: 38px;
+      height: 38px;
       object-fit: contain;
       display: block;
       border-radius: 8px;
@@ -173,14 +178,14 @@ interface NavGroup {
       flex: 1;
       overflow-y: auto;
       overflow-x: visible;
-      padding: 10px 0 24px;
+      padding: 8px 0 24px;
       scrollbar-width: thin;
-      scrollbar-color: color-mix(in srgb, var(--sero-primary) 22%, transparent) transparent;
+      scrollbar-color: color-mix(in srgb, var(--theme-primary) 30%, transparent) transparent;
 
       &::-webkit-scrollbar { width: 4px; }
       &::-webkit-scrollbar-track { background: transparent; }
       &::-webkit-scrollbar-thumb {
-        background: color-mix(in srgb, var(--sero-primary) 22%, transparent);
+        background: color-mix(in srgb, var(--theme-primary) 30%, transparent);
         border-radius: 4px;
       }
     }
@@ -196,11 +201,11 @@ interface NavGroup {
       cursor: pointer;
       position: relative;
       text-decoration: none;
-      color: var(--sero-text-secondary);
+      color: var(--theme-text-primary);
       font-family: var(--sero-font);
       font-size: 0.8125rem;
-      font-weight: 500;
-      line-height: 1.3;
+      font-weight: 400;
+      line-height: 1.4;
       transition: background 150ms ease, color 150ms ease;
       border: none;
       background: transparent;
@@ -208,19 +213,19 @@ interface NavGroup {
       text-align: start;
 
       &:hover:not(.active):not(.group-active) {
-        background: var(--sero-bg-hover);
-        color: var(--sero-text-primary);
+        background: var(--theme-bg-hover);
+        color: var(--theme-text-primary);
 
-        .nav-icon { color: var(--sero-primary); }
+        .nav-icon { color: var(--theme-primary); }
       }
 
       /* Active leaf — direct links only, not group headers */
       &.active:not(.has-children) {
-        background: var(--sero-bg-selected);
-        color: var(--sero-primary-dark);
-        font-weight: 600;
+        background: var(--theme-bg-selected);
+        color: var(--theme-text-primary);
+        font-weight: 500;
 
-        .nav-icon { color: var(--sero-primary); }
+        .nav-icon { color: var(--theme-primary); }
 
         &::after {
           content: '';
@@ -230,16 +235,16 @@ interface NavGroup {
           transform: translateY(-50%);
           width: 3px;
           height: 55%;
-          background: var(--sero-primary);
+          background: var(--theme-primary);
           border-radius: 2px 0 0 2px;
         }
       }
 
       /* Group header — a child is active */
       &.group-active {
-        color: var(--sero-primary-dark);
-        font-weight: 600;
-        .nav-icon { color: var(--sero-primary); }
+        color: var(--theme-text-primary);
+        font-weight: 500;
+        .nav-icon { color: var(--theme-primary); }
       }
     }
 
@@ -269,10 +274,10 @@ interface NavGroup {
       position: fixed;
       min-width: 200px;
       max-width: 220px;
-      background: var(--sero-card-bg);
-      border: 1px solid var(--sero-border);
+      background: var(--theme-bg-card);
+      border: 1px solid var(--theme-border);
       border-radius: 10px;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--theme-shadow-lg);
       padding: 8px;
       z-index: 300;
     }
@@ -280,9 +285,9 @@ interface NavGroup {
     .nav-popup-title {
       font-size: 0.75rem;
       font-weight: 800;
-      color: var(--sero-text-primary);
+      color: var(--theme-text-primary);
       padding: 4px 8px 8px;
-      border-bottom: 1px solid var(--sero-border-light);
+      border-bottom: 1px solid var(--theme-border);
       margin-bottom: 6px;
     }
 
@@ -299,26 +304,27 @@ interface NavGroup {
       border-radius: 8px;
       padding: 7px 8px;
       text-decoration: none;
-      color: var(--sero-text-secondary);
+      color: var(--theme-text-secondary);
       font-size: 0.76rem;
       transition: background var(--t-fast), color var(--t-fast);
     }
 
     .nav-popup-child:hover {
-      background: var(--sero-bg-hover);
-      color: var(--sero-text-primary);
+      background: var(--theme-bg-hover);
+      color: var(--theme-text-primary);
     }
 
     .nav-popup-child.active {
-      background: var(--sero-bg-selected);
-      color: var(--sero-primary-dark);
+      background: var(--theme-bg-selected);
+      color: var(--theme-text-primary);
       font-weight: 700;
     }
 
     .nav-icon {
-      font-size: 18px;
+      width: 18px;
+      height: 18px;
       flex-shrink: 0;
-      color: var(--sero-text-muted);
+      color: var(--theme-text-secondary);
       transition: color 150ms ease;
     }
 
@@ -331,8 +337,9 @@ interface NavGroup {
     }
 
     .nav-chevron {
-      font-size: 16px;
-      color: var(--sero-text-muted);
+      width: 16px;
+      height: 16px;
+      color: var(--theme-text-tertiary);
       flex-shrink: 0;
       transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -347,8 +354,8 @@ interface NavGroup {
       height: 20px;
       padding: 0 7px;
       border-radius: 999px;
-      background: var(--sero-primary);
-      color: #fff;
+      background: var(--theme-primary);
+      color: var(--theme-text-inverse);
       font-size: 0.68rem;
       font-weight: 700;
       line-height: 1;
@@ -360,7 +367,7 @@ interface NavGroup {
     .nav-children {
       margin-inline-start: 22px;
       padding-inline-start: 12px;
-      border-inline-start: 1.5px solid var(--sero-border);
+      border-inline-start: 1.5px solid var(--theme-border);
       margin-top: 2px;
       margin-bottom: 4px;
     }
@@ -376,25 +383,25 @@ interface NavGroup {
       cursor: pointer;
       position: relative;
       text-decoration: none;
-      color: var(--sero-text-secondary);
+      color: var(--theme-text-secondary);
       font-size: 0.8rem;
       font-weight: 400;
       line-height: 1.3;
       transition: background 150ms ease, color 150ms ease;
 
       &:hover:not(.active) {
-        background: var(--sero-bg-hover);
-        color: var(--sero-text-primary);
-        .child-icon { color: var(--sero-primary); }
-        &::before { background: color-mix(in srgb, var(--sero-primary) 55%, transparent); }
+        background: var(--theme-bg-hover);
+        color: var(--theme-text-primary);
+        .child-icon { color: var(--theme-primary); }
+        &::before { background: color-mix(in srgb, var(--theme-primary) 55%, transparent); }
       }
 
       &.active {
-        background: var(--sero-bg-selected);
-        color: var(--sero-primary-dark);
+        background: var(--theme-bg-selected);
+        color: var(--theme-text-primary);
         font-weight: 600;
-        .child-icon { color: var(--sero-primary); }
-        &::before { background: var(--sero-primary); }
+        .child-icon { color: var(--theme-primary); }
+        &::before { background: var(--theme-primary); }
       }
 
       &::before {
@@ -412,9 +419,10 @@ interface NavGroup {
     }
 
     .child-icon {
-      font-size: 16px;
+      width: 16px;
+      height: 16px;
       flex-shrink: 0;
-      color: var(--sero-text-muted);
+      color: var(--theme-text-tertiary);
       transition: color 150ms ease;
     }
 
@@ -429,7 +437,7 @@ interface NavGroup {
     /* ── RTL ── */
     :host-context([dir="rtl"]) .sero-sidebar {
       border-inline-end: none;
-      border-inline-start: 0.1px solid var(--sero-border);
+      border-inline-start: 1px solid var(--theme-border);
     }
 
     :host-context([dir="rtl"]) .nav-item.active:not(.has-children)::after {
@@ -445,6 +453,68 @@ interface NavGroup {
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
+  private readonly iconMap: Record<string, string> = {
+    account_balance: 'building-bank',
+    account_balance_wallet: 'wallet',
+    account_tree: 'git-branch',
+    add_circle_outline: 'circle-plus',
+    add_shopping_cart: 'shopping-cart-plus',
+    admin_panel_settings: 'shield-lock',
+    alt_route: 'route',
+    approval: 'checks',
+    assignment: 'clipboard-list',
+    badge: 'id-badge',
+    balance: 'scale',
+    bar_chart: 'chart-bar',
+    business: 'building',
+    calendar_month: 'calendar-month',
+    card_membership: 'credit-card',
+    category: 'category',
+    check_circle_outline: 'circle-check',
+    confirmation_number: 'ticket',
+    corporate_fare: 'building-skyscraper',
+    description: 'file-description',
+    directions_bus: 'bus',
+    directions_car: 'car',
+    domain: 'building-community',
+    flight: 'plane',
+    format_list_bulleted: 'list',
+    group: 'users-group',
+    groups: 'users-group',
+    hotel: 'hotel-service',
+    hub: 'sitemap',
+    inventory: 'package',
+    inventory_2: 'packages',
+    layers: 'layers-intersect',
+    list_alt: 'list-details',
+    local_shipping: 'truck',
+    luggage: 'luggage',
+    manage_accounts: 'user-cog',
+    miscellaneous_services: 'tools',
+    mosque: 'building-mosque',
+    payments: 'cash',
+    pending_actions: 'clock',
+    people: 'users',
+    people_outline: 'users',
+    pie_chart: 'chart-pie',
+    point_of_sale: 'cash-register',
+    price_change: 'cash-banknote',
+    receipt_long: 'receipt-2',
+    request_quote: 'file-invoice',
+    restaurant: 'tools-kitchen-2',
+    restaurant_menu: 'tools-kitchen',
+    settings: 'settings',
+    shopping_bag: 'shopping-bag',
+    shopping_cart: 'shopping-cart',
+    star_rate: 'star',
+    storefront: 'building-store',
+    summarize: 'report',
+    supervisor_account: 'user-shield',
+    support_agent: 'headset',
+    trending_up: 'trending-up',
+    tune: 'adjustments-horizontal',
+    workspaces: 'layout-grid'
+  };
 
   currentUrl = '';
   openGroups = new Set<string>();
@@ -454,6 +524,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   popupRight: number | null = null;
 
   navGroups: NavGroup[] = [];
+
+  toTablerIcon(icon: string): string {
+    return this.iconMap[icon] ?? icon;
+  }
 
   private readonly adminNavGroups: NavGroup[] = [
     {

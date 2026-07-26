@@ -1,0 +1,142 @@
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  color: var(--app-text-primary, #2e3623);
+  font-size: 14px;
+  line-height: 1.334rem;
+  overflow-x: hidden;
+  background-color: var(--app-bg, #f8f9f7);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// 🌚 Dark Mode Body
+.dark-theme body {
+  background-color: var(--app-bg, #1e2419);
+  color: var(--app-text-primary, #f0f3ea);
+}
+
+html .mat-drawer-container {
+  background-color: var(--app-bg, #f8f9f7);
+  transition: background-color 0.3s ease;
+}
+
+// 🌚 Dark Mode Drawer Container
+.dark-theme html .mat-drawer-container {
+  background-color: var(--app-bg, #1e2419);
+}
+
+.mainWrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  flex: 1;
+  height: 100%;
+  background-color: var(--app-bg, #f8f9f7);
+  transition: background-color 0.3s ease;
+}
+
+// 🌚 Dark Mode Main Wrapper
+.dark-theme .mainWrapper {
+  background-color: var(--app-bg, #1e2419);
+}
+
+.pageWrapper {
+  padding: 24px;
+  min-height: calc(100vh - 70px);
+  margin: 0 auto;
+  background-color: transparent;
+  
+  &.maxWidth {
+    max-width: $boxedWidth;
+  }
+}
+
+.contentWrapper {
+  background-color: var(--app-bg, #f8f9f7);
+  transition: background-color 0.3s ease;
+}
+
+// 🌚 Dark Mode Content Wrapper
+.dark-theme .contentWrapper {
+  background-color: var(--app-bg, #1e2419);
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.shadow-none {
+  box-shadow: none !important;
+}
+
+.rounded {
+  border-radius: $border-radius !important;
+}
+
+.rounded-circle {
+  border-radius: 50% !important;
+}
+
+.rounded-pill {
+  border-radius: 25px !important;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.table-responsive {
+  overflow-x: auto;
+
+  td,
+  mat-cell {
+    // white-space: nowrap;
+    padding: 16px;
+  }
+}
+
+.op-5 {
+  opacity: 0.5;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.avatar-group {
+  img {
+    border: 2px solid white;
+    margin-right: -5px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.text-hover-primary:hover {
+  .hover-text {
+    color: $primary;
+  }
+}
+
+.filter-sidebar {
+  width: 290px;
+}

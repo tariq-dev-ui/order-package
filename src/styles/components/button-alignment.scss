@@ -1,0 +1,80 @@
+// ══════════════════════════════════════════════════════════════════
+// Global Button Alignment — icon + label centering for all buttons
+// Fixes Angular Material MDC .mdc-button__label (defaults to inline)
+// and aligns tabler-icon / mat-icon inside every button variant.
+// Does NOT touch colors, sizes, typography, or business logic.
+// ══════════════════════════════════════════════════════════════════
+
+// ── Angular Material MDC label wrapper ──────────────────────────
+// Applies to: mat-raised-button, mat-flat-button, mat-stroked-button,
+//             mat-button (all use .mdc-button__label internally)
+.mdc-button__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+// ── Icons inside any button ──────────────────────────────────────
+// Covers: tabler-icon (SVG-based), mat-icon (ligature/font),
+//         and their MDC wrappers (.mat-mdc-button-base)
+.mat-mdc-button-base,
+button {
+  tabler-icon,
+  i-tabler {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+    margin: 0;
+    vertical-align: middle;
+
+    svg {
+      display: block;
+      flex-shrink: 0;
+    }
+  }
+
+  mat-icon,
+  .mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+    margin: 0;
+    vertical-align: middle;
+  }
+}
+
+// ── mat-icon-button: center its single icon ──────────────────────
+.mat-mdc-icon-button {
+  .mat-mdc-button-persistent-ripple,
+  .mdc-icon-button__ripple { border-radius: inherit; }
+
+  tabler-icon,
+  i-tabler,
+  mat-icon,
+  .mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+  }
+}
+
+// ── Dialog action buttons: keep row alignment consistent ─────────
+.mat-mdc-dialog-actions {
+  .mat-mdc-button-base {
+    .mdc-button__label {
+      gap: 6px;
+    }
+  }
+}
+
+// ── RTL: gap direction is logical, no extra overrides needed ─────
+// (inline-flex already respects document direction)

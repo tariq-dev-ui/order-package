@@ -1,0 +1,114 @@
+// ============================
+// SERO Global Variables
+// المتغيرات العامة
+// ============================
+// This file references the unified color system
+// All variables should use the color system
+// ============================
+
+@use './themes/colors' as *;
+
+// ============================
+// FONTS
+// ============================
+@import url("https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@200;400;600;700&display=swap");
+
+$font-family: "Noto Kufi Arabic", sans-serif;
+
+// ============================
+// PRIMARY COLORS
+// ============================
+$primary: $primary-base;
+$primary-light: $primary-light;
+$primary-dark: $primary-dark;
+
+$accent: $accent-base;
+$accent-light: $accent-light;
+$accent-dark: $accent-dark;
+
+// ============================
+// SEMANTIC COLORS
+// ============================
+$success: $success-base;
+$warning: $warning-base;
+$error: $error-base;
+$info: $info-base;
+$white: $neutral-white;
+
+// ============================
+// LIGHT MODE
+// ============================
+$sidebarbg: $light-bg-secondary;
+$background: $light-bg-primary;
+$cardbg: $light-bg-card;
+$toolbar: $light-bg-card;
+$cardshadow: $light-shadow-md;
+$hoverBgColor: $light-bg-hover;
+
+$textPrimary: $light-text-primary;
+$textSecondary: $light-text-secondary;
+$textMuted: $light-text-tertiary;
+
+$borderColor: $light-border-primary;
+$borderformColor: $light-border-secondary;
+
+// ============================
+// DARK MODE
+// ============================
+$darksidebarbg: $dark-bg-secondary;
+$darkbackground: $dark-bg-primary;
+$darkcardbg: $dark-bg-card;
+$darktoolbar: $dark-bg-card;
+$darkcardshadow: $dark-shadow-md;
+$darkhoverbgcolor: $dark-bg-hover;
+
+$darkTextPrimary: $dark-text-primary;
+$darkTextSecondary: $dark-text-secondary;
+$darkTextMuted: $dark-text-tertiary;
+
+$darkborderColor: $dark-border-primary;
+$darkformborderColor: $dark-border-secondary;
+
+// Dark mode color adjustments
+$darkthemelightprimary: $primary-light;
+$darkthemelightaccent: $accent-base;
+$darkthemelightwarning: $dark-warning-muted;
+$darkthemelighterror: $dark-error-muted;
+$darkthemelightsuccess: $dark-success-muted;
+
+// ============================
+// STATUS COLORS
+// ============================
+$pendingColor: $status-pending;
+$confirmedColor: $status-confirmed;
+$assignedColor: $status-assigned;
+$checkinColor: $status-checkin;
+$closedColor: $status-closed;
+
+// ============================
+// GRADIENTS
+// ============================
+$sero-linear-gradient: $gradient-primary;
+$sero-linear-gradient-hover: $gradient-primary-hover;
+
+// ============================
+// LAYOUT & SIZING
+// ============================
+$sidenav-desktop: $sidenav-desktop-width;
+$sidenav-mini: $sidenav-mini-width;
+$header-height: $header-height;
+$boxedWidth: $boxed-max-width;
+$border-radius: $border-radius-md;
+
+// ============================
+// UTILITY COLORS
+// ============================
+$light: #f2f6f0;
+$gray-100: $gray-olive-light;
+
+$light-primary: $primary-light;
+$light-accent: $accent-light;
+$light-warning: $warning-light;
+$light-error: $error-light;
+$light-success: $success-light;
+

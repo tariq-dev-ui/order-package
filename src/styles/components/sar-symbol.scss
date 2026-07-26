@@ -1,0 +1,215 @@
+/**
+ * ========================================
+ * 🇸🇦 Saudi Riyal (SAR) Symbol Styles
+ * ========================================
+ * Unified currency symbol styling for the entire project.
+ * Supports RTL, responsive sizing, and color customization.
+ *
+ * @font-face مُعرَّف في ملف واحد فقط:
+ *   public/scss/components/sar-symbol.scss
+ * (يُضمَّن عبر src/styles.scss)
+ */
+
+/**
+ * Base SAR Symbol Class
+ * Use this class on a span element containing the symbol character
+ */
+.sar-symbol {
+  font-family: 'SaudiRiyal', 'Arial', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: baseline;
+  
+  // Ensure proper RTL support
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/**
+ * Container for currency display (value + symbol)
+ * Automatically handles RTL layout
+ */
+.currency-display {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  direction: rtl;
+  
+  .currency-value {
+    font-family: inherit;
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+  
+  .sar-symbol {
+    margin-right: 2px;
+  }
+}
+
+/**
+ * Size Variants
+ */
+.sar-symbol {
+  // Default size (inherits from parent)
+  font-size: 1em;
+  
+  &.sar-sm {
+    font-size: 0.875em;
+  }
+  
+  &.sar-md {
+    font-size: 1em;
+  }
+  
+  &.sar-lg {
+    font-size: 1.25em;
+  }
+  
+  &.sar-xl {
+    font-size: 1.5em;
+  }
+  
+  &.sar-2xl {
+    font-size: 2em;
+  }
+}
+
+/**
+ * Color Variants
+ */
+.sar-symbol {
+  // Default color (inherits from parent)
+  color: inherit;
+  
+  &.sar-primary {
+    color: #198754; // Success green
+  }
+  
+  &.sar-success {
+    color: #198754;
+  }
+  
+  &.sar-danger {
+    color: #dc3545;
+  }
+  
+  &.sar-warning {
+    color: #fd7e14;
+  }
+  
+  &.sar-info {
+    color: #0d6efd;
+  }
+  
+  &.sar-muted {
+    color: #6c757d;
+  }
+  
+  &.sar-dark {
+    color: #212529;
+  }
+  
+  &.sar-light {
+    color: #f8f9fa;
+  }
+}
+
+/**
+ * Alignment Variants
+ */
+.sar-symbol {
+  &.sar-align-top {
+    vertical-align: top;
+  }
+  
+  &.sar-align-middle {
+    vertical-align: middle;
+  }
+  
+  &.sar-align-bottom {
+    vertical-align: bottom;
+  }
+  
+  &.sar-align-baseline {
+    vertical-align: baseline;
+  }
+}
+
+/**
+ * Table-specific styles
+ */
+.mat-mdc-table {
+  .currency-display {
+    text-align: left;
+    direction: rtl;
+    
+    .currency-value {
+      direction: ltr;
+    }
+  }
+}
+
+/**
+ * Card-specific styles
+ */
+.mat-mdc-card,
+.card {
+  .currency-display {
+    font-weight: 600;
+  }
+}
+
+/**
+ * Input/Form field styles
+ */
+.mat-mdc-form-field,
+mat-form-field {
+  .currency-display {
+    .currency-value {
+      font-weight: 500;
+    }
+  }
+}
+
+/**
+ * Financial summary styles
+ */
+.financial-summary {
+  .currency-display {
+    font-size: 1.1em;
+    font-weight: 600;
+    
+    &.total {
+      font-size: 1.3em;
+      font-weight: 700;
+    }
+  }
+}
+
+/**
+ * Responsive adjustments
+ */
+@media (max-width: 768px) {
+  .sar-symbol {
+    &.sar-2xl {
+      font-size: 1.5em;
+    }
+    
+    &.sar-xl {
+      font-size: 1.25em;
+    }
+  }
+}
+
+/**
+ * Print styles
+ */
+@media print {
+  .sar-symbol {
+    font-family: 'SaudiRiyal', 'Arial', sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

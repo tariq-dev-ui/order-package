@@ -27,7 +27,7 @@ import { filter } from 'rxjs';
     .sero-shell {
       display: flex;
       min-height: 100vh;
-      background: var(--sero-app-bg);
+      background: var(--theme-bg);
     }
 
     .sero-main {
@@ -50,7 +50,7 @@ import { filter } from 'rxjs';
     .sero-content {
       flex: 1;
       padding: 24px 28px;
-      background: var(--sero-app-bg);
+      background: var(--theme-bg);
       min-height: calc(100vh - var(--sero-topbar-height));
     }
 

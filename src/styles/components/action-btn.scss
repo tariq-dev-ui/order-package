@@ -1,0 +1,184 @@
+// ============================================================
+// PMS Action Button — Global Design Standard
+// Reference: Booking Details → Header → Download Button
+// 28×28px · transparent · green default · 14px icon
+// ============================================================
+// Usage via component:
+//   <app-icon-btn icon="edit"  variant="edit"   [tooltip]="'تعديل' | translate" (click)="edit()">
+//   <app-icon-btn icon="trash" variant="delete" [tooltip]="'حذف'   | translate" (click)="delete()">
+//
+// Usage via class (fallback / edge-cases):
+//   <button type="button" class="pms-action-btn btn-edit" [matTooltip]="'تعديل' | translate">
+//     <tabler-icon name="edit" size="14"></tabler-icon>
+//   </button>
+// ============================================================
+
+// Container — wraps multiple action buttons in a row
+.pms-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+// Canonical action button — matches the Download Button reference
+.pms-action-btn {
+  // Dimensions — 28×28px (Download Button reference)
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0;
+  margin: 0;
+
+  // Layout
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  // Visual baseline — transparent, gray border, green icon
+  background: transparent;
+  border: 1px solid var(--app-border, #e5e7eb);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--app-heading, #3a472a);
+  line-height: 1;
+
+  // Smooth unified transition (matches Download Button)
+  transition: all 0.2s ease;
+
+  // tabler-icon / i-tabler sizing — 14px (matches Download Button)
+  tabler-icon,
+  i-tabler {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    pointer-events: none;
+    color: inherit;
+  }
+
+  // mat-icon sizing
+  mat-icon,
+  .mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  // Disabled state
+  &:disabled,
+  &[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Active press — subtle scale (matches Download Button)
+  &:active:not(:disabled):not([disabled]) {
+    transform: scale(0.95);
+  }
+
+  // Default hover — green tint (matches Download Button hover)
+  &:not(:disabled):not([disabled]):hover {
+    background: var(--app-bg, #f3f4f6);
+    border-color: var(--app-heading, #3a472a);
+    color: var(--app-heading, #3a472a);
+  }
+
+  // ── Semantic color variants — hover overrides only ───────
+  // (all buttons are green by default; only hover color changes per action type)
+
+  // Edit / Add / Approve / Check-in / Restore — brand green (same as default)
+  &.btn-edit:not(:disabled):not([disabled]):hover,
+  &.btn-add:not(:disabled):not([disabled]):hover,
+  &.btn-approve:not(:disabled):not([disabled]):hover,
+  &.btn-checkin:not(:disabled):not([disabled]):hover,
+  &.btn-restore:not(:disabled):not([disabled]):hover {
+    background: rgba(58, 71, 42, 0.08);
+    border-color: var(--app-heading, #3a472a);
+    color: var(--app-heading, #3a472a);
+  }
+
+  // Delete / Cancel / Reject / Check-out — red
+  &.btn-delete:not(:disabled):not([disabled]):hover,
+  &.btn-cancel:not(:disabled):not([disabled]):hover,
+  &.btn-reject:not(:disabled):not([disabled]):hover,
+  &.btn-checkout:not(:disabled):not([disabled]):hover {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: #dc2626;
+    color: #dc2626;
+  }
+
+  // View / Info / Details — slate blue
+  &.btn-view:not(:disabled):not([disabled]):hover,
+  &.btn-info:not(:disabled):not([disabled]):hover {
+    background: rgba(84, 110, 122, 0.08);
+    border-color: #546e7a;
+    color: #546e7a;
+  }
+
+  // Print / Download / Export — amber
+  &.btn-print:not(:disabled):not([disabled]):hover,
+  &.btn-download:not(:disabled):not([disabled]):hover,
+  &.btn-export:not(:disabled):not([disabled]):hover {
+    background: rgba(217, 118, 6, 0.08);
+    border-color: #d97706;
+    color: #d97706;
+  }
+
+  // Assign / Transfer — blue
+  &.btn-assign:not(:disabled):not([disabled]):hover,
+  &.btn-transfer:not(:disabled):not([disabled]):hover {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: #2563eb;
+    color: #2563eb;
+  }
+
+  // Toggle status — sky blue
+  &.btn-toggle:not(:disabled):not([disabled]):hover {
+    background: rgba(2, 132, 199, 0.08);
+    border-color: #0284c7;
+    color: #0284c7;
+  }
+
+  // Star / Set-default — amber
+  &.btn-star:not(:disabled):not([disabled]):hover {
+    background: rgba(217, 118, 6, 0.08);
+    border-color: #d97706;
+    color: #d97706;
+  }
+
+  // Duplicate / Clone — purple
+  &.btn-duplicate:not(:disabled):not([disabled]):hover {
+    background: rgba(124, 58, 237, 0.08);
+    border-color: #7c3aed;
+    color: #7c3aed;
+  }
+
+  // Extend Stay — sky blue
+  &.btn-extend:not(:disabled):not([disabled]):hover {
+    background: rgba(2, 132, 199, 0.08);
+    border-color: #0284c7;
+    color: #0284c7;
+  }
+
+  // Settings — neutral gray
+  &.btn-settings:not(:disabled):not([disabled]):hover {
+    background: rgba(107, 114, 128, 0.08);
+    border-color: #9ca3af;
+    color: #6b7280;
+  }
+
+  // Zero-pad / Neutral utility — gold
+  &.btn-zero:not(:disabled):not([disabled]):hover {
+    background: rgba(140, 123, 61, 0.08);
+    border-color: #8c7b3d;
+    color: #8c7b3d;
+  }
+}

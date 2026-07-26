@@ -1,0 +1,492 @@
+// ============================
+// Unified Color System
+// نظام الألوان الموحد
+// ============================
+
+// ============================
+// 1. Core Brand Colors - الألوان الأساسية
+// ============================
+$colors: (
+  // Primary Colors
+  'primary': (
+    'base': #3a472a,
+    'light': #9da395,
+    'dark': #2d3821,
+    'contrast': #ffffff,
+  ),
+  
+  // Accent/Secondary Colors
+  'accent': (
+    'base': #8c7b3d,
+    'light': #b7ac83,
+    'dark': #756935,
+    'contrast': #ffffff,
+  ),
+  
+  // Semantic Colors
+  'success': (
+    'base': #3b7d57,
+    'light': #e4f0e8,
+    'dark': #2e5d34,
+    'contrast': #ffffff,
+  ),
+  
+  'warning': (
+    'base': #e3a72f,
+    'light': #f9e8c4,
+    'dark': #b0892e,
+    'contrast': #ffffff,
+  ),
+  
+  'error': (
+    'base': #d96565,
+    'light': #f3d0ca,
+    'dark': #a55d5d,
+    'contrast': #ffffff,
+  ),
+  
+  'info': (
+    'base': #03a88f,
+    'light': #b2e8dc,
+    'dark': #02826e,
+    'contrast': #ffffff,
+  ),
+  
+  // Neutral Colors
+  'neutral': (
+    'white': #ffffff,
+    'black': #000000,
+    'gray-50': #fafafa,
+    'gray-100': #f5f5f5,
+    'gray-200': #eeeeee,
+    'gray-300': #e0e0e0,
+    'gray-400': #bdbdbd,
+    'gray-500': #9e9e9e,
+    'gray-600': #757575,
+    'gray-700': #616161,
+    'gray-800': #424242,
+    'gray-900': #212121,
+  ),
+);
+
+// ============================
+// 2. Theme-Specific Colors
+// ============================
+$light-theme: (
+  // Backgrounds
+  'bg-primary': #fefefc,
+  'bg-secondary': #f8f9f7,
+  'bg-tertiary': #ffffff,
+  'bg-card': #ffffff,
+  'bg-hover': #edf0eb,
+  'bg-selected': #e8ede5,
+  'bg-disabled': #f2f6f0,
+  
+  // Text
+  'text-primary': #2a3524,
+  'text-secondary': #5c6652,
+  'text-tertiary': #7b8574,
+  'text-disabled': #a3a89b,
+  'text-inverse': #ffffff,
+  
+  // Borders
+  'border-primary': #d8decf,
+  'border-secondary': #d0d7c4,
+  'border-hover': #c5cdb9,
+  'border-focus': #3a472a,
+  
+  // Shadows
+  'shadow-sm': rgba(58, 71, 42, 0.05) 0px 1px 2px,
+  'shadow-md': rgba(58, 71, 42, 0.08) 0px 2px 4px,
+  'shadow-lg': rgba(58, 71, 42, 0.06) 0px 12px 24px -4px,
+  'shadow-xl': rgba(58, 71, 42, 0.1) 0px 20px 40px -8px,
+);
+
+$dark-theme: (
+  // Backgrounds
+  'bg-primary': #252d1f,
+  'bg-secondary': #1e2419,
+  'bg-tertiary': #2b3424,
+  'bg-card': #2b3424,
+  'bg-hover': #3d4a32,
+  'bg-selected': #45533a,
+  'bg-disabled': #2a3221,
+  
+  // Text
+  'text-primary': #e6e9e0,
+  'text-secondary': #c5c9bf,
+  'text-tertiary': #a3a89b,
+  'text-disabled': #6b7263,
+  'text-inverse': #2a3524,
+  
+  // Borders
+  'border-primary': #3a472a,
+  'border-secondary': #556347,
+  'border-hover': #627b47,
+  'border-focus': #9da395,
+  
+  // Shadows
+  'shadow-sm': rgba(0, 0, 0, 0.15) 0px 1px 2px,
+  'shadow-md': rgba(0, 0, 0, 0.25) 0px 2px 4px,
+  'shadow-lg': rgba(0, 0, 0, 0.15) 0px 12px 24px -4px,
+  'shadow-xl': rgba(0, 0, 0, 0.35) 0px 20px 40px -8px,
+);
+
+// ============================
+// 3. Status Colors - ألوان الحالات
+// ============================
+$status-colors: (
+  'pending': (
+    'bg': #8c7b3d,
+    'text': #ffffff,
+    'border': #756935,
+  ),
+  'confirmed': (
+    'bg': #3a472a,
+    'text': #ffffff,
+    'border': #2d3821,
+  ),
+  'assigned': (
+    'bg': #627b47,
+    'text': #ffffff,
+    'border': #556842,
+  ),
+  'checkin': (
+    'bg': #2e5d34,
+    'text': #ffffff,
+    'border': #234a28,
+  ),
+  'checkout': (
+    'bg': #03a88f,
+    'text': #ffffff,
+    'border': #02826e,
+  ),
+  'cancelled': (
+    'bg': #d96565,
+    'text': #ffffff,
+    'border': #c75050,
+  ),
+  'closed': (
+    'bg': #5a5a5a,
+    'text': #ffffff,
+    'border': #4a4a4a,
+  ),
+  'active': (
+    'bg': #3b7d57,
+    'text': #ffffff,
+    'border': #2e5d34,
+  ),
+  'inactive': (
+    'bg': #9e9e9e,
+    'text': #ffffff,
+    'border': #757575,
+  ),
+);
+
+// ============================
+// 4. Spacing System - نظام المسافات
+// ============================
+$spacing: (
+  'none': 0,
+  'xs': 0.25rem,    // 4px
+  'sm': 0.5rem,     // 8px
+  'md': 1rem,       // 16px
+  'lg': 1.5rem,     // 24px
+  'xl': 2rem,       // 32px
+  '2xl': 3rem,      // 48px
+  '3xl': 4rem,      // 64px
+  '4xl': 6rem,      // 96px
+);
+
+// ============================
+// 5. Special Gradients - التدرجات الخاصة
+// ============================
+$gradients: (
+  'sero-primary': linear-gradient(135deg, #3a472a, #627b47),
+  'sero-primary-hover': linear-gradient(135deg, #2d3821, #556842),
+  'sero-accent': linear-gradient(135deg, #8c7b3d, #b7ac83),
+  'sero-success': linear-gradient(135deg, #3b7d57, #4e7a5d),
+);
+
+// ============================
+// 6. Border Radius - نصف قطر الحواف
+// ============================
+$radius: (
+  'none': 0,
+  'sm': 4px,
+  'md': 8px,
+  'lg': 12px,
+  'xl': 16px,
+  '2xl': 24px,
+  'full': 9999px,
+);
+
+// ============================
+// 7. Typography Scale - مقياس الخطوط
+// ============================
+$font-sizes: (
+  'xs': 0.75rem,    // 12px
+  'sm': 0.875rem,   // 14px
+  'base': 1rem,     // 16px
+  'lg': 1.125rem,   // 18px
+  'xl': 1.25rem,    // 20px
+  '2xl': 1.5rem,    // 24px
+  '3xl': 1.875rem,  // 30px
+  '4xl': 2.25rem,   // 36px
+  '5xl': 3rem,      // 48px
+);
+
+$font-weights: (
+  'light': 200,
+  'normal': 400,
+  'medium': 500,
+  'semibold': 600,
+  'bold': 700,
+);
+
+// ============================
+// 8. Z-Index Scale - ترتيب الطبقات
+// ============================
+$z-index: (
+  'dropdown': 1000,
+  'sticky': 1020,
+  'fixed': 1030,
+  'modal-backdrop': 1040,
+  'modal': 1050,
+  'popover': 1060,
+  'tooltip': 1070,
+);
+
+// ============================
+// Helper Functions - دوال مساعدة
+// ============================
+
+// Get color from map
+@function color($color-name, $variant: 'base') {
+  @if map-has-key($colors, $color-name) {
+    $color-map: map-get($colors, $color-name);
+    @if map-has-key($color-map, $variant) {
+      @return map-get($color-map, $variant);
+    }
+  }
+  @warn "Color '#{$color-name}' with variant '#{$variant}' not found";
+  @return null;
+}
+
+// Get theme color
+@function theme-color($name, $theme: 'light') {
+  $theme-map: if($theme == 'light', $light-theme, $dark-theme);
+  @if map-has-key($theme-map, $name) {
+    @return map-get($theme-map, $name);
+  }
+  @warn "Theme color '#{$name}' not found in '#{$theme}' theme";
+  @return null;
+}
+
+// Get status color
+@function status-color($status, $property: 'bg') {
+  @if map-has-key($status-colors, $status) {
+    $status-map: map-get($status-colors, $status);
+    @if map-has-key($status-map, $property) {
+      @return map-get($status-map, $property);
+    }
+  }
+  @warn "Status '#{$status}' with property '#{$property}' not found";
+  @return null;
+}
+
+// Get gradient
+@function gradient($name) {
+  @if map-has-key($gradients, $name) {
+    @return map-get($gradients, $name);
+  }
+  @warn "Gradient '#{$name}' not found";
+  @return null;
+}
+
+// Get spacing
+@function spacing($size) {
+  @if map-has-key($spacing, $size) {
+    @return map-get($spacing, $size);
+  }
+  @warn "Spacing '#{$size}' not found";
+  @return null;
+}
+
+// Get radius
+@function radius($size) {
+  @if map-has-key($radius, $size) {
+    @return map-get($radius, $size);
+  }
+  @warn "Radius '#{$size}' not found";
+  @return null;
+}
+
+// ============================
+// Utility Mixins - Mixins مساعدة
+// ============================
+
+// Generate CSS custom properties for colors
+@mixin generate-color-vars($theme: 'light') {
+  $theme-map: if($theme == 'light', $light-theme, $dark-theme);
+  
+  // Core colors
+  @each $color-name, $variants in $colors {
+    @each $variant, $value in $variants {
+      --color-#{$color-name}-#{$variant}: #{$value};
+    }
+  }
+  
+  // Theme colors
+  @each $name, $value in $theme-map {
+    --#{$name}: #{$value};
+  }
+  
+  // Status colors
+  @each $status, $properties in $status-colors {
+    @each $property, $value in $properties {
+      --status-#{$status}-#{$property}: #{$value};
+    }
+  }
+  
+  // Spacing
+  @each $name, $value in $spacing {
+    --spacing-#{$name}: #{$value};
+  }
+  
+  // Radius
+  @each $name, $value in $radius {
+    --radius-#{$name}: #{$value};
+  }
+  
+  // Font sizes
+  @each $name, $value in $font-sizes {
+    --font-size-#{$name}: #{$value};
+  }
+  
+  // Font weights
+  @each $name, $value in $font-weights {
+    --font-weight-#{$name}: #{$value};
+  }
+  
+  // Z-index
+  @each $name, $value in $z-index {
+    --z-index-#{$name}: #{$value};
+  }
+}
+
+// Apply theme colors
+@mixin theme($theme: 'light') {
+  @include generate-color-vars($theme);
+}
+
+// Status badge/chip styling
+@mixin status-badge($status) {
+  background-color: status-color($status, 'bg');
+  color: status-color($status, 'text');
+  border: 1px solid status-color($status, 'border');
+  padding: spacing('xs') spacing('sm');
+  border-radius: radius('md');
+  font-size: map-get($font-sizes, 'sm');
+  font-weight: map-get($font-weights, 'medium');
+  display: inline-flex;
+  align-items: center;
+  gap: spacing('xs');
+}
+
+// Card styling
+@mixin card($theme: 'light') {
+  background-color: theme-color('bg-card', $theme);
+  border: 1px solid theme-color('border-primary', $theme);
+  border-radius: radius('lg');
+  box-shadow: theme-color('shadow-md', $theme);
+  padding: spacing('lg');
+  
+  &:hover {
+    box-shadow: theme-color('shadow-lg', $theme);
+  }
+}
+
+// Button variants
+@mixin button-variant($color, $variant: 'base') {
+  background-color: color($color, $variant);
+  color: color($color, 'contrast');
+  border: 1px solid color($color, $variant);
+  padding: spacing('sm') spacing('lg');
+  border-radius: radius('md');
+  font-weight: map-get($font-weights, 'medium');
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    background-color: color($color, 'dark');
+    border-color: color($color, 'dark');
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ============================
+// Export as CSS Variables
+// ============================
+:root {
+  @include theme('light');
+}
+
+[data-theme="dark"],
+.dark-theme {
+  @include theme('dark');
+}
+
+// ============================
+// Backward Compatibility
+// تحافظ على المتغيرات القديمة
+// ============================
+$primary: color('primary', 'base');
+$accent: color('accent', 'base');
+$success: color('success', 'base');
+$warning: color('warning', 'base');
+$error: color('error', 'base');
+$white: color('neutral', 'white');
+
+$background: theme-color('bg-primary', 'light');
+$sidebarbg: theme-color('bg-secondary', 'light');
+$cardbg: theme-color('bg-card', 'light');
+$toolbar: theme-color('bg-tertiary', 'light');
+$hoverBgColor: theme-color('bg-hover', 'light');
+
+$textPrimary: theme-color('text-primary', 'light');
+$textSecondary: theme-color('text-secondary', 'light');
+$textMuted: theme-color('text-tertiary', 'light');
+
+$borderColor: theme-color('border-primary', 'light');
+$borderformColor: theme-color('border-secondary', 'light');
+$border-radius: radius('md');
+
+$darkbackground: theme-color('bg-primary', 'dark');
+$darksidebarbg: theme-color('bg-secondary', 'dark');
+$darkcardbg: theme-color('bg-card', 'dark');
+$darktoolbar: theme-color('bg-tertiary', 'dark');
+$darkhoverbgcolor: theme-color('bg-hover', 'dark');
+
+$darkTextPrimary: theme-color('text-primary', 'dark');
+$darkTextSecondary: theme-color('text-secondary', 'dark');
+$darkTextMuted: theme-color('text-tertiary', 'dark');
+
+$darkborderColor: theme-color('border-primary', 'dark');
+$darkformborderColor: theme-color('border-secondary', 'dark');
+
+$pendingColor: status-color('pending', 'bg');
+$confirmedColor: status-color('confirmed', 'bg');
+$assignedColor: status-color('assigned', 'bg');
+$checkinColor: status-color('checkin', 'bg');
+$closedColor: status-color('closed', 'bg');
+

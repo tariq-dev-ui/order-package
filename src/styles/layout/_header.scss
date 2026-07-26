@@ -1,0 +1,65 @@
+/* ========================================
+   🎨 HEADER - Elegant Identity Theme
+   Light & Dark Mode Support
+======================================== */
+
+html .topbar {
+  background-color: var(--app-card-bg, #ffffff);
+  border-bottom: 1px solid var(--app-border, #c6ccb8);
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  height: $header-height;
+  transition: all 0.3s ease;
+  color: var(--app-text-primary, #2e3623);
+}
+
+// 🌚 Dark Mode Header
+.dark-theme {
+  html .topbar {
+    background-color: var(--app-card-bg, #2b3424);
+    border-bottom-color: var(--app-border, #3a472a);
+    color: var(--app-text-primary, #f0f3ea);
+  }
+}
+
+.topbar-dd {
+  min-width: 360px !important;
+}
+
+.apps-dd {
+  min-width: 830px !important;
+  overflow: unset !important;
+
+  .mat-mdc-menu-content {
+    padding: 0;
+  }
+}
+
+.upgrade-bg {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 100%;
+}
+
+.object-cover {
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .search-dialog {
+    width: 600px;
+  }
+}
+
+// perfect scroll
+.ps__rail-y {
+  right: 0;
+  left: unset !important;
+}
+
+.profile-dd {
+  margin-top: -5px;
+  margin-left: -5px;
+}
