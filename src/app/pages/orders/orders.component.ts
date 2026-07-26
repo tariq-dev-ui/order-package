@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, HostListener, inject, OnI
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TablerIconComponent } from 'angular-tabler-icons';
 import { SeroDropdownComponent, SeroDropdownOption } from '../../shared/components/sero-dropdown/sero-dropdown.component';
 import { PaginationComponent } from '../../features/master/packages/components/pagination.component';
 import { OrdersService } from './orders.service';
@@ -23,227 +24,339 @@ type TypeCounts = Record<string, number>;
   selector: 'app-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslateModule, SeroDropdownComponent, PaginationComponent],
+  imports: [CommonModule, TranslateModule, TablerIconComponent, SeroDropdownComponent, PaginationComponent],
   template: `
     <section class="op-page">
-
-      <!-- ── Header ── -->
-      <header class="op-header">
-        <div class="op-header-titles">
-          <h1 class="op-title">{{ 'orders.title' | translate }}</h1>
-          <p class="op-subtitle">{{ 'orders.subtitle' | translate }}</p>
+      <div class="page-header">
+        <div class="header-content">
+          <div class="header-info">
+            <div class="page-icon">
+              <tabler-icon name="shopping-cart"></tabler-icon>
+            </div>
+            <div class="header-text">
+              <h1 class="page-title">{{ 'orders.title' | translate }}</h1>
+              <p class="page-description">{{ 'orders.subtitle' | translate }}</p>
+            </div>
+          </div>
         </div>
-        <span class="op-header-icon">
-          <span class="material-icons-round">shopping_cart</span>
-        </span>
-      </header>
-
-      <!-- ── Status filter cards ── -->
-      <div class="op-stat-cards">
-        @for (meta of typeMeta; track meta.type) {
-          <button type="button"
-            class="op-stat-card"
-            [class.op-stat-card--active]="activeType() === meta.type"
-            (click)="selectType(meta.type)">
-            <span class="op-stat-count">{{ countFor(meta.type) }}</span>
-            <span class="op-stat-label">{{ meta.labelKey | translate }}</span>
-            <span class="op-stat-icon">
-              <span class="material-icons-round">{{ meta.icon }}</span>
-            </span>
-          </button>
-        }
       </div>
 
-      <!-- ── Action bar ── -->
-      <div class="op-action-bar">
-        <button type="button" class="op-btn op-btn--outline" (click)="exportCsv()">
-          <span class="material-icons-round">file_download</span>
-          <span>{{ 'orders.actions.export' | translate }}</span>
-        </button>
-
-        <div class="op-search">
-          <span class="material-icons-round op-search-icon">search</span>
-          <input type="text" class="op-search-input"
-            [placeholder]="'orders.actions.searchPlaceholder' | translate"
-            [value]="searchText()"
-            (input)="onSearchInput($event)" />
+      <div class="statistics-section">
+        <div class="statistics-grid">
+          @for (meta of typeMeta; track meta.type) {
+            <button
+              type="button"
+              class="stat-card"
+              [class.active]="activeType() === meta.type"
+              (click)="selectType(meta.type)">
+              <div class="stat-icon" [ngClass]="'stat-icon--' + meta.type">
+                <tabler-icon [name]="tablerIconForType(meta.type)"></tabler-icon>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ countFor(meta.type) }}</span>
+                <span class="stat-label">{{ meta.labelKey | translate }}</span>
+              </div>
+            </button>
+          }
         </div>
-
-        <button type="button" class="op-btn op-btn--outline"
-          [class.op-btn--active]="showAdvancedFilters()"
-          (click)="toggleAdvancedFilters()">
-          <span class="material-icons-round">tune</span>
-          <span>{{ 'orders.actions.advancedFilters' | translate }}</span>
-        </button>
-
-        <button type="button" class="op-btn op-btn--primary" (click)="toggleAdvancedFilters()">
-          <span class="material-icons-round">filter_list</span>
-          <span>{{ 'orders.actions.filter' | translate }}</span>
-        </button>
       </div>
 
-      @if (showAdvancedFilters()) {
-        <div class="op-adv-filters">
-          <div class="op-field">
-            <label>{{ 'orders.filters.paymentStatus' | translate }}</label>
-            <app-sero-dropdown
-              [options]="paymentOptions"
-              [value]="paymentFilter()"
-              [placeholderKey]="'orders.filters.any'"
-              (valueChange)="onPaymentFilterChange($event)">
-            </app-sero-dropdown>
-          </div>
-          <div class="op-field">
-            <label>{{ 'orders.filters.operationStatus' | translate }}</label>
-            <app-sero-dropdown
-              [options]="operationOptions"
-              [value]="operationFilter()"
-              [placeholderKey]="'orders.filters.any'"
-              (valueChange)="onOperationFilterChange($event)">
-            </app-sero-dropdown>
-          </div>
-          <div class="op-field">
-            <label>{{ 'orders.filters.agentStatus' | translate }}</label>
-            <app-sero-dropdown
-              [options]="agentStatusOptions"
-              [value]="agentStatusFilter()"
-              [placeholderKey]="'orders.filters.any'"
-              (valueChange)="onAgentStatusFilterChange($event)">
-            </app-sero-dropdown>
-          </div>
-          <button type="button" class="op-btn op-btn--ghost op-clear-filters" (click)="clearAdvancedFilters()">
-            <span class="material-icons-round">close</span>
-            <span>{{ 'orders.actions.clearFilters' | translate }}</span>
-          </button>
-        </div>
-      }
+      <div class="filters-section">
+        <div class="filters-container">
+          <div class="filters-header-row">
+            <div class="filter-button-wrapper">
+              <button
+                type="button"
+                class="filter-main-btn"
+                [class.is-open]="showAdvancedFilters()"
+                (click)="toggleAdvancedFilters()">
+                <tabler-icon name="filter"></tabler-icon>
+                <span>{{ 'orders.actions.filter' | translate }}</span>
+                @if (activeFilterCount() > 0) {
+                  <span class="filter-badge">{{ activeFilterCount() }}</span>
+                }
+              </button>
+            </div>
 
-      <!-- ── Table ── -->
-      <div class="op-table-card">
-        <div class="op-table-wrap">
-          <table class="op-table">
-            <thead>
-              <tr>
-                <th>{{ 'orders.columns.type' | translate }}</th>
-                <th>{{ 'orders.columns.orderNo' | translate }}</th>
-                <th>{{ 'orders.columns.orderDate' | translate }}</th>
-                <th>{{ 'orders.columns.agent' | translate }}</th>
-                <th>{{ 'orders.columns.totalPrice' | translate }}</th>
-                <th>{{ 'orders.columns.paid' | translate }}</th>
-                <th>{{ 'orders.columns.remaining' | translate }}</th>
-                <th>{{ 'orders.columns.paymentStatus' | translate }}</th>
-                <th>{{ 'orders.columns.operationStatus' | translate }}</th>
-                <th>{{ 'orders.columns.agentStatus' | translate }}</th>
-                <th>{{ 'orders.columns.actions' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @if (isLoading()) {
+            <div class="search-field-wrapper">
+              <div class="search-icon">
+                <tabler-icon name="search"></tabler-icon>
+              </div>
+              <div class="search-divider"></div>
+              <input
+                type="text"
+                class="search-input"
+                [placeholder]="'orders.actions.searchPlaceholder' | translate"
+                [value]="searchText()"
+                (input)="onSearchInput($event)" />
+              @if (searchText()) {
+                <button
+                  type="button"
+                  class="search-clear-btn"
+                  [attr.aria-label]="'orders.actions.clearFilters' | translate"
+                  (click)="clearSearch()">
+                  <tabler-icon name="x"></tabler-icon>
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="export-btn"
+              (click)="exportCsv()">
+              <tabler-icon name="download"></tabler-icon>
+              <span>{{ 'orders.actions.export' | translate }}</span>
+            </button>
+          </div>
+
+          @if (showAdvancedFilters()) {
+            <div class="active-filters-display op-active-filters">
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="credit-card"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.paymentStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="paymentOptions"
+                    [value]="paymentFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onPaymentFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
+
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="progress-check"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.operationStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="operationOptions"
+                    [value]="operationFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onOperationFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
+
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="user-check"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.agentStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="agentStatusOptions"
+                    [value]="agentStatusFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onAgentStatusFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
+
+              @if (activeFilterCount() > 0) {
+                <button
+                  type="button"
+                  class="clear-all-filters-btn"
+                  (click)="clearAdvancedFilters()">
+                  <tabler-icon name="trash"></tabler-icon>
+                  <span>{{ 'orders.actions.clearFilters' | translate }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="table-section">
+        <div class="table-card">
+          <div class="table-container">
+            <table class="orders-table">
+              <thead>
                 <tr>
-                  <td colspan="11" class="op-state-cell">
-                    <div class="op-spinner"></div>
-                  </td>
+                  <th>{{ 'orders.columns.type' | translate }}</th>
+                  <th>{{ 'orders.columns.orderNo' | translate }}</th>
+                  <th>{{ 'orders.columns.orderDate' | translate }}</th>
+                  <th>{{ 'orders.columns.agent' | translate }}</th>
+                  <th>{{ 'orders.columns.totalPrice' | translate }}</th>
+                  <th>{{ 'orders.columns.paid' | translate }}</th>
+                  <th>{{ 'orders.columns.remaining' | translate }}</th>
+                  <th>{{ 'orders.columns.paymentStatus' | translate }}</th>
+                  <th>{{ 'orders.columns.operationStatus' | translate }}</th>
+                  <th>{{ 'orders.columns.agentStatus' | translate }}</th>
+                  <th>{{ 'orders.columns.actions' | translate }}</th>
                 </tr>
-              } @else if (rows().length === 0) {
-                <tr>
-                  <td colspan="11" class="op-state-cell">
-                    <span class="material-icons-round">shopping_cart</span>
-                    <h3>{{ 'orders.empty.title' | translate }}</h3>
-                    <p>{{ 'orders.empty.description' | translate }}</p>
-                  </td>
-                </tr>
-              } @else {
-                @for (row of rows(); track row.id) {
+              </thead>
+
+              <tbody>
+                @if (isLoading()) {
                   <tr>
-                    <td>
-                      <span class="op-type-chip">
-                        <span class="material-icons-round">{{ iconForType(row.type) }}</span>
-                        {{ typeLabelKey(row.type) | translate }}
-                      </span>
+                    <td colspan="11" class="op-state-cell">
+                      <div class="op-spinner"></div>
                     </td>
-                    <td class="op-strong">{{ row.orderNo }}</td>
-                    <td class="op-date-cell">
-                      <span>{{ row.orderDate | date:'dd MMM yyyy' }}</span>
-                      <span class="op-date-time">{{ row.orderDate | date:'HH:mm' }}</span>
-                    </td>
-                    <td>{{ row.agent }}</td>
-                    <td class="op-amount">{{ row.totalPrice | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                    <td class="op-amount">{{ row.paid | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                    <td class="op-amount">{{ row.remaining | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                    <td>
-                      <span class="op-badge op-badge--{{ paymentMeta(row.paymentStatus).cls }}">
-                        {{ paymentMeta(row.paymentStatus).labelKey | translate }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="op-badge op-badge--{{ operationMeta(row.operationStatus).cls }}">
-                        {{ operationMeta(row.operationStatus).labelKey | translate }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="op-badge op-badge--{{ agentStatusMeta(row.agentStatus).cls }}">
-                        {{ agentStatusMeta(row.agentStatus).labelKey | translate }}
-                      </span>
-                    </td>
-                    <td>
-                      <div class="op-row-actions">
-                        <button type="button" class="op-icon-btn" [attr.aria-label]="'orders.actionsMenu.view' | translate" (click)="viewRow(row)">
-                          <span class="material-icons-round">visibility</span>
-                        </button>
-                        <button type="button" class="op-icon-btn" [attr.aria-label]="'orders.actionsMenu.edit' | translate" (click)="editRow(row)">
-                          <span class="material-icons-round">edit</span>
-                        </button>
-                        <button type="button" class="op-icon-btn" [attr.aria-label]="'orders.actionsMenu.print' | translate" (click)="printRow(row)">
-                          <span class="material-icons-round">print</span>
-                        </button>
-                        <div class="op-more-wrap">
-                          <button type="button" class="op-icon-btn" [attr.aria-label]="'orders.actionsMenu.more' | translate" (click)="toggleMoreMenu(row.id, $event)">
-                            <span class="material-icons-round">more_vert</span>
-                          </button>
-                          @if (openMoreMenuId() === row.id) {
-                            <div class="op-more-menu">
-                              <button type="button" (click)="duplicateRow(row)">
-                                <span class="material-icons-round">content_copy</span>
-                                {{ 'orders.actionsMenu.duplicate' | translate }}
-                              </button>
-                              <button type="button" (click)="downloadPdf(row)">
-                                <span class="material-icons-round">picture_as_pdf</span>
-                                {{ 'orders.actionsMenu.downloadPdf' | translate }}
-                              </button>
-                              <button type="button" (click)="viewStatusLog(row)">
-                                <span class="material-icons-round">history</span>
-                                {{ 'orders.actionsMenu.statusLog' | translate }}
-                              </button>
-                              <button type="button" class="op-more-menu-danger" (click)="deleteRow(row)">
-                                <span class="material-icons-round">delete</span>
-                                {{ 'orders.actionsMenu.delete' | translate }}
-                              </button>
-                            </div>
-                          }
-                        </div>
+                  </tr>
+                } @else if (rows().length === 0) {
+                  <tr>
+                    <td colspan="11" class="op-state-cell">
+                      <div class="empty-state">
+                        <tabler-icon name="shopping-cart-off"></tabler-icon>
+                        <h3>{{ 'orders.empty.title' | translate }}</h3>
+                        <p>{{ 'orders.empty.description' | translate }}</p>
                       </div>
                     </td>
                   </tr>
+                } @else {
+                  @for (row of rows(); track row.id) {
+                    <tr class="order-row">
+                      <td>
+                        <span class="booking-type-badge">
+                          <tabler-icon [name]="tablerIconForType(row.type)"></tabler-icon>
+                          {{ typeLabelKey(row.type) | translate }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="cell-ref">{{ row.orderNo }}</span>
+                      </td>
+                      <td>
+                        <span class="cell-date">
+                          <span>{{ row.orderDate | date:'dd MMM yyyy' }}</span>
+                          <span class="cell-time">{{ row.orderDate | date:'HH:mm' }}</span>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="cell-name">{{ row.agent }}</span>
+                      </td>
+                      <td>
+                        <span class="amount-currency-wrap">
+                          <span class="amount-value">{{ row.totalPrice | number:'1.2-2' }}</span>
+                          <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="amount-currency-wrap">
+                          <span class="amount-value paid-value">{{ row.paid | number:'1.2-2' }}</span>
+                          <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="amount-currency-wrap">
+                          <span class="amount-value remaining-value">{{ row.remaining | number:'1.2-2' }}</span>
+                          <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="status-badge status-{{ paymentMeta(row.paymentStatus).cls }}">
+                          {{ paymentMeta(row.paymentStatus).labelKey | translate }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="status-badge status-{{ operationMeta(row.operationStatus).cls }}">
+                          {{ operationMeta(row.operationStatus).labelKey | translate }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="status-badge status-{{ agentStatusMeta(row.agentStatus).cls }}">
+                          {{ agentStatusMeta(row.agentStatus).labelKey | translate }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="pms-actions-cell">
+                          <button
+                            type="button"
+                            class="op-icon-btn btn-view"
+                            [attr.aria-label]="'orders.actionsMenu.view' | translate"
+                            [title]="'orders.actionsMenu.view' | translate"
+                            (click)="viewRow(row)">
+                            <tabler-icon name="eye"></tabler-icon>
+                          </button>
+                          <button
+                            type="button"
+                            class="op-icon-btn btn-edit"
+                            [attr.aria-label]="'orders.actionsMenu.edit' | translate"
+                            [title]="'orders.actionsMenu.edit' | translate"
+                            (click)="editRow(row)">
+                            <tabler-icon name="edit"></tabler-icon>
+                          </button>
+                          <button
+                            type="button"
+                            class="op-icon-btn btn-print"
+                            [attr.aria-label]="'orders.actionsMenu.print' | translate"
+                            [title]="'orders.actionsMenu.print' | translate"
+                            (click)="printRow(row)">
+                            <tabler-icon name="printer"></tabler-icon>
+                          </button>
+                          <div class="op-more-wrap">
+                            <button
+                              type="button"
+                              class="op-icon-btn btn-more"
+                              [attr.aria-label]="'orders.actionsMenu.more' | translate"
+                              [title]="'orders.actionsMenu.more' | translate"
+                              (click)="toggleMoreMenu(row.id, $event)">
+                              <tabler-icon name="dots-vertical"></tabler-icon>
+                            </button>
+                            @if (openMoreMenuId() === row.id) {
+                              <div class="op-more-menu">
+                                <button type="button" (click)="duplicateRow(row)">
+                                  <tabler-icon name="copy"></tabler-icon>
+                                  {{ 'orders.actionsMenu.duplicate' | translate }}
+                                </button>
+                                <button type="button" (click)="downloadPdf(row)">
+                                  <tabler-icon name="file-type-pdf"></tabler-icon>
+                                  {{ 'orders.actionsMenu.downloadPdf' | translate }}
+                                </button>
+                                <button type="button" (click)="viewStatusLog(row)">
+                                  <tabler-icon name="history"></tabler-icon>
+                                  {{ 'orders.actionsMenu.statusLog' | translate }}
+                                </button>
+                                <button type="button" class="op-more-menu-danger" (click)="deleteRow(row)">
+                                  <tabler-icon name="trash"></tabler-icon>
+                                  {{ 'orders.actionsMenu.delete' | translate }}
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  }
                 }
+              </tbody>
+
+              @if (!isLoading() && rows().length > 0) {
+                <tfoot>
+                  <tr class="op-footer-row">
+                    <td class="op-footer-label" colspan="4">{{ 'orders.footer.total' | translate }}</td>
+                    <td>
+                      <span class="amount-currency-wrap">
+                        <span class="amount-value">{{ footerTotal() | number:'1.2-2' }}</span>
+                        <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="amount-currency-wrap">
+                        <span class="amount-value paid-value">{{ footerPaid() | number:'1.2-2' }}</span>
+                        <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="amount-currency-wrap">
+                        <span class="amount-value remaining-value">{{ footerRemaining() | number:'1.2-2' }}</span>
+                        <span class="sar-symbol sar-sm" aria-hidden="true">R</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge status-{{ footerPaymentMeta().cls }}">
+                        {{ footerPaymentMeta().labelKey | translate }}
+                      </span>
+                    </td>
+                    <td colspan="3"></td>
+                  </tr>
+                </tfoot>
               }
-            </tbody>
-            @if (!isLoading() && rows().length > 0) {
-              <tfoot>
-                <tr class="op-footer-row">
-                  <td class="op-footer-label" colspan="4">{{ 'orders.footer.total' | translate }}</td>
-                  <td class="op-amount op-strong">{{ footerTotal() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                  <td class="op-amount op-strong">{{ footerPaid() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                  <td class="op-amount op-strong">{{ footerRemaining() | number:'1.2-2' }} <span class="sar-symbol">R</span></td>
-                  <td>
-                    <span class="op-badge op-badge--{{ footerPaymentMeta().cls }}">
-                      {{ footerPaymentMeta().labelKey | translate }}
-                    </span>
-                  </td>
-                  <td colspan="3"></td>
-                </tr>
-              </tfoot>
-            }
-          </table>
+            </table>
+          </div>
         </div>
 
         <div class="op-pagination">
@@ -253,406 +366,414 @@ type TypeCounts = Record<string, number>;
             (pageChange)="setPage($event)" />
         </div>
       </div>
-
     </section>
   `,
   styles: [`
+    :host {
+      display: block;
+      min-height: 100%;
+      background: var(--app-bg);
+      font-family: var(--sero-font, 'Noto Kufi Arabic', sans-serif);
+    }
+
     .op-page {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-5);
+      min-height: 100vh;
+      background: var(--app-bg);
     }
 
-    /* ── Header ── */
-    .op-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--sp-4);
-      padding-bottom: var(--sp-4);
-      border-bottom: 1px solid var(--sero-border-light);
+    .statistics-section {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
     }
 
-    .op-header-titles {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .statistics-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.75rem;
     }
 
-    .op-title {
-      margin: 0;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--sero-text-primary);
-      font-family: var(--sero-font-heading);
-    }
-
-    .op-subtitle {
-      margin: 0;
-      font-size: 0.82rem;
-      color: var(--sero-text-secondary);
-    }
-
-    .op-header-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--r-lg);
-      background: var(--sero-primary);
-      color: #fff;
+    .stat-card {
+      min-height: 72px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .op-header-icon .material-icons-round {
-      font-size: 24px;
-    }
-
-    /* ── Status filter cards ── */
-    .op-stat-cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--sp-3);
-    }
-
-    .op-stat-card {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--sp-3);
-      padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
-      border-radius: var(--r-full);
-      border: 1px solid var(--sero-border);
-      background: var(--sero-card-bg);
+      gap: 12px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-card-bg);
+      color: var(--app-text-primary);
       cursor: pointer;
-      font-family: var(--sero-font);
-      transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .op-stat-card:hover {
-      border-color: var(--sero-border-strong);
-      background: var(--sero-surface-2);
-      transform: translateY(-1px);
+    .stat-card:hover {
+      border-color: var(--app-heading);
+      background: var(--app-bg);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--app-text-primary) 8%, transparent);
+      transform: translateY(-2px);
     }
 
-    .op-stat-count {
-      min-width: 30px;
-      height: 30px;
-      padding: 0 8px;
-      border-radius: var(--r-full);
-      background: var(--sero-surface-3);
-      color: var(--sero-text-primary);
+    .stat-card.active {
+      background: var(--app-heading);
+      border-color: var(--app-heading);
+      color: var(--app-card-bg);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--app-heading) 30%, transparent);
+    }
+
+    .stat-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 0.85rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      color: var(--app-heading);
+      flex: 0 0 auto;
+      transition: color 0.3s ease;
     }
 
-    .op-stat-label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--sero-text-primary);
-      white-space: nowrap;
+    .stat-icon tabler-icon,
+    .stat-icon i-tabler {
+      width: 1.75rem;
+      height: 1.75rem;
     }
 
-    .op-stat-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--r-full);
-      background: var(--sero-surface-3);
-      color: var(--sero-text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .stat-icon--transportation,
+    .stat-icon--ticket {
+      color: var(--sero-info);
     }
 
-    .op-stat-icon .material-icons-round {
-      font-size: 17px;
+    .stat-icon--visa,
+    .stat-icon--custom {
+      color: var(--sero-warning);
     }
 
-    .op-stat-card--active {
-      background: var(--sero-primary);
-      border-color: var(--sero-primary);
+    .stat-icon--catering {
+      color: var(--sero-success);
     }
 
-    .op-stat-card--active .op-stat-label {
-      color: #fff;
+    .stat-card.active .stat-icon,
+    .stat-card.active .stat-label,
+    .stat-card.active .stat-value {
+      color: var(--app-card-bg);
     }
 
-    .op-stat-card--active .op-stat-count {
-      background: #fff;
-      color: var(--sero-primary-dark);
-    }
-
-    .op-stat-card--active .op-stat-icon {
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff;
-    }
-
-    /* ── Action bar ── */
-    .op-action-bar {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-3);
-      flex-wrap: wrap;
-      padding: var(--sp-3);
-      border: 1px solid var(--sero-border-light);
-      border-radius: var(--r-xl);
-      background: var(--sero-card-bg);
-    }
-
-    .op-search {
-      flex: 1;
-      min-width: 220px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 var(--sp-3);
-      height: 42px;
-      border: 1px solid var(--sero-border);
-      border-radius: var(--r-lg);
-      background: var(--sero-app-bg);
-    }
-
-    .op-search-icon {
-      font-size: 18px;
-      color: var(--sero-text-muted);
-      flex-shrink: 0;
-    }
-
-    .op-search-input {
-      flex: 1;
+    .stat-content {
       min-width: 0;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-family: var(--sero-font);
-      font-size: 0.85rem;
-      color: var(--sero-text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
     }
 
-    .op-search-input::placeholder {
-      color: var(--sero-text-muted);
-    }
-
-    .op-btn {
+    .stat-value {
+      min-width: 40px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      height: 42px;
-      padding: 0 var(--sp-4);
-      border-radius: var(--r-lg);
-      border: 1px solid transparent;
-      font-family: var(--sero-font);
-      font-weight: 700;
-      font-size: 0.82rem;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-    }
-
-    .op-btn .material-icons-round {
-      font-size: 18px;
-    }
-
-    .op-btn--primary {
-      background: var(--sero-primary);
-      color: #fff;
-    }
-
-    .op-btn--primary:hover {
-      background: var(--sero-primary-dark);
-    }
-
-    .op-btn--outline {
-      background: var(--sero-card-bg);
-      color: var(--sero-text-primary);
-      border-color: var(--sero-border);
-    }
-
-    .op-btn--outline:hover,
-    .op-btn--outline.op-btn--active {
-      background: var(--sero-surface-2);
-      border-color: var(--sero-border-strong);
-    }
-
-    .op-btn--ghost {
-      background: transparent;
-      color: var(--sero-text-secondary);
-    }
-
-    .op-btn--ghost:hover {
-      background: var(--sero-surface-2);
-      color: var(--sero-text-primary);
-    }
-
-    /* ── Advanced filters ── */
-    .op-adv-filters {
-      display: flex;
-      align-items: flex-end;
-      gap: var(--sp-4);
-      flex-wrap: wrap;
-      padding: var(--sp-3) var(--sp-4);
-      border: 1px solid var(--sero-border-light);
-      border-radius: var(--r-xl);
-      background: var(--sero-surface-2);
-    }
-
-    .op-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 180px;
-    }
-
-    .op-field label {
-      font-size: 0.72rem;
+      justify-content: center;
+      padding: 4px 12px;
+      border: 1px solid color-mix(in srgb, var(--app-heading) 15%, transparent);
+      border-radius: 0.5rem;
+      background: color-mix(in srgb, var(--app-heading) 10%, var(--app-card-bg));
+      color: var(--app-heading);
+      font-size: 1.5rem;
       font-weight: 800;
-      color: var(--sero-text-secondary);
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+      transition: all 0.3s ease;
     }
 
-    .op-clear-filters {
-      height: 42px;
+    .stat-card.active .stat-value {
+      background: color-mix(in srgb, var(--app-card-bg) 22%, transparent);
+      border-color: color-mix(in srgb, var(--app-card-bg) 30%, transparent);
     }
 
-    /* ── Table card ── */
-    .op-table-card {
-      background: var(--sero-card-bg);
-      border: 1px solid var(--sero-border-light);
-      border-radius: var(--r-xl);
+    .stat-label {
+      min-width: 0;
+      color: var(--app-text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s ease;
     }
 
-    .op-table-wrap {
+    .filters-section {
+      margin-bottom: 2rem;
+    }
+
+    .filter-main-btn.is-open {
+      background: color-mix(in srgb, var(--app-heading) 88%, var(--app-text-primary));
+    }
+
+    .search-field-wrapper {
+      position: relative;
+    }
+
+    .search-clear-btn {
+      width: 30px;
+      height: 30px;
+      margin-inline-end: 0.35rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 0.375rem;
+      background: transparent;
+      color: var(--app-text-secondary);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .search-clear-btn:hover {
+      background: color-mix(in srgb, var(--app-heading) 8%, transparent);
+      color: var(--app-heading);
+    }
+
+    .search-clear-btn tabler-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .op-active-filters {
+      align-items: stretch;
+    }
+
+    .op-active-filters .active-filter-item {
+      min-width: 220px;
+    }
+
+    .op-active-filters app-sero-dropdown {
+      display: block;
+      width: 100%;
+    }
+
+    .table-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem;
+    }
+
+    .table-card {
+      margin-bottom: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--app-border);
+      border-radius: 0.75rem;
+      background: var(--app-card-bg);
+      box-shadow: 0 1px 3px color-mix(in srgb, var(--app-text-primary) 6%, transparent);
+    }
+
+    .table-container {
       overflow-x: auto;
+      max-height: calc(100vh - 280px);
     }
 
-    .op-table {
+    .orders-table {
       width: 100%;
       min-width: 1180px;
       border-collapse: collapse;
+      background: transparent;
     }
 
-    .op-table thead tr {
-      background: var(--sero-primary);
+    .orders-table thead tr {
+      height: 44px;
+      background: var(--app-heading);
     }
 
-    .op-table th {
-      color: rgba(255, 255, 255, 0.92);
-      font-size: 0.72rem;
-      font-weight: 800;
+    .orders-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 0 1rem;
+      border-bottom: none;
+      background: var(--app-heading);
+      color: color-mix(in srgb, var(--app-card-bg) 85%, transparent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      line-height: 44px;
       text-align: center;
-      padding: var(--sp-3) var(--sp-3);
+      text-transform: uppercase;
       white-space: nowrap;
     }
 
-    .op-table td {
-      border-bottom: 1px solid var(--sero-border-light);
-      color: var(--sero-text-primary);
-      font-size: 0.8rem;
+    .orders-table td {
+      height: 52px;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--app-border) 60%, transparent);
+      color: var(--app-text-primary);
+      font-size: 0.8125rem;
+      line-height: 1.4;
       text-align: center;
-      padding: var(--sp-3);
-      white-space: nowrap;
       vertical-align: middle;
+      white-space: nowrap;
     }
 
-    .op-table tbody tr:hover {
-      background: color-mix(in srgb, var(--sero-surface-2) 70%, var(--sero-card-bg));
+    .orders-table tbody tr {
+      transition: background 150ms ease;
     }
 
-    .op-table tbody tr:last-child td {
+    .orders-table tbody tr:hover {
+      background: color-mix(in srgb, var(--app-heading) 4%, transparent);
+    }
+
+    .orders-table tbody tr:last-child td {
       border-bottom: none;
     }
 
-    .op-strong {
-      font-weight: 800;
-    }
-
-    .op-amount {
+    .cell-ref {
+      color: var(--app-heading);
+      font-size: 0.8rem;
       font-weight: 700;
-      white-space: nowrap;
     }
 
-    .op-date-cell {
-      display: flex;
+    .cell-name {
+      font-weight: 600;
+    }
+
+    .cell-date {
+      display: inline-flex;
       flex-direction: column;
       gap: 2px;
-      line-height: 1.3;
+      direction: ltr;
+      unicode-bidi: isolate;
+      line-height: 1.25;
     }
 
-    .op-date-time {
+    .cell-time {
+      color: var(--app-text-secondary);
       font-size: 0.72rem;
-      color: var(--sero-text-secondary);
     }
 
-    .op-type-chip {
+    .booking-type-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--r-full);
-      border: 1px solid var(--sero-border);
-      background: var(--sero-surface-2);
-      color: var(--sero-text-primary);
-      font-size: 0.74rem;
+      gap: 0.35rem;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid color-mix(in srgb, var(--app-heading) 20%, transparent);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--app-heading) 8%, transparent);
+      color: var(--app-heading);
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .booking-type-badge tabler-icon {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+    }
+
+    .amount-currency-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      direction: ltr;
+      font-variant-numeric: tabular-nums;
+      unicode-bidi: isolate;
+    }
+
+    .amount-value {
+      color: var(--app-text-primary);
+      font-size: 0.825rem;
       font-weight: 700;
-      white-space: nowrap;
     }
 
-    .op-type-chip .material-icons-round {
-      font-size: 15px;
-      color: var(--sero-text-secondary);
+    .paid-value {
+      color: var(--sero-success);
     }
 
-    /* ── Status badges ── */
-    .op-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 12px;
-      border-radius: var(--r-full);
-      font-size: 0.72rem;
-      font-weight: 800;
-      border: 1px solid transparent;
-      white-space: nowrap;
+    .remaining-value {
+      color: var(--sero-danger);
     }
 
-    .op-badge--success  { background: var(--sero-success-bg);  color: var(--sero-success);  border-color: var(--sero-success-border); }
-    .op-badge--warning  { background: var(--sero-warning-bg);  color: var(--sero-warning);  border-color: var(--sero-warning-border); }
-    .op-badge--danger   { background: var(--sero-danger-bg);   color: var(--sero-danger);   border-color: var(--sero-danger-border); }
-    .op-badge--info     { background: var(--sero-info-bg);     color: var(--sero-info);     border-color: var(--sero-info-border); }
-    .op-badge--muted    { background: var(--sero-surface-3);   color: var(--sero-text-secondary); border-color: var(--sero-border); }
-
-    /* ── Row actions ── */
-    .op-row-actions {
+    .status-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      min-height: 22px;
+      padding: 0.18rem 0.55rem;
+      border: 1px solid;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .status-success {
+      background: color-mix(in srgb, var(--sero-success) 10%, transparent);
+      color: var(--sero-success);
+      border-color: color-mix(in srgb, var(--sero-success) 25%, transparent);
+    }
+
+    .status-warning {
+      background: color-mix(in srgb, var(--sero-warning) 10%, transparent);
+      color: var(--sero-warning);
+      border-color: color-mix(in srgb, var(--sero-warning) 25%, transparent);
+    }
+
+    .status-danger {
+      background: color-mix(in srgb, var(--sero-danger) 10%, transparent);
+      color: var(--sero-danger);
+      border-color: color-mix(in srgb, var(--sero-danger) 25%, transparent);
+    }
+
+    .status-info {
+      background: color-mix(in srgb, var(--sero-info) 10%, transparent);
+      color: var(--sero-info);
+      border-color: color-mix(in srgb, var(--sero-info) 25%, transparent);
+    }
+
+    .status-muted {
+      background: color-mix(in srgb, var(--app-text-secondary) 10%, transparent);
+      color: var(--app-text-secondary);
+      border-color: color-mix(in srgb, var(--app-text-secondary) 25%, transparent);
+    }
+
+    .pms-actions-cell {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
     }
 
     .op-icon-btn {
-      width: 30px;
-      height: 30px;
-      border: 1px solid var(--sero-border);
-      border-radius: var(--r-md);
-      background: var(--sero-card-bg);
-      color: var(--sero-text-secondary);
+      width: 32px;
+      height: 32px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+      padding: 0;
+      border: 1px solid color-mix(in srgb, var(--app-text-secondary) 20%, var(--app-border));
+      border-radius: 0.375rem;
+      background: var(--app-card-bg);
+      color: var(--app-text-secondary);
+      line-height: 1;
+      transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, color 140ms ease;
     }
 
-    .op-icon-btn .material-icons-round {
-      font-size: 16px;
+    .op-icon-btn tabler-icon {
+      width: 14px;
+      height: 14px;
     }
 
     .op-icon-btn:hover {
-      background: var(--sero-primary-50);
-      border-color: var(--sero-primary-100);
-      color: var(--sero-primary-dark);
+      background: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg));
+      border-color: color-mix(in srgb, var(--app-heading) 40%, transparent);
+      color: var(--app-heading);
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--app-text-primary) 10%, transparent);
+    }
+
+    .btn-print:hover,
+    .btn-more:hover {
+      background: color-mix(in srgb, var(--app-text-secondary) 8%, var(--app-card-bg));
+      border-color: color-mix(in srgb, var(--app-text-secondary) 35%, transparent);
+      color: var(--app-text-primary);
     }
 
     .op-more-wrap {
@@ -665,98 +786,107 @@ type TypeCounts = Record<string, number>;
       inset-inline-end: 0;
       top: calc(100% + 6px);
       z-index: 30;
-      min-width: 180px;
-      background: var(--sero-card-bg);
-      border: 1px solid var(--sero-border-light);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-lg);
-      padding: 6px;
+      min-width: 190px;
       display: flex;
       flex-direction: column;
       gap: 2px;
+      padding: 0.375rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-card-bg);
+      box-shadow: 0 10px 22px color-mix(in srgb, var(--app-text-primary) 16%, transparent);
     }
 
     .op-more-menu button {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.55rem 0.625rem;
       border: none;
-      border-radius: var(--r-md);
+      border-radius: 0.375rem;
       background: transparent;
-      color: var(--sero-text-primary);
-      font-family: var(--sero-font);
+      color: var(--app-text-primary);
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 600;
+      line-height: 1.3;
       text-align: start;
-      cursor: pointer;
       white-space: nowrap;
+      transition: background 0.12s ease, color 0.12s ease;
     }
 
     .op-more-menu button:hover {
-      background: var(--sero-surface-2);
+      background: color-mix(in srgb, var(--app-heading) 6%, var(--app-card-bg));
     }
 
-    .op-more-menu button .material-icons-round {
-      font-size: 16px;
-      color: var(--sero-text-secondary);
+    .op-more-menu button tabler-icon {
+      width: 15px;
+      height: 15px;
+      color: var(--app-text-secondary);
+      flex: 0 0 auto;
     }
 
-    .op-more-menu-danger {
-      color: var(--sero-danger) !important;
-    }
-
-    .op-more-menu-danger .material-icons-round {
+    .op-more-menu-danger,
+    .op-more-menu-danger tabler-icon {
       color: var(--sero-danger) !important;
     }
 
     .op-more-menu-danger:hover {
-      background: var(--sero-danger-bg) !important;
+      background: color-mix(in srgb, var(--sero-danger) 10%, transparent) !important;
     }
 
-    /* ── Footer summary row ── */
     .op-footer-row td {
-      background: var(--sero-surface-2);
-      font-weight: 800;
-      border-top: 2px solid var(--sero-border);
+      height: 52px;
+      border-top: 2px solid var(--app-border);
       border-bottom: none;
+      background: color-mix(in srgb, var(--app-heading) 5%, var(--app-card-bg));
+      font-weight: 800;
     }
 
     .op-footer-label {
-      text-align: end;
-      color: var(--sero-text-secondary);
+      color: var(--app-text-secondary);
+      text-align: end !important;
     }
 
-    /* ── Empty / loading state ── */
     .op-state-cell {
-      padding: 48px 16px !important;
+      padding: 3rem 1rem !important;
+      border-bottom: none !important;
       white-space: normal !important;
     }
 
-    .op-state-cell .material-icons-round {
-      font-size: 40px;
-      color: var(--sero-border-strong);
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--app-text-secondary);
     }
 
-    .op-state-cell h3 {
-      margin: 10px 0 4px;
+    .empty-state tabler-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      opacity: 0.3;
+    }
+
+    .empty-state h3 {
+      margin: 0.5rem 0 0;
+      color: var(--app-text-primary);
       font-size: 0.95rem;
       font-weight: 800;
-      color: var(--sero-text-primary);
     }
 
-    .op-state-cell p {
+    .empty-state p {
       margin: 0;
-      font-size: 0.8rem;
-      color: var(--sero-text-secondary);
+      color: var(--app-text-secondary);
+      font-size: 0.875rem;
     }
 
     .op-spinner {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       margin: 0 auto;
-      border: 3px solid var(--sero-border-light);
-      border-top-color: var(--sero-primary);
+      border: 3px solid color-mix(in srgb, var(--app-border) 70%, transparent);
+      border-top-color: var(--app-heading);
       border-radius: 50%;
       animation: op-spin 0.8s linear infinite;
     }
@@ -768,14 +898,69 @@ type TypeCounts = Record<string, number>;
     .op-pagination {
       display: flex;
       justify-content: center;
-      padding: var(--sp-4);
-      border-top: 1px solid var(--sero-border-light);
+      padding: 0.25rem 0 0;
     }
 
-    @media (max-width: 900px) {
-      .op-header {
-        flex-direction: column-reverse;
-        align-items: flex-start;
+    :host ::ng-deep .op-pagination .pg-btn {
+      width: 40px;
+      height: 40px;
+      border-color: var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-card-bg);
+      color: var(--app-text-primary);
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    :host ::ng-deep .op-pagination .pg-btn:hover:not(:disabled):not(.pg-btn--active) {
+      background: color-mix(in srgb, var(--app-heading) 8%, var(--app-card-bg));
+      border-color: var(--app-heading);
+    }
+
+    :host ::ng-deep .op-pagination .pg-btn--active {
+      background: var(--app-heading);
+      border-color: var(--app-heading);
+      color: var(--app-card-bg);
+    }
+
+    :host ::ng-deep .op-pagination .pg-ellipsis {
+      color: var(--app-text-secondary);
+    }
+
+    @media (max-width: 1200px) {
+      .statistics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .statistics-section {
+        padding: 0 1rem;
+      }
+
+      .statistics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .table-section {
+        padding: 0 1rem 2rem;
+      }
+
+      .table-container {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .statistics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        justify-content: flex-start;
+      }
+
+      .stat-content {
+        justify-content: flex-start;
       }
     }
   `],
@@ -787,6 +972,16 @@ export class OrdersComponent implements OnInit {
 
   readonly typeMeta = ORDER_TYPE_META;
   readonly pageSize = 10;
+
+  private readonly typeIconMap: Record<OrderTypeFilter, string> = {
+    all: 'shopping-cart',
+    hotel: 'building',
+    transportation: 'bus',
+    visa: 'id',
+    catering: 'tools-kitchen-2',
+    ticket: 'ticket',
+    custom: 'sparkles',
+  };
 
   readonly paymentOptions: SeroDropdownOption<PaymentStatus>[] = [
     { value: 'paid', labelKey: 'orders.payment.paid' },
@@ -823,6 +1018,11 @@ export class OrdersComponent implements OnInit {
   openMoreMenuId = signal<number | null>(null);
 
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize)));
+  readonly activeFilterCount = computed(() => [
+    this.paymentFilter(),
+    this.operationFilter(),
+    this.agentStatusFilter(),
+  ].filter(Boolean).length);
 
   readonly footerTotal = computed(() => this.rows().reduce((sum, r) => sum + r.totalPrice, 0));
   readonly footerPaid = computed(() => this.rows().reduce((sum, r) => sum + r.paid, 0));
@@ -842,6 +1042,10 @@ export class OrdersComponent implements OnInit {
 
   countFor(type: OrderTypeFilter): number {
     return this.typeCounts()[type] ?? 0;
+  }
+
+  tablerIconForType(type: OrderTypeFilter): string {
+    return this.typeIconMap[type] ?? 'shopping-cart';
   }
 
   iconForType(type: OrderRow['type']): string {
@@ -874,6 +1078,13 @@ export class OrdersComponent implements OnInit {
   onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchText.set(value);
+    this.page.set(1);
+    this.loadRows();
+  }
+
+  clearSearch(): void {
+    if (!this.searchText()) return;
+    this.searchText.set('');
     this.page.set(1);
     this.loadRows();
   }
