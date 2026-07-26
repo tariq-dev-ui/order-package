@@ -241,19 +241,19 @@
       "edit": "Edit",
       "print": "Print",
       "more": "More",
-      "duplicate": "Duplicate",
-      "downloadPdf": "Download PDF",
-      "statusLog": "Status Log",
-      "delete": "Delete"
+      "orderDetails": "Order Details",
+      "managerLog": "Manager Log",
+      "agentLog": "Agent Log",
+      "managePayments": "Payment Management"
     },
     "feedback": {
       "view": "Viewing quotation {{no}}",
       "edit": "Editing quotation {{no}}",
       "print": "Printing quotation {{no}}",
-      "duplicate": "Duplicated quotation {{no}}",
-      "downloadPdf": "Downloading PDF for {{no}}",
-      "statusLog": "Opening status log for {{no}}",
-      "delete": "Deleted quotation {{no}}",
+      "orderDetails": "Opening order details for {{no}}",
+      "managerLog": "Opening manager log for {{no}}",
+      "agentLog": "Opening agent log for {{no}}",
+      "managePayments": "Opening payment management for {{no}}",
       "exportStarted": "Exporting {{count}} quotations..."
     }
   },

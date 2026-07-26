@@ -283,21 +283,21 @@
                         </button>
                         @if (openMoreMenuId() === row.id) {
                           <div class="op-more-menu">
-                            <button type="button" (click)="duplicateRow(row)">
-                              <tabler-icon name="copy"></tabler-icon>
-                              {{ 'orders.actionsMenu.duplicate' | translate }}
+                            <button type="button" (click)="openOrderDetails(row)">
+                              <tabler-icon name="file-description"></tabler-icon>
+                              {{ 'orders.actionsMenu.orderDetails' | translate }}
                             </button>
-                            <button type="button" (click)="downloadPdf(row)">
-                              <tabler-icon name="file-type-pdf"></tabler-icon>
-                              {{ 'orders.actionsMenu.downloadPdf' | translate }}
+                            <button type="button" (click)="openManagerLog(row)">
+                              <tabler-icon name="user-shield"></tabler-icon>
+                              {{ 'orders.actionsMenu.managerLog' | translate }}
                             </button>
-                            <button type="button" (click)="viewStatusLog(row)">
-                              <tabler-icon name="history"></tabler-icon>
-                              {{ 'orders.actionsMenu.statusLog' | translate }}
+                            <button type="button" (click)="openAgentLog(row)">
+                              <tabler-icon name="user-check"></tabler-icon>
+                              {{ 'orders.actionsMenu.agentLog' | translate }}
                             </button>
-                            <button type="button" class="op-more-menu-danger" (click)="deleteRow(row)">
-                              <tabler-icon name="trash"></tabler-icon>
-                              {{ 'orders.actionsMenu.delete' | translate }}
+                            <button type="button" (click)="managePayments(row)">
+                              <tabler-icon name="credit-card"></tabler-icon>
+                              {{ 'orders.actionsMenu.managePayments' | translate }}
                             </button>
                           </div>
                         }

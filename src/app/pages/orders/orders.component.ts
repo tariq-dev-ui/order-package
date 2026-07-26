@@ -211,24 +211,24 @@ export class OrdersComponent implements OnInit {
     this.notify('orders.feedback.print', row);
   }
 
-  duplicateRow(row: OrderRow): void {
+  openOrderDetails(row: OrderRow): void {
     this.openMoreMenuId.set(null);
-    this.notify('orders.feedback.duplicate', row);
+    this.notify('orders.feedback.orderDetails', row);
   }
 
-  downloadPdf(row: OrderRow): void {
+  openManagerLog(row: OrderRow): void {
     this.openMoreMenuId.set(null);
-    this.notify('orders.feedback.downloadPdf', row);
+    this.notify('orders.feedback.managerLog', row);
   }
 
-  viewStatusLog(row: OrderRow): void {
+  openAgentLog(row: OrderRow): void {
     this.openMoreMenuId.set(null);
-    this.notify('orders.feedback.statusLog', row);
+    this.notify('orders.feedback.agentLog', row);
   }
 
-  deleteRow(row: OrderRow): void {
+  managePayments(row: OrderRow): void {
     this.openMoreMenuId.set(null);
-    this.notify('orders.feedback.delete', row);
+    this.notify('orders.feedback.managePayments', row);
   }
 
   exportCsv(): void {

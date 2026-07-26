@@ -287,19 +287,19 @@
       "edit": "تعديل",
       "print": "طباعة",
       "more": "المزيد",
-      "duplicate": "نسخ",
-      "downloadPdf": "تحميل PDF",
-      "statusLog": "سجل الحالة",
-      "delete": "حذف"
+      "orderDetails": "تفاصيل الطلب",
+      "managerLog": "سجل المدير",
+      "agentLog": "سجل الوكيل",
+      "managePayments": "إدارة المدفوعات"
     },
     "feedback": {
       "view": "عرض عرض السعر {{no}}",
       "edit": "تعديل عرض السعر {{no}}",
       "print": "طباعة عرض السعر {{no}}",
-      "duplicate": "تم نسخ عرض السعر {{no}}",
-      "downloadPdf": "تنزيل PDF لـ {{no}}",
-      "statusLog": "فتح سجل الحالة لـ {{no}}",
-      "delete": "تم حذف عرض السعر {{no}}",
+      "orderDetails": "فتح تفاصيل الطلب {{no}}",
+      "managerLog": "فتح سجل المدير لـ {{no}}",
+      "agentLog": "فتح سجل الوكيل لـ {{no}}",
+      "managePayments": "فتح إدارة المدفوعات لـ {{no}}",
       "exportStarted": "تصدير {{count}} عرض سعر..."
     }
   },
