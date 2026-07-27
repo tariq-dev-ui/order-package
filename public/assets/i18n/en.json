@@ -117,6 +117,7 @@
       "transportRequests":      "Transport Requests",
       "cateringRequests":       "Catering Requests",
       "flightRequests":         "Flight Requests",
+      "availabilityReport":     "Availability Report",
       "pricingGroup":           "Pricing",
       "transportPricing":       "Transport Pricing",
       "foodPricing":            "Food Pricing",

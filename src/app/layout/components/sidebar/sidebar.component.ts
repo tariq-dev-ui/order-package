@@ -561,7 +561,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         { label: 'sidebar.nav.visaRequests',      route: '/admin/operations/visa-requests',      icon: 'badge' },
         { label: 'sidebar.nav.transportRequests', route: '/admin/operations/transport-requests', icon: 'directions_bus' },
         { label: 'sidebar.nav.cateringRequests',  route: '/admin/operations/catering-requests',  icon: 'restaurant' },
-        { label: 'sidebar.nav.flightRequests',    route: '/admin/operations/flight-requests',    icon: 'flight' }
+        { label: 'sidebar.nav.flightRequests',    route: '/admin/operations/flight-requests',    icon: 'flight' },
+        { label: 'sidebar.nav.availabilityReport',route: '/admin/operations/availability-report',icon: 'bar_chart' }
       ]
     },
     {
