@@ -256,19 +256,35 @@
 
   "availabilityReport": {
     "title": "Availability Report",
-    "subtitle": "View and analyze unit availability for the selected period.",
+    "subtitle": "View and analyze hotel availability and occupancy across providers, hotels and selected periods.",
     "actions": {
       "exportPdf": "Export PDF",
       "showResults": "Show Results"
     },
+    "kpis": {
+      "totalHotels": "Total Hotels",
+      "totalUnits": "Total Units",
+      "occupiedUnits": "Occupied Units",
+      "availableUnits": "Available Units",
+      "waitingCheckIn": "Waiting Check-In",
+      "overbookedUnits": "Overbooked Units",
+      "avgOccupancy": "Average Occupancy",
+      "avgAvailability": "Average Availability"
+    },
     "filters": {
+      "provider": "Provider",
+      "hotel": "Hotel",
       "period": "Period",
       "roomType": "Room Type",
       "bookingType": "Booking Type",
+      "groupBy": "Group By",
+      "allProviders": "All Providers",
+      "allHotels": "All Hotels",
       "allRoomTypes": "All Room Types",
       "allBookingTypes": "All Booking Types",
       "search": "Search",
       "noOptions": "No options found",
+      "loading": "Loading...",
       "roomTypes": {
         "standard": "Standard Room",
         "deluxe": "Deluxe Room",
@@ -281,6 +297,13 @@
         "subQadiMilyan": "Sub-agent of Qadi Milyan",
         "representative": "Representative",
         "subRepresentative": "Sub-agent of Representative"
+      },
+      "groupByOptions": {
+        "hotel": "By Hotel",
+        "date": "By Date",
+        "provider": "By Provider",
+        "roomType": "By Room Type",
+        "bookingType": "By Booking Type"
       },
       "presets": {
         "today": "Today",
@@ -298,6 +321,12 @@
     },
     "columns": {
       "period": "Period",
+      "date": "Date",
+      "hotel": "Hotel",
+      "provider": "Provider",
+      "hotels": "Hotels",
+      "roomType": "Room Type",
+      "bookingType": "Booking Type",
       "totalUnits": "Total Units",
       "checkedIn": "Checked In",
       "waitingCheckIn": "Waiting Check In",

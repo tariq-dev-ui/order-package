@@ -302,19 +302,35 @@
 
   "availabilityReport": {
     "title": "تقرير الإتاحة",
-    "subtitle": "عرض وتحليل إتاحة الوحدات حسب الفترة المحددة.",
+    "subtitle": "عرض وتحليل إتاحة الوحدات وإشغالها عبر المزودين والفنادق والفترات المحددة.",
     "actions": {
       "exportPdf": "تصدير PDF",
       "showResults": "عرض النتائج"
     },
+    "kpis": {
+      "totalHotels": "إجمالي الفنادق",
+      "totalUnits": "إجمالي الوحدات",
+      "occupiedUnits": "الوحدات المشغولة",
+      "availableUnits": "الوحدات المتاحة",
+      "waitingCheckIn": "في انتظار تسجيل الوصول",
+      "overbookedUnits": "الحجز الزائد",
+      "avgOccupancy": "متوسط الإشغال",
+      "avgAvailability": "متوسط الإتاحة"
+    },
     "filters": {
+      "provider": "المزود",
+      "hotel": "الفندق",
       "period": "الفترة",
       "roomType": "نوع الغرفة",
       "bookingType": "نوع الحجز",
+      "groupBy": "تجميع حسب",
+      "allProviders": "كل المزودين",
+      "allHotels": "كل الفنادق",
       "allRoomTypes": "جميع أنواع الغرف",
       "allBookingTypes": "كل أنواع الحجز",
       "search": "بحث",
       "noOptions": "لا توجد نتائج",
+      "loading": "جاري التحميل...",
       "roomTypes": {
         "standard": "غرفة عادية",
         "deluxe": "غرفة ديلوكس",
@@ -327,6 +343,13 @@
         "subQadiMilyan": "فرعي من القاضي مليان",
         "representative": "مندوب",
         "subRepresentative": "فرعي من المندوب"
+      },
+      "groupByOptions": {
+        "hotel": "حسب الفندق",
+        "date": "حسب التاريخ",
+        "provider": "حسب المزود",
+        "roomType": "حسب نوع الغرفة",
+        "bookingType": "حسب نوع الحجز"
       },
       "presets": {
         "today": "اليوم",
@@ -344,6 +367,12 @@
     },
     "columns": {
       "period": "الفترة",
+      "date": "التاريخ",
+      "hotel": "الفندق",
+      "provider": "المزود",
+      "hotels": "الفنادق",
+      "roomType": "نوع الغرفة",
+      "bookingType": "نوع الحجز",
       "totalUnits": "إجمالي الوحدات",
       "checkedIn": "تسجيل الوصول",
       "waitingCheckIn": "في انتظار تسجيل الوصول",
