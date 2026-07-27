@@ -309,7 +309,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  order: 1;
+  order: 3;
   white-space: nowrap;
 }
 
@@ -361,7 +361,7 @@
 
 .search-field-wrapper {
   position: relative;
-  order: 3;
+  order: 2;
   display: flex;
   align-items: center;
   flex: 1;
@@ -477,7 +477,7 @@
   align-items: center;
   gap: 0.5rem;
   flex-shrink: 0;
-  order: 4;
+  order: 1;
 }
 
 .export-format-btn {
@@ -523,22 +523,39 @@
 }
 
 .active-filters-display {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  z-index: 200;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: stretch;
+  flex-direction: column;
   gap: 0.5rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--app-border);
+  width: max-content;
+  min-width: 280px;
+  max-width: 320px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+  background: var(--app-card-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.2s ease;
+}
+
+@media (max-width: 480px) {
+  .active-filters-display {
+    inset-inline-end: auto;
+    inset-inline-start: 0;
+    min-width: min(320px, 90vw);
+  }
 }
 
 .active-filter-item {
   display: flex;
-  flex: 0 0 auto;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 220px;
-  max-width: 280px;
+  width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--app-border);
   border-radius: 0.5rem;
@@ -1239,5 +1256,16 @@
 
   .stat-content {
     justify-content: flex-start;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

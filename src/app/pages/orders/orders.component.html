@@ -45,17 +45,20 @@
   <div class="filters-section">
     <div class="filters-container">
       <div class="filters-header-row">
-        <div class="filter-button-wrapper">
+        <div class="export-buttons-group">
           <button
             type="button"
-            class="filter-main-btn"
-            [class.is-open]="showAdvancedFilters()"
-            (click)="toggleAdvancedFilters()">
-            <tabler-icon name="filter"></tabler-icon>
-            <span>{{ 'orders.actions.filter' | translate }}</span>
-            @if (activeFilterCount() > 0) {
-              <span class="filter-badge">{{ activeFilterCount() }}</span>
-            }
+            class="export-format-btn export-format-btn--pdf"
+            (click)="exportCsv()">
+            <tabler-icon name="file-type-pdf"></tabler-icon>
+            <span>{{ 'orders.actions.exportPdf' | translate }}</span>
+          </button>
+          <button
+            type="button"
+            class="export-format-btn export-format-btn--excel"
+            (click)="exportCsv()">
+            <tabler-icon name="file-spreadsheet"></tabler-icon>
+            <span>{{ 'orders.actions.exportExcel' | translate }}</span>
           </button>
         </div>
 
@@ -81,82 +84,79 @@
           }
         </div>
 
-        <div class="export-buttons-group">
+        <div class="filter-button-wrapper">
           <button
             type="button"
-            class="export-format-btn export-format-btn--pdf"
-            (click)="exportCsv()">
-            <tabler-icon name="file-type-pdf"></tabler-icon>
-            <span>{{ 'orders.actions.exportPdf' | translate }}</span>
+            class="filter-main-btn"
+            [class.is-open]="showAdvancedFilters()"
+            (click)="toggleAdvancedFilters()">
+            <tabler-icon name="filter"></tabler-icon>
+            <span>{{ 'orders.actions.filter' | translate }}</span>
+            @if (activeFilterCount() > 0) {
+              <span class="filter-badge">{{ activeFilterCount() }}</span>
+            }
           </button>
-          <button
-            type="button"
-            class="export-format-btn export-format-btn--excel"
-            (click)="exportCsv()">
-            <tabler-icon name="file-spreadsheet"></tabler-icon>
-            <span>{{ 'orders.actions.exportExcel' | translate }}</span>
-          </button>
-        </div>
-      </div>
 
-      @if (showAdvancedFilters()) {
-        <div class="active-filters-display op-active-filters">
-          <div class="active-filter-item">
-            <div class="filter-item-header">
-              <tabler-icon name="credit-card"></tabler-icon>
-              <span class="filter-item-label">{{ 'orders.filters.paymentStatus' | translate }}</span>
-            </div>
-            <div class="filter-item-input">
-              <app-sero-dropdown
-                [options]="paymentOptions"
-                [value]="paymentFilter()"
-                [placeholderKey]="'orders.filters.any'"
-                (valueChange)="onPaymentFilterChange($event)">
-              </app-sero-dropdown>
-            </div>
-          </div>
+          @if (showAdvancedFilters()) {
+            <div class="active-filters-display op-active-filters">
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="credit-card"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.paymentStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="paymentOptions"
+                    [value]="paymentFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onPaymentFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
 
-          <div class="active-filter-item">
-            <div class="filter-item-header">
-              <tabler-icon name="progress-check"></tabler-icon>
-              <span class="filter-item-label">{{ 'orders.filters.operationStatus' | translate }}</span>
-            </div>
-            <div class="filter-item-input">
-              <app-sero-dropdown
-                [options]="operationOptions"
-                [value]="operationFilter()"
-                [placeholderKey]="'orders.filters.any'"
-                (valueChange)="onOperationFilterChange($event)">
-              </app-sero-dropdown>
-            </div>
-          </div>
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="progress-check"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.operationStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="operationOptions"
+                    [value]="operationFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onOperationFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
 
-          <div class="active-filter-item">
-            <div class="filter-item-header">
-              <tabler-icon name="user-check"></tabler-icon>
-              <span class="filter-item-label">{{ 'orders.filters.agentStatus' | translate }}</span>
-            </div>
-            <div class="filter-item-input">
-              <app-sero-dropdown
-                [options]="agentStatusOptions"
-                [value]="agentStatusFilter()"
-                [placeholderKey]="'orders.filters.any'"
-                (valueChange)="onAgentStatusFilterChange($event)">
-              </app-sero-dropdown>
-            </div>
-          </div>
+              <div class="active-filter-item">
+                <div class="filter-item-header">
+                  <tabler-icon name="user-check"></tabler-icon>
+                  <span class="filter-item-label">{{ 'orders.filters.agentStatus' | translate }}</span>
+                </div>
+                <div class="filter-item-input">
+                  <app-sero-dropdown
+                    [options]="agentStatusOptions"
+                    [value]="agentStatusFilter()"
+                    [placeholderKey]="'orders.filters.any'"
+                    (valueChange)="onAgentStatusFilterChange($event)">
+                  </app-sero-dropdown>
+                </div>
+              </div>
 
-          @if (activeFilterCount() > 0) {
-            <button
-              type="button"
-              class="clear-all-filters-btn"
-              (click)="clearAdvancedFilters()">
-              <tabler-icon name="trash"></tabler-icon>
-              <span>{{ 'orders.actions.clearFilters' | translate }}</span>
-            </button>
+              @if (activeFilterCount() > 0) {
+                <button
+                  type="button"
+                  class="clear-all-filters-btn"
+                  (click)="clearAdvancedFilters()">
+                  <tabler-icon name="trash"></tabler-icon>
+                  <span>{{ 'orders.actions.clearFilters' | translate }}</span>
+                </button>
+              }
+            </div>
           }
         </div>
-      }
+      </div>
     </div>
   </div>
   <div class="table-section">
