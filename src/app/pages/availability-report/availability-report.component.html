@@ -1,0 +1,173 @@
+<section class="ar-page">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="page-icon">
+          <tabler-icon name="calendar-check"></tabler-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">{{ 'availabilityReport.title' | translate }}</h1>
+          <p class="page-description">{{ 'availabilityReport.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          class="export-format-btn export-format-btn--pdf"
+          (click)="exportPdf()">
+          <tabler-icon name="file-type-pdf"></tabler-icon>
+          <span>{{ 'availabilityReport.actions.exportPdf' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filter-group">
+        <span class="filter-group-label">
+          <tabler-icon name="calendar-event"></tabler-icon>
+          {{ 'availabilityReport.filters.period' | translate }}
+        </span>
+        <div class="preset-group">
+          @for (preset of periodPresets; track preset.value) {
+            <button
+              type="button"
+              class="preset-btn"
+              [class.preset-btn--active]="periodPreset() === preset.value"
+              (click)="selectPreset(preset.value)">
+              {{ preset.labelKey | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (periodPreset() === 'custom') {
+        <div class="custom-range-row">
+          <div class="custom-range-field">
+            <span class="custom-range-label">{{ 'availabilityReport.filters.customFrom' | translate }}</span>
+            <app-sero-date-picker
+              [value]="customFrom()"
+              (valueChange)="onCustomFromChange($event)">
+            </app-sero-date-picker>
+          </div>
+          <div class="custom-range-field">
+            <span class="custom-range-label">{{ 'availabilityReport.filters.customTo' | translate }}</span>
+            <app-sero-date-picker
+              [value]="customTo()"
+              (valueChange)="onCustomToChange($event)">
+            </app-sero-date-picker>
+          </div>
+        </div>
+      }
+
+      <div class="filters-row">
+        <div class="filter-field">
+          <span class="filter-field-label">{{ 'availabilityReport.filters.roomType' | translate }}</span>
+          <app-sero-dropdown
+            [options]="roomTypeOptions"
+            [value]="roomType()"
+            (valueChange)="onRoomTypeChange($event)">
+          </app-sero-dropdown>
+        </div>
+
+        <div class="filter-field">
+          <span class="filter-field-label">{{ 'availabilityReport.filters.bookingType' | translate }}</span>
+          <app-sero-multi-select
+            [options]="bookingTypeOptions"
+            [value]="bookingType()"
+            [placeholderKey]="'availabilityReport.filters.allBookingTypes'"
+            [searchPlaceholderKey]="'availabilityReport.filters.search'"
+            [noOptionsKey]="'availabilityReport.filters.noOptions'"
+            (valueChange)="onBookingTypeChange($event)">
+          </app-sero-multi-select>
+        </div>
+
+        <button
+          type="button"
+          class="show-results-btn"
+          (click)="showResults()">
+          <tabler-icon name="search"></tabler-icon>
+          <span>{{ 'availabilityReport.actions.showResults' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <div class="table-card">
+      <div class="table-container">
+        <table class="availability-table">
+          <thead>
+            <tr>
+              <th>{{ 'availabilityReport.columns.period' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="8" class="ar-state-cell">
+                  <div class="ar-spinner"></div>
+                </td>
+              </tr>
+            } @else if (rows().length === 0) {
+              <tr>
+                <td colspan="8" class="ar-state-cell">
+                  <div class="empty-state">
+                    <tabler-icon name="calendar-off"></tabler-icon>
+                    <h3>{{ 'availabilityReport.empty.title' | translate }}</h3>
+                    <p>{{ 'availabilityReport.empty.description' | translate }}</p>
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              @for (row of rows(); track row.period) {
+                <tr>
+                  <td class="cell-period">{{ row.period }}</td>
+                  <td>{{ row.totalUnits }}</td>
+                  <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
+                  <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
+                  <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
+                  <td>{{ row.totalAvailable }}</td>
+                  <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
+                  <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (!isLoading() && rows().length > 0) {
+        <div class="table-footer">
+          <pkg-pagination
+            [currentPage]="page()"
+            [totalPages]="totalPages()"
+            (pageChange)="setPage($event)" />
+
+          <div class="footer-meta">
+            <span class="footer-range">{{ rangeStart() }}–{{ rangeEnd() }} <span class="footer-range-of">of</span> {{ totalCount() }}</span>
+
+            <div class="items-per-page">
+              <span>{{ 'availabilityReport.footer.itemsPerPage' | translate }}</span>
+              <app-sero-dropdown
+                [options]="itemsPerPageDropdownOptions"
+                [value]="itemsPerPage()"
+                size="sm"
+                (valueChange)="onItemsPerPageChange($event)">
+              </app-sero-dropdown>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -300,6 +300,67 @@
     }
   },
 
+  "availabilityReport": {
+    "title": "تقرير الإتاحة",
+    "subtitle": "عرض وتحليل إتاحة الوحدات حسب الفترة المحددة.",
+    "actions": {
+      "exportPdf": "تصدير PDF",
+      "showResults": "عرض النتائج"
+    },
+    "filters": {
+      "period": "الفترة",
+      "roomType": "نوع الغرفة",
+      "bookingType": "نوع الحجز",
+      "allRoomTypes": "جميع أنواع الغرف",
+      "allBookingTypes": "كل أنواع الحجز",
+      "search": "بحث",
+      "noOptions": "لا توجد نتائج",
+      "roomTypes": {
+        "standard": "غرفة عادية",
+        "deluxe": "غرفة ديلوكس",
+        "suite": "جناح",
+        "family": "غرفة عائلية"
+      },
+      "bookingTypes": {
+        "regular": "عادي",
+        "qadiMilyan": "قاضي مليان",
+        "subQadiMilyan": "فرعي من القاضي مليان",
+        "representative": "مندوب",
+        "subRepresentative": "فرعي من المندوب"
+      },
+      "presets": {
+        "today": "اليوم",
+        "yesterday": "أمس",
+        "thisWeek": "هذا الأسبوع",
+        "lastWeek": "الأسبوع الماضي",
+        "thisMonth": "هذا الشهر",
+        "lastMonth": "الشهر الماضي",
+        "currentYear": "السنة الحالية",
+        "lastYear": "السنة الماضية",
+        "custom": "مخصص"
+      },
+      "customFrom": "من",
+      "customTo": "إلى"
+    },
+    "columns": {
+      "period": "الفترة",
+      "totalUnits": "إجمالي الوحدات",
+      "checkedIn": "تسجيل الوصول",
+      "waitingCheckIn": "في انتظار تسجيل الوصول",
+      "overbooked": "الحجز الزائد",
+      "totalAvailable": "الإجمالي المتاح",
+      "availablePercent": "نسبة الإتاحة",
+      "occupancyPercent": "نسبة الإشغال"
+    },
+    "empty": {
+      "title": "لا توجد بيانات إتاحة",
+      "description": "حاول تعديل الفترة أو الفلاتر والبحث مرة أخرى."
+    },
+    "footer": {
+      "itemsPerPage": "عناصر في الصفحة:"
+    }
+  },
+
   "quotations": {
     "title": "جميع عروض الأسعار",
     "subtitle": "تصفح وأدر جميع عروض الأسعار عبر جميع الخدمات.",

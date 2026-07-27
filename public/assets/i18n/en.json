@@ -254,6 +254,67 @@
     }
   },
 
+  "availabilityReport": {
+    "title": "Availability Report",
+    "subtitle": "View and analyze unit availability for the selected period.",
+    "actions": {
+      "exportPdf": "Export PDF",
+      "showResults": "Show Results"
+    },
+    "filters": {
+      "period": "Period",
+      "roomType": "Room Type",
+      "bookingType": "Booking Type",
+      "allRoomTypes": "All Room Types",
+      "allBookingTypes": "All Booking Types",
+      "search": "Search",
+      "noOptions": "No options found",
+      "roomTypes": {
+        "standard": "Standard Room",
+        "deluxe": "Deluxe Room",
+        "suite": "Suite",
+        "family": "Family Room"
+      },
+      "bookingTypes": {
+        "regular": "Regular",
+        "qadiMilyan": "Qadi Milyan",
+        "subQadiMilyan": "Sub-agent of Qadi Milyan",
+        "representative": "Representative",
+        "subRepresentative": "Sub-agent of Representative"
+      },
+      "presets": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "thisWeek": "This Week",
+        "lastWeek": "Last Week",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "currentYear": "Current Year",
+        "lastYear": "Last Year",
+        "custom": "Custom"
+      },
+      "customFrom": "From",
+      "customTo": "To"
+    },
+    "columns": {
+      "period": "Period",
+      "totalUnits": "Total Units",
+      "checkedIn": "Checked In",
+      "waitingCheckIn": "Waiting Check In",
+      "overbooked": "Overbooked",
+      "totalAvailable": "Total Available",
+      "availablePercent": "Available %",
+      "occupancyPercent": "Occupancy %"
+    },
+    "empty": {
+      "title": "No availability data",
+      "description": "Try adjusting the period or filters and search again."
+    },
+    "footer": {
+      "itemsPerPage": "Items per page:"
+    }
+  },
+
   "quotations": {
     "title": "All Quotations",
     "subtitle": "Browse and manage all quotations across all services.",

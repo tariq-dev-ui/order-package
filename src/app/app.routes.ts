@@ -39,7 +39,7 @@ const operationsVisaRequestsPage = () => import('./features/admin/operations/vis
 const operationsTransportRequestsPage = () => import('./features/admin/operations/transport-requests/transport-requests-page.component').then(m => m.TransportRequestsPageComponent);
 const operationsCateringRequestsPage = () => import('./features/admin/operations/catering-requests/catering-requests-page.component').then(m => m.CateringRequestsPageComponent);
 const operationsFlightRequestsPage = () => import('./features/admin/operations/flight-requests/flight-requests-page.component').then(m => m.FlightRequestsPageComponent);
-const operationsAvailabilityReportPage = () => import('./features/admin/availability-report/availability-report-page.component').then(m => m.AvailabilityReportPageComponent);
+const availabilityReportPage = () => import('./pages/availability-report/availability-report.component').then(m => m.AvailabilityReportComponent);
 const salamAgentPackagesPage = () => import('./pages/sero-packages/sero-packages.component').then(m => m.SeroPackagesComponent);
 const salamPackageBuilderPage = () => import('./pages/package-builder/package-builder.component').then(m => m.PackageBuilderComponent);
 const agentRequestsPage = () => import('./pages/agents-orders/agents-orders.component').then(m => m.AgentsOrdersComponent);
@@ -84,7 +84,7 @@ export const routes: Routes = [
       { path: 'operations/transport-requests', loadComponent: operationsTransportRequestsPage },
       { path: 'operations/catering-requests',  loadComponent: operationsCateringRequestsPage },
       { path: 'operations/flight-requests',    loadComponent: operationsFlightRequestsPage },
-      { path: 'operations/availability-report', loadComponent: operationsAvailabilityReportPage },
+      { path: 'operations/availability-report', loadComponent: availabilityReportPage },
       { path: 'operations/hotels',             redirectTo: 'operations/hotel-bookings', pathMatch: 'full' },
       { path: 'operations/visa',               redirectTo: 'operations/visa-requests', pathMatch: 'full' },
       { path: 'operations/transport',          redirectTo: 'operations/transport-requests', pathMatch: 'full' },
