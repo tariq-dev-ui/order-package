@@ -281,6 +281,7 @@
       "groupBy": "Group By",
       "allProviders": "All Providers",
       "allHotels": "All Hotels",
+      "selectHotelFirst": "Select a hotel first",
       "allRoomTypes": "All Room Types",
       "allBookingTypes": "All Booking Types",
       "search": "Search",

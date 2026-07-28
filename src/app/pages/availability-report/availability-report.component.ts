@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TablerIconComponent } from 'angular-tabler-icons';
 import { SeroDropdownComponent, SeroDropdownOption } from '../../shared/components/sero-dropdown/sero-dropdown.component';
@@ -11,7 +12,6 @@ import {
   HOTELS,
   HOTELS_BY_ID,
   HotelMock,
-  PROVIDERS,
   PROVIDERS_BY_ID,
   ROOM_TYPE_WEIGHTS,
 } from './availability-report.mock-data';
@@ -38,10 +38,7 @@ interface Sums {
 
 interface ReportRow {
   key: string;
-  label?: string;
-  labelKey?: string;
-  secondaryLabel?: string;
-  hotelsCount?: number;
+  label: string;
   totalUnits: number;
   checkedIn: number;
   waitingCheckIn: number;
@@ -71,6 +68,7 @@ interface Kpis {
   standalone: true,
   imports: [
     TranslateModule,
+    DatePipe,
     TablerIconComponent,
     SeroDropdownComponent,
     SeroMultiSelectComponent,
@@ -111,19 +109,11 @@ export class AvailabilityReportComponent {
     { value: 'subRepresentative', labelKey: 'availabilityReport.filters.bookingTypes.subRepresentative' },
   ];
 
-  readonly providerOptions: SeroSearchableSelectOption<string>[] = [
-    { value: 'all', labelKey: 'availabilityReport.filters.allProviders' },
-    ...PROVIDERS.map((provider) => ({ value: provider.id, label: provider.name })),
+  // Hotel is the primary selector — always the full hotel list, independent of provider.
+  readonly hotelOptions: SeroSearchableSelectOption<string>[] = [
+    { value: 'all', labelKey: 'availabilityReport.filters.allHotels' },
+    ...HOTELS.map((hotel) => ({ value: hotel.id, label: hotel.name })),
   ];
-
-  readonly hotelOptions = computed<SeroSearchableSelectOption<string>[]>(() => {
-    const providerId = this.providerId();
-    const hotels = providerId === 'all' ? HOTELS : HOTELS.filter((hotel) => hotel.providerId === providerId);
-    return [
-      { value: 'all', labelKey: 'availabilityReport.filters.allHotels' },
-      ...hotels.map((hotel) => ({ value: hotel.id, label: hotel.name })),
-    ];
-  });
 
   readonly itemsPerPageOptions = [10, 25, 50, 100];
   readonly itemsPerPageDropdownOptions: SeroDropdownOption<number>[] = this.itemsPerPageOptions.map((count) => ({
@@ -136,9 +126,9 @@ export class AvailabilityReportComponent {
   readonly customTo = signal<string>('');
   readonly roomType = signal<string>('all');
   readonly bookingType = signal<string[]>([]);
-  readonly providerId = signal<string>('all');
   readonly hotelId = signal<string>('all');
-  readonly isLoadingHotels = signal(false);
+  readonly providerId = signal<string>('all');
+  readonly isLoadingProviders = signal(false);
 
   readonly isLoading = signal(false);
   readonly hasSearched = signal(false);
@@ -153,11 +143,29 @@ export class AvailabilityReportComponent {
   readonly appliedFrom = signal<Date | null>(null);
   readonly appliedTo = signal<Date | null>(null);
 
+  // Provider is entirely dependent on the selected hotel — disabled until a specific hotel is chosen.
+  readonly isProviderDisabled = computed(() => this.hotelId() === 'all');
+
+  readonly providerOptions = computed<SeroSearchableSelectOption<string>[]>(() => {
+    const hotelId = this.hotelId();
+    if (hotelId === 'all') return [];
+    const hotel = HOTELS_BY_ID.get(hotelId);
+    const provider = hotel ? PROVIDERS_BY_ID.get(hotel.providerId) : undefined;
+    return [
+      { value: 'all', labelKey: 'availabilityReport.filters.allProviders' },
+      ...(provider ? [{ value: provider.id, label: provider.name }] : []),
+    ];
+  });
+
+  readonly activePeriodLabelKey = computed(
+    () => this.periodPresets.find((p) => p.value === this.periodPreset())?.labelKey ?? '',
+  );
+
   readonly groupedRows = computed<ReportRow[]>(() => {
     const records = this.atomicRows();
     const roomType = this.appliedRoomType();
     const bookingTypes = this.appliedBookingTypes();
-    return this.groupByHotel(records, roomType, bookingTypes);
+    return this.groupByDate(records, roomType, bookingTypes);
   });
 
   readonly totalCount = computed(() => this.groupedRows().length);
@@ -205,6 +213,9 @@ export class AvailabilityReportComponent {
 
   selectPreset(preset: PeriodPreset): void {
     this.periodPreset.set(preset);
+    if (preset !== 'custom') {
+      this.showResults();
+    }
   }
 
   onRoomTypeChange(value: string): void {
@@ -215,25 +226,28 @@ export class AvailabilityReportComponent {
     this.bookingType.set(value);
   }
 
-  onProviderChange(value: string): void {
-    this.providerId.set(value);
-    this.hotelId.set('all');
-    this.isLoadingHotels.set(true);
-    setTimeout(() => this.isLoadingHotels.set(false), 200);
+  onHotelChange(value: string): void {
+    this.hotelId.set(value);
+    this.providerId.set('all');
+    this.isLoadingProviders.set(true);
+    setTimeout(() => this.isLoadingProviders.set(false), 200);
     this.showResults();
   }
 
-  onHotelChange(value: string): void {
-    this.hotelId.set(value);
+  onProviderChange(value: string): void {
+    if (this.isProviderDisabled()) return;
+    this.providerId.set(value);
     this.showResults();
   }
 
   onCustomFromChange(value: string): void {
     this.customFrom.set(value);
+    this.maybeRefreshCustomRange();
   }
 
   onCustomToChange(value: string): void {
     this.customTo.set(value);
+    this.maybeRefreshCustomRange();
   }
 
   onItemsPerPageChange(count: number): void {
@@ -277,15 +291,17 @@ export class AvailabilityReportComponent {
     // TODO: wire up to the real export endpoint once the Availability Report API is available.
   }
 
+  private maybeRefreshCustomRange(): void {
+    if (this.periodPreset() === 'custom' && this.customFrom() && this.customTo()) {
+      this.showResults();
+    }
+  }
+
   private resolveHotelsInScope(): HotelMock[] {
     const hotelId = this.hotelId();
     if (hotelId !== 'all') {
       const hotel = HOTELS_BY_ID.get(hotelId);
       return hotel ? [hotel] : [];
-    }
-    const providerId = this.providerId();
-    if (providerId !== 'all') {
-      return HOTELS.filter((h) => h.providerId === providerId);
     }
     return HOTELS;
   }
@@ -471,24 +487,11 @@ export class AvailabilityReportComponent {
     return map;
   }
 
-  private countDistinctDates(records: AtomicRecord[]): number {
-    return new Set(records.map((r) => r.date)).size;
-  }
-
-  private toRow(
-    key: string,
-    sum: Sums,
-    dayDivisor: number,
-    label?: string,
-    secondaryLabel?: string,
-    hotelsCount?: number,
-    labelKey?: string,
-  ): ReportRow {
-    const divisor = Math.max(1, dayDivisor);
-    const totalUnits = Math.round(sum.totalUnits / divisor);
-    const checkedIn = Math.round(sum.checkedIn / divisor);
-    const waitingCheckIn = Math.round(sum.waitingCheckIn / divisor);
-    const overbooked = Math.round(sum.overbooked / divisor);
+  private toRow(key: string, sum: Sums, label: string): ReportRow {
+    const totalUnits = Math.round(sum.totalUnits);
+    const checkedIn = Math.round(sum.checkedIn);
+    const waitingCheckIn = Math.round(sum.waitingCheckIn);
+    const overbooked = Math.round(sum.overbooked);
     const totalAvailable = Math.max(0, totalUnits - checkedIn - waitingCheckIn);
     const availablePercent = totalUnits === 0 ? 0 : Math.round((totalAvailable / totalUnits) * 100);
     const occupancyPercent = totalUnits === 0 ? 0 : Math.round((checkedIn / totalUnits) * 100);
@@ -496,9 +499,6 @@ export class AvailabilityReportComponent {
     return {
       key,
       label,
-      labelKey,
-      secondaryLabel,
-      hotelsCount,
       totalUnits,
       checkedIn,
       waitingCheckIn,
@@ -509,16 +509,18 @@ export class AvailabilityReportComponent {
     };
   }
 
-  private groupByHotel(records: AtomicRecord[], roomType: string, bookingTypes: string[]): ReportRow[] {
-    const dayCount = this.countDistinctDates(records);
-    const sums = this.groupSum(records, (r) => r.hotelId, roomType, bookingTypes);
+  // Hotel/Provider are now header-level context filters, so each table row represents
+  // one day in the selected period rather than one hotel.
+  private groupByDate(records: AtomicRecord[], roomType: string, bookingTypes: string[]): ReportRow[] {
+    const sums = this.groupSum(records, (r) => r.date, roomType, bookingTypes);
     return Array.from(sums.entries())
-      .map(([hotelId, sum]) => {
-        const hotel = HOTELS_BY_ID.get(hotelId);
-        const provider = hotel ? PROVIDERS_BY_ID.get(hotel.providerId) : undefined;
-        return this.toRow(`hotel:${hotelId}`, sum, dayCount, hotel?.name ?? hotelId, provider?.name);
-      })
-      .sort((a, b) => b.occupancyPercent - a.occupancyPercent);
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([dateKey, sum]) => this.toRow(`date:${dateKey}`, sum, this.formatDisplayDate(dateKey)));
+  }
+
+  private formatDisplayDate(dateKey: string): string {
+    const [y, m, d] = dateKey.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   private averageDailyRatios(records: AtomicRecord[], roomType: string, bookingTypes: string[]): { occupancy: number; availability: number } {

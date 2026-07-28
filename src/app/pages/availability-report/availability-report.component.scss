@@ -91,6 +91,49 @@
   margin-inline-start: auto;
 }
 
+.period-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--app-heading) 20%, var(--app-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-heading) 8%, transparent);
+  color: var(--app-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.period-badge tabler-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Hotel → Provider context selector — the primary context for the whole report */
+
+.context-section {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1.5rem;
+}
+
+.context-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  padding: 0.65rem 1rem;
+  background: color-mix(in srgb, var(--app-heading) 4%, var(--app-card-bg));
+  border: 1px solid color-mix(in srgb, var(--app-heading) 14%, var(--app-border));
+  border-radius: 12px;
+}
+
+.ar-fb-field--context {
+  width: 240px;
+}
+
 /* Export button — same pattern as the orders page export buttons */
 
 .export-format-btn {
@@ -684,9 +727,20 @@
   }
 
   .ar-fb-field,
-  .ar-fb-field--provider,
-  .ar-fb-field--hotel,
   .ar-fb-field--booking {
+    width: 100%;
+  }
+
+  .context-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .context-bar .ar-fb-sep {
+    display: none;
+  }
+
+  .ar-fb-field--context {
     width: 100%;
   }
 

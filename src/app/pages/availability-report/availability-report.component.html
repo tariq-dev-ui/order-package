@@ -9,6 +9,14 @@
           <h1 class="page-title">{{ 'availabilityReport.title' | translate }}</h1>
           <p class="page-description">{{ 'availabilityReport.subtitle' | translate }}</p>
         </div>
+        <span class="period-badge">
+          <tabler-icon name="calendar-event" size="14"></tabler-icon>
+          @if (periodPreset() === 'custom' && appliedFrom() && appliedTo()) {
+            <span>{{ appliedFrom() | date:'dd MMM yyyy' }} → {{ appliedTo() | date:'dd MMM yyyy' }}</span>
+          } @else {
+            <span>{{ activePeriodLabelKey() | translate }}</span>
+          }
+        </span>
       </div>
       <div class="header-actions">
         <button
@@ -25,6 +33,46 @@
           <tabler-icon name="file-type-pdf"></tabler-icon>
           <span>{{ 'availabilityReport.actions.exportPdf' | translate }}</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="context-section">
+    <div class="context-bar">
+      <span class="ar-fb-label">
+        <tabler-icon name="building" size="14"></tabler-icon>
+        <span>{{ 'availabilityReport.filters.hotel' | translate }}</span>
+      </span>
+      <div class="ar-fb-field ar-fb-field--context">
+        <app-sero-searchable-select
+          size="sm"
+          [options]="hotelOptions"
+          [value]="hotelId()"
+          [placeholderKey]="'availabilityReport.filters.allHotels'"
+          [searchPlaceholderKey]="'availabilityReport.filters.search'"
+          [noOptionsKey]="'availabilityReport.filters.noOptions'"
+          (valueChange)="onHotelChange($event)">
+        </app-sero-searchable-select>
+      </div>
+
+      <span class="ar-fb-sep"></span>
+
+      <span class="ar-fb-label">
+        <tabler-icon name="building-store" size="14"></tabler-icon>
+        <span>{{ 'availabilityReport.filters.provider' | translate }}</span>
+      </span>
+      <div class="ar-fb-field ar-fb-field--context">
+        <app-sero-searchable-select
+          size="sm"
+          [options]="providerOptions()"
+          [value]="providerId()"
+          [disabled]="isProviderDisabled()"
+          [loading]="isLoadingProviders()"
+          [placeholderKey]="isProviderDisabled() ? 'availabilityReport.filters.selectHotelFirst' : 'availabilityReport.filters.allProviders'"
+          [searchPlaceholderKey]="'availabilityReport.filters.search'"
+          [noOptionsKey]="'availabilityReport.filters.noOptions'"
+          (valueChange)="onProviderChange($event)">
+        </app-sero-searchable-select>
       </div>
     </div>
   </div>
@@ -133,43 +181,6 @@
         <span class="ar-fb-sep"></span>
 
         <span class="ar-fb-label">
-          <tabler-icon name="building-store" size="14"></tabler-icon>
-          <span>{{ 'availabilityReport.filters.provider' | translate }}</span>
-        </span>
-        <div class="ar-fb-field ar-fb-field--provider">
-          <app-sero-searchable-select
-            size="sm"
-            [options]="providerOptions"
-            [value]="providerId()"
-            [placeholderKey]="'availabilityReport.filters.allProviders'"
-            [searchPlaceholderKey]="'availabilityReport.filters.search'"
-            [noOptionsKey]="'availabilityReport.filters.noOptions'"
-            (valueChange)="onProviderChange($event)">
-          </app-sero-searchable-select>
-        </div>
-
-        <span class="ar-fb-sep"></span>
-
-        <span class="ar-fb-label">
-          <tabler-icon name="building" size="14"></tabler-icon>
-          <span>{{ 'availabilityReport.filters.hotel' | translate }}</span>
-        </span>
-        <div class="ar-fb-field ar-fb-field--hotel">
-          <app-sero-searchable-select
-            size="sm"
-            [options]="hotelOptions()"
-            [value]="hotelId()"
-            [loading]="isLoadingHotels()"
-            [placeholderKey]="'availabilityReport.filters.allHotels'"
-            [searchPlaceholderKey]="'availabilityReport.filters.search'"
-            [noOptionsKey]="'availabilityReport.filters.noOptions'"
-            (valueChange)="onHotelChange($event)">
-          </app-sero-searchable-select>
-        </div>
-
-        <span class="ar-fb-sep"></span>
-
-        <span class="ar-fb-label">
           <tabler-icon name="door" size="14"></tabler-icon>
           <span>{{ 'availabilityReport.filters.roomType' | translate }}</span>
         </span>
@@ -235,8 +246,7 @@
         <table class="availability-table">
           <thead>
             <tr>
-              <th>{{ 'availabilityReport.columns.hotel' | translate }}</th>
-              <th>{{ 'availabilityReport.columns.provider' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.date' | translate }}</th>
               <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
               <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
               <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
@@ -251,13 +261,13 @@
           <tbody>
             @if (isLoading()) {
               <tr>
-                <td colspan="10" class="ar-state-cell">
+                <td colspan="9" class="ar-state-cell">
                   <div class="ar-spinner"></div>
                 </td>
               </tr>
             } @else if (rows().length === 0) {
               <tr>
-                <td colspan="10" class="ar-state-cell">
+                <td colspan="9" class="ar-state-cell">
                   <div class="empty-state">
                     <tabler-icon name="calendar-off"></tabler-icon>
                     <h3>{{ 'availabilityReport.empty.title' | translate }}</h3>
@@ -268,8 +278,7 @@
             } @else {
               @for (row of rows(); track row.key) {
                 <tr>
-                  <td class="cell-primary">{{ row.label }}</td>
-                  <td>{{ row.secondaryLabel }}</td>
+                  <td class="cell-period">{{ row.label }}</td>
                   <td>{{ row.totalUnits }}</td>
                   <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
                   <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
