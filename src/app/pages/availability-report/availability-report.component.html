@@ -193,21 +193,6 @@
           </app-sero-multi-select>
         </div>
 
-        <span class="ar-fb-sep"></span>
-
-        <span class="ar-fb-label">
-          <tabler-icon name="list" size="14"></tabler-icon>
-          <span>{{ 'availabilityReport.filters.groupBy' | translate }}</span>
-        </span>
-        <div class="ar-fb-field ar-fb-field--groupby">
-          <app-sero-dropdown
-            size="sm"
-            [options]="groupByOptions"
-            [value]="groupBy()"
-            (valueChange)="onGroupByChange($event)">
-          </app-sero-dropdown>
-        </div>
-
         <button type="button" class="ar-fb-search-btn" (click)="showResults()">
           <tabler-icon name="search" size="14"></tabler-icon>
           <span>{{ 'availabilityReport.actions.showResults' | translate }}</span>
@@ -241,73 +226,19 @@
     <div class="table-card">
       <div class="table-container">
         <table class="availability-table">
-          @switch (groupBy()) {
-            @case ('hotel') {
-              <thead>
-                <tr>
-                  <th>{{ 'availabilityReport.columns.hotel' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.provider' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
-                </tr>
-              </thead>
-            }
-            @case ('date') {
-              <thead>
-                <tr>
-                  <th>{{ 'availabilityReport.columns.date' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.hotels' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
-                </tr>
-              </thead>
-            }
-            @case ('provider') {
-              <thead>
-                <tr>
-                  <th>{{ 'availabilityReport.columns.provider' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.hotels' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
-                </tr>
-              </thead>
-            }
-            @default {
-              <thead>
-                <tr>
-                  <th>
-                    @if (groupBy() === 'roomType') {
-                      {{ 'availabilityReport.columns.roomType' | translate }}
-                    } @else {
-                      {{ 'availabilityReport.columns.bookingType' | translate }}
-                    }
-                  </th>
-                  <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
-                  <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
-                </tr>
-              </thead>
-            }
-          }
+          <thead>
+            <tr>
+              <th>{{ 'availabilityReport.columns.hotel' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.provider' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.totalUnits' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
+            </tr>
+          </thead>
 
           <tbody>
             @if (isLoading()) {
@@ -329,51 +260,15 @@
             } @else {
               @for (row of rows(); track row.key) {
                 <tr>
-                  @switch (groupBy()) {
-                    @case ('hotel') {
-                      <td class="cell-primary">{{ row.label }}</td>
-                      <td>{{ row.secondaryLabel }}</td>
-                      <td>{{ row.totalUnits }}</td>
-                      <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
-                      <td>{{ row.totalAvailable }}</td>
-                      <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
-                      <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
-                    }
-                    @case ('date') {
-                      <td class="cell-primary cell-period">{{ row.label }}</td>
-                      <td>{{ row.hotelsCount }}</td>
-                      <td>{{ row.totalUnits }}</td>
-                      <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
-                      <td>{{ row.totalAvailable }}</td>
-                      <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
-                      <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
-                    }
-                    @case ('provider') {
-                      <td class="cell-primary">{{ row.label }}</td>
-                      <td>{{ row.hotelsCount }}</td>
-                      <td>{{ row.totalUnits }}</td>
-                      <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
-                      <td>{{ row.totalAvailable }}</td>
-                      <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
-                      <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
-                    }
-                    @default {
-                      <td class="cell-primary">{{ row.labelKey ? (row.labelKey | translate) : row.label }}</td>
-                      <td>{{ row.totalUnits }}</td>
-                      <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
-                      <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
-                      <td>{{ row.totalAvailable }}</td>
-                      <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
-                      <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
-                    }
-                  }
+                  <td class="cell-primary">{{ row.label }}</td>
+                  <td>{{ row.secondaryLabel }}</td>
+                  <td>{{ row.totalUnits }}</td>
+                  <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
+                  <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
+                  <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
+                  <td>{{ row.totalAvailable }}</td>
+                  <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
+                  <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>
                 </tr>
               }
             }

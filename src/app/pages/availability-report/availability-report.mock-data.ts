@@ -11,11 +11,11 @@ export interface HotelMock {
 }
 
 export const PROVIDERS: ProviderMock[] = [
-  { id: 'booking', name: 'Booking.com' },
-  { id: 'agoda', name: 'Agoda' },
-  { id: 'expedia', name: 'Expedia' },
-  { id: 'direct', name: 'Direct' },
-  { id: 'hotelscom', name: 'Hotels.com' },
+  { id: 'booking', name: 'شركة الوفاء للسياحة والسفر' },
+  { id: 'agoda', name: 'شركة نجم الحرمين للضيافة' },
+  { id: 'expedia', name: 'شركة الرحلة الذهبية للسياحة' },
+  { id: 'direct', name: 'شركة الوصال للضيافة' },
+  { id: 'hotelscom', name: 'شركة النخبة للخدمات الفندقية' },
 ];
 
 const PROVIDER_IDS = PROVIDERS.map((provider) => provider.id);

@@ -7,8 +7,6 @@ import { SeroSearchableSelectComponent, SeroSearchableSelectOption } from '../..
 import { SeroDatePickerComponent } from '../../shared/components/sero-date-picker/sero-date-picker.component';
 import { PaginationComponent } from '../../shared/components/pkg-pagination/pagination.component';
 import {
-  ALL_BOOKING_TYPES,
-  ALL_ROOM_TYPES,
   BOOKING_TYPE_WEIGHTS,
   HOTELS,
   HOTELS_BY_ID,
@@ -19,7 +17,6 @@ import {
 } from './availability-report.mock-data';
 
 type PeriodPreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'currentYear' | 'lastYear' | 'custom';
-type GroupBy = 'hotel' | 'date' | 'provider' | 'roomType' | 'bookingType';
 
 interface AtomicRecord {
   date: string;
@@ -114,14 +111,6 @@ export class AvailabilityReportComponent {
     { value: 'subRepresentative', labelKey: 'availabilityReport.filters.bookingTypes.subRepresentative' },
   ];
 
-  readonly groupByOptions: SeroDropdownOption<GroupBy>[] = [
-    { value: 'hotel', labelKey: 'availabilityReport.filters.groupByOptions.hotel' },
-    { value: 'date', labelKey: 'availabilityReport.filters.groupByOptions.date' },
-    { value: 'provider', labelKey: 'availabilityReport.filters.groupByOptions.provider' },
-    { value: 'roomType', labelKey: 'availabilityReport.filters.groupByOptions.roomType' },
-    { value: 'bookingType', labelKey: 'availabilityReport.filters.groupByOptions.bookingType' },
-  ];
-
   readonly providerOptions: SeroSearchableSelectOption<string>[] = [
     { value: 'all', labelKey: 'availabilityReport.filters.allProviders' },
     ...PROVIDERS.map((provider) => ({ value: provider.id, label: provider.name })),
@@ -149,7 +138,6 @@ export class AvailabilityReportComponent {
   readonly bookingType = signal<string[]>([]);
   readonly providerId = signal<string>('all');
   readonly hotelId = signal<string>('all');
-  readonly groupBy = signal<GroupBy>('hotel');
   readonly isLoadingHotels = signal(false);
 
   readonly isLoading = signal(false);
@@ -169,14 +157,7 @@ export class AvailabilityReportComponent {
     const records = this.atomicRows();
     const roomType = this.appliedRoomType();
     const bookingTypes = this.appliedBookingTypes();
-
-    switch (this.groupBy()) {
-      case 'hotel': return this.groupByHotel(records, roomType, bookingTypes);
-      case 'date': return this.groupByDate(records, roomType, bookingTypes);
-      case 'provider': return this.groupByProvider(records, roomType, bookingTypes);
-      case 'roomType': return this.groupByRoomType(records, bookingTypes);
-      case 'bookingType': return this.groupByBookingType(records, roomType);
-    }
+    return this.groupByHotel(records, roomType, bookingTypes);
   });
 
   readonly totalCount = computed(() => this.groupedRows().length);
@@ -245,11 +226,6 @@ export class AvailabilityReportComponent {
   onHotelChange(value: string): void {
     this.hotelId.set(value);
     this.showResults();
-  }
-
-  onGroupByChange(value: GroupBy): void {
-    this.groupBy.set(value);
-    this.page.set(1);
   }
 
   onCustomFromChange(value: string): void {
@@ -539,94 +515,6 @@ export class AvailabilityReportComponent {
         return this.toRow(`hotel:${hotelId}`, sum, dayCount, hotel?.name ?? hotelId, provider?.name);
       })
       .sort((a, b) => b.occupancyPercent - a.occupancyPercent);
-  }
-
-  private groupByDate(records: AtomicRecord[], roomType: string, bookingTypes: string[]): ReportRow[] {
-    const sums = this.groupSum(records, (r) => r.date, roomType, bookingTypes);
-    const hotelsCount = this.appliedHotels().length;
-    return Array.from(sums.entries())
-      .map(([date, sum]) => this.toRow(`date:${date}`, sum, 1, date, undefined, hotelsCount))
-      .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''));
-  }
-
-  private groupByProvider(records: AtomicRecord[], roomType: string, bookingTypes: string[]): ReportRow[] {
-    const dayCount = this.countDistinctDates(records);
-    const sums = this.groupSum(records, (r) => HOTELS_BY_ID.get(r.hotelId)?.providerId ?? 'unknown', roomType, bookingTypes);
-    const hotelSets = new Map<string, Set<string>>();
-    for (const record of records) {
-      const providerId = HOTELS_BY_ID.get(record.hotelId)?.providerId ?? 'unknown';
-      const set = hotelSets.get(providerId) ?? new Set<string>();
-      set.add(record.hotelId);
-      hotelSets.set(providerId, set);
-    }
-    return Array.from(sums.entries())
-      .map(([providerId, sum]) => {
-        const provider = PROVIDERS_BY_ID.get(providerId);
-        return this.toRow(
-          `provider:${providerId}`,
-          sum,
-          dayCount,
-          provider?.name ?? providerId,
-          undefined,
-          hotelSets.get(providerId)?.size ?? 0,
-        );
-      })
-      .sort((a, b) => b.occupancyPercent - a.occupancyPercent);
-  }
-
-  private groupByRoomType(records: AtomicRecord[], bookingTypes: string[]): ReportRow[] {
-    const dayCount = this.countDistinctDates(records);
-    const types = this.appliedRoomType() === 'all' ? ALL_ROOM_TYPES : [this.appliedRoomType()];
-    const bookingFactor = this.bookingWeight(bookingTypes);
-
-    return types
-      .map((rt) => {
-        const factor = (ROOM_TYPE_WEIGHTS[rt] ?? 0) * bookingFactor;
-        const sum = this.scaleAll(records, factor);
-        return this.toRow(
-          `roomType:${rt}`,
-          sum,
-          dayCount,
-          undefined,
-          undefined,
-          undefined,
-          `availabilityReport.filters.roomTypes.${rt}`,
-        );
-      })
-      .sort((a, b) => b.occupancyPercent - a.occupancyPercent);
-  }
-
-  private groupByBookingType(records: AtomicRecord[], roomType: string): ReportRow[] {
-    const dayCount = this.countDistinctDates(records);
-    const types = this.appliedBookingTypes().length === 0 ? ALL_BOOKING_TYPES : this.appliedBookingTypes();
-    const roomFactor = this.roomWeight(roomType);
-
-    return types
-      .map((bt) => {
-        const factor = roomFactor * (BOOKING_TYPE_WEIGHTS[bt] ?? 0);
-        const sum = this.scaleAll(records, factor);
-        return this.toRow(
-          `bookingType:${bt}`,
-          sum,
-          dayCount,
-          undefined,
-          undefined,
-          undefined,
-          `availabilityReport.filters.bookingTypes.${bt}`,
-        );
-      })
-      .sort((a, b) => b.occupancyPercent - a.occupancyPercent);
-  }
-
-  private scaleAll(records: AtomicRecord[], factor: number): Sums {
-    const sum: Sums = { totalUnits: 0, checkedIn: 0, waitingCheckIn: 0, overbooked: 0, totalAvailable: 0 };
-    for (const record of records) {
-      sum.totalUnits += record.totalUnits * factor;
-      sum.checkedIn += record.checkedIn * factor;
-      sum.waitingCheckIn += record.waitingCheckIn * factor;
-      sum.overbooked += record.overbooked * factor;
-    }
-    return sum;
   }
 
   private averageDailyRatios(records: AtomicRecord[], roomType: string, bookingTypes: string[]): { occupancy: number; availability: number } {
