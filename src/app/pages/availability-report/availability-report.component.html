@@ -13,6 +13,13 @@
       <div class="header-actions">
         <button
           type="button"
+          class="export-format-btn export-format-btn--excel"
+          (click)="exportExcel()">
+          <tabler-icon name="file-type-xls"></tabler-icon>
+          <span>{{ 'availabilityReport.actions.exportExcel' | translate }}</span>
+        </button>
+        <button
+          type="button"
           class="export-format-btn export-format-btn--pdf"
           (click)="exportPdf()">
           <tabler-icon name="file-type-pdf"></tabler-icon>
@@ -234,6 +241,7 @@
               <th>{{ 'availabilityReport.columns.checkedIn' | translate }}</th>
               <th>{{ 'availabilityReport.columns.waitingCheckIn' | translate }}</th>
               <th>{{ 'availabilityReport.columns.overbooked' | translate }}</th>
+              <th>{{ 'availabilityReport.columns.occupiedTotal' | translate }}</th>
               <th>{{ 'availabilityReport.columns.totalAvailable' | translate }}</th>
               <th>{{ 'availabilityReport.columns.availablePercent' | translate }}</th>
               <th>{{ 'availabilityReport.columns.occupancyPercent' | translate }}</th>
@@ -243,13 +251,13 @@
           <tbody>
             @if (isLoading()) {
               <tr>
-                <td colspan="9" class="ar-state-cell">
+                <td colspan="10" class="ar-state-cell">
                   <div class="ar-spinner"></div>
                 </td>
               </tr>
             } @else if (rows().length === 0) {
               <tr>
-                <td colspan="9" class="ar-state-cell">
+                <td colspan="10" class="ar-state-cell">
                   <div class="empty-state">
                     <tabler-icon name="calendar-off"></tabler-icon>
                     <h3>{{ 'availabilityReport.empty.title' | translate }}</h3>
@@ -266,6 +274,7 @@
                   <td><span class="cell-pill cell-pill--checked-in">{{ row.checkedIn }}</span></td>
                   <td><span class="cell-pill cell-pill--waiting">{{ row.waitingCheckIn }}</span></td>
                   <td><span class="cell-pill cell-pill--overbooked">{{ row.overbooked }}</span></td>
+                  <td>{{ row.checkedIn + row.waitingCheckIn + row.overbooked }}</td>
                   <td>{{ row.totalAvailable }}</td>
                   <td><span class="status-badge status-success">{{ row.availablePercent }}%</span></td>
                   <td><span class="status-badge status-warning">{{ row.occupancyPercent }}%</span></td>

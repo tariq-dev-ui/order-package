@@ -259,6 +259,7 @@
     "subtitle": "View and analyze hotel availability and occupancy across providers, hotels and selected periods.",
     "actions": {
       "exportPdf": "Export PDF",
+      "exportExcel": "Export Excel",
       "showResults": "Show Results"
     },
     "kpis": {
@@ -331,7 +332,8 @@
       "checkedIn": "Checked In",
       "waitingCheckIn": "Waiting Check In",
       "overbooked": "Overbooked",
-      "totalAvailable": "Total Available",
+      "occupiedTotal": "Total",
+      "totalAvailable": "Available",
       "availablePercent": "Available %",
       "occupancyPercent": "Occupancy %"
     },

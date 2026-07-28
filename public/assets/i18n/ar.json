@@ -305,6 +305,7 @@
     "subtitle": "عرض وتحليل إتاحة الوحدات وإشغالها عبر المزودين والفنادق والفترات المحددة.",
     "actions": {
       "exportPdf": "تصدير PDF",
+      "exportExcel": "تصدير Excel",
       "showResults": "عرض النتائج"
     },
     "kpis": {
@@ -374,12 +375,13 @@
       "roomType": "نوع الغرفة",
       "bookingType": "نوع الحجز",
       "totalUnits": "إجمالي الوحدات",
-      "checkedIn": "تسجيل الوصول",
-      "waitingCheckIn": "في انتظار تسجيل الوصول",
+      "checkedIn": "تم التسكين",
+      "waitingCheckIn": "بانتظار التسكين",
       "overbooked": "الحجز الزائد",
-      "totalAvailable": "الإجمالي المتاح",
-      "availablePercent": "نسبة الإتاحة",
-      "occupancyPercent": "نسبة الإشغال"
+      "occupiedTotal": "الإجمالي",
+      "totalAvailable": "متاح",
+      "availablePercent": "نسبة المتاح %",
+      "occupancyPercent": "نسبة الإشغال %"
     },
     "empty": {
       "title": "لا توجد بيانات إتاحة",

@@ -273,6 +273,10 @@ export class AvailabilityReportComponent {
     // TODO: wire up to the real export endpoint once the Availability Report API is available.
   }
 
+  exportExcel(): void {
+    // TODO: wire up to the real export endpoint once the Availability Report API is available.
+  }
+
   private resolveHotelsInScope(): HotelMock[] {
     const hotelId = this.hotelId();
     if (hotelId !== 'all') {
